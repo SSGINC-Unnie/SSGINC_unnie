@@ -1,8 +1,8 @@
 ---
-name: Feature request
-about: 작업할 기능에 대해 정리하는 이슈
-title: "[FEAT]"
-labels: enhancement
+name: Info report
+about: 정보 공유 이슈
+title: "[INFO]"
+labels: document
 assignees: ''
 
 ---
