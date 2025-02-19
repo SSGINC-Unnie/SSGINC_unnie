@@ -1,6 +1,8 @@
 package com.ssginc.unnie.shop.vo;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.sql.Time;
@@ -8,6 +10,8 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Shop {
 
     // 업체 번호
@@ -39,9 +43,9 @@ public class Shop {
     // 회원 번호
     private Integer shopMemberId;
     // 위도
-    private BigDecimal shopLatitude;
+    private Double shopLatitude;
     // 경도
-    private BigDecimal shopLongitude;
+    private Double shopLongitude;
     // 승인여부
     private Integer shopStatus;
 }

@@ -1,8 +1,12 @@
 package com.ssginc.unnie.shop.vo;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Designer {
     // 디자이너 번호
     private Integer designerId;
