@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+    <!-- 로그 설정 (DEBUG 모드 활성화) -->
+    <settings>
+<!--        <setting name="logImpl" value="STDOUT_LOGGING"/>-->
+        <setting name="logImpl" value="org.apache.ibatis.logging.slf4j.Slf4jImpl"/>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+    </settings>
+
+    <!-- Alias 설정 -->
+    <typeAliases>
+        <package name="com.ssginc.ewms.*.vo"/>
+    </typeAliases>
+</configuration>
