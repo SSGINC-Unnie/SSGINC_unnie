@@ -13,6 +13,6 @@
 
     <!-- Alias 설정 -->
     <typeAliases>
-        <package name="com.ssginc.ewms.*.vo"/>
+        <package name="com.ssginc.unnie.*.vo"/>
     </typeAliases>
 </configuration>
