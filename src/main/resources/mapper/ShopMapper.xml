@@ -2,4 +2,18 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ssginc.unnie.shop.mapper.ShopMapper">
+
+
+    <select id="selectShopByCategory" resultType="com.ssginc.unnie.shop.dto.ShopResponse">
+        SELECT s.shop_name, s.shop_business_time, ROUND(AVG(re.review_rate), 2) AS avg_rate
+        FROM shop s
+                 JOIN receipt r ON r.SHOP_ID = s.shop_id
+                 JOIN review re ON r.receipt_id = re.receipt_id
+        WHERE shop_category = #{category}
+        GROUP BY s.shop_name, s.shop_business_time
+    </select>
+
+
+
+
 </mapper>
