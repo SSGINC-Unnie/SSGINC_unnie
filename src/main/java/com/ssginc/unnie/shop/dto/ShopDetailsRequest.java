@@ -1,5 +1,4 @@
 package com.ssginc.unnie.shop.dto;
 
-
-public class ShopRequest {
+public class ShopDetailsRequest {
 }
