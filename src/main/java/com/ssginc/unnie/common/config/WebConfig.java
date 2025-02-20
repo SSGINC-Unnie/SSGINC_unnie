@@ -1,6 +1,7 @@
 package com.ssginc.unnie.common.config;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
@@ -15,4 +16,10 @@ public class WebConfig implements WebMvcConfigurer {
 //                .addPathPatterns("/**") // 하위에 전부 적용
 //                .excludePathPatterns("/login/**", "/logout/**", "/registration/**", "/js/**",  "/img/**", "/css/**", "/*.ico", "/error"); // 예외
 //    }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/upload/**")
+                .addResourceLocations("file:C:/upload/");
+    }
 }

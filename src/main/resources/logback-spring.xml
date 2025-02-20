@@ -15,7 +15,6 @@
         </encoder>
     </appender>
 
-
     <!-- 루트 로그 설정 -->
     <root level="info">
         <appender-ref ref="CONSOLE" />
@@ -23,43 +22,36 @@
     </root>
 
     <!-- 특정 패키지 로그 레벨 설정 -->
-    <logger name="com.ssginc.unnie" level="debug">
+    <logger name="com.ssginc.unnie" level="debug" additivity="false">
         <appender-ref ref="CONSOLE" />
         <appender-ref ref="FILE" />
     </logger>
 
-    <logger name="org.springframework.web" level="debug">
+    <logger name="org.springframework.web" level="debug" additivity="false">
         <appender-ref ref="CONSOLE" />
         <appender-ref ref="FILE" />
     </logger>
 
-    <logger name="org.thymeleaf" level="info">
+    <logger name="org.thymeleaf" level="info" additivity="false">
         <appender-ref ref="CONSOLE" />
         <appender-ref ref="FILE" />
     </logger>
 
-    <logger name="org.springframework.boot.web.servlet" level="error">
+    <logger name="org.springframework.boot.web.servlet" level="error" additivity="false">
         <appender-ref ref="CONSOLE" />
         <appender-ref ref="FILE" />
     </logger>
 
-    <!-- mybatis -->
-    <logger name="org.mybatis" level="debug">
+    <!-- MyBatis 로그 설정 -->
+    <logger name="org.mybatis" level="debug" additivity="false">
         <appender-ref ref="CONSOLE" />
         <appender-ref ref="FILE" />
     </logger>
 
-    <logger name="org.apache.ibatis" level="debug">
+    <logger name="org.apache.ibatis" level="debug" additivity="false">
         <appender-ref ref="CONSOLE" />
         <appender-ref ref="FILE" />
     </logger>
-
-    <!-- MyBatis Mapper 로깅 -->
-    <logger name="com.ssginc.ewms.mapper" level="DEBUG">
-        <appender-ref ref="CONSOLE" />
-        <appender-ref ref="FILE" />
-    </logger>
-
 
 
 </configuration>
