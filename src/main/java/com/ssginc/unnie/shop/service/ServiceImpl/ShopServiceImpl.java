@@ -19,12 +19,8 @@ public class ShopServiceImpl implements ShopService {
     private final ShopMapper shopMapper;
 
     @Override
-    public List<ShopResponse> selectShopByCategory(String Category) {
-
-
-        return shopMapper.selectShopByCategory(Category);
+    public List<ShopResponse> selectShopByCategory(String category, Long cursor, int size) {
+        return shopMapper.selectShopByCategory(category, cursor, size);
     }
-
-
 
 }

@@ -15,12 +15,12 @@ import java.time.LocalDateTime;
 public class Shop {
 
     // 업체 번호
-    private Integer shopId;
+    private int shopId;
     // 업체명
     private String shopName;
     // 업체 위치
     private String shopLocation;
-    // 입점임
+    // 입점일
     private Timestamp shopRegisteredAt;
     // 카테고리
     private ShopCategory shopCategory;
@@ -41,11 +41,11 @@ public class Shop {
     //수정일
     private Timestamp shopUpdatedAt;
     // 회원 번호
-    private Integer shopMemberId;
+    private int shopMemberId;
     // 위도
     private Double shopLatitude;
     // 경도
     private Double shopLongitude;
     // 승인여부
-    private Integer shopStatus;
+    private int shopStatus;
 }
