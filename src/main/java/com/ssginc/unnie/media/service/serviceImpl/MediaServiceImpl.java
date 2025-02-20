@@ -4,6 +4,7 @@ import com.ssginc.unnie.common.exception.UnnieMediaException;
 import com.ssginc.unnie.common.util.ErrorCode;
 import com.ssginc.unnie.common.util.generator.FileNameGenerator;
 import com.ssginc.unnie.common.util.validation.FileValidator;
+import com.ssginc.unnie.media.dto.MediaRequest;
 import com.ssginc.unnie.media.mapper.MediaMapper;
 import com.ssginc.unnie.media.service.MediaService;
 import com.ssginc.unnie.media.vo.MediaTargetType;
@@ -50,7 +51,7 @@ public class MediaServiceImpl implements MediaService {
 
         log.info("uploadPath = {}", uploadPath);
 
-        String fileUrn = uploadPath + newFileName;
+        String fileUrn = uploadPath + File.separator + newFileName;
 
         // 저장 경로 설정
         File destination = new File(fileUrn);
@@ -58,9 +59,10 @@ public class MediaServiceImpl implements MediaService {
         log.info("destination = {}", destination.getAbsolutePath());
 
         try {
+            File uploadDir = destination.getParentFile();
 
-            if(!destination.exists()) {
-                destination.mkdirs();
+            if(!uploadDir.exists()) {
+                uploadDir.mkdirs();
             }
 
             // 파일 저장
@@ -70,7 +72,15 @@ public class MediaServiceImpl implements MediaService {
             throw new UnnieMediaException(ErrorCode.FILE_INTERNAL_SERVER_ERROR, e);
         }
 
-        mediaMapper.insert(targetType, targetId, fileUrn, fileOriginalName, newFileName);
+        MediaRequest mediaRequest = MediaRequest.builder()
+                                                    .targetType(targetType)
+                                                    .targetId(targetId)
+                                                    .fileUrn(fileUrn)
+                                                    .fileOriginalName(fileOriginalName)
+                                                    .newFileName(newFileName)
+                                                .build();
+
+        mediaMapper.insert(mediaRequest);
 
         return fileUrn;
     }
