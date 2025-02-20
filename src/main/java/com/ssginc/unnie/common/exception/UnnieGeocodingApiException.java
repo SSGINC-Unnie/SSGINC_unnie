@@ -1,7 +1,10 @@
 package com.ssginc.unnie.common.exception;
 
-public class UnnieGeocodingApiException extends RuntimeException {
-  public UnnieGeocodingApiException(String message) {
-    super(message);
-  }
+import com.ssginc.unnie.common.util.ErrorCode;
+
+public class UnnieGeocodingApiException extends UnnieException {
+    public UnnieGeocodingApiException(ErrorCode errorCode) {
+        super(errorCode);
+    }
+    public UnnieGeocodingApiException(ErrorCode errorCode, Throwable cause) {super(errorCode, cause);}
 }
