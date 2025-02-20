@@ -2,6 +2,7 @@ package com.ssginc.unnie.common.util.validation;
 
 import com.ssginc.unnie.common.exception.UnnieMediaException;
 import com.ssginc.unnie.common.util.ErrorCode;
+import com.ssginc.unnie.common.util.parser.BoardParser;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tika.Tika;
 import org.springframework.stereotype.Component;

@@ -2,4 +2,24 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ssginc.unnie.board.mapper.BoardMapper">
+
+    <insert id="insertBoard" useGeneratedKeys="true" keyColumn="board_id">
+        insert into board
+        (
+         board_title,
+         board_category,
+         board_contents,
+         board_thumbnail,
+         board_author
+         )
+        values
+        (
+         #{boardTitle},
+         #{boardCategory},
+         #{boardContents},
+         #{boardThumbnail},
+         #{boardAuthor}
+        )
+    </insert>
+
 </mapper>

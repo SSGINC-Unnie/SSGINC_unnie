@@ -1,9 +1,10 @@
 package com.ssginc.unnie.board.vo;
 
+import com.ssginc.unnie.common.util.EnumDescription;
 import lombok.Getter;
 
 @Getter
-public enum BoardCategory {
+public enum BoardCategory implements EnumDescription {
     NOTICE("공지 있어!"),
     SALE("여기 할인어때?"),
     WHAT_SUITS_ME("나 뭐가 어울려?"),

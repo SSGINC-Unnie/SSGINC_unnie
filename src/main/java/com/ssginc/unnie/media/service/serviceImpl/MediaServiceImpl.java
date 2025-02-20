@@ -3,7 +3,7 @@ package com.ssginc.unnie.media.service.serviceImpl;
 import com.ssginc.unnie.common.exception.UnnieMediaException;
 import com.ssginc.unnie.common.util.ErrorCode;
 import com.ssginc.unnie.common.util.generator.FileNameGenerator;
-import com.ssginc.unnie.common.util.validation.FileValidator;
+import com.ssginc.unnie.common.util.validation.Validator;
 import com.ssginc.unnie.media.mapper.MediaMapper;
 import com.ssginc.unnie.media.service.MediaService;
 import com.ssginc.unnie.media.vo.MediaTargetType;
@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -22,13 +23,16 @@ import java.io.IOException;
 public class MediaServiceImpl implements MediaService {
 
     private final MediaMapper mediaMapper;
-    private final FileValidator fileValidator;
+
+    private final Validator<MultipartFile> fileValidator; // 유효성 검증 인터페이스
+
     private final FileNameGenerator fileNameGenerator;
 
     @Value("${upload.path}")
     private String uploadPath;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public String uploadFile(MultipartFile file, String targetType, long targetId) {
 
         MediaTargetType type;
@@ -42,27 +46,19 @@ public class MediaServiceImpl implements MediaService {
 
         String fileOriginalName = file.getOriginalFilename();
 
-        log.info("fileName = {}", fileOriginalName);
-
         String newFileName = fileNameGenerator.generateFileName(fileOriginalName);
-
-        log.info("newFileName = {}", newFileName);
-
-        log.info("uploadPath = {}", uploadPath);
 
         String fileUrn = uploadPath + newFileName;
 
         // 저장 경로 설정
         File destination = new File(fileUrn);
 
-        log.info("destination = {}", destination.getAbsolutePath());
+        log.info("fileName = {} / newFileName = {} / destination = {}", fileOriginalName, newFileName, destination.getAbsolutePath());
 
         try {
-
             if(!destination.exists()) {
                 destination.mkdirs();
             }
-
             // 파일 저장
             file.transferTo(destination);
 
