@@ -97,8 +97,6 @@ public class OCRValidator implements Validator<String> {
     /**
      * 🔹 날짜 추출
      */
-    // ✅ OCR JSON 배열에서 날짜 및 시간 추출
-
     public static LocalDateTime extractDateTime(JSONArray fields) {
         String datePart = null;
         String hour = "00", minute = "00", second = "00"; // 기본값
