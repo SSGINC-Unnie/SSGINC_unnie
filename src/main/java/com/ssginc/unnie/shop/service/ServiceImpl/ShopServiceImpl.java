@@ -1,12 +1,11 @@
 package com.ssginc.unnie.shop.service.ServiceImpl;
 
-import com.ssginc.unnie.common.util.ResponseDto;
-import com.ssginc.unnie.common.util.validation.Validator;
-import com.ssginc.unnie.shop.dto.ShopDetailsRequest;
-import com.ssginc.unnie.shop.dto.ShopDetailsResponse;
+import com.ssginc.unnie.shop.dto.ShopInfoResponse;
 import com.ssginc.unnie.shop.dto.ShopResponse;
 import com.ssginc.unnie.shop.mapper.ShopMapper;
 import com.ssginc.unnie.shop.service.ShopService;
+import com.ssginc.unnie.shop.vo.Designer;
+import com.ssginc.unnie.shop.vo.Procedure;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,8 +18,23 @@ public class ShopServiceImpl implements ShopService {
     private final ShopMapper shopMapper;
 
     @Override
-    public List<ShopResponse> selectShopByCategory(String category, Long cursor, int size) {
-        return shopMapper.selectShopByCategory(category, cursor, size);
+    public List<ShopResponse> selectShopByCategory(String category) {
+        return shopMapper.selectShopByCategory(category);
     }
 
+
+    @Override
+    public List<Designer> getDesignersByShopId(long shopId) {
+        return shopMapper.findDesignersByShopId(shopId);
+    }
+
+    @Override
+    public List<Procedure> getProceduresByShopId(long shopId) {
+        return shopMapper.findProceduresByShopId(shopId);
+    } // 수정은 하는데 수정일이 없음
+
+    @Override
+    public ShopInfoResponse getShopByShopId(long shopId) {
+        return shopMapper.findShopById(shopId);
+    }
 }

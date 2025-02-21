@@ -1,7 +1,5 @@
 package com.ssginc.unnie.common.util;
 
-import lombok.Getter;
-
 /**
  * 시스템에서 발생할 수 있는 다양한 에러 코드와 메시지를 정의하는 Enum 클래스
  * <p>
@@ -37,6 +35,10 @@ public enum ErrorCode {
     GEOCODING_FAILED(400, "SH025", "주소를 좌표로 변환하는 중 오류가 발생했습니다."),
     NO_BOOKMARK_FOUND(404, "SH026", "찜한 매장이 없습니다."),
     PROCEDURE_ALREADY_EXISTS(409, "SH027", "시술이 이미 등록되어 있습니다."),
+    INVALID_SHOP_NAME_FORMAT(400,"SH028","업체 이름 형식이 올바르지 않습니다."),
+    INVALID_TEL_FORMAT(400,"SH029","업체 전화번호 형식이 올바르지 않습니다."),
+    INVALID_INTRODUCTION_FORMAT(400,"SH030","업체 소개 형식이 올바르지 않습니다"),
+
 
     // 마이페이지(업체)
     SHOP_NOT_FOUND(404, "SH001", "해당 업체 정보를 찾을 수 없습니다."),
