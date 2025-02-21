@@ -9,12 +9,11 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class ReceiptRequest {
+    private long receiptId;
     private LocalDateTime receiptDate;
     private int receiptAmount;
     private String receiptBusinessNumber;
     private String receiptApprovalNumber;
-    private int receiptShopId;
-    private int receiptMemberId;
-    private String shopName;
+    private String receiptShopName;
     private List<ReceiptItemRequest> items;
 }
