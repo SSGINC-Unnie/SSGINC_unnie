@@ -1,15 +1,13 @@
 package com.ssginc.unnie.board.controller;
 
-import com.ssginc.unnie.board.dto.BoardRequest;
+import com.ssginc.unnie.board.dto.BoardCreateRequest;
+import com.ssginc.unnie.board.dto.BoardUpdateRequest;
 import com.ssginc.unnie.board.service.BoardService;
 import com.ssginc.unnie.common.util.ResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -26,13 +24,41 @@ public class BoardApiController {
      * @return insert 한 데이터의 id
      */
     @PostMapping("")
-    public ResponseEntity<ResponseDto<Map<String, String>>> createBoard(BoardRequest boardRequest) {
-
-        String boardId = boardService.createBoard(boardRequest);
-
+    public ResponseEntity<ResponseDto<Map<String, String>>> createBoard(BoardCreateRequest boardRequest) {
         return ResponseEntity.ok(
-                new ResponseDto<>(HttpStatus.CREATED.value(), "게시글 작성에 성공했습니다.", Map.of("boardId", boardId))
+                new ResponseDto<>(HttpStatus.CREATED.value(), "게시글 작성에 성공했습니다.", Map.of("boardId", boardService.createBoard(boardRequest)))
         );
     }
 
+    /**
+     * 게시글 상세 조회 메서드
+     */
+    @GetMapping("/{boardId}")
+    public ResponseEntity<ResponseDto<Map<String, Object>>> getBoard(@PathVariable String boardId) {
+        return ResponseEntity.ok(
+                new ResponseDto<>(HttpStatus.OK.value(), "게시글 조회 성공", Map.of("board", boardService.getBoard(boardId)))
+        );
+    }
+
+    /**
+     * 게시글 수정 메서드
+     */
+    @PutMapping()
+    public ResponseEntity<ResponseDto<Map<String, Object>>> updateBoard(BoardUpdateRequest boardUpdateRequest) {
+        String memberId = "1";
+        return ResponseEntity.ok(
+                new ResponseDto<>(HttpStatus.OK.value(), "게시글 수정 성공", Map.of("boardId", boardService.updateBoard(boardUpdateRequest, memberId)))
+        );
+    }
+
+    /**
+     * 게시글 삭제(soft delete) 메서드
+     */
+    @PatchMapping("/{boardId}")
+    public ResponseEntity<ResponseDto<Map<String, Object>>> softDeleteBoard(@PathVariable String boardId) {
+        String memberId = "1";
+        return ResponseEntity.ok(
+                new ResponseDto<>(HttpStatus.OK.value(), "게시글 삭제 성공", Map.of("boardId", boardService.softDeleteBoard(boardId, memberId)))
+        );
+    }
 }

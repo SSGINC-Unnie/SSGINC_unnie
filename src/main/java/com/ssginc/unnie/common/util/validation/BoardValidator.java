@@ -1,6 +1,8 @@
 package com.ssginc.unnie.common.util.validation;
 
-import com.ssginc.unnie.board.dto.BoardRequest;
+import com.ssginc.unnie.board.dto.BoardCreateRequest;
+import com.ssginc.unnie.board.dto.BoardRequestBase;
+import com.ssginc.unnie.board.dto.BoardUpdateRequest;
 import com.ssginc.unnie.board.vo.BoardCategory;
 import com.ssginc.unnie.common.exception.UnnieBoardException;
 import com.ssginc.unnie.common.util.ErrorCode;
@@ -18,7 +20,7 @@ import java.util.stream.Collectors;
 
 @Slf4j  // 🚀 로그 추가
 @Component
-public class BoardValidator implements Validator<BoardRequest> {
+public class BoardValidator implements Validator<BoardRequestBase> {
 
     // BoardCategory를 Set으로 저장 (유효한 카테고리 목록) -> O(1) 조회
     private static final Set<String> CATEGORY_SET = Arrays.stream(BoardCategory.values())
@@ -26,11 +28,16 @@ public class BoardValidator implements Validator<BoardRequest> {
             .collect(Collectors.toSet());
 
     @Override
-    public boolean validate(BoardRequest board) {
+    public boolean validate(BoardRequestBase board) {
         validateTitle(board.getBoardTitle());
         validateCategory(board.getBoardCategory());
         validateContent(board.getBoardContents());
         validateThumbnail(board.getBoardThumbnail());
+
+        if (board instanceof BoardUpdateRequest){
+            validateBoardId(((BoardUpdateRequest) board).getBoardId());
+        }
+
         return true;
     }
 
@@ -89,6 +96,12 @@ public class BoardValidator implements Validator<BoardRequest> {
         // 이미지 첨부 여부 검증
         if ( thumbnail == null) {
             throw new UnnieBoardException(ErrorCode.BOARD_FILE_REQUIRED);
+        }
+    }
+
+    private void validateBoardId(long id){
+        if ( id <= 0 ) {
+            throw new UnnieBoardException(ErrorCode.NULL_POINTER_ERROR);
         }
     }
 }

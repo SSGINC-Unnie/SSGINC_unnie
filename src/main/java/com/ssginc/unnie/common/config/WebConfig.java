@@ -7,7 +7,7 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
- * 인터셉터 적용을 위한 웹 설정
+ * 웹 설정
  */
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
@@ -25,6 +25,10 @@ public class WebConfig implements WebMvcConfigurer {
                 .addResourceLocations("file:C:/upload/");
     }
 
+    /**
+     * 카테고리 형식의 ENUM 을 자동으로 변환시켜주는 컨버터 등록하기
+     *
+     */
     @Override
     public void addFormatters(FormatterRegistry registry) {
         registry.addConverterFactory(new EnumDescriptionConverterFactory());

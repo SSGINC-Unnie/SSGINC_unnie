@@ -1,5 +1,6 @@
 package com.ssginc.unnie.common.handler;
 
+import com.ssginc.unnie.common.exception.UnnieException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -20,23 +21,23 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-//    /**
-//     * 모든 커스텀 예외 클래스들을 핸들링하는 메서드입니다.
-//     * @param e 커스텀 예외 클래스
-//     * @return HTTP 응답 객체에 포함시킬 객체
-//     */
-//    @ExceptionHandler(AbstractionException.class)
-//    public ResponseEntity<Map<String, Object>> handleAbstractionException(AbstractionException e) {
-//
-//        // 예외 로그에 스택 트레이스 포함
-//        log.error("Handled AbstractionException: {}", e.toString(), e);
-//
-//        Map<String, Object> response = new HashMap<>();
-//        response.put("code", e.getCode());
-//        response.put("message", e.getMessage());
-//        return ResponseEntity.status(e.getStatus()).body(response);
-//
-//    }
+    /**
+     * 모든 커스텀 예외 클래스들을 핸들링하는 메서드입니다.
+     * @param e 커스텀 예외 클래스
+     * @return HTTP 응답 객체에 포함시킬 객체
+     */
+    @ExceptionHandler(UnnieException.class)
+    public ResponseEntity<Map<String, Object>> handleAbstractionException(UnnieException e) {
+
+        // 예외 로그에 스택 트레이스 포함
+        log.error("Handled AbstractionException: {}", e.toString(), e);
+        Map<String, Object> response = new HashMap<>();
+        response.put("http_code", e.getStatus());
+        response.put("error_code", e.getCode());
+        response.put("message", e.getMessage());
+        return ResponseEntity.status(e.getStatus()).body(response);
+
+    }
 //
 //    /**
 //     * 커스텀 예외 클래스들로 잡지 못한 나머지 예외들을 핸들링하는 메서드입니다.
