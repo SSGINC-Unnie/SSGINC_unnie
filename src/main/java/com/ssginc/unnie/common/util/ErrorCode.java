@@ -99,6 +99,7 @@ public enum ErrorCode {
     BOARD_DELETE_FAILED(500, "BO010", "게시글 삭제 중 오류가 발생했습니다."),
     BOARD_UPDATE_FAILED(500, "BO011", "게시글 수정 중 오류가 발생했습니다."),
     BOARD_SEARCH_FAILED(500, "BO012", "게시글 정보를 가져오는 중 오류가 발생했습니다."),
+    BOARD_NOT_INVALID(400, "BO013", "게시글 작성 형식이 올바르지 않습니다."),
 
     // =================================== 댓글 관련 에러 =====================================================
     COMMENT_CREATE_FAILED(500, "CO001", "댓글 작성에 실패했습니다."),
@@ -145,7 +146,8 @@ public enum ErrorCode {
     DB_CONNECTION_ERROR(500, "CM003", "DB 연결 오류가 발생했습니다."),
     INVALID_PAGINATION_PARAM(400, "CM004", "페이지네이션 파라미터가 유효하지 않습니다."),
     PAGE_OUT_OF_RANGE(400, "CM005", "요청한 페이지가 범위를 벗어났습니다."),
-    NULL_POINTER_ERROR(500, "CM006", "값이 존재하지 않습니다.");
+    NULL_POINTER_ERROR(500, "CM006", "값이 존재하지 않습니다."),
+    INVALID_CATEGORY(400, "CM007", "유효하지 않은 카테고리 입니다.");
 
     private final int status;
     private final String code;

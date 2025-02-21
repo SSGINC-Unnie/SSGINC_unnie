@@ -2,4 +2,89 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ssginc.unnie.board.mapper.BoardMapper">
+
+    <!-- 게시글 작성  -->
+    <insert id="insertBoard" useGeneratedKeys="true" keyColumn="board_id">
+        insert into board
+        (
+         board_title,
+         board_category,
+         board_contents,
+         board_thumbnail,
+         board_author
+         )
+        values
+        (
+         #{boardTitle},
+         #{boardCategory},
+         #{boardContents},
+         #{boardThumbnail},
+         #{boardAuthor}
+        )
+    </insert>
+
+    <!--  게시글 삭제  -->
+    <delete id="deleteBoard">
+        select
+    </delete>
+
+    <!--  게시글 상세 조회  -->
+    <select id="selectBoard" resultType="com.ssginc.unnie.board.dto.BoardDetailGetResponse">
+        SELECT
+            b.board_id,
+            b.board_category,
+            b.board_author,
+            b.board_title,
+            b.board_contents,
+            b.board_created_at,
+            b.board_views,
+            coalesce(COUNT(l.like_id), 0 ) AS "likeCount"
+        FROM board b
+                 LEFT JOIN `like` l
+                           ON l.like_target_type = "BOARD"
+                              AND l.like_target_id = b.board_id
+        WHERE b.board_id = #{boardId}
+          AND b.board_isactive = 1
+        GROUP BY b.board_id
+    </select>
+
+    <!--  게시글 수정  -->
+    <update id="updateBoard">
+        update board
+        set
+            board_title = #{boardTitle},
+            board_category = #{boardCategory},
+            board_contents = #{boardContents},
+            board_thumbnail = #{boardThumbnail},
+            board_author = #{boardAuthor},
+            board_updated_at = current_timestamp
+        where
+            board_id = #{boardId}
+    </update>
+
+    <update id="softDeleteBoard" useGeneratedKeys="true" keyColumn="board_id">
+        update board
+        set
+            board_isactive = 0,
+            board_updated_at = current_timestamp
+        where
+            board_id = #{boardId}
+    </update>
+
+    <!-- boardId 존재 여부  -->
+    <select id="checkBoardId" resultType="int">
+        SELECT COUNT(*) FROM board WHERE board_id = #{boardId}
+    </select>
+
+    <!-- boardAuthorId 와 현재 로그인 유저 번호 일치 여부  -->
+    <select id="checkBoardAndAuthor" resultType="java.lang.Integer">
+        SELECT
+            CASE
+                WHEN COUNT(*) = 0 THEN -1  -- 게시글이 존재하지 않음
+                WHEN board_author != 1 THEN 0  -- 작성자가 다름
+                ELSE 1  -- 정상적으로 수정 가능
+                END AS "ownership"
+        FROM board
+        WHERE board_id = #{boardId}
+    </select>
 </mapper>
