@@ -7,8 +7,7 @@ import com.ssginc.unnie.common.util.generator.FileNameGenerator;
 import com.ssginc.unnie.common.util.validation.Validator;
 
 
-
-
+import com.ssginc.unnie.media.dto.MediaRequest;
 import com.ssginc.unnie.media.mapper.MediaMapper;
 import com.ssginc.unnie.media.service.MediaService;
 import com.ssginc.unnie.media.vo.MediaTargetType;
