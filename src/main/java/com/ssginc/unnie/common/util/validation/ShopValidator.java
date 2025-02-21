@@ -34,14 +34,14 @@ public class ShopValidator implements Validator<ShopInsertRequest>{
     }
 
     public void validateName(String name) {
-        validateWithRegex(name, nameReg, ErrorCode.SHOP_INSERT_FAILED);
+        validateWithRegex(name, nameReg, ErrorCode.INVALID_SHOP_NAME_FORMAT);
     }
     public void validateTel(String phone) {
-        validateWithRegex(phone, phoneReg, ErrorCode.SHOP_INSERT_FAILED);
+        validateWithRegex(phone, phoneReg, ErrorCode.INVALID_TEL_FORMAT);
     }
 
     public void validateIntro(String intro) {
-        validateWithRegex(intro, introReg, ErrorCode.SHOP_INSERT_FAILED);
+        validateWithRegex(intro, introReg, ErrorCode.INVALID_INTRODUCTION_FORMAT);
     }
 
     private void validateWithRegex(String value, String regex, ErrorCode errorCode) {
