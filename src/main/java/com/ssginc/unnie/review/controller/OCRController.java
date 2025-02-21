@@ -6,6 +6,7 @@ import com.ssginc.unnie.review.service.OCRService;
 import com.ssginc.unnie.review.service.ReceiptService;
 import com.ssginc.unnie.review.ReviewOCR.OCRParser;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/api/ocr")
 @RequiredArgsConstructor
+@Slf4j
 public class OCRController {
 
     private final OCRService ocrService;
@@ -24,20 +26,27 @@ public class OCRController {
      */
     @PostMapping("/upload")
     public ResponseEntity<ReceiptResponse> uploadReceipt(@RequestParam("file") MultipartFile file) {
-        // 파일 수신 확인 로그
-        System.out.println("파일 업로드 요청 수신됨: " + file.getOriginalFilename());
-        System.out.println("파일 크기: " + file.getSize());
+        log.info("📤 파일 업로드 요청 수신됨: {}", file.getOriginalFilename());
 
-        // OCR 처리 (JSON 직접 반환)
-        JSONObject ocrJson = ocrService.processOCR(file);
-        System.out.println("OCR JSON 응답: " + ocrJson.toString(2)); // ✅ JSON 응답 확인
-
-        // OCR 데이터를 DTO로 변환
+        JSONObject ocrJson = processOCR(file);
         ReceiptRequest receiptRequest = OCRParser.parse(ocrJson);
-
-        // DB 저장
-        ReceiptResponse savedReceipt = receiptService.saveReceipt(receiptRequest);
+        ReceiptResponse savedReceipt = saveReceipt(receiptRequest);
 
         return ResponseEntity.ok(savedReceipt);
     }
+
+    /**
+     * OCR 처리
+     */
+    private JSONObject processOCR(MultipartFile file) {
+        return ocrService.processOCR(file);
+    }
+
+    /**
+     * 응답 받은 JSON 영수증 Table 에 저장
+     */
+    private ReceiptResponse saveReceipt(ReceiptRequest receiptRequest) {
+        return receiptService.saveReceipt(receiptRequest);
+    }
+
 }

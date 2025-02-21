@@ -2,20 +2,23 @@ package com.ssginc.unnie.review.ReviewOCR;
 
 import com.ssginc.unnie.review.dto.ReceiptItemRequest;
 import com.ssginc.unnie.review.dto.ReceiptRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Slf4j
 public class OCRParser {
 
     public static ReceiptRequest parse(JSONObject jsonObject) {
         try {
-            // 🔹 JSON 응답 출력
-            System.out.println("🔍 OCR API JSON 응답: " + jsonObject.toString(2));
+            // 🔹 JSON 응답 log
+            log.info(jsonObject.toString(2));
 
             JSONArray images = jsonObject.optJSONArray("images");
             if (images == null || images.isEmpty()) {
@@ -70,10 +73,15 @@ public class OCRParser {
      * 🔹 정규식을 사용하여 특정 패턴 추출
      */
     private static String extractPattern(String text, String regex) {
-        Pattern pattern = Pattern.compile(regex);
+        Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(text);
-        return matcher.find() ? matcher.group(1).trim() : "";
+        if (matcher.find()) {
+            return matcher.find() ? matcher.group(1).trim() : "";
+        }
+        log.warn("⚠️ 정규식 '{}'에 해당하는 데이터를 찾을 수 없음", regex);
+        return "데이터 없음";
     }
+
 
     /**
      * 🔹 결제 금액 추출

@@ -1,6 +1,7 @@
 package com.ssginc.unnie.review.service.serviceImpl;
 
 import com.ssginc.unnie.review.service.OCRService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -12,7 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.UUID;
-
+@Slf4j
 @Service
 public class OCRServiceImpl implements OCRService {
 
@@ -53,9 +54,10 @@ public class OCRServiceImpl implements OCRService {
             HttpEntity<String> requestEntity = new HttpEntity<>(json.toString(), headers);
 
             // 🚀 API 요청 로그 출력
-            System.out.println("🔍 OCR API 요청 URL: " + OCR_URL);
-            System.out.println("🔍 OCR API 요청 본문: " + json.toString(2));
-            System.out.println("🔍 OCR API 요청 헤더: " + headers);
+            log.info("🔍 OCR API 요청 URL: {}", OCR_URL);
+            log.info("🔍 OCR API 요청 본문: {}", json.toString(2));
+            log.info("🔍 OCR API 요청 헤더: {}", headers);
+
 
             // ✅ OCR API 요청 보내기
             ResponseEntity<String> responseEntity = restTemplate.exchange(
@@ -63,10 +65,9 @@ public class OCRServiceImpl implements OCRService {
             );
 
             // 🚀 응답 상태 코드 출력
-            System.out.println("🔍 OCR API 응답 코드: " + responseEntity.getStatusCode());
-
+            log.info("🔍 OCR API 응답 코드: {}", responseEntity.getStatusCode());
             // 🚀 응답 본문 출력
-            System.out.println("🔍 OCR API 원본 응답: " + responseEntity.getBody());
+            log.info("🔍 OCR API 원본 응답: {}", responseEntity.getBody());
 
             // ✅ JSON 변환
             return new JSONObject(responseEntity.getBody());
