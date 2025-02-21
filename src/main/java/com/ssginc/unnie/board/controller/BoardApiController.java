@@ -1,5 +1,6 @@
 package com.ssginc.unnie.board.controller;
 
+
 import com.ssginc.unnie.board.dto.BoardCreateRequest;
 import com.ssginc.unnie.board.dto.BoardUpdateRequest;
 import com.ssginc.unnie.board.service.BoardService;
@@ -61,4 +62,19 @@ public class BoardApiController {
                 new ResponseDto<>(HttpStatus.OK.value(), "게시글 삭제 성공", Map.of("boardId", boardService.softDeleteBoard(boardId, memberId)))
         );
     }
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

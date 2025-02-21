@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssginc.unnie.review.mapper.ReceiptItemMapper">
+    <!-- 영수증 품목 삽입 -->
+    <insert id="insertReceiptItem" parameterType="com.ssginc.unnie.review.vo.ReceiptItem" useGeneratedKeys="true" keyProperty="receiptItemId">
+        INSERT INTO RECEIPT_ITEM (RECEIPT_ID, RECEIPT_ITEM_NAME, RECEIPT_ITEM_PRICE, RECEIPT_ITEM_QUANTITY)
+        VALUES (#{receiptId}, #{receiptItemName}, #{receiptItemPrice}, #{receiptItemQuantity})
+    </insert>
+
+    <select id="findItemsByReceiptId" resultType="com.ssginc.unnie.review.vo.ReceiptItem">
+        SELECT * FROM RECEIPT_ITEM WHERE RECEIPT_ID = #{receiptId}
+    </select>
+</mapper>

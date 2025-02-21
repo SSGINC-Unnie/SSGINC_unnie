@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssginc.unnie.review.mapper.ReceiptMapper">
+
+    <!-- 영수증 삽입 -->
+    <insert id="insertReceipt" useGeneratedKeys="true" keyProperty="receiptId">
+        INSERT INTO RECEIPT (RECEIPT_DATE, RECEIPT_AMOUNT, RECEIPT_BUSINESS_NUMBER, RECEIPT_APPROVAL_NUMBER, RECEIPT_SHOP_ID, RECEIPT_MEMBER_ID)
+        VALUES (#{receiptDate}, #{receiptAmount}, #{receiptBusinessNumber}, #{receiptApprovalNumber}, #{receiptShopId}, #{receiptMemberId})
+    </insert>
+
+    <select id="findReceiptById" resultType="com.ssginc.unnie.review.vo.Receipt">
+        SELECT * FROM RECEIPT WHERE RECEIPT_ID = #{receiptId}
+    </select>
+</mapper>
