@@ -1,5 +1,6 @@
 package com.ssginc.unnie.board.vo;
 
+import com.ssginc.unnie.board.dto.BoardCategory;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

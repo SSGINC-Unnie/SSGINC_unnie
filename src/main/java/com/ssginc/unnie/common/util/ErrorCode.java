@@ -102,6 +102,9 @@ public enum ErrorCode {
     BOARD_UPDATE_FAILED(500, "BO011", "게시글 수정 중 오류가 발생했습니다."),
     BOARD_SEARCH_FAILED(500, "BO012", "게시글 정보를 가져오는 중 오류가 발생했습니다."),
     BOARD_NOT_INVALID(400, "BO013", "게시글 작성 형식이 올바르지 않습니다."),
+    BOARD_INVALID_SEARCH_TYPE(400, "BO013", "요청한 검색 타입이 유효하지 않습니다."),
+    BOARD_INVALID_SORT_TYPE(400, "BO014", "요청한 정렬 방식이 유효하지 않습니다."),
+    BOARD_INVALID_CATEGORY(400, "BO015", "요청한 카테고리가 유효하지 않습니다."),
 
     // =================================== 댓글 관련 에러 =====================================================
     COMMENT_CREATE_FAILED(500, "CO001", "댓글 작성에 실패했습니다."),

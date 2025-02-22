@@ -1,6 +1,5 @@
 package com.ssginc.unnie.board.dto;
 
-import com.ssginc.unnie.board.vo.BoardCategory;
 import lombok.Getter;
 import lombok.Setter;
 

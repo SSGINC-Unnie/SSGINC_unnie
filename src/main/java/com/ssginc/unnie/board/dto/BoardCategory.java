@@ -1,4 +1,4 @@
-package com.ssginc.unnie.board.vo;
+package com.ssginc.unnie.board.dto;
 
 import com.ssginc.unnie.common.util.EnumDescription;
 import lombok.Getter;

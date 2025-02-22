@@ -1,11 +1,11 @@
 package com.ssginc.unnie.board.service.serviceImpl;
 
-import com.ssginc.unnie.board.dto.BoardCreateRequest;
-import com.ssginc.unnie.board.dto.BoardDetailGetResponse;
-import com.ssginc.unnie.board.dto.BoardRequestBase;
-import com.ssginc.unnie.board.dto.BoardUpdateRequest;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.ssginc.unnie.board.dto.*;
 import com.ssginc.unnie.board.mapper.BoardMapper;
 import com.ssginc.unnie.board.service.BoardService;
+import com.ssginc.unnie.board.dto.BoardCategory;
 import com.ssginc.unnie.common.exception.UnnieBoardException;
 import com.ssginc.unnie.common.util.ErrorCode;
 import com.ssginc.unnie.common.util.parser.BoardParser;
@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * 게시글 기능 관련 서비스 인터페이스 구현 클래스
@@ -26,6 +28,8 @@ public class BoardServiceImpl implements BoardService {
     private final Validator<BoardRequestBase> boardValidator; // 유효성 검증 인터페이스
 
     private final BoardMapper boardMapper;
+
+    private final int pageSize = 10;
 
     /**
      * 게시글 작성 메서드
@@ -148,5 +152,72 @@ public class BoardServiceImpl implements BoardService {
         }
 
         return res;
+    }
+
+    /**
+     * 비회원 게시글 목록 조회 전용 메서드
+     *
+     * @return
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public PageInfo<BoardsGuestGetResponse> getBoardsGuest(BoardCategory category, String sort, String searchType, String search, int page) {
+
+
+        List<BoardsGuestGetResponse> boards = boardMapper.getGuestBoards((BoardsGuestGetRequest) this.buildRequest(category, sort, searchType, search, page, 0));
+
+        return new PageInfo<>(boards);
+    }
+
+    @Override
+    public PageInfo<BoardsGetResponse> getBoards(BoardCategory category, String sort, String searchType, String search, int page, int memberId) {
+
+        List<BoardsGetResponse> boards = boardMapper.getBoards((BoardsGetRequest) this.buildRequest(category, sort, searchType, search, page, memberId));
+
+        return new PageInfo<>(boards);
+    }
+
+    private BoardsGetRequestBase buildRequest(BoardCategory category, String sort, String searchType, String search, int page, int memberId){
+        if (category == null ) {
+            throw new UnnieBoardException(ErrorCode.BOARD_INVALID_CATEGORY);
+        }
+
+        if (searchType != null && !SearchType.isValid(searchType)){
+            throw new UnnieBoardException(ErrorCode.BOARD_INVALID_SEARCH_TYPE);
+        }
+
+        if (sort != null && !SortType.isValid(sort)){
+            throw new UnnieBoardException(ErrorCode.BOARD_INVALID_SORT_TYPE);
+        }
+
+
+        BoardsGetRequestBase request = null;
+
+        if (memberId > 0){
+            request = BoardsGetRequest.builder()
+                    .category(category)
+                    .sort(sort)
+                    .searchType(searchType)
+                    .search(search)
+                    .page(page)
+                    .pageSize(pageSize)
+                    .memberId(memberId)
+                    .build();
+        } else {
+            request = BoardsGuestGetRequest.builder()
+                    .category(category)
+                    .sort(sort)
+                    .searchType(searchType)
+                    .search(search)
+                    .page(page)
+                    .pageSize(pageSize)
+                    .build();
+        }
+
+
+        // PageHelper 사용해 페이징 적용
+        PageHelper.startPage(page, pageSize);
+
+        return request;
     }
 }

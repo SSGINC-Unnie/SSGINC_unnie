@@ -87,4 +87,64 @@
         FROM board
         WHERE board_id = #{boardId}
     </select>
+
+
+    <!-- 비회원 게시글 목록 조회 -->
+    <select id="getGuestBoards" resultType="com.ssginc.unnie.board.dto.BoardsGuestGetResponse">
+
+        SELECT
+            b.board_author AS boardAuthor,
+            m.member_nickname AS memberNickname,
+            m.member_profile AS memberProfile,
+            b.board_id AS boardId,
+            b.board_title AS boardTitle,
+            DATE_FORMAT(b.board_created_at, '%Y-%m-%d %H:%i:%s') AS boardCreatedAt,
+            b.board_views AS boardViews,
+            (SELECT COUNT(*)
+             FROM `like` l
+             WHERE l.like_target_type = "BOARD"
+               AND l.like_target_id = b.board_id) AS likeCount
+        FROM board b
+                 JOIN member m ON b.board_author = m.member_id
+        WHERE
+            (b.board_category = #{category})
+          AND (#{searchType} = 'TITLE' AND b.board_title LIKE CONCAT('%', #{search}, '%')) OR
+               (#{searchType} = 'CONTENT' AND b.board_contents LIKE CONCAT('%', #{search}, '%'))
+        ORDER BY
+            CASE WHEN #{sort} = 'LATEST' THEN b.board_created_at END DESC,
+            CASE WHEN #{sort} = 'POPULAR' THEN b.board_views END DESC
+    </select>
+
+    <!-- 회원 게시글 목록 조회(좋아요 여부 포함)   -->
+    <select id="getBoards" resultType="com.ssginc.unnie.board.dto.BoardsGetResponse">
+        SELECT
+            b.board_author AS boardAuthor,
+            m.member_nickname AS memberNickname,
+            m.member_profile AS memberProfile,
+            b.board_id AS boardId,
+            b.board_title AS boardTitle,
+            DATE_FORMAT(b.board_created_at, '%Y-%m-%d %H:%i:%s') AS boardCreatedAt,
+            b.board_views AS boardViews,
+            (SELECT COUNT(*)
+             FROM `like` l
+             WHERE l.like_target_type = "BOARD"
+               AND l.like_target_id = b.board_id) AS likeCount,
+            EXISTS(
+                SELECT 1
+                FROM `like` l
+                WHERE l.like_target_type = "BOARD"
+                  AND l.like_target_id = b.board_id
+                  AND l.like_member_id = #{memberId}
+            ) AS liked
+        FROM board b
+                 JOIN member m ON b.board_author = m.member_id
+        WHERE
+            (b.board_category = #{category})
+                AND (#{searchType} = 'TITLE' AND b.board_title LIKE CONCAT('%', #{search}, '%')) OR
+            (#{searchType} = 'CONTENT' AND b.board_contents LIKE CONCAT('%', #{search}, '%'))
+        ORDER BY
+            CASE WHEN #{sort} = 'LATEST' THEN b.board_created_at END DESC,
+            CASE WHEN #{sort} = 'POPULAR' THEN b.board_views END DESC
+    </select>
+
 </mapper>
