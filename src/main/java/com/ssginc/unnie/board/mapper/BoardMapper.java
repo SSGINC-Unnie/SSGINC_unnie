@@ -1,9 +1,9 @@
 package com.ssginc.unnie.board.mapper;
 
-import com.ssginc.unnie.board.dto.BoardCreateRequest;
-import com.ssginc.unnie.board.dto.BoardDetailGetResponse;
-import com.ssginc.unnie.board.dto.BoardUpdateRequest;
+import com.ssginc.unnie.board.dto.*;
 import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
 
 @Mapper
 public interface BoardMapper {
@@ -18,4 +18,8 @@ public interface BoardMapper {
     int checkBoardAndAuthor(long boardId, String memberId);
 
     int softDeleteBoard(String boardId);
+
+    List<BoardsGuestGetResponse> getGuestBoards(BoardsGuestGetRequest request);
+
+    List<BoardsGetResponse> getBoards(BoardsGetRequest request);
 }

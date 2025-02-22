@@ -1,8 +1,7 @@
 package com.ssginc.unnie.board.service;
 
-import com.ssginc.unnie.board.dto.BoardCreateRequest;
-import com.ssginc.unnie.board.dto.BoardDetailGetResponse;
-import com.ssginc.unnie.board.dto.BoardUpdateRequest;
+import com.github.pagehelper.PageInfo;
+import com.ssginc.unnie.board.dto.*;
 
 public interface BoardService {
     String createBoard(BoardCreateRequest boardRequest);
@@ -12,4 +11,8 @@ public interface BoardService {
     int updateBoard(BoardUpdateRequest boardUpdateRequest, String memberId);
 
     int softDeleteBoard(String boardId, String memberId);
+
+    PageInfo<BoardsGuestGetResponse> getBoardsGuest(BoardCategory category, String sort, String searchType, String search, int page);
+
+    PageInfo<BoardsGetResponse> getBoards(BoardCategory category, String sort, String searchType, String search, int page, int memberId);
 }
