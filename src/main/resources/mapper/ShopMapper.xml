@@ -2,4 +2,48 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ssginc.unnie.shop.mapper.ShopMapper">
+
+
+    <select id="selectShopByCategory" resultType="com.ssginc.unnie.shop.dto.ShopResponse">
+        SELECT s.shop_id, s.shop_name, s.shop_business_time, ROUND(AVG(re.review_rate), 2) AS avg_rate,
+               s.shop_location
+        FROM shop s
+        JOIN receipt r ON r.receipt_SHOP_ID = s.shop_id
+        JOIN review re ON r.receipt_id = re.receipt_id
+        WHERE s.shop_category = #{category} and s.shop_status = 1
+        GROUP BY s.shop_id, s.shop_name, s.shop_business_time, s.shop_location
+    </select>
+
+    <select id="findDesignersByShopId" resultType="com.ssginc.unnie.shop.vo.Designer">
+        SELECT designer_id,designer_name,designer_introduction,designer_thumbnail,designer_shop_id
+        FROM designer
+        WHERE designer_shop_id = #{shopId}
+    </select>
+
+    <select id="findProceduresByShopId" resultType="com.ssginc.unnie.shop.vo.Procedure">
+        SELECT p.procedure_id, p.procedure_name, p.procedure_price from `procedure` p
+        join designer d on d.designer_id = p.procedure_designer_id
+        join shop s on s.shop_id = d.designer_shop_id
+        where s.shop_id = #{shopId}
+    </select>
+
+    <select id="findShopById" resultType="com.ssginc.unnie.shop.dto.ShopInfoResponse">
+        SELECT
+            s.shop_id,
+            s.shop_name,
+            s.shop_business_time,
+            ROUND(AVG(re.review_rate), 2) AS avg_rate,
+            s.shop_location,
+            MAX(re.review_date) AS latest_review_date,
+            SUBSTRING_INDEX(GROUP_CONCAT(re.review_content ORDER BY re.review_date DESC), ',', 1) AS latest_review_content,
+            SUBSTRING_INDEX(GROUP_CONCAT(m.member_nickname ORDER BY re.review_date DESC), ',', 1) AS latest_member_nickname
+        FROM shop s
+                 JOIN receipt r ON r.receipt_shop_id = s.shop_id
+                 JOIN review re ON r.receipt_id = re.receipt_id
+                 JOIN member m ON re.review_member_id = m.member_id
+        WHERE s.shop_id = #{shopId} and s.shop_status = 1
+        GROUP BY s.shop_id, s.shop_name, s.shop_business_time, s.shop_location;
+    </select>
+
+
 </mapper>

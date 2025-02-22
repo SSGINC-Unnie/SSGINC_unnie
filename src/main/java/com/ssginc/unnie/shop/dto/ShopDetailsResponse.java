@@ -1,21 +1,14 @@
-package com.ssginc.unnie.shop.vo;
+package com.ssginc.unnie.shop.dto;
 
-import lombok.AllArgsConstructor;
+import com.ssginc.unnie.shop.vo.ShopCategory;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class Shop {
-
-    // 업체 번호
-    private int shopId;
+public class ShopDetailsResponse {
     // 업체명
     private String shopName;
     // 업체 위치
