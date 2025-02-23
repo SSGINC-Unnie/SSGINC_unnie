@@ -170,6 +170,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public PageInfo<BoardsGetResponse> getBoards(BoardCategory category, String sort, String searchType, String search, int page, int memberId) {
 
         List<BoardsGetResponse> boards = boardMapper.getBoards((BoardsGetRequest) this.buildRequest(category, sort, searchType, search, page, memberId));

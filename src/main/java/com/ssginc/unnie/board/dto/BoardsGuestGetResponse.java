@@ -21,4 +21,5 @@ public class BoardsGuestGetResponse {
     private String boardCreatedAt; // 작성일
     private long boardViews; // 조회 수
     private int likeCount; // 좋아요 수
+    private int commentCount; // 댓글 수
 }
