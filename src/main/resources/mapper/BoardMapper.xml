@@ -100,10 +100,10 @@
             b.board_title AS boardTitle,
             DATE_FORMAT(b.board_created_at, '%Y-%m-%d %H:%i:%s') AS boardCreatedAt,
             b.board_views AS boardViews,
-            (SELECT COUNT(*)
-             FROM `like` l
-             WHERE l.like_target_type = "BOARD"
-               AND l.like_target_id = b.board_id) AS likeCount
+            -- 좋아요 개수
+            (SELECT COUNT(like_id) FROM `like` l WHERE l.like_target_type = "BOARD" AND l.like_target_id = b.board_id) AS likeCount,
+            -- 댓글 개수
+            (SELECT COUNT(comment_id) FROM `comment` c WHERE c.comment_board_id = b.board_id) AS commentCount
         FROM board b
                  JOIN member m ON b.board_author = m.member_id
         WHERE
@@ -125,10 +125,10 @@
             b.board_title AS boardTitle,
             DATE_FORMAT(b.board_created_at, '%Y-%m-%d %H:%i:%s') AS boardCreatedAt,
             b.board_views AS boardViews,
-            (SELECT COUNT(*)
-             FROM `like` l
-             WHERE l.like_target_type = "BOARD"
-               AND l.like_target_id = b.board_id) AS likeCount,
+            -- 좋아요 개수
+            (SELECT COUNT(like_id) FROM `like` l WHERE l.like_target_type = "BOARD" AND l.like_target_id = b.board_id) AS likeCount,
+            -- 댓글 개수
+            (SELECT COUNT(comment_id) FROM `comment` c WHERE c.comment_board_id = b.board_id) AS commentCount,
             EXISTS(
                 SELECT 1
                 FROM `like` l
