@@ -2,10 +2,9 @@ package com.ssginc.unnie.board.service.serviceImpl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.ssginc.unnie.board.dto.*;
+import com.ssginc.unnie.board.dto.board.*;
 import com.ssginc.unnie.board.mapper.BoardMapper;
 import com.ssginc.unnie.board.service.BoardService;
-import com.ssginc.unnie.board.dto.BoardCategory;
 import com.ssginc.unnie.common.exception.UnnieBoardException;
 import com.ssginc.unnie.common.util.ErrorCode;
 import com.ssginc.unnie.common.util.parser.BoardParser;

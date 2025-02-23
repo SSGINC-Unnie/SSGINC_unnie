@@ -1,6 +1,6 @@
 package com.ssginc.unnie.board.mapper;
 
-import com.ssginc.unnie.board.dto.*;
+import com.ssginc.unnie.board.dto.board.*;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;

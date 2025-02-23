@@ -115,6 +115,7 @@ public enum ErrorCode {
     COMMENT_NOT_FOUND(404, "CO006", "요청한 댓글을 찾을 수 없습니다."),
     COMMENT_SELECT_FAILED(500, "CO007", "댓글을 가져오는 데 실패했습니다."),
     COMMENT_INVALID_WORD(400, "CO008", "금칙어가 포함되어 있습니다."),
+    COMMENT_PARENT_NOT_FOUND(404, "CO009", "원댓글을 찾을 수 없습니다."),
 
     // =================================== 좋아요 관련 에러 =====================================================
     LIKE_CREATE_FAILED(500, "LI001", "좋아요 처리에 실패했습니다."),

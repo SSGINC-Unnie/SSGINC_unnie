@@ -2,7 +2,7 @@ package com.ssginc.unnie.board.controller;
 
 
 import com.github.pagehelper.PageInfo;
-import com.ssginc.unnie.board.dto.*;
+import com.ssginc.unnie.board.dto.board.*;
 import com.ssginc.unnie.board.service.BoardService;
 import com.ssginc.unnie.common.util.ResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -10,14 +10,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
+/**
+ * 게시글 기능 관련 REST API 처리하는 컨트롤러 클래스
+ */
 @RestController
 @RequestMapping("/api/community/board")
 @RequiredArgsConstructor
-public class BoardApiController {
+public class BoardController {
 
     private final BoardService boardService;
 

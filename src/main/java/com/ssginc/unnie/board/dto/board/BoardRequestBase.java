@@ -1,4 +1,4 @@
-package com.ssginc.unnie.board.dto;
+package com.ssginc.unnie.board.dto.board;
 
 import lombok.Getter;
 import lombok.Setter;
