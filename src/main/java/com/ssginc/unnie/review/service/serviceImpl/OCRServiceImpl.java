@@ -45,8 +45,9 @@ public class OCRServiceImpl implements OCRService {
             JSONArray images = new JSONArray();
             images.put(image);
             json.put("images", images);
-
-            // ✅ HTTP 요청 헤더 설정
+            //{"images" : [json]}
+            //{"images" : [{format:jpg, name:filename, data:dsklfjsdflsfj}]}
+            //{version: V2, requestId: dkslfkdsfd, timestamp:20250115, images: [{~~~}]}            // ✅ HTTP 요청 헤더 설정
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             headers.set("X-OCR-SECRET", secretKey);

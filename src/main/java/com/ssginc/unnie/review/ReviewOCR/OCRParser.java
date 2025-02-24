@@ -1,8 +1,10 @@
 package com.ssginc.unnie.review.ReviewOCR;
 
 import com.ssginc.unnie.common.util.validation.OCRValidator;
+import com.ssginc.unnie.common.util.validation.Validator;
 import com.ssginc.unnie.review.dto.ReceiptItemRequest;
 import com.ssginc.unnie.review.dto.ReceiptRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -14,6 +16,7 @@ import java.util.List;
 import static com.ssginc.unnie.common.util.validation.OCRValidator.isNumeric;
 
 @Slf4j
+@RequiredArgsConstructor
 public class OCRParser {
 
     private static final OCRValidator validator = new OCRValidator();

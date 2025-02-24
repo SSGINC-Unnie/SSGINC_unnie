@@ -3,14 +3,16 @@ package com.ssginc.unnie.common.util.validation;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Component
 @Slf4j
-public class OCRValidator implements Validator<String> {
+public class OCRValidator implements Validator<Object> {
 
     // ✅ 가게 이름 추출 (상호: 또는 대괄호 [] 내부에서 추출)
     private static final String SHOP_NAME_REGEX = "(?:상\\s*호[:\\s]*([가-힣A-Za-z0-9\\s-]+)|\\[(.*?)\\])";
@@ -34,8 +36,8 @@ public class OCRValidator implements Validator<String> {
      * 🔹 Validator 인터페이스 구현: OCR 데이터의 유효성 검사
      */
     @Override
-    public boolean validate(String text) {
-        if (text == null || text.trim().isEmpty()) {
+    public boolean validate(Object text) {
+        if (text == null ) {
             log.warn("검증 실패: OCR 텍스트가 비어 있음");
             return false;
         }
@@ -49,7 +51,11 @@ public class OCRValidator implements Validator<String> {
         Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(text);
 
-        if (matcher.find()) {
+        if (matcher.find()) { //패턴에 맞는 문자열이 있으면
+            //[null, "test"]
+            //group(0)이면 [
+            //group(1)이면 [null,
+            //group(2)이면 [null, "test"
             return matcher.group(1) != null ? matcher.group(1).trim() : matcher.group(2).trim();
         }
         log.warn("정규식 '{}'에 해당하는 데이터를 찾을 수 없음", regex);
@@ -104,6 +110,9 @@ public class OCRValidator implements Validator<String> {
         for (int i = 0; i < fields.length(); i++) {
             JSONObject field = fields.getJSONObject(i);
             String text = field.optString("inferText", "").trim();
+            //optString(if문 포함, 조건체크할 수 있는 함수)
+            //json인 field에 key가 inferText이면 기본값은 ""처리해주고, 없으면 공백을 잘라서
+            //text에 넣어라.!
 
             // ✅ 날짜 찾기
             if (text.matches(DATE_REGEX)) {
@@ -134,6 +143,7 @@ public class OCRValidator implements Validator<String> {
 
         if (datePart != null) {
             // ✅ 최종 값 검증 및 ISO-8601 변환
+            //왜 ISO-8601로 변환했는가? 쟤가 뭐길래??
             String dateTimeString = datePart + "T" + hour + ":" + minute + ":" + second;
             return LocalDateTime.parse(dateTimeString, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
         }
