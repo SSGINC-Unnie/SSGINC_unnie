@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssginc.unnie.mypage.mapper.MyPageShopMapper">
+
+
+        <insert id="insertBusinessVerification" parameterType="com.ssginc.unnie.mypage.dto.BusinessVerificationRequest">
+            INSERT INTO shop
+                (shop_representation_name, shop_created_at, shop_business_number)
+            VALUES
+                (#{shopRepresentationName}, #{shopCreatedAt}, #{shopBusinessNumber})
+        </insert>
+
+    <insert id="insertShop" parameterType="com.ssginc.unnie.mypage.dto.ShopCreateRequest">
+        INSERT INTO shop
+        (shop_name,shop_location,shop_category,shop_business_time,shop_tel,shop_introduction,shop_closed_day,
+        shop_representation_name,shop_business_number,shop_created_at,shop_member_id)
+        VALUES
+            (#{shopName},#{shopLocation}, #{shopCategory},#{shopBusinessTime},#{shopTel},#{shopIntroduction},
+            #{shopClosedDay},#{shopRepresentationName},#{shopBusinessNumber},#{shopCreatedAt},#{shopMemberId})
+    </insert>
+
+
+
+    <insert id="insertDesigner" parameterType="com.ssginc.unnie.mypage.dto.DesignerCreateRequest">
+        INSERT INTO designer
+            (designer_shop_id, designer_name, designer_introduction, designer_thumbnail)
+        VALUES
+            (#{designerShopId}, #{designerName}, #{designerIntroduction}, #{designerThumbnail})
+    </insert>
+
+    <insert id="insertProcedure" parameterType="com.ssginc.unnie.mypage.dto.ProcedureCreateRequest">
+        INSERT INTO `procedure`
+        (procedure_designer_id,procedure_name,procedure_price)
+        VALUES
+            (#{procedureDesignerId},#{procedureName},#{procedurePrice})
+    </insert>
+
+
+    <select id="existsByShopName" parameterType="String" resultType="int">
+        SELECT COUNT(*)
+        FROM shop
+        WHERE shop_name = #{shopName}
+    </select>
+    <select id="existsByShopTel" parameterType="String" resultType="int">
+        SELECT COUNT(*)
+        FROM shop
+        WHERE shop_tel = #{shopTel}
+    </select>
+
+    <select id="existsByDesignerName" parameterType="String" resultType="int">
+        SELECT COUNT(*)
+        FROM designer
+        WHERE designer_name = #{designerName}
+    </select>
+
+    <select id="existsByProcedureName" parameterType="String" resultType="int">
+        SELECT COUNT(*)
+        FROM `procedure`
+        WHERE procedure_name = #{procedureName}
+    </select>
+
+    <select id="existsByDesignerId" resultType="int">
+        SELECT COUNT(*) FROM designer WHERE designer_id = #{designerId}
+    </select>
+    <select id="existsByShopId" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM shop WHERE shop_id = #{shopId}
+    </select>
+
+</mapper>
+
+
+

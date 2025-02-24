@@ -21,6 +21,7 @@ public class BoardApiController {
 
     /**
      * 게시글 작성 메서드
+     *
      * @param boardRequest DB 서버 insert 할 내용(카테고리, 제목, 내용)
      * @return insert 한 데이터의 id
      */
@@ -62,6 +63,7 @@ public class BoardApiController {
                 new ResponseDto<>(HttpStatus.OK.value(), "게시글 삭제 성공", Map.of("boardId", boardService.softDeleteBoard(boardId, memberId)))
         );
     }
+}
 
 
 

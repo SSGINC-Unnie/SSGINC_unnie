@@ -1,11 +1,8 @@
 package com.ssginc.unnie.shop.controller;
 
 import com.ssginc.unnie.common.util.ResponseDto;
-import com.ssginc.unnie.shop.dto.ShopInfoResponse;
-import com.ssginc.unnie.shop.dto.ShopResponse;
+import com.ssginc.unnie.shop.dto.*;
 import com.ssginc.unnie.shop.service.ShopService;
-import com.ssginc.unnie.shop.vo.Designer;
-import com.ssginc.unnie.shop.vo.Procedure;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -26,6 +23,7 @@ public class ShopController {
      * 업체 조회
      */
 
+    //위치보기에서 나오는 샵 조회
     // 메인 페이지에서 카테고리별 샵 조회 (예: "헤어샵", "네일샵" 등)
     @GetMapping("/category/{category}")
     public ResponseEntity<ResponseDto<Map<String, Object>>> getShopByCategory(
@@ -35,8 +33,14 @@ public class ShopController {
         return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "업체 조회에 성공했습니다.", Map.of("shops", shops)));
     }
 
+
+
+    /**
+     * 업체 상세 보기
+     */
+
     // 샵 기본 정보 조회 (홈 탭)
-    @GetMapping("/shopdetails/info/{shopId}")
+    @GetMapping("/shopdetails/home/{shopId}")
     public ResponseEntity<ResponseDto<Map<String, Object>>> getShopInfo(
             @PathVariable long shopId) {
         ShopInfoResponse shop = shopService.getShopByShopId(shopId);
@@ -49,7 +53,7 @@ public class ShopController {
     @GetMapping("/shopdetails/designer/{shopId}")
     public ResponseEntity<ResponseDto<Map<String, Object>>> getDesignersByShopId(
             @PathVariable long shopId) {
-        List<Designer> designers = shopService.getDesignersByShopId(shopId);
+        List<ShopDesignerResponse> designers = shopService.getDesignersByShopId(shopId);
         log.info("designers: {}", designers);
 
         return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "디자이너 조회에 성공했습니다.", Map.of("designers", designers)));
@@ -59,10 +63,23 @@ public class ShopController {
     @GetMapping("/shopdetails/procedure/{shopId}")
     public ResponseEntity<ResponseDto<Map<String, Object>>> getProceduresByShopId(
             @PathVariable long shopId) {
-        List<Procedure> procedures = shopService.getProceduresByShopId(shopId);
+        List<ShopProcedureResponse> procedures = shopService.getProceduresByShopId(shopId);
         log.info("procedures: {}", procedures);
 
         return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "시술 조회에 성공했습니다.", Map.of("procedures", procedures)));
     }
+
+    // 정보 조회 (정보 탭)
+    @GetMapping("/shopdetails/info/{shopId}")
+    public ResponseEntity<ResponseDto<Map<String, Object>>> getShopDetailsByShopId(
+            @PathVariable long shopId) {
+        ShopDetailsResponse shopDetails = shopService.getShopDetailsByShopId(shopId);
+        log.info("shopDetails: {}", shopDetails);
+
+        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(),"업체 상세정보 조회에 성공했습니다.", Map.of("shopDetails", shopDetails)));
+    }
+
+
+
 
 }

@@ -6,7 +6,7 @@
 <configuration>
     <!-- 로그 설정 (DEBUG 모드 활성화) -->
     <settings>
-<!--        <setting name="logImpl" value="STDOUT_LOGGING"/>-->
+        <!--        <setting name="logImpl" value="STDOUT_LOGGING"/>-->
         <setting name="logImpl" value="org.apache.ibatis.logging.slf4j.Slf4jImpl"/>
         <setting name="mapUnderscoreToCamelCase" value="true"/>
     </settings>
@@ -19,6 +19,8 @@
     <!-- 타입 핸들러 등록(ENUM 자동 처리)  -->
     <typeHandlers>
         <typeHandler handler="com.ssginc.unnie.common.handler.EnumTypeHandler" javaType="com.ssginc.unnie.board.vo.BoardCategory"/>
+        <typeHandler handler="com.ssginc.unnie.common.handler.EnumTypeHandler" javaType="com.ssginc.unnie.shop.vo.ShopCategory"/>
     </typeHandlers>
+
 
 </configuration>
