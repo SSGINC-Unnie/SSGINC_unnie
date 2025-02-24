@@ -5,11 +5,11 @@
 
     <!-- 영수증 삽입 -->
     <insert id="insertReceipt" useGeneratedKeys="true" keyProperty="receiptId">
-        INSERT INTO RECEIPT (RECEIPT_DATE, RECEIPT_AMOUNT, RECEIPT_BUSINESS_NUMBER, RECEIPT_APPROVAL_NUMBER, RECEIPT_SHOP_ID, RECEIPT_MEMBER_ID)
-        VALUES (#{receiptDate}, #{receiptAmount}, #{receiptBusinessNumber}, #{receiptApprovalNumber}, #{receiptShopId}, #{receiptMemberId})
+        INSERT INTO RECEIPT (RECEIPT_DATE, RECEIPT_AMOUNT, RECEIPT_BUSINESS_NUMBER, RECEIPT_APPROVAL_NUMBER, RECEIPT_SHOP_NAME)
+        VALUES (#{receiptDate}, #{receiptAmount}, #{receiptBusinessNumber}, #{receiptApprovalNumber}, #{receiptShopName})
     </insert>
 
-    <select id="findReceiptById" resultType="com.ssginc.unnie.review.vo.Receipt">
+    <select id="findReceiptById" resultType="com.ssginc.unnie.review.dto.ReceiptResponse">
         SELECT * FROM RECEIPT WHERE RECEIPT_ID = #{receiptId}
     </select>
 </mapper>

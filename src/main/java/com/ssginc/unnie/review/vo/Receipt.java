@@ -21,7 +21,5 @@ public class Receipt {
     private int receiptAmount; //결제 금액
     private String receiptBusinessNumber; //사업자 번호
     private String receiptApprovalNumber; //승인번호
-    private LocalDateTime receiptCreatedAt; //영수증 업로드 일시
-    private int receiptShopId; //업체 번호
-    private int receiptMemberId; //영수증 업로드 회원
+    private String receiptCreatedAt; //영수증 업로드 일시
 }

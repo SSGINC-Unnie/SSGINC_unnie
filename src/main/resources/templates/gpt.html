@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>리뷰 요약 테스트</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+        textarea {
+            width: 100%;
+            max-width: 600px;
+            height: 150px;
+            padding: 10px;
+            font-size: 14px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            max-width: 600px;
+        }
+    </style>
+</head>
+<body>
+<h1>리뷰 요약 테스트</h1>
+<form id="reviewForm">
+    <textarea id="reviewInput" placeholder="리뷰 내용을 입력하세요."></textarea><br>
+    <button type="submit">요약하기</button>
+</form>
+<h2>요약 결과</h2>
+<div id="result"></div>
+
+<script>
+    document.getElementById('reviewForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const review = document.getElementById('reviewInput').value.trim();
+
+        if (!review) {
+            alert('리뷰 내용을 입력해주세요.');
+            return;
+        }
+
+        // 서버에 POST 요청 (리뷰는 문자열 형태로 전송)
+        fetch('/api/review/summarize', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(review)
+        })
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('result').innerText = data;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('result').innerText = '요청에 실패했습니다.';
+            });
+    });
+</script>
+</body>
+</html>
