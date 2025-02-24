@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssginc.unnie.like.mapper.LikeMapper">
+
+
+    <select id="getLikeStatus" resultType="java.lang.Integer">
+        SELECT EXISTS(
+            SELECT 1
+            FROM `like`
+            WHERE like_target_type = #{likeTargetType}
+              AND like_target_id = #{likeTargetId}
+              AND like_member_id = #{likeMemberId}
+        ) AS liked
+    </select>
+</mapper>
