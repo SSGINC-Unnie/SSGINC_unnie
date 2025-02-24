@@ -1,7 +1,9 @@
 package com.ssginc.unnie.common.config;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
+import org.springframework.web.client.RestTemplate;
 
 @Configuration
 //프로젝트 시작할 때 어노테이션들을 다 scan해서
@@ -11,4 +13,8 @@ import org.springframework.context.annotation.ImportResource;
 //여러개인 경우 {설정xml, 설정xml2} 배열을 사용함.
 public class AppConfig {
     //설정하나당 메서드하나씩 설정~!!!!!
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
 }
