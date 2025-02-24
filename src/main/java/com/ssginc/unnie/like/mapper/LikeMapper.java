@@ -9,4 +9,10 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface LikeMapper {
     int getLikeStatus(LikeRequest like);
+
+    int createLike(LikeRequest like);
+
+    int deleteLike(LikeRequest like);
+
+    int checkLikeAndMemberId(LikeRequest like);
 }

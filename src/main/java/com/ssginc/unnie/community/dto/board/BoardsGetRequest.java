@@ -11,10 +11,10 @@ import lombok.Setter;
 @Setter
 public class BoardsGetRequest extends BoardsGetRequestBase{
 
-    private int memberId;
+    private long memberId;
 
     @Builder
-    public BoardsGetRequest(BoardCategory category, String sort, String searchType, String search, int page, int pageSize, int memberId) {
+    public BoardsGetRequest(BoardCategory category, String sort, String searchType, String search, int page, int pageSize, long memberId) {
         super(category, sort, searchType, search, page, pageSize);
         this.memberId = memberId;
     }

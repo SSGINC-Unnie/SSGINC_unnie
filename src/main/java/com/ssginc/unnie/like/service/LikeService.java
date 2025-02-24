@@ -7,4 +7,8 @@ import com.ssginc.unnie.like.dto.LikeRequest;
  */
 public interface LikeService {
     boolean getLikeStatus(LikeRequest like);
+
+    long createLike(LikeRequest like);
+
+    long deleteLike(LikeRequest like);
 }
