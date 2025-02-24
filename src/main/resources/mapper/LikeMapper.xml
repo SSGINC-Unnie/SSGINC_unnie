@@ -3,7 +3,15 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ssginc.unnie.like.mapper.LikeMapper">
 
+    <!-- 좋아요 취소  -->
+    <delete id="deleteLike">
+        DELETE
+        FROM `like`
+        WHERE like_id = #{likeId}
+          AND like_member_id = #{likeMemberId}
+    </delete>
 
+    <!-- 게시글 상세 화면에서 좋아요 여부 확인  -->
     <select id="getLikeStatus" resultType="java.lang.Integer">
         SELECT EXISTS(
             SELECT 1
@@ -13,4 +21,32 @@
               AND like_member_id = #{likeMemberId}
         ) AS liked
     </select>
+
+    <!-- like_member_id 와 유저 일치 여부 확인 -->
+    <select id="checkLikeAndMemberId" resultType="java.lang.Integer">
+        SELECT
+          CASE
+            WHEN COUNT(like_id) = 0 THEN -1
+            WHEN like_member_id != #{likeMemberId} THEN 0
+            ELSE 1
+            END AS "ownership"
+        FROM `like`
+        WHERE like_id = #{likeId}
+    </select>
+
+    <!-- 좋아요 추가  -->
+    <insert id="createLike" useGeneratedKeys="true" keyProperty="likeId" keyColumn="like_id">
+        INSERT INTO `like`
+        (
+         like_target_type,
+         like_target_id,
+         like_member_id
+        )
+        VALUES
+        (
+         #{likeTargetType},
+         #{likeTargetId},
+         #{likeMemberId}
+        )
+    </insert>
 </mapper>

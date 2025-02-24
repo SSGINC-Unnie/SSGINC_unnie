@@ -2,12 +2,16 @@ package com.ssginc.unnie.community.controller;
 
 
 import com.github.pagehelper.PageInfo;
+import com.ssginc.unnie.common.config.MemberPrincipal;
 import com.ssginc.unnie.community.dto.board.*;
 import com.ssginc.unnie.community.service.BoardService;
 import com.ssginc.unnie.common.util.ResponseDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -15,6 +19,7 @@ import java.util.Map;
 /**
  * 게시글 기능 관련 REST API 처리하는 컨트롤러 클래스
  */
+@Slf4j
 @RestController
 @RequestMapping("/api/community/board")
 @RequiredArgsConstructor
@@ -29,7 +34,9 @@ public class BoardController {
      * @return insert 한 데이터의 id
      */
     @PostMapping("")
-    public ResponseEntity<ResponseDto<Map<String, String>>> createBoard(BoardCreateRequest boardRequest) {
+    public ResponseEntity<ResponseDto<Map<String, String>>> createBoard(BoardCreateRequest boardRequest,
+                                                                        @AuthenticationPrincipal UserDetails userDetails) {
+        log.info("userDetails: {}", userDetails);
         return ResponseEntity.ok(
                 new ResponseDto<>(HttpStatus.CREATED.value(), "게시글 작성에 성공했습니다.", Map.of("boardId", boardService.createBoard(boardRequest)))
         );
@@ -49,8 +56,9 @@ public class BoardController {
      * 게시글 수정 메서드
      */
     @PutMapping()
-    public ResponseEntity<ResponseDto<Map<String, Object>>> updateBoard(BoardUpdateRequest boardUpdateRequest) {
-        String memberId = "1";
+    public ResponseEntity<ResponseDto<Map<String, Object>>> updateBoard(BoardUpdateRequest boardUpdateRequest,
+                                                                        @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
+        long memberId = memberPrincipal.getMemberId();
         return ResponseEntity.ok(
                 new ResponseDto<>(HttpStatus.OK.value(), "게시글 수정 성공", Map.of("boardId", boardService.updateBoard(boardUpdateRequest, memberId)))
         );
@@ -60,8 +68,9 @@ public class BoardController {
      * 게시글 삭제(soft delete) 메서드
      */
     @PatchMapping("/{boardId}")
-    public ResponseEntity<ResponseDto<Map<String, Object>>> softDeleteBoard(@PathVariable String boardId) {
-        String memberId = "1";
+    public ResponseEntity<ResponseDto<Map<String, Object>>> softDeleteBoard(@PathVariable String boardId,
+                                                                            @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
+        long memberId = memberPrincipal.getMemberId();
         return ResponseEntity.ok(
                 new ResponseDto<>(HttpStatus.OK.value(), "게시글 삭제 성공", Map.of("boardId", boardService.softDeleteBoard(boardId, memberId)))
         );
@@ -106,9 +115,10 @@ public class BoardController {
             @RequestParam(defaultValue = "LATEST") String sort,
             @RequestParam(defaultValue = "TITLE") String searchType,
             @RequestParam(required = false) String search,
-            @RequestParam(defaultValue = "1") int page) {
+            @RequestParam(defaultValue = "1") int page,
+            @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
 
-        int memberId = 1;
+        long memberId = memberPrincipal.getMemberId();
 
         PageInfo<BoardsGetResponse> boards = boardService.getBoards(category, sort, searchType, search, page, memberId);
 

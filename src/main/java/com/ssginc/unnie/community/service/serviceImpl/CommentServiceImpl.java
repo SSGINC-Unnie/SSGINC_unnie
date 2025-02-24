@@ -30,7 +30,7 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public long createComment(CommentRequest request, int memberId) {
+    public long createComment(CommentRequest request, long memberId) {
 
         checkRequestDto(request);
 
@@ -50,7 +50,7 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public long createReplyComment(CommentRequest request, int memberId) {
+    public long createReplyComment(CommentRequest request, long memberId) {
 
         checkRequestDto(request);
 

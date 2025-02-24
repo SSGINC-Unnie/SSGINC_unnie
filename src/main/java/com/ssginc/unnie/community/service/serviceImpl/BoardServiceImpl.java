@@ -87,7 +87,7 @@ public class BoardServiceImpl implements BoardService {
      * 게시글 수정 메서드
      */
     @Override
-    public long updateBoard(BoardUpdateRequest boardUpdateRequest, String memberId) {
+    public long updateBoard(BoardUpdateRequest boardUpdateRequest, long memberId) {
 
         // => 미리 파싱해서 boardRequest 에 넣음
         log.info("boardUpdateRequest: {}", boardUpdateRequest);
@@ -121,7 +121,7 @@ public class BoardServiceImpl implements BoardService {
     /**
      * 게시글 식별 번호 존재 여부, 게시글 작성자 번호와 로그인 유저 번호 일치 여부 확인하는 메서드
      */
-    private void validateBoardOwnership(Long boardId, String memberId) {
+    private void validateBoardOwnership(Long boardId, long memberId) {
         int checkResult = boardMapper.checkBoardAndAuthor(Map.of("boardId", boardId, "memberId", memberId));
 
         if (checkResult == -1) {
@@ -138,9 +138,9 @@ public class BoardServiceImpl implements BoardService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int softDeleteBoard(String boardId, String memberId) {
+    public int softDeleteBoard(String boardId, long memberId) {
 
-        if (boardId == null || memberId == null){
+        if (boardId == null || memberId < 1){
             throw new UnnieBoardException(ErrorCode.BOARD_NOT_INVALID);
         }
 
@@ -167,7 +167,7 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     @Transactional(readOnly = true)
-    public PageInfo<BoardsGetResponse> getBoards(BoardCategory category, String sort, String searchType, String search, int page, int memberId) {
+    public PageInfo<BoardsGetResponse> getBoards(BoardCategory category, String sort, String searchType, String search, int page, long memberId) {
         List<BoardsGetResponse> boards = boardMapper.getBoards((BoardsGetRequest) this.buildRequest(category, sort, searchType, search, page, memberId));
         return new PageInfo<>(boards);
     }
@@ -175,7 +175,7 @@ public class BoardServiceImpl implements BoardService {
     /**
      * 요청 정보 유효성 검증
      */
-    private BoardsGetRequestBase buildRequest(BoardCategory category, String sort, String searchType, String search, int page, int memberId){
+    private BoardsGetRequestBase buildRequest(BoardCategory category, String sort, String searchType, String search, int page, long memberId){
         int pageSize = 10;
 
         if (page < 1){

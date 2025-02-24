@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ssginc.unnie.board.mapper.BoardMapper">
+<mapper namespace="com.ssginc.unnie.community.mapper.BoardMapper">
 
     <!-- 게시글 작성  -->
     <insert id="insertBoard" useGeneratedKeys="true" keyColumn="board_id" keyProperty="boardId">
@@ -75,13 +75,13 @@
     <select id="checkBoardAndAuthor" resultType="java.lang.Integer">
         SELECT
             CASE
-                WHEN COUNT(*) = 0 THEN -1  -- 게시글이 존재하지 않음
+                WHEN COUNT(board_id) = 0 THEN -1  -- 게시글이 존재하지 않음
                 WHEN board_author != #{memberId} THEN 0  -- 작성자가 다름
                 ELSE 1  -- 정상적으로 수정 가능
                 END AS "ownership"
         FROM board
         WHERE board_id = #{boardId}
-          AND b.board_isactive = 1
+          AND board_isactive = 1
     </select>
 
 

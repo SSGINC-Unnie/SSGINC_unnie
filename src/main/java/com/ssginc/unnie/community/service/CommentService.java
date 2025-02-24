@@ -9,9 +9,9 @@ import com.ssginc.unnie.community.dto.comment.CommentGuestGetResponse;
  * 댓글 기능 인터페이스
  */
 public interface CommentService {
-    long createComment(CommentRequest request, int memberId);
+    long createComment(CommentRequest request, long memberId);
 
-    long createReplyComment(CommentRequest request, int memberId);
+    long createReplyComment(CommentRequest request, long memberId);
 
     PageInfo<CommentGuestGetResponse> getAllCommentsGuest(long boardId, int page);
 
