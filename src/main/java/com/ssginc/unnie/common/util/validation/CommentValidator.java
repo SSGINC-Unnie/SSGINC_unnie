@@ -1,8 +1,8 @@
 package com.ssginc.unnie.common.util.validation;
 
+import com.ssginc.unnie.community.dto.board.BoardCategory;
 import com.ssginc.unnie.community.dto.board.BoardRequestBase;
 import com.ssginc.unnie.community.dto.board.BoardUpdateRequest;
-import com.ssginc.unnie.community.dto.board.BoardCategory;
 import com.ssginc.unnie.common.exception.UnnieBoardException;
 import com.ssginc.unnie.common.util.ErrorCode;
 import com.ssginc.unnie.common.util.parser.BoardParser;
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 @Slf4j  // 🚀 로그 추가
 @Component
-public class BoardValidator implements Validator<BoardRequestBase> {
+public class CommentValidator implements Validator<BoardRequestBase> {
 
     // BoardCategory를 Set으로 저장 (유효한 카테고리 목록) -> O(1) 조회
     private static final Set<String> CATEGORY_SET = Arrays.stream(BoardCategory.values())

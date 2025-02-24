@@ -25,7 +25,7 @@ public class BoardParser {
         StringBuilder textContent = new StringBuilder();
 
         for (Element paragraph : paragraphs) {
-            // 🚀 <img> 태그 제거 후 텍스트만 추가
+            // <img> 태그 제거 후 텍스트만 추가
             paragraph.select("img").remove();
             String paragraphText = paragraph.text().trim();
             textContent.append(paragraphText);

@@ -18,7 +18,7 @@
 
     <!-- 타입 핸들러 등록(ENUM 자동 처리)  -->
     <typeHandlers>
-        <typeHandler handler="com.ssginc.unnie.common.handler.EnumTypeHandler" javaType="com.ssginc.unnie.board.dto.BoardCategory"/>
+        <typeHandler handler="com.ssginc.unnie.common.handler.EnumTypeHandler" javaType="com.ssginc.unnie.community.dto.board.BoardCategory"/>
     </typeHandlers>
 
 </configuration>

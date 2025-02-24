@@ -4,7 +4,7 @@
 <mapper namespace="com.ssginc.unnie.board.mapper.BoardMapper">
 
     <!-- 게시글 작성  -->
-    <insert id="insertBoard" useGeneratedKeys="true" keyColumn="board_id">
+    <insert id="insertBoard" useGeneratedKeys="true" keyColumn="board_id" keyProperty="boardId">
         insert into board
         (
          board_title,
@@ -23,13 +23,8 @@
         )
     </insert>
 
-    <!--  게시글 삭제  -->
-    <delete id="deleteBoard">
-        select
-    </delete>
-
     <!--  게시글 상세 조회  -->
-    <select id="selectBoard" resultType="com.ssginc.unnie.board.dto.BoardDetailGetResponse">
+    <select id="selectBoard" resultType="com.ssginc.unnie.community.dto.board.BoardDetailGetResponse">
         SELECT
             b.board_id,
             b.board_category,
@@ -49,7 +44,7 @@
     </select>
 
     <!--  게시글 수정  -->
-    <update id="updateBoard">
+    <update id="updateBoard" useGeneratedKeys="true" keyProperty="boardId" keyColumn="board_id">
         update board
         set
             board_title = #{boardTitle},
@@ -62,7 +57,7 @@
             board_id = #{boardId}
     </update>
 
-    <update id="softDeleteBoard" useGeneratedKeys="true" keyColumn="board_id">
+    <update id="softDeleteBoard" useGeneratedKeys="true" keyColumn="board_id" keyProperty="boardId">
         update board
         set
             board_isactive = 0,
@@ -73,7 +68,7 @@
 
     <!-- boardId 존재 여부  -->
     <select id="checkBoardId" resultType="int">
-        SELECT COUNT(*) FROM board WHERE board_id = #{boardId}
+        SELECT COUNT(*) FROM board WHERE board_id = #{boardId} AND board_isactive = 1
     </select>
 
     <!-- boardAuthorId 와 현재 로그인 유저 번호 일치 여부  -->
@@ -81,17 +76,17 @@
         SELECT
             CASE
                 WHEN COUNT(*) = 0 THEN -1  -- 게시글이 존재하지 않음
-                WHEN board_author != 1 THEN 0  -- 작성자가 다름
+                WHEN board_author != #{memberId} THEN 0  -- 작성자가 다름
                 ELSE 1  -- 정상적으로 수정 가능
                 END AS "ownership"
         FROM board
         WHERE board_id = #{boardId}
+          AND b.board_isactive = 1
     </select>
 
 
     <!-- 비회원 게시글 목록 조회 -->
-    <select id="getGuestBoards" resultType="com.ssginc.unnie.board.dto.BoardsGuestGetResponse">
-
+    <select id="getGuestBoards" resultType="com.ssginc.unnie.community.dto.board.BoardsGuestGetResponse">
         SELECT
             b.board_author AS boardAuthor,
             m.member_nickname AS memberNickname,
@@ -110,13 +105,14 @@
             (b.board_category = #{category})
           AND (#{searchType} = 'TITLE' AND b.board_title LIKE CONCAT('%', #{search}, '%')) OR
                (#{searchType} = 'CONTENT' AND b.board_contents LIKE CONCAT('%', #{search}, '%'))
+          AND b.board_isactive = 1
         ORDER BY
             CASE WHEN #{sort} = 'LATEST' THEN b.board_created_at END DESC,
             CASE WHEN #{sort} = 'POPULAR' THEN b.board_views END DESC
     </select>
 
     <!-- 회원 게시글 목록 조회(좋아요 여부 포함)   -->
-    <select id="getBoards" resultType="com.ssginc.unnie.board.dto.BoardsGetResponse">
+    <select id="getBoards" resultType="com.ssginc.unnie.community.dto.board.BoardsGetResponse">
         SELECT
             b.board_author AS boardAuthor,
             m.member_nickname AS memberNickname,
@@ -142,6 +138,7 @@
             (b.board_category = #{category})
                 AND (#{searchType} = 'TITLE' AND b.board_title LIKE CONCAT('%', #{search}, '%')) OR
             (#{searchType} = 'CONTENT' AND b.board_contents LIKE CONCAT('%', #{search}, '%'))
+            AND b.board_isactive = 1
         ORDER BY
             CASE WHEN #{sort} = 'LATEST' THEN b.board_created_at END DESC,
             CASE WHEN #{sort} = 'POPULAR' THEN b.board_views END DESC

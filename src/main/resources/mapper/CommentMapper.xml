@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssginc.unnie.board.mapper.CommentMapper">
+
+    <!-- 댓글 작성 -->
+    <insert id="createComment" useGeneratedKeys="true" keyProperty="commentId"  keyColumn="comment_id">
+        INSERT INTO comment
+        (
+         comment_contents,
+         comment_board_id,
+         comment_member_id
+        )
+        VALUES
+        (
+         #{commentContents},
+         #{commentBoardId},
+         #{commentMemberId}
+        )
+    </insert>
+
+    <!-- 대댓글 작성 -->
+    <insert id="createReplyComment" useGeneratedKeys="true" keyProperty="commentId" keyColumn="comment_id">
+        INSERT INTO comment
+        (
+            comment_contents,
+            comment_board_id,
+            comment_parent_id,
+            comment_member_id
+        )
+        VALUES
+            (
+                #{commentContents},
+                #{commentBoardId},
+                #{commentParentId},
+                #{commentMemberId}
+            )
+    </insert>
+
+    <!-- 게시글 식별 번호 존재 여부 확인 -->
+    <select id="checkBoardId" resultType="java.lang.Integer">
+    SELECT EXISTS(
+        SELECT 1
+        FROM board
+        where board_id = #{commentBoardId}
+          AND board_isactive = 1
+    ) as "checkBoardId"
+    </select>
+
+    <!-- 댓글 존재 여부 확인 -->
+    <select id="checkCommentId" resultType="java.lang.Integer">
+    SELECT EXISTS(
+        SELECT 1
+        FROM comment
+        WHERE comment_board_id = #{commentBoardId}
+          AND comment_id = #{commentParentId}
+          AND comment_isactive = 1
+    ) as "checkCommentId"
+    </select>
+
+    <!--  비로그인 시 댓글 조회   -->
+    <select id="getAllCommentsGuest" resultType="com.ssginc.unnie.community.dto.comment.CommentGuestGetResponse">
+        SELECT
+            c.comment_id,
+            c.comment_member_id,
+            c.comment_parent_id,
+            m.member_nickname,
+            m.member_profile,
+            c.comment_created_at,
+            c.comment_updated_at,
+            c.comment_contents,
+            (SELECT COUNT(like_id) FROM `like` l WHERE l.like_target_type = "COMMENT" AND l.like_target_id = c.comment_id) AS likeCount
+        FROM
+            comment c
+            JOIN member m ON c.comment_member_id = m.member_id
+        WHERE
+            c.comment_board_id = #{boardId}
+        ORDER BY
+            c.comment_id ASC
+    </select>
+
+    <!-- 로그인 시 댓글 조회 -->
+    <select id="getAllComments" resultType="com.ssginc.unnie.community.dto.comment.CommentGetResponse">
+        SELECT
+            c.comment_id,
+            c.comment_member_id,
+            c.comment_parent_id,
+            m.member_nickname,
+            m.member_profile,
+            c.comment_created_at,
+            c.comment_updated_at,
+            c.comment_contents,
+            (SELECT COUNT(like_id) FROM `like` l WHERE l.like_target_type = "COMMENT" AND l.like_target_id = c.comment_id) AS likeCount,
+            EXISTS(
+                SELECT 1
+                FROM `like` l
+                WHERE l.like_target_type = "COMMENT"
+                  AND l.like_target_id = c.comment_id
+                  AND l.like_member_id = #{memberId}
+            ) AS liked
+        FROM
+            comment c
+                JOIN member m ON c.comment_member_id = m.member_id
+        WHERE
+            c.comment_board_id = #{boardId}
+        ORDER BY
+            c.comment_id ASC
+    </select>
+
+    <!-- 댓글 수정 -->
+    <update id="updateComment" useGeneratedKeys="true" keyColumn="comment_id" keyProperty="commentId">
+        UPDATE comment
+        SET
+            comment_contents = #{commentContents},
+            comment_updated_at = current_timestamp
+        WHERE
+            comment_id = #{commentId}
+    </update>
+
+    <!-- commentMemberId 와 현재 로그인 유저 번호 일치 여부  -->
+    <select id="checkCommentAndAuthor" resultType="java.lang.Integer">
+        SELECT
+            CASE
+                WHEN COUNT(*) = 0 THEN -1  -- 게시글이 존재하지 않음
+                WHEN comment_member_id != #{memberId} THEN 0  -- 작성자가 다름
+                ELSE 1  -- 정상적으로 수정 가능
+                END AS "ownership"
+        FROM comment
+        WHERE comment_id = #{commentId}
+          AND comment_isactive = 1
+    </select>
+
+    <!-- 댓글 삭제(soft delete)  -->
+    <update id="deleteComment" useGeneratedKeys="true" keyProperty="commentId" keyColumn="comment_id">
+        UPDATE comment
+        SET
+            comment_isactive = 0,
+            comment_updated_at = current_timestamp
+        WHERE
+            comment_id = #{commentId}
+    </update>
+</mapper>
