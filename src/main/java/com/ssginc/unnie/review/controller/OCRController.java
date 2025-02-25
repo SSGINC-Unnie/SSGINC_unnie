@@ -5,7 +5,7 @@ import com.ssginc.unnie.review.dto.ReceiptRequest;
 import com.ssginc.unnie.review.dto.ReceiptResponse;
 import com.ssginc.unnie.review.service.OCRService;
 import com.ssginc.unnie.review.service.ReceiptService;
-import com.ssginc.unnie.review.ReviewOCR.OCRParser;
+import com.ssginc.unnie.common.util.parser.OCRParser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;

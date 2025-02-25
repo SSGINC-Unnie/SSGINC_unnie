@@ -5,8 +5,8 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class ChatCompletionRequestDTO {
+public class ChatCompletionRequest {
     private String model;
-    private List<ChatMessageDTO> messages;
+    private List<ChatMessage> messages;
     private double temperature;
 }

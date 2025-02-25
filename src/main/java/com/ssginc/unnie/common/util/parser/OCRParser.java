@@ -1,7 +1,6 @@
-package com.ssginc.unnie.review.ReviewOCR;
+package com.ssginc.unnie.common.util.parser;
 
 import com.ssginc.unnie.common.util.validation.OCRValidator;
-import com.ssginc.unnie.common.util.validation.Validator;
 import com.ssginc.unnie.review.dto.ReceiptItemRequest;
 import com.ssginc.unnie.review.dto.ReceiptRequest;
 import lombok.RequiredArgsConstructor;
@@ -58,7 +57,7 @@ public class OCRParser {
             List<ReceiptItemRequest> items = extractItems(fields);
 
 
-            return new ReceiptRequest(1, receiptDate, receiptAmount, businessNumber, approvalNumber, receiptShopName, items);
+            return new ReceiptRequest(1L, receiptDate, receiptAmount, businessNumber, approvalNumber, receiptShopName, items);
 
         } catch (Exception e) {
             throw new RuntimeException("JSON 파싱 오류: " + e.getMessage(), e);
