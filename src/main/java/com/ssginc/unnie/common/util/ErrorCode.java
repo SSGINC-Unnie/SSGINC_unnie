@@ -25,6 +25,20 @@ public enum ErrorCode {
     SMS_SEND_FAILED(500, "ME014", "SMS 전송에 실패했습니다."),
     MEMBER_UPDATE_FAILED(500, "ME015", "회원 정보 수정 중 오류가 발생했습니다."),
     MEMBER_DELETION_FAILED(500, "ME016", "회원 탈퇴 중 오류가 발생했습니다."),
+    INVALID_PASSWORD_FORMAT(400, "ME017", "비밀번호 형식이 올바르지 않습니다."),
+    INVALID_NAME_FORMAT(400, "ME018", "이름 형식이 올바르지 않습니다."),
+    INVALID_NICKNAME_FORMAT(400, "ME019", "닉네임 형식이 올바르지 않습니다."),
+    INVALID_BIRTH_FORMAT(400, "ME020", "생년월일 형식이 올바르지 않습니다."),
+    LOGIN_FAILED(401, "ME021", "로그인에 실패했습니다."),
+    EMAIL_INPUT_EMPTY(400, "ME022", "이메일 입력값이 누락되었습니다."),
+    PHONE_INPUT_EMPTY(400, "ME023", "전화번호 입력값이 누락되었습니다."),
+
+    //JWT 관련 에러
+    INVALID_ACCESS_TOKEN(401, "JWT001", "유효하지 않은 Access Token입니다."),
+    EXPIRED_ACCESS_TOKEN(401, "JWT002", "Access Token이 만료되었습니다."),
+    INVALID_REFRESH_TOKEN(401, "JWT003", "유효하지 않은 Refresh Token입니다."),
+    EXPIRED_REFRESH_TOKEN(401, "JWT004", "Refresh Token이 만료되었습니다."),
+    REFRESH_TOKEN_NOT_FOUND(400, "JWT005", "Refresh Token이 존재하지 않습니다."),
 
     // =================================== 뷰티샵 관련 에러 =====================================================
 
@@ -106,6 +120,9 @@ public enum ErrorCode {
     BOARD_UPDATE_FAILED(500, "BO011", "게시글 수정 중 오류가 발생했습니다."),
     BOARD_SEARCH_FAILED(500, "BO012", "게시글 정보를 가져오는 중 오류가 발생했습니다."),
     BOARD_NOT_INVALID(400, "BO013", "게시글 작성 형식이 올바르지 않습니다."),
+    BOARD_INVALID_SEARCH_TYPE(400, "BO013", "요청한 검색 타입이 유효하지 않습니다."),
+    BOARD_INVALID_SORT_TYPE(400, "BO014", "요청한 정렬 방식이 유효하지 않습니다."),
+    BOARD_INVALID_CATEGORY(400, "BO015", "요청한 카테고리가 유효하지 않습니다."),
 
     // =================================== 댓글 관련 에러 =====================================================
     COMMENT_CREATE_FAILED(500, "CO001", "댓글 작성에 실패했습니다."),
@@ -116,11 +133,14 @@ public enum ErrorCode {
     COMMENT_NOT_FOUND(404, "CO006", "요청한 댓글을 찾을 수 없습니다."),
     COMMENT_SELECT_FAILED(500, "CO007", "댓글을 가져오는 데 실패했습니다."),
     COMMENT_INVALID_WORD(400, "CO008", "금칙어가 포함되어 있습니다."),
+    COMMENT_PARENT_NOT_FOUND(404, "CO009", "원댓글을 찾을 수 없습니다."),
+    COMMENT_BOARD_NOT_FOUND(404, "CO010", "댓글 게시글을 찾을 수 없습니다."),
 
     // =================================== 좋아요 관련 에러 =====================================================
-    LIKE_CREATE_FAILED(500, "LI001", "좋아요 처리에 실패했습니다."),
+    LIKE_CREATE_FAILED(500, "LI001", "좋아요 중 오류가 발생했습니다"),
     LIKE_NOT_FOUND(404, "LI002", "좋아요 대상을 찾을 수 없습니다."),
-
+    LIKE_INVALID_TARGET_TYPE(400, "LI003", "좋아요 타입이 적절하지 않습니다."),
+    LIKE_DELETE_FAILED(500, "LI004", "좋아요 취소 중 오류가 발생했습니다."),
     // =================================== 신고 관련 에러 =====================================================
     REPORT_CREATE_FAILED(500, "RE001", "신고 접수에 실패했습니다."),
     REPORT_REASON_REQUIRED(400, "RE002", "신고 사유는 필수 입력 항목입니다."),

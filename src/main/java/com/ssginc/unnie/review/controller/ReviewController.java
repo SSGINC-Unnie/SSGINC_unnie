@@ -8,8 +8,13 @@ public class ReviewController {
     /**
      * 파일 업로드 테스트 페이지 제공
      */
-    @GetMapping("/upload")
+    @GetMapping("/ocr")
     public String uploadPage() {
-        return "upload";  // templates/upload.html을 반환
+        return "ocr";  // templates/upload.html을 반환
+    }
+
+    @GetMapping("/gpt")
+    public String summarize(){
+        return "gpt";
     }
 }

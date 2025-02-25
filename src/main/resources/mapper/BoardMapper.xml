@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ssginc.unnie.board.mapper.BoardMapper">
+<mapper namespace="com.ssginc.unnie.community.mapper.BoardMapper">
 
     <!-- 게시글 작성  -->
-    <insert id="insertBoard" useGeneratedKeys="true" keyColumn="board_id">
+    <insert id="insertBoard" useGeneratedKeys="true" keyColumn="board_id" keyProperty="boardId">
         insert into board
         (
          board_title,
@@ -23,13 +23,8 @@
         )
     </insert>
 
-    <!--  게시글 삭제  -->
-    <delete id="deleteBoard">
-        select
-    </delete>
-
     <!--  게시글 상세 조회  -->
-    <select id="selectBoard" resultType="com.ssginc.unnie.board.dto.BoardDetailGetResponse">
+    <select id="selectBoard" resultType="com.ssginc.unnie.community.dto.board.BoardDetailGetResponse">
         SELECT
             b.board_id,
             b.board_category,
@@ -49,7 +44,7 @@
     </select>
 
     <!--  게시글 수정  -->
-    <update id="updateBoard">
+    <update id="updateBoard" useGeneratedKeys="true" keyProperty="boardId" keyColumn="board_id">
         update board
         set
             board_title = #{boardTitle},
@@ -62,7 +57,7 @@
             board_id = #{boardId}
     </update>
 
-    <update id="softDeleteBoard" useGeneratedKeys="true" keyColumn="board_id">
+    <update id="softDeleteBoard" useGeneratedKeys="true" keyColumn="board_id" keyProperty="boardId">
         update board
         set
             board_isactive = 0,
@@ -73,18 +68,80 @@
 
     <!-- boardId 존재 여부  -->
     <select id="checkBoardId" resultType="int">
-        SELECT COUNT(*) FROM board WHERE board_id = #{boardId}
+        SELECT COUNT(*) FROM board WHERE board_id = #{boardId} AND board_isactive = 1
     </select>
 
     <!-- boardAuthorId 와 현재 로그인 유저 번호 일치 여부  -->
     <select id="checkBoardAndAuthor" resultType="java.lang.Integer">
         SELECT
             CASE
-                WHEN COUNT(*) = 0 THEN -1  -- 게시글이 존재하지 않음
-                WHEN board_author != 1 THEN 0  -- 작성자가 다름
+                WHEN COUNT(board_id) = 0 THEN -1  -- 게시글이 존재하지 않음
+                WHEN board_author != #{memberId} THEN 0  -- 작성자가 다름
                 ELSE 1  -- 정상적으로 수정 가능
                 END AS "ownership"
         FROM board
         WHERE board_id = #{boardId}
+          AND board_isactive = 1
     </select>
+
+
+    <!-- 비회원 게시글 목록 조회 -->
+    <select id="getGuestBoards" resultType="com.ssginc.unnie.community.dto.board.BoardsGuestGetResponse">
+        SELECT
+            b.board_author AS boardAuthor,
+            m.member_nickname AS memberNickname,
+            m.member_profile AS memberProfile,
+            b.board_id AS boardId,
+            b.board_title AS boardTitle,
+            DATE_FORMAT(b.board_created_at, '%Y-%m-%d %H:%i:%s') AS boardCreatedAt,
+            b.board_views AS boardViews,
+            -- 좋아요 개수
+            (SELECT COUNT(like_id) FROM `like` l WHERE l.like_target_type = "BOARD" AND l.like_target_id = b.board_id) AS likeCount,
+            -- 댓글 개수
+            (SELECT COUNT(comment_id) FROM `comment` c WHERE c.comment_board_id = b.board_id) AS commentCount
+        FROM board b
+                 JOIN member m ON b.board_author = m.member_id
+        WHERE
+            (b.board_category = #{category})
+          AND (#{searchType} = 'TITLE' AND b.board_title LIKE CONCAT('%', #{search}, '%')) OR
+               (#{searchType} = 'CONTENT' AND b.board_contents LIKE CONCAT('%', #{search}, '%'))
+          AND b.board_isactive = 1
+        ORDER BY
+            CASE WHEN #{sort} = 'LATEST' THEN b.board_created_at END DESC,
+            CASE WHEN #{sort} = 'POPULAR' THEN b.board_views END DESC
+    </select>
+
+    <!-- 회원 게시글 목록 조회(좋아요 여부 포함)   -->
+    <select id="getBoards" resultType="com.ssginc.unnie.community.dto.board.BoardsGetResponse">
+        SELECT
+            b.board_author AS boardAuthor,
+            m.member_nickname AS memberNickname,
+            m.member_profile AS memberProfile,
+            b.board_id AS boardId,
+            b.board_title AS boardTitle,
+            DATE_FORMAT(b.board_created_at, '%Y-%m-%d %H:%i:%s') AS boardCreatedAt,
+            b.board_views AS boardViews,
+            -- 좋아요 개수
+            (SELECT COUNT(like_id) FROM `like` l WHERE l.like_target_type = "BOARD" AND l.like_target_id = b.board_id) AS likeCount,
+            -- 댓글 개수
+            (SELECT COUNT(comment_id) FROM `comment` c WHERE c.comment_board_id = b.board_id) AS commentCount,
+            EXISTS(
+                SELECT 1
+                FROM `like` l
+                WHERE l.like_target_type = "BOARD"
+                  AND l.like_target_id = b.board_id
+                  AND l.like_member_id = #{memberId}
+            ) AS liked
+        FROM board b
+                 JOIN member m ON b.board_author = m.member_id
+        WHERE
+            (b.board_category = #{category})
+                AND (#{searchType} = 'TITLE' AND b.board_title LIKE CONCAT('%', #{search}, '%')) OR
+            (#{searchType} = 'CONTENT' AND b.board_contents LIKE CONCAT('%', #{search}, '%'))
+            AND b.board_isactive = 1
+        ORDER BY
+            CASE WHEN #{sort} = 'LATEST' THEN b.board_created_at END DESC,
+            CASE WHEN #{sort} = 'POPULAR' THEN b.board_views END DESC
+    </select>
+
 </mapper>

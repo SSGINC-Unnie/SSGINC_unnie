@@ -1,9 +1,8 @@
 package com.ssginc.unnie.common.util.validation;
 
-import com.ssginc.unnie.board.dto.BoardCreateRequest;
-import com.ssginc.unnie.board.dto.BoardRequestBase;
-import com.ssginc.unnie.board.dto.BoardUpdateRequest;
-import com.ssginc.unnie.board.vo.BoardCategory;
+import com.ssginc.unnie.community.dto.board.BoardRequestBase;
+import com.ssginc.unnie.community.dto.board.BoardUpdateRequest;
+import com.ssginc.unnie.community.dto.board.BoardCategory;
 import com.ssginc.unnie.common.exception.UnnieBoardException;
 import com.ssginc.unnie.common.util.ErrorCode;
 import com.ssginc.unnie.common.util.parser.BoardParser;

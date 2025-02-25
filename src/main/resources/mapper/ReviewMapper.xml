@@ -2,4 +2,14 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ssginc.unnie.review.mapper.ReviewMapper">
+    <!-- 리뷰 저장 -->
+    <insert id="insertReview" useGeneratedKeys="true" keyProperty="reviewId">
+        INSERT INTO REVIEW (REVIEW_MEMBER_ID, REVIEW_RECEIPT_ID, REVIEW_IMAGE, REVIEW_RATE, REVIEW_CONTENT)
+        VALUES (#{reviewMemberId}, #{reviewReceiptId}, #{reviewImage}, #{reviewRate}, #{reviewContent})
+    </insert>
+
+    <!-- 리뷰 조회 -->
+    <select id="findReviewById" resultType="com.ssginc.unnie.review.dto.ReviewResponse">
+        SELECT * FROM REVIEW WHERE REVIEW_ID = #{reviewId}
+    </select>
 </mapper>

@@ -1,7 +1,10 @@
 package com.ssginc.unnie.review.ReviewOCR;
 
+import com.ssginc.unnie.common.util.validation.OCRValidator;
+import com.ssginc.unnie.common.util.validation.Validator;
 import com.ssginc.unnie.review.dto.ReceiptItemRequest;
 import com.ssginc.unnie.review.dto.ReceiptRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -9,15 +12,17 @@ import org.json.JSONObject;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import static com.ssginc.unnie.common.util.validation.OCRValidator.isNumeric;
 
 @Slf4j
+@RequiredArgsConstructor
 public class OCRParser {
+
+    private static final OCRValidator validator = new OCRValidator();
 
     public static ReceiptRequest parse(JSONObject jsonObject) {
         try {
-            // 🔹 JSON 응답 log
             log.info(jsonObject.toString(2));
 
             JSONArray images = jsonObject.optJSONArray("images");
@@ -31,73 +36,33 @@ public class OCRParser {
                 throw new RuntimeException("OCR API 응답에 'fields' 키가 없습니다.");
             }
 
-            // ✅ OCR에서 추출한 데이터 저장 변수
-            String shopName = "알 수 없음";
-            String businessNumber = "";
-            String approvalNumber = "";
-            LocalDateTime receiptDate = LocalDateTime.now();
-            int receiptAmount = 0;
-            List<ReceiptItemRequest> items = new ArrayList<>();
-
             // ✅ 텍스트 데이터 하나로 결합 (더 유연한 정규식 적용 가능)
             StringBuilder ocrText = new StringBuilder();
             for (int i = 0; i < fields.length(); i++) {
                 ocrText.append(fields.getJSONObject(i).optString("inferText", "")).append(" ");
             }
-            String fullText = ocrText.toString().trim();
+            String fullText = ocrText.toString().replaceAll("\\s+", " ").trim();
+            log.debug("OCR 텍스트 데이터: {}", fullText);
 
-            // ✅ 가게 이름 추출 (상호: 뒤에 오는 첫 단어)
-            shopName = extractPattern(fullText, "상호:\\s*([가-힣A-Za-z0-9\\s-]+)");
+            // ✅ OCRValidator 를 사용하여 OCR 데이터 검증
+            if (!validator.validate(fullText)) {
+                throw new RuntimeException("OCR 데이터가 유효하지 않습니다.");
+            }
 
-            // ✅ 사업자번호 추출
-            businessNumber = extractPattern(fullText, "사업자번호\\s*[:\\s]*(\\d{3}-?\\d{2}-?\\d{5})");
+            // ✅ OCRValidator 를 사용하여 데이터 추출
+            String receiptShopName = OCRValidator.extractShopName(fullText);
+            LocalDateTime receiptDate = OCRValidator.extractDateTime(fields);
+            String businessNumber = OCRValidator.extractBusinessNumber(fullText);
+            String approvalNumber = OCRValidator.extractApprovalNumber(fullText);
+            int receiptAmount = OCRValidator.extractAmount(fullText);
+            List<ReceiptItemRequest> items = extractItems(fields);
 
-            // ✅ 승인번호 추출
-            approvalNumber = extractPattern(fullText, "승인번호\\s*[:\\s]*(\\d{6,})");
 
-            // ✅ 결제 금액 추출
-            receiptAmount = extractAmount(fullText);
-
-            // ✅ 품목 리스트 추출
-            items = extractItems(fields);
-
-            // ✅ DTO 생성 후 반환
-            return new ReceiptRequest(receiptDate, receiptAmount, businessNumber, approvalNumber, 1, 1, shopName, items);
+            return new ReceiptRequest(1, receiptDate, receiptAmount, businessNumber, approvalNumber, receiptShopName, items);
 
         } catch (Exception e) {
             throw new RuntimeException("JSON 파싱 오류: " + e.getMessage(), e);
         }
-    }
-
-    /**
-     * 🔹 정규식을 사용하여 특정 패턴 추출
-     */
-    private static String extractPattern(String text, String regex) {
-        Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(text);
-        if (matcher.find()) {
-            return matcher.find() ? matcher.group(1).trim() : "";
-        }
-        log.warn("⚠️ 정규식 '{}'에 해당하는 데이터를 찾을 수 없음", regex);
-        return "데이터 없음";
-    }
-
-
-    /**
-     * 🔹 결제 금액 추출
-     */
-    private static int extractAmount(String text) {
-        Pattern amountPattern = Pattern.compile("결제금액[^\n]*?([\\d,]+)\\s*원");
-        Matcher matcher = amountPattern.matcher(text);
-        if (matcher.find()) {
-            try {
-                return Integer.parseInt(matcher.group(1).replaceAll(",", ""));
-            } catch (NumberFormatException e) {
-                System.out.println("⚠️ 금액 변환 오류: " + matcher.group(1));
-            }
-        }
-        System.out.println("⚠️ 결제 금액을 찾을 수 없음 → 기본값 0 사용");
-        return 0;
     }
 
     /**
@@ -120,19 +85,12 @@ public class OCRParser {
                 try {
                     int price = Integer.parseInt(priceText.replaceAll(",", ""));
                     int quantity = Integer.parseInt(quantityText);
-                    items.add(new ReceiptItemRequest(0, 0, itemName, price, quantity));
+                    items.add(new ReceiptItemRequest(1, 1, itemName, price, quantity));
                 } catch (NumberFormatException e) {
-                    System.out.println("⚠️ 품목 데이터 변환 오류: " + itemName);
+                    System.out.println("품목 데이터 변환 오류: " + itemName);
                 }
             }
         }
         return items;
-    }
-
-    /**
-     * 🔹 문자열이 숫자인지 확인
-     */
-    private static boolean isNumeric(String str) {
-        return str.matches("\\d+(,\\d{3})*");  // 쉼표 포함된 숫자 체크
     }
 }
