@@ -1,7 +1,9 @@
 package com.ssginc.unnie.report.vo;
 
+import com.ssginc.unnie.common.util.EnumDescription;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 /**
  * 신고 사유 ENUM 클래스
@@ -17,4 +19,13 @@ public enum ReportReason {
     ETC("기타");
 
     private final String description;
+
+    public static String getDescriptionFromName(String name) {
+        for (ReportReason reason : ReportReason.values()) {
+            if (reason.name().equalsIgnoreCase(name)) {
+                return reason.getDescription();
+            }
+        }
+        return name;
+    }
 }

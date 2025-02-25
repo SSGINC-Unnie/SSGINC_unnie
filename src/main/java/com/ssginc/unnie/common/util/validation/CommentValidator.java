@@ -14,10 +14,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * 게시글 유효성 검증 클래스
+ * 댓글 유효성 검증 클래스
  */
 
-@Slf4j  // 🚀 로그 추가
+@Slf4j
 @Component
 public class CommentValidator implements Validator<BoardRequestBase> {
 
@@ -59,7 +59,7 @@ public class CommentValidator implements Validator<BoardRequestBase> {
             throw new UnnieBoardException(ErrorCode.BOARD_CATEGORY_REQUIRED);
         }
 
-        // 🚀 수정: category.getDescription() 사용 (올바른 방식)
+        // 수정: category.getDescription() 사용 (올바른 방식)
         if (!CATEGORY_SET.contains(category.getDescription())) {
             log.error("유효하지 않은 카테고리: {}", category.getDescription());
             throw new UnnieBoardException(ErrorCode.BOARD_NOT_INVALID);

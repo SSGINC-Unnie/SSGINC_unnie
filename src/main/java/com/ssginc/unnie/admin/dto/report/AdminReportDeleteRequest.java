@@ -1,20 +1,17 @@
-package com.ssginc.unnie.report.dto;
+package com.ssginc.unnie.admin.dto.report;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
- * REPORT 요청 DTO 클래스
+ * 신고 컨텐츠 삭제 요청 전용 DTO
  */
 
-@Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-public class ReportRequest {
+@Getter
+@Setter
+public class AdminReportDeleteRequest {
     private long reportId; // 신고 식별 번호
     private int reportTargetType; // 신고 컨텐츠 타입(1 : 게시글 / 2: 댓글 / 3: 리뷰)
     private long reportTargetId; // 신고 컨텐츠 식별 번호
-    private String reportReason; // 신고 사유
-    private String reportReasonDetailed; // 신고 상세 내용
     private long reportMemberId; // 신고자 식별 번호
 }
