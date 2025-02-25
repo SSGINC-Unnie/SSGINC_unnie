@@ -52,10 +52,10 @@ public class OCRValidator implements Validator<Object> {
         Matcher matcher = pattern.matcher(text);
 
         if (matcher.find()) { //패턴에 맞는 문자열이 있으면
-            //[null, "test"]
+            //[{"test", " ", ~]
             //group(0)이면 [
-            //group(1)이면 [null,
-            //group(2)이면 [null, "test"
+            //group(1)이면 [{
+            //group(2)이면 [{"test", " ", ~
             return matcher.group(1) != null ? matcher.group(1).trim() : matcher.group(2).trim();
         }
         log.warn("정규식 '{}'에 해당하는 데이터를 찾을 수 없음", regex);
