@@ -141,6 +141,7 @@ public enum ErrorCode {
     LIKE_NOT_FOUND(404, "LI002", "좋아요 대상을 찾을 수 없습니다."),
     LIKE_INVALID_TARGET_TYPE(400, "LI003", "좋아요 타입이 적절하지 않습니다."),
     LIKE_DELETE_FAILED(500, "LI004", "좋아요 취소 중 오류가 발생했습니다."),
+
     // =================================== 신고 관련 에러 =====================================================
     REPORT_CREATE_FAILED(500, "RE001", "신고 접수에 실패했습니다."),
     REPORT_REASON_REQUIRED(400, "RE002", "신고 사유는 필수 입력 항목입니다."),
@@ -151,7 +152,11 @@ public enum ErrorCode {
     REPORT_LENGTH_INVALID(400, "RE007", "신고 상세내용은 300자 이하여야 합니다."),
     REPORT_SELECT_FAILED(500, "RE008", "신고 내용을 가져오는 중 오류가 발생했습니다."),
     REPORT_UPDATE_FAILED(500, "RE009", "신고 처리 중 오류가 발생했습니다."),
-
+    REPORT_INVALID_STATUS(400, "RE010", "요청하신 신고 상태 값이 적절하지 않습니다."),
+    REPORT_INVALID_DATE(400, "RE011", "요청하신  날짜값이 적절하지 않습니다."),
+    REPORT_INVALID_TARGET_TYPE(400, "RE012", "요청하신 신고 타입이 적절하지 않습니다."),
+    ADMIN_REPORT_NOT_FOUND(404, "RE013", "요청하신 신고가 존재하지 않습니다."),
+    REPORTED_CONTENT_DELETE_FAILED(500, "RE014", "신고 컨텐츠 삭제 중 오류가 발생했습니다."),
     // =================================== 알림 관련 에러 =====================================================
     INVALID_NOTIFICATION_REQUEST(400, "NT001", "잘못된 알림 요청입니다."),
     NOTIFICATION_NOT_FOUND(404, "NT002", "해당 알림을 찾을 수 없습니다."),

@@ -3,6 +3,7 @@ package com.ssginc.unnie.community.mapper;
 import com.ssginc.unnie.community.dto.comment.CommentRequest;
 import com.ssginc.unnie.community.dto.comment.CommentGetResponse;
 import com.ssginc.unnie.community.dto.comment.CommentGuestGetResponse;
+import com.ssginc.unnie.mypage.dto.community.MyPageCommentsResponse;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -27,4 +28,6 @@ public interface CommentMapper {
     int checkCommentAndAuthor(Map<String, Object> commentId);
 
     int deleteComment(Map<String, Object> comment);
+
+    List<MyPageCommentsResponse> getMyComments(long memberId);
 }

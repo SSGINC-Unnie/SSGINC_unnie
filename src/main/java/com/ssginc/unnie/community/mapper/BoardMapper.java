@@ -1,6 +1,7 @@
 package com.ssginc.unnie.community.mapper;
 
 import com.ssginc.unnie.community.dto.board.*;
+import com.ssginc.unnie.mypage.dto.community.MyPageBoardsResponse;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -25,4 +26,6 @@ public interface BoardMapper {
     List<BoardsGetResponse> getBoards(BoardsGetRequest request);
 
     int checkBoardAndAuthor(Map<String, Object> boardId);
+
+    List<MyPageBoardsResponse> getMyBoards(long memberId);
 }

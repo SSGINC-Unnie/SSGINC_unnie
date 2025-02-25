@@ -323,10 +323,26 @@ VALUES
 
 
 -- =================================== INSERT ====================================================
-        SELECT EXISTS(
-            SELECT 1
-            FROM `like`
-            WHERE like_target_type = "BOARD"
-              AND like_target_id = 1
-              AND like_member_id = 1
-        ) AS liked;
+        SELECT
+            r.report_id AS reportId,
+            CASE
+                WHEN r.report_target_type = 1 THEN '게시글'
+                WHEN r.report_target_type = 2 THEN '댓글'
+                WHEN r.report_target_type = 3 THEN '리뷰'
+                END AS reportTargetType,
+            r.report_target_id AS reportTargetId,
+            r.report_member_id AS reportMemberId,
+            r.report_reason AS reportReason,
+            DATE_FORMAT(r.report_created_at, '%Y-%m-%dT%H:%i:%s') AS reportCreatedAt,
+            DATE_FORMAT(r.report_rosolved_at, '%Y-%m-%dT%H:%i:%s') AS reportRosolvedAt,
+            CASE
+                WHEN r.report_status = 0 THEN '미처리'
+                WHEN r.report_status = 1 THEN '처리 완료'
+                WHEN r.report_status = 2 THEN '무시'
+                END AS status
+        FROM report r
+        WHERE
+            (NULL IS NULL OR r.report_status = 1) AND
+            r.report_created_at BETWEEN "2025-01-01" AND "2025-02-25"
+        ORDER BY r.report_created_at DESC;
+    

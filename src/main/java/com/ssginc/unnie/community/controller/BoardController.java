@@ -34,9 +34,7 @@ public class BoardController {
      * @return insert 한 데이터의 id
      */
     @PostMapping("")
-    public ResponseEntity<ResponseDto<Map<String, String>>> createBoard(BoardCreateRequest boardRequest,
-                                                                        @AuthenticationPrincipal UserDetails userDetails) {
-        log.info("userDetails: {}", userDetails);
+    public ResponseEntity<ResponseDto<Map<String, String>>> createBoard(BoardCreateRequest boardRequest) {
         return ResponseEntity.ok(
                 new ResponseDto<>(HttpStatus.CREATED.value(), "게시글 작성에 성공했습니다.", Map.of("boardId", boardService.createBoard(boardRequest)))
         );
@@ -78,12 +76,6 @@ public class BoardController {
 
     /**
      * 비회원 게시글 목록 조회
-     * @param category 게시글 카테고리
-     * @param sort 게시글 정렬 방식(최신순/인기순)
-     * @param searchType 게시글 검색 방식(제목/내용)
-     * @param search 검색어
-     * @param page 현재 페이지 수
-     * @return 게시글 목록
      */
     @GetMapping("/guest")
     public ResponseEntity<ResponseDto<Map<String, Object>>> getBoardsGuest(

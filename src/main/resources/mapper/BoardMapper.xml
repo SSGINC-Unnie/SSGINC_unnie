@@ -93,6 +93,7 @@
             m.member_profile AS memberProfile,
             b.board_id AS boardId,
             b.board_title AS boardTitle,
+            b.board_thumbnail AS boardThumbnail,
             DATE_FORMAT(b.board_created_at, '%Y-%m-%d %H:%i:%s') AS boardCreatedAt,
             b.board_views AS boardViews,
             -- 좋아요 개수
@@ -117,6 +118,7 @@
             b.board_author AS boardAuthor,
             m.member_nickname AS memberNickname,
             m.member_profile AS memberProfile,
+            b.board_thumbnail AS boardThumbnail,
             b.board_id AS boardId,
             b.board_title AS boardTitle,
             DATE_FORMAT(b.board_created_at, '%Y-%m-%d %H:%i:%s') AS boardCreatedAt,
@@ -142,6 +144,24 @@
         ORDER BY
             CASE WHEN #{sort} = 'LATEST' THEN b.board_created_at END DESC,
             CASE WHEN #{sort} = 'POPULAR' THEN b.board_views END DESC
+    </select>
+
+    <!-- 나의 게시글 목록 조회  -->
+    <select id="getMyBoards" resultType="com.ssginc.unnie.mypage.dto.community.MyPageBoardsResponse">
+        SELECT
+            b.board_id AS boardId,
+            b.board_title AS boardTitle,
+            b.board_thumbnail AS boardThumbnail,
+            DATE_FORMAT(b.board_created_at, '%Y-%m-%d %H:%i:%s') AS boardCreatedAt,
+            b.board_views AS boardViews,
+            -- 좋아요 개수
+            (SELECT COUNT(like_id) FROM `like` l WHERE l.like_target_type = "BOARD" AND l.like_target_id = b.board_id) AS likeCount,
+            -- 댓글 개수
+            (SELECT COUNT(comment_id) FROM `comment` c WHERE c.comment_board_id = b.board_id) AS commentCount
+        FROM board b
+        WHERE b.board_author = #{memberId}
+          AND b.board_isactive = 1
+        ORDER BY b.board_created_at desc
     </select>
 
 </mapper>
