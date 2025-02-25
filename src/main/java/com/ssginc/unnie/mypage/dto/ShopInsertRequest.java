@@ -5,11 +5,10 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.sql.Time;
-import java.sql.Timestamp;
 
 @Data
 @Builder
-public class ShopCreateRequest {
+public class ShopInsertRequest {
     // 업체명
     private String shopName;
     // 업체 주소

@@ -7,11 +7,13 @@ import java.util.List;
 public interface ShopService {
     List<ShopResponse> selectShopByCategory(String category);
 
-    List<ShopDesignerResponse> getDesignersByShopId(long shopId);
+    List<ShopDesignerResponse> getDesignersByShopId(int shopId);
 
-    List<ShopProcedureResponse> getProceduresByShopId(long shopId);
+    List<ShopProcedureResponse> getProceduresByShopId(int shopId);
 
-    ShopInfoResponse getShopByShopId(long shopId);
+    ShopInfoResponse getShopByShopId(int shopId);
 
-    ShopDetailsResponse getShopDetailsByShopId(long shopId);
+    ShopDetailsResponse getShopDetailsByShopId(int shopId);
+
+    String createBookmark(ShopBookmarkRequest request);
 }

@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
@@ -45,14 +46,13 @@ public class MyPageShopServiceImpl implements MyPageShopService {
      */
 
     @Override
-    public String createShop(ShopCreateRequest request) throws URISyntaxException {
+    public String createShop(ShopInsertRequest request) throws URISyntaxException {
 
         BusinessVerificationRequest bizRequest = convertFromShopRequest(
                 request.getShopRepresentationName(),
                 request.getShopBusinessNumber(),
                 String.valueOf(request.getShopCreatedAt())
         );
-        System.out.println(bizRequest);
 
         boolean verified = isValidBusinessLicense(bizRequest);
         if(!verified) {
@@ -60,30 +60,24 @@ public class MyPageShopServiceImpl implements MyPageShopService {
             return "null";
         }
 
-        request = ShopCreateRequest.builder()
-                .shopTel(request.getShopTel())
-                .shopLocation(request.getShopLocation())
-                .shopCategory(request.getShopCategory())
-                .shopName(request.getShopName())
-                .shopIntroduction(request.getShopIntroduction())
-                .shopBusinessTime(request.getShopBusinessTime())
-                .shopClosedDay(request.getShopClosedDay())
-                .shopRepresentationName(request.getShopRepresentationName())
-                .shopBusinessNumber(request.getShopBusinessNumber())
-                .shopCreatedAt(request.getShopCreatedAt())
-                .shopMemberId(request.getShopMemberId())
-                .build();
 
         shopValidator.validate(request);
 
         boolean isDuplicateName = (myPageShopMapper.existsByShopName(request.getShopName()) > 0);
-        shopValidator.validateDuplicateShopName(isDuplicateName);
+        if (isDuplicateName) {
+            throw new UnnieShopException(ErrorCode.SHOP_ALREADY_EXISTS);
+        }
 
-        // 3) 전화번호 중복 검사
         boolean isDuplicatePhone = (myPageShopMapper.existsByShopTel(request.getShopTel()) > 0);
-        shopValidator.validateDuplicatePhoneNumber(isDuplicatePhone);
+        if (isDuplicatePhone) {
+            throw new UnnieShopException(ErrorCode.DUPLICATE_SHOP_TEL);
+        }
 
         int res = myPageShopMapper.insertShop(request);
+        if(res == 0)
+         {
+           throw new UnnieShopException(ErrorCode.SHOP_INSERT_FAILED);
+        }
             return String.valueOf(res);
 
     }
@@ -95,19 +89,14 @@ public class MyPageShopServiceImpl implements MyPageShopService {
      */
 
     @Override
-    public String createDesigner(DesignerCreateRequest request) {
-
-        request = DesignerCreateRequest.builder()
-                .designerShopId(request.getDesignerShopId())
-                .designerName(request.getDesignerName())
-                .designerIntroduction(request.getDesignerIntroduction())
-                .designerThumbnail(request.getDesignerThumbnail())
-                .build();
+    public String createDesigner(DesignerRequest request) {
 
         shopValidator.validateDesigner(request);
 
         boolean shopExists = (myPageShopMapper.existsByShopId(request.getDesignerShopId()) > 0);
-        shopValidator.validateShopReference(shopExists);
+        if(shopExists) {
+            throw new UnnieShopException(ErrorCode.SHOP_ALREADY_EXISTS);
+        }
 
         boolean isDuplicateDesigner = (myPageShopMapper.existsByDesignerName(request.getDesignerName()) > 0);
         if(isDuplicateDesigner) {
@@ -115,6 +104,10 @@ public class MyPageShopServiceImpl implements MyPageShopService {
         }
 
         int res = myPageShopMapper.insertDesigner(request);
+        if(res == 0)
+        {
+            throw new UnnieShopException(ErrorCode.DESIGNER_INSERT_FAILED);
+        }
 
         return String.valueOf(res);
     }
@@ -126,13 +119,8 @@ public class MyPageShopServiceImpl implements MyPageShopService {
      */
 
 
-    public String createProcedure(ProcedureCreateRequest request) {
+    public String createProcedure(ProcedureRequest request) {
 
-        request = ProcedureCreateRequest.builder()
-                .procedureDesignerId(request.getProcedureDesignerId())
-                .procedureName(request.getProcedureName())
-                .procedurePrice(request.getProcedurePrice())
-                .build();
 
         shopValidator.validateProcedure(request);
 
@@ -141,17 +129,169 @@ public class MyPageShopServiceImpl implements MyPageShopService {
             throw new UnnieShopException(ErrorCode.PROCEDURE_ALREADY_EXISTS);
         }
         boolean designerExists = (myPageShopMapper.existsByDesignerId(request.getProcedureDesignerId()) > 0);
-        shopValidator.validateDesignerReference(designerExists);
-
+        if (designerExists) {
+            throw new UnnieShopException(ErrorCode.DESIGNER_NOT_FOUND);
+        }
 
         int res = myPageShopMapper.insertProcedure(request);
+        if(res == 0)
+        {
+            throw new UnnieShopException(ErrorCode.PROCEDURE_INSERT_FAILED);
+        }
+        // 트랜젝션 어노테이션 추가(lollback ~)
+        return String.valueOf(res);
+    }
+
+    /**
+     * ======================= 업체 수정 =======================
+     */
+
+    @Override
+    public String updateShop(ShopUpdateRequest request) {
+
+        shopValidator.validateRequiredFields(request);
+        shopValidator.validate(request);
+
+        if (request.getShopId() <= 0) {
+            throw new UnnieShopException(ErrorCode.SHOP_NOT_FOUND);
+        }
+
+        boolean isDuplicateName = (myPageShopMapper.existsByShopName(request.getShopName()) > 0);
+        if (isDuplicateName) {
+            throw new UnnieShopException(ErrorCode.SHOP_ALREADY_EXISTS);
+        }
+
+        boolean isDuplicatePhone = (myPageShopMapper.existsByShopTel(request.getShopTel()) > 0);
+        if (isDuplicatePhone) {
+            throw new UnnieShopException(ErrorCode.DUPLICATE_SHOP_TEL);
+        }
+
+
+
+        int res = myPageShopMapper.updateShop(request);
+        if (res == 0) {
+            throw new UnnieShopException(ErrorCode.SHOP_UPDATE_FAILED);
+        }
+        return String.valueOf(res);
+    }
+
+    /**
+     * ======================= 디자이너 수정 =======================
+     */
+
+
+    public String updateDesigner(DesignerRequest request) {
+
+        shopValidator.validateDesigner(request);
+
+        if(request.getDesignerShopId()<= 0) {
+            throw new UnnieShopException(ErrorCode.SHOP_NOT_FOUND);
+        }
+
+        boolean shopExists = (myPageShopMapper.existsByShopId(request.getDesignerShopId()) > 0);
+        if(shopExists) {
+            throw new UnnieShopException(ErrorCode.SHOP_ALREADY_EXISTS);
+        }
+
+        boolean isDuplicateDesigner = (myPageShopMapper.existsByDesignerName(request.getDesignerName()) > 0);
+        if(isDuplicateDesigner) {
+            throw new UnnieShopException(ErrorCode.DESIGNER_ALREADY_EXISTS);
+        }
+
+
+        int res = myPageShopMapper.updateDesigner(request);
+        if(res == 0) {
+            throw new UnnieShopException(ErrorCode.DESIGNER_UPDATE_FAILED);
+        }
 
         return String.valueOf(res);
     }
 
     /**
-     * 외부 API를 호출하여 사업자 진위 여부를 확인합니다.
+     * ======================= 시술 수정 =======================
      */
+
+    public String updateProcedure(ProcedureRequest request) {
+      shopValidator.validateProcedure(request);
+
+      if(request.getProcedureDesignerId()<=0) {
+          throw new UnnieShopException(ErrorCode.DESIGNER_NOT_FOUND);
+      }
+
+        boolean isDuplicateProcedure = (myPageShopMapper.existsByProcedureName(request.getProcedureName()) > 0);
+        if(isDuplicateProcedure) {
+            throw new UnnieShopException(ErrorCode.PROCEDURE_ALREADY_EXISTS);
+        }
+        boolean designerExists = (myPageShopMapper.existsByDesignerId(request.getProcedureDesignerId()) > 0);
+        if (designerExists) {
+            throw new UnnieShopException(ErrorCode.DESIGNER_NOT_FOUND);
+        }
+
+      int res = myPageShopMapper.updateProcedure(request);
+      if(res ==0) {
+          throw new UnnieShopException(ErrorCode.PROCEDURE_UPDATE_FAILED);
+      }
+
+      return String.valueOf(res);
+
+    }
+
+    /**
+     * ======================= 업체 삭제 =======================
+     */
+
+    @Override
+    @Transactional
+    public String deleteShop(int shopId) {
+        // shopId 유효성 검증
+        if (shopId <= 0) {
+            throw new UnnieShopException(ErrorCode.SHOP_NOT_FOUND);
+        }
+        int res = myPageShopMapper.deleteShopCascade(shopId);
+        if (res == 0) {
+            throw new UnnieShopException(ErrorCode.SHOP_DELETE_FAILED);
+        }
+        return String.valueOf(res);
+    }
+
+    /**
+     * ======================= 디자이너 삭제 =======================
+     */
+
+    @Override
+    public String deleteDesigner(int designerId) {
+        if (designerId <= 0) {
+            throw new UnnieShopException(ErrorCode.DESIGNER_NOT_FOUND);
+        }
+        int res = myPageShopMapper.deleteDesignerCascade(designerId);
+        if (res == 0) {
+            throw new UnnieShopException(ErrorCode.DESIGNER_DELETE_FAILED);
+        }
+        return String.valueOf(res);
+    }
+
+    /**
+     * ======================= 시술 삭제 =======================
+     */
+
+    @Override
+    public String deleteProcedure(int procedureId) {
+        if (procedureId <= 0) {
+            throw new UnnieShopException(ErrorCode.PROCEDURE_NOT_FOUND);
+        }
+        int res = myPageShopMapper.deleteProcedure(procedureId);
+        if (res == 0) {
+            throw new UnnieShopException(ErrorCode.PROCEDURE_DELETE_FAILED);
+        }
+        return String.valueOf(res);
+    }
+
+
+
+    /**
+     * ======================= 사업자 진위여부 확인 =======================
+     */
+
     public boolean isValidBusinessLicense(BusinessVerificationRequest request) throws URISyntaxException {
         // 1. URI 생성
         URI uri = new URI(baseUrl + serviceKey);
@@ -185,9 +325,15 @@ public class MyPageShopServiceImpl implements MyPageShopService {
         String valid = validationResponse.getValid();
         log.info("사업자 진위 확인 결과 valid: {}", valid);
 
+
+
         // "02"이면 유효하지 않은 것으로 처리, 그 외에는 유효한 것으로 간주
         return !"02".equals(valid);
     }
+
+    /**
+     * ======================= shop 데이터로 컨버트 =======================
+     */
 
     public BusinessVerificationRequest convertFromShopRequest(String shopRepresentationName,
                                                               String shopBusinessNumber,

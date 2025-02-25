@@ -6,13 +6,10 @@ import lombok.Data;
 import java.sql.Time;
 
 @Data
-public class ShopInsertResponse {
-
-    // 업체 번호
-    private Integer shopId;
+public class ShopUpdateRequest {
     // 업체명
     private String shopName;
-    // 업체 위치
+    // 업체 주소
     private String shopLocation;
     // 카테고리
     private ShopCategory shopCategory;
@@ -23,10 +20,7 @@ public class ShopInsertResponse {
     // 업체 소개
     private String shopIntroduction;
     // 휴무일
-    private Character ShopClosedDay;
-    // 사업자등록번호
-    private String shopBusinessNumber;
-    // 회원 번호
-    private Integer shopMemberId;
+    private Character shopClosedDay;
 
+    private int shopId;
 }

@@ -5,10 +5,11 @@ import lombok.Data;
 
 @Data
 @Builder
-public class ProcedureCreateRequest {
+public class ProcedureRequest {
 
     private int procedureDesignerId;
     private String procedureName;
     private int procedurePrice;
+    private int procedureId;
 
 }

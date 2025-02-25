@@ -62,6 +62,7 @@ public enum ErrorCode {
     INVALID_DESIGNER_NAME_FORMAT(400,"SH032","디자이너 이름 형식이 올바르지 않습니다."),
     INVALID_PROCEDURE_PRICE(400, "SH033", "시술 가격이 유효하지 않습니다."),
     DESIGNER_NOT_FOUND(404, "SH034","해당 디자이너를 찾을 수 없습니다."),
+    PROCEDURE_NOT_FOUND(404,"SH035","해당 시술을 찾을 수 없습니다,"),
 
     // 관리자(업체)
     ALREADY_APPROVED(409, "SH019", "이미 승인(또는 거부) 처리된 업체입니다."),

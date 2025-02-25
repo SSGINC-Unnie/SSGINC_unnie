@@ -33,8 +33,6 @@ public class ShopController {
         return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "업체 조회에 성공했습니다.", Map.of("shops", shops)));
     }
 
-
-
     /**
      * 업체 상세 보기
      */
@@ -42,7 +40,7 @@ public class ShopController {
     // 샵 기본 정보 조회 (홈 탭)
     @GetMapping("/shopdetails/home/{shopId}")
     public ResponseEntity<ResponseDto<Map<String, Object>>> getShopInfo(
-            @PathVariable long shopId) {
+            @PathVariable int shopId) {
         ShopInfoResponse shop = shopService.getShopByShopId(shopId);
         log.info("shop: {}", shop);
 
@@ -52,7 +50,7 @@ public class ShopController {
     // 디자이너 목록 조회 (디자이너 탭)
     @GetMapping("/shopdetails/designer/{shopId}")
     public ResponseEntity<ResponseDto<Map<String, Object>>> getDesignersByShopId(
-            @PathVariable long shopId) {
+            @PathVariable int shopId) {
         List<ShopDesignerResponse> designers = shopService.getDesignersByShopId(shopId);
         log.info("designers: {}", designers);
 
@@ -62,7 +60,7 @@ public class ShopController {
     // 시술 목록 조회 (시술 탭)
     @GetMapping("/shopdetails/procedure/{shopId}")
     public ResponseEntity<ResponseDto<Map<String, Object>>> getProceduresByShopId(
-            @PathVariable long shopId) {
+            @PathVariable int shopId) {
         List<ShopProcedureResponse> procedures = shopService.getProceduresByShopId(shopId);
         log.info("procedures: {}", procedures);
 
@@ -72,7 +70,7 @@ public class ShopController {
     // 정보 조회 (정보 탭)
     @GetMapping("/shopdetails/info/{shopId}")
     public ResponseEntity<ResponseDto<Map<String, Object>>> getShopDetailsByShopId(
-            @PathVariable long shopId) {
+            @PathVariable int shopId) {
         ShopDetailsResponse shopDetails = shopService.getShopDetailsByShopId(shopId);
         log.info("shopDetails: {}", shopDetails);
 
