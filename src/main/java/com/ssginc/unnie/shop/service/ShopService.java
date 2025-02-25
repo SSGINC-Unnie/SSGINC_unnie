@@ -1,18 +1,19 @@
 package com.ssginc.unnie.shop.service;
 
-import com.ssginc.unnie.shop.dto.ShopInfoResponse;
-import com.ssginc.unnie.shop.dto.ShopResponse;
-import com.ssginc.unnie.shop.vo.Designer;
-import com.ssginc.unnie.shop.vo.Procedure;
+import com.ssginc.unnie.shop.dto.*;
 
 import java.util.List;
 
 public interface ShopService {
     List<ShopResponse> selectShopByCategory(String category);
 
-    List<Designer> getDesignersByShopId(long shopId);
+    List<ShopDesignerResponse> getDesignersByShopId(int shopId);
 
-    List<Procedure> getProceduresByShopId(long shopId);
+    List<ShopProcedureResponse> getProceduresByShopId(int shopId);
 
-    ShopInfoResponse getShopByShopId(long shopId);
+    ShopInfoResponse getShopByShopId(int shopId);
+
+    ShopDetailsResponse getShopDetailsByShopId(int shopId);
+
+    String createBookmark(ShopBookmarkRequest request);
 }

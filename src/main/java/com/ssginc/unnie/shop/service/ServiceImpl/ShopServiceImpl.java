@@ -1,11 +1,11 @@
 package com.ssginc.unnie.shop.service.ServiceImpl;
 
-import com.ssginc.unnie.shop.dto.ShopInfoResponse;
-import com.ssginc.unnie.shop.dto.ShopResponse;
+import com.ssginc.unnie.common.exception.UnnieShopException;
+import com.ssginc.unnie.common.util.ErrorCode;
+import com.ssginc.unnie.common.util.validation.ShopValidator;
+import com.ssginc.unnie.shop.dto.*;
 import com.ssginc.unnie.shop.mapper.ShopMapper;
 import com.ssginc.unnie.shop.service.ShopService;
-import com.ssginc.unnie.shop.vo.Designer;
-import com.ssginc.unnie.shop.vo.Procedure;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,25 +16,50 @@ import java.util.List;
 public class ShopServiceImpl implements ShopService {
 
     private final ShopMapper shopMapper;
+    private final ShopValidator validator;
+
 
     @Override
     public List<ShopResponse> selectShopByCategory(String category) {
+        if (category == null || category.isEmpty()) {
+            throw new UnnieShopException(ErrorCode.SHOP_CATEGORY_NOT_FOUND);
+        }
         return shopMapper.selectShopByCategory(category);
     }
 
-
     @Override
-    public List<Designer> getDesignersByShopId(long shopId) {
+    public List<ShopDesignerResponse> getDesignersByShopId(int shopId) {
+        validator.validateShopId(shopId);
         return shopMapper.findDesignersByShopId(shopId);
     }
 
     @Override
-    public List<Procedure> getProceduresByShopId(long shopId) {
+    public List<ShopProcedureResponse> getProceduresByShopId(int shopId) {
+        validator.validateShopId(shopId);
         return shopMapper.findProceduresByShopId(shopId);
-    } // 수정은 하는데 수정일이 없음
+    }
 
     @Override
-    public ShopInfoResponse getShopByShopId(long shopId) {
-        return shopMapper.findShopById(shopId);
+    public ShopInfoResponse getShopByShopId(int shopId) {
+        validator.validateShopId(shopId);
+        ShopInfoResponse res = shopMapper.findShopById(shopId);
+        if (res == null) {
+            throw new UnnieShopException(ErrorCode.SHOP_NOT_FOUND);
+        }
+        return res;
     }
+
+    @Override
+    public ShopDetailsResponse getShopDetailsByShopId(int shopId) {
+        validator.validateShopId(shopId);
+        return shopMapper.findShopDetailsById(shopId);
+    }
+
+    @Override
+    public String createBookmark(ShopBookmarkRequest request) {
+        // bookmark 관련 로직 구현
+        return "";
+    }
+
+
 }

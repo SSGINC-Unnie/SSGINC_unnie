@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssginc.unnie.mypage.mapper.MyPageShopMapper">
+
+
+        <insert id="insertBusinessVerification" parameterType="com.ssginc.unnie.mypage.dto.BusinessVerificationRequest">
+            INSERT INTO shop
+                (shop_representation_name, shop_created_at, shop_business_number)
+            VALUES
+                (#{shopRepresentationName}, #{shopCreatedAt}, #{shopBusinessNumber})
+        </insert>
+
+    <insert id="insertShop" parameterType="com.ssginc.unnie.mypage.dto.ShopInsertRequest">
+        INSERT INTO shop
+        (shop_name,shop_location,shop_category,shop_business_time,shop_tel,shop_introduction,shop_closed_day,
+        shop_representation_name,shop_business_number,shop_created_at,shop_member_id)
+        VALUES
+            (#{shopName},#{shopLocation}, #{shopCategory},#{shopBusinessTime},#{shopTel},#{shopIntroduction},
+            #{shopClosedDay},#{shopRepresentationName},#{shopBusinessNumber},#{shopCreatedAt},#{shopMemberId})
+    </insert>
+
+
+
+    <insert id="insertDesigner" parameterType="com.ssginc.unnie.mypage.dto.DesignerRequest">
+        INSERT INTO designer
+            (designer_shop_id, designer_name, designer_introduction, designer_thumbnail)
+        VALUES
+            (#{designerShopId}, #{designerName}, #{designerIntroduction}, #{designerThumbnail})
+    </insert>
+
+    <insert id="insertProcedure" parameterType="com.ssginc.unnie.mypage.dto.ProcedureRequest">
+        INSERT INTO `procedure`
+        (procedure_designer_id,procedure_name,procedure_price)
+        VALUES
+            (#{procedureDesignerId},#{procedureName},#{procedurePrice})
+    </insert>
+    <update id="updateShop" parameterType="com.ssginc.unnie.mypage.dto.ShopUpdateRequest">
+        UPDATE shop
+        SET
+            shop_name = #{shopName},
+            shop_location = #{shopLocation},
+            shop_category = #{shopCategory},
+            shop_business_time = #{shopBusinessTime},
+            shop_tel = #{shopTel},
+            shop_introduction = #{shopIntroduction},
+            shop_closed_day = #{shopClosedDay}
+        WHERE shop_id = #{shopId}
+    </update>
+    <update id="updateDesigner" parameterType="com.ssginc.unnie.mypage.dto.DesignerRequest">
+        UPDATE designer
+        SET
+            designer_name = #{designerName},
+            designer_introduction = #{designerIntroduction},
+            designer_thumbnail = #{designerThumbnail}
+        WHERE designer_id = #{designerId}
+    </update>
+
+    <update id="updateProcedure" parameterType="com.ssginc.unnie.mypage.dto.ProcedureRequest">
+        UPDATE `procedure`
+        SET
+            procedure_name = #{procedureName},
+            procedure_price = #{procedurePrice}
+        WHERE procedure_id = #{procedureId}
+    </update>
+
+    <delete id="deleteDesigner" parameterType="int">
+        DELETE FROM designer
+        WHERE designer_id = #{designerId}
+    </delete>
+
+    <delete id="deleteProcedure" parameterType="int">
+        DELETE FROM procedure
+        WHERE procedure_id = #{procedureId}
+    </delete>
+
+    <delete id="deleteShop" parameterType="int">
+        DELETE FROM shop
+        WHERE shop_id = #{shopId}
+    </delete>
+    <delete id="deleteDesignerCascade" statementType="CALLABLE" parameterType="int">
+        { CALL deleteDesignerCascade(#{designerId}) }
+    </delete>
+    <select id="deleteShopCascade" statementType="CALLABLE" parameterType="int" resultType="int">
+        { CALL deleteShopCascade(#{shopId}) }
+    </select>
+
+
+    <select id="existsByShopName" parameterType="String" resultType="int">
+        SELECT COUNT(*)
+        FROM shop
+        WHERE shop_name = #{shopName}
+    </select>
+    <select id="existsByShopTel" parameterType="String" resultType="int">
+        SELECT COUNT(*)
+        FROM shop
+        WHERE shop_tel = #{shopTel}
+    </select>
+
+    <select id="existsByDesignerName" parameterType="String" resultType="int">
+        SELECT COUNT(*)
+        FROM designer
+        WHERE designer_name = #{designerName}
+    </select>
+
+    <select id="existsByProcedureName" parameterType="String" resultType="int">
+        SELECT COUNT(*)
+        FROM `procedure`
+        WHERE procedure_name = #{procedureName}
+    </select>
+
+    <select id="existsByDesignerId" resultType="int">
+        SELECT COUNT(*) FROM designer WHERE designer_id = #{designerId}
+    </select>
+    <select id="existsByShopId" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM shop WHERE shop_id = #{shopId}
+    </select>
+
+</mapper>
+
+
+
