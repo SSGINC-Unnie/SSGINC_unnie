@@ -32,7 +32,7 @@ public enum ErrorCode {
     LOGIN_FAILED(401, "ME021", "로그인에 실패했습니다."),
     EMAIL_INPUT_EMPTY(400, "ME022", "이메일 입력값이 누락되었습니다."),
     PHONE_INPUT_EMPTY(400, "ME023", "전화번호 입력값이 누락되었습니다."),
-
+    PASSWORD_UPDATE_FAILED(500, "ME024", "비밀번호 변경에 실패했습니다." ),
     //JWT 관련 에러
     INVALID_ACCESS_TOKEN(401, "JWT001", "유효하지 않은 Access Token입니다."),
     EXPIRED_ACCESS_TOKEN(401, "JWT002", "Access Token이 만료되었습니다."),

@@ -18,11 +18,28 @@
             #{memberPhone}, #{memberBirth}, #{memberGender}
         )
     </insert>
+
     <select id="selectMemberByEmail" resultType="com.ssginc.unnie.member.vo.Member">
         SELECT * FROM member WHERE member_email = #{memberEmail}
     </select>
+
     <select id="selectMemberById" resultType="com.ssginc.unnie.member.vo.Member">
         SELECT * FROM member WHERE member_id = #{memberId}
     </select>
+    <select id="selectMemberByNameAndPhone" resultType="java.lang.String">
+        SELECT member_email
+        FROM member
+        WHERE member_name = #{memberName}
+        AND member_phone = #{memberPhone}
+    </select>
+
+    <update id="updateMemberPassword">
+        UPDATE member
+        SET member_pw = #{memberPw},  member_updated_at = CASE
+            WHEN member_updated_at IS NULL THEN NOW()
+            ELSE CURRENT_TIMESTAMP
+            END
+        WHERE member_email = #{memberEmail}
+    </update>
 
 </mapper>

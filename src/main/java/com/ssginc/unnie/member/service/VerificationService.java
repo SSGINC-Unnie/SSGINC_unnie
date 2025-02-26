@@ -26,4 +26,11 @@ public interface VerificationService {
 
     // 인증 여부 확인 메서드
     boolean isVerified(String key);
+
+    // 아이디 찾기
+    String findId(String memberName, String memberPhone);
+    // 비밀번호 찾기
+    void findPassword(String memberEmail);
+
 }
+

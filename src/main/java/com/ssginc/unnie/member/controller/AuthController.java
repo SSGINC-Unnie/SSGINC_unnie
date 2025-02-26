@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -30,7 +31,7 @@ public class AuthController {
      * 로그인 API (JWT 발급) - JWT Access Token 및 Refresh Token 발급
      */
     @PostMapping("/login")
-    public ResponseEntity<ResponseDto<Map<String,String>>> login(@RequestBody MemberLoginRequest memberLoginRequest, HttpServletResponse response) {
+    public ResponseEntity<ResponseDto<Map<String,String>>> login(@RequestBody MemberLoginRequest memberLoginRequest, HttpServletResponse response ) {
 
         Map<String, String> tokens = authService.login(memberLoginRequest, response);
         return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "로그인에 성공했습니다.", tokens));
