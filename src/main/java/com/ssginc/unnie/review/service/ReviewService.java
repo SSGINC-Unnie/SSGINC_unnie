@@ -2,6 +2,7 @@ package com.ssginc.unnie.review.service;
 
 import com.ssginc.unnie.review.dto.ReviewCreateRequest;
 import com.ssginc.unnie.review.dto.ReviewGetResponse;
+import com.ssginc.unnie.review.dto.ReviewUpdateRequest;
 
 import java.util.List;
 
@@ -27,6 +28,22 @@ public interface ReviewService {
      * @return 키워드를 담은 DTO
      */
     List<String> selectReviewKeywordsByReviewId(long reviewId);
+
+    /**
+     * 리뷰 수정
+     * @param reviewUpdateRequest 리뷰 수정에 필요한 정보를 담은 DTO
+     * @return 수정된 리뷰의 ID
+     */
+    long updateReview(ReviewUpdateRequest reviewUpdateRequest);
+
+
+    /**
+     * 키워드 삭제
+     * @param reviewId
+     * @return 삭제 결과
+     */
+    int deleteReviewKeywords(long reviewId);
+
 
 //    List<ReviewGetResponse> getAllReviews();
 }

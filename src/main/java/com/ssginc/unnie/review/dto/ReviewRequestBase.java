@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.util.List;
+
 /**
  * 리뷰 요청 DTO
  */
@@ -20,4 +22,5 @@ public class ReviewRequestBase {
     private String reviewImage;     // 리뷰 대표 이미지
     private int reviewRate;         // 리뷰 별점
     private String reviewContent;   // 리뷰 내용
+    private List<Integer> keywordIds; //리뷰 키워드
 }

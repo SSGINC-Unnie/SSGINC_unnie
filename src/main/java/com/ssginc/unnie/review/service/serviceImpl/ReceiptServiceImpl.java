@@ -79,4 +79,16 @@ public class ReceiptServiceImpl implements ReceiptService {
                 receiptItems
         );
     }
+
+    @Override
+    public boolean isReceiptVerified(long receiptId) {
+        // 영수증이 DB에 존재하는지 조회 (예: findReceiptById)
+        ReceiptResponse receiptResponse = receiptMapper.findReceiptById(receiptId);
+        if (receiptResponse == null) {
+            return false;
+        }
+        // 예시: 승인번호가 "데이터 없음"이 아니면 인증된 것으로 가정
+        return receiptResponse.getReceiptApprovalNumber() != null
+                && !receiptResponse.getReceiptApprovalNumber().equals("데이터 없음");
+    }
 }

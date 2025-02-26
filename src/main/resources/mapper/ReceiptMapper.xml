@@ -9,7 +9,15 @@
         VALUES (#{receiptDate}, #{receiptAmount}, #{receiptBusinessNumber}, #{receiptApprovalNumber}, #{receiptShopName})
     </insert>
 
-    <select id="findReceiptById" resultType="com.ssginc.unnie.review.dto.ReceiptResponse">
-        SELECT * FROM RECEIPT WHERE RECEIPT_ID = #{receiptId}
+    <select id="findReceiptById" parameterType="long" resultType="com.ssginc.unnie.review.dto.ReceiptResponse">
+        SELECT
+            receipt_id AS receiptId,
+            receipt_date As receiptDate,
+            receipt_amount AS receiptAmount,
+            receipt_business_number AS receiptBusinessNumber,
+            receipt_approval_number AS receiptApprovalNumber,
+            receipt_shop_name AS receiptShopName
+        FROM receipt
+        WHERE receipt_id = #{receiptId}
     </select>
 </mapper>

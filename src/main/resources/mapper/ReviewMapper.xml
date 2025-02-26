@@ -4,7 +4,7 @@
 <mapper namespace="com.ssginc.unnie.review.mapper.ReviewMapper">
 
     <!-- 1) 리뷰 등록: review 테이블에 Insert 후 reviewId를 자동 매핑 -->
-    <insert id="insertReview" useGeneratedKeys="true" keyProperty="reviewId">
+    <insert id="insertReview" useGeneratedKeys="true" keyProperty="reviewId" parameterType="com.ssginc.unnie.review.dto.ReviewCreateRequest">
         INSERT INTO review
         (
             review_member_id,
@@ -23,8 +23,8 @@
             )
     </insert>
 
-    <!-- 2) 리뷰-키워드 연결 정보 등록: review_keyword 테이블에 (keyword_id, review_id) 저장 -->
-    <insert id="insertReviewKeywords">
+    <!-- 2) 리뷰-키워드 연결 정보 등록 (생성용) -->
+    <insert id="insertReviewKeywordsForCreate" parameterType="com.ssginc.unnie.review.dto.ReviewCreateRequest">
         INSERT INTO review_keyword (keyword_id, review_id)
         VALUES
         <foreach collection="keywordIds" item="keywordId" separator=",">
@@ -32,40 +32,16 @@
         </foreach>
     </insert>
 
-<!--    &lt;!&ndash; 3) 리뷰 조회 시 DTO와 매핑할 resultMap &ndash;&gt;-->
-<!--    <resultMap id="ReviewGetResponseMap" type="com.ssginc.unnie.review.dto.ReviewGetResponse">-->
-<!--        &lt;!&ndash; review 테이블 기본 키 &ndash;&gt;-->
-<!--        <id property="reviewId" column="REVIEW_ID"/>-->
-
-<!--        &lt;!&ndash; review 테이블 기본 정보 &ndash;&gt;-->
-<!--        <result property="reviewMemberId"     column="REVIEW_MEMBER_ID"/>-->
-<!--        <result property="reviewReceiptId"    column="REVIEW_RECEIPT_ID"/>-->
-<!--        <result property="reviewImage"        column="REVIEW_IMAGE"/>-->
-<!--        <result property="reviewRate"         column="REVIEW_RATE"/>-->
-<!--        <result property="reviewContent"      column="REVIEW_CONTENT"/>-->
-<!--        <result property="reviewDate"         column="REVIEW_DATE"/>-->
-
-<!--        &lt;!&ndash; member JOIN 결과 (작성자명) &ndash;&gt;-->
-<!--        <result property="memberNickName"   column="member_nickname"/>-->
-
-<!--        &lt;!&ndash; shop JOIN 결과 (상호명, 카테고리) &ndash;&gt;-->
-<!--        <result property="shopName"    column="shop_name"/>-->
-
-<!--        &lt;!&ndash; 키워드 목록: review_keyword → keyword JOIN 결과 &ndash;&gt;-->
-<!--        <collection property="reviewKeywords" ofType="java.lang.String"-->
-<!--                    select="selectReviewKeywordsByReviewId" column="review_id"/>-->
-<!--    </resultMap>-->
-
-    <!-- 4) 리뷰에 연결된 키워드 목록 조회 -->
-    <select id="selectReviewKeywordsByReviewId" resultType="java.lang.String">
+    <!-- 3) 리뷰에 연결된 키워드 목록 조회 -->
+    <select id="selectReviewKeywordsByReviewId" resultType="java.lang.String" parameterType="long">
         SELECT k.keyword
         FROM review_keyword rk
                  JOIN keyword k ON rk.keyword_id = k.keyword_id
         WHERE rk.review_id = #{reviewId}
     </select>
 
-    <!-- 5) 리뷰 Id를 통한 조회 쿼리 -->
-    <select id="getReviewById" resultType="com.ssginc.unnie.review.dto.ReviewGetResponse">
+    <!-- 4) 리뷰 상세 조회 쿼리 -->
+    <select id="getReviewById" resultType="com.ssginc.unnie.review.dto.ReviewGetResponse" parameterType="long">
         SELECT
             r.review_id AS reviewId,
             r.review_member_id AS reviewMemberId,
@@ -77,13 +53,35 @@
             m.member_nickname AS memberNickName,
             s.shop_name AS shopName
         FROM review r
-                 JOIN member m
-                      ON r.review_member_id = m.member_id
-                 JOIN receipt rc
-                      ON r.review_receipt_id = rc.receipt_id
-                 JOIN shop s
-                      ON rc.receipt_shop_id = s.shop_id
-        WHERE r.review_id = #{reviewId};
+                 JOIN member m ON r.review_member_id = m.member_id
+                 JOIN receipt rc ON r.review_receipt_id = rc.receipt_id
+                 JOIN shop s ON rc.receipt_shop_id = s.shop_id
+        WHERE r.review_id = #{reviewId}
     </select>
+
+    <!-- 5) 리뷰 수정 쿼리 -->
+    <update id="updateReview" parameterType="com.ssginc.unnie.review.dto.ReviewUpdateRequest" keyProperty="reviewId" keyColumn="review_id">
+        UPDATE review
+        SET
+            review_image = #{reviewImage},
+            review_rate = #{reviewRate},
+            review_content = #{reviewContent},
+            review_date = CURRENT_TIMESTAMP
+        WHERE review_id = #{reviewId}
+    </update>
+
+    <!-- 6) 리뷰 수정 시 기존의 키워드 관계 삭제 쿼리 -->
+    <delete id="deleteReviewKeywords" parameterType="long">
+        DELETE FROM review_keyword WHERE review_id = #{reviewId}
+    </delete>
+
+    <!-- 7) 리뷰-키워드 연결 정보 등록 (수정용) -->
+    <insert id="insertReviewKeywordsForUpdate" parameterType="com.ssginc.unnie.review.dto.ReviewUpdateRequest">
+        INSERT INTO review_keyword (keyword_id, review_id)
+        VALUES
+        <foreach collection="keywordIds" item="keywordId" separator=",">
+            (#{keywordId}, #{reviewId})
+        </foreach>
+    </insert>
 
 </mapper>
