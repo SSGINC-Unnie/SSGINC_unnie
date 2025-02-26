@@ -9,11 +9,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ShopProcedureResponse {
     // 시술 번호 (PK)
-    private Integer procedureId;
+    private int procedureId;
     // 시술 이름
     private String procedureName;
     // 시술 가격
-    private Integer procedurePrice;
+    private int procedurePrice;
     // 디자이너 번호 (FK)
-    private Integer procedureDesignerId;
+    private int procedureDesignerId;
 }

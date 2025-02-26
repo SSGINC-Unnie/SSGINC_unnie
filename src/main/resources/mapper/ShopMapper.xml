@@ -4,7 +4,7 @@
 <mapper namespace="com.ssginc.unnie.shop.mapper.ShopMapper">
     <insert id="insertBookmark" parameterType="com.ssginc.unnie.shop.dto.ShopBookmarkRequest">
         INSERT INTO bookmark VALUES
-        (#{bookmarkMemberId}, #{bookmarkShopId})
+            (#{bookmarkMemberId}, #{bookmarkShopId})
     </insert>
 
 
@@ -37,6 +37,7 @@
             s.shop_id,
             s.shop_name,
             s.shop_business_time,
+            s.shop_member_id,
             ROUND(AVG(re.review_rate), 2) AS avg_rate,
             s.shop_location,
             MAX(re.review_date) AS latest_review_date,
@@ -47,8 +48,9 @@
                  JOIN review re ON r.receipt_id = re.receipt_id
                  JOIN member m ON re.review_member_id = m.member_id
         WHERE s.shop_id = #{shopId}
-        GROUP BY s.shop_id, s.shop_name, s.shop_business_time, s.shop_location;
+        GROUP BY s.shop_id, s.shop_name, s.shop_business_time, s.shop_member_id, s.shop_location;
     </select>
+
 
     <select id="findShopDetailsById" resultType="com.ssginc.unnie.shop.dto.ShopDetailsResponse">
         SELECT
@@ -67,4 +69,3 @@
 
 
 </mapper>
-

@@ -2,7 +2,10 @@ package com.ssginc.unnie.common.util.validation;
 
 import com.ssginc.unnie.common.exception.UnnieShopException;
 import com.ssginc.unnie.common.util.ErrorCode;
-import com.ssginc.unnie.mypage.dto.*;
+import com.ssginc.unnie.mypage.dto.shop.DesignerRequest;
+import com.ssginc.unnie.mypage.dto.shop.ProcedureRequest;
+import com.ssginc.unnie.mypage.dto.shop.ShopInsertRequest;
+import com.ssginc.unnie.mypage.dto.shop.ShopUpdateRequest;
 import org.springframework.stereotype.Component;
 
 @Component

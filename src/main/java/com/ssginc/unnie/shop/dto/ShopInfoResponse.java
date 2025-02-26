@@ -14,4 +14,5 @@ public class ShopInfoResponse {
     private LocalDateTime latestReviewDate;
     private String latestReviewContent;
     private String latestMemberNickname;
+    private long shopMemberId;
 }
