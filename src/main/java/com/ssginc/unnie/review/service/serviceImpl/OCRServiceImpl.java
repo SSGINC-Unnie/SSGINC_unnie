@@ -28,10 +28,10 @@ public class OCRServiceImpl implements OCRService {
     @Override
     public JSONObject processOCR(MultipartFile file) {
         try {
-            // ✅ MultipartFile을 Base64 인코딩된 String으로 변환
+            // MultipartFile을 Base64 인코딩된 String으로 변환
             String base64Image = convertFileToBase64(file);
 
-            // ✅ JSON 요청 본문 구성
+            // JSON 요청 본문 구성
             JSONObject json = new JSONObject();
             json.put("version", "V2");
             json.put("requestId", UUID.randomUUID().toString());
@@ -40,34 +40,35 @@ public class OCRServiceImpl implements OCRService {
             JSONObject image = new JSONObject();
             image.put("format", "jpg");
             image.put("name", file.getOriginalFilename());
-            image.put("data", base64Image);  // 🔥 Base64 인코딩된 이미지 데이터 추가
+            image.put("data", base64Image);  // Base64 인코딩된 이미지 데이터 추가
 
             JSONArray images = new JSONArray();
             images.put(image);
             json.put("images", images);
             //{"images" : [json]}
             //{"images" : [{format:jpg, name:filename, data:dsklfjsdflsfj}]}
-            //{version: V2, requestId: dkslfkdsfd, timestamp:20250115, images: [{~~~}]}            // ✅ HTTP 요청 헤더 설정
+            //{version: V2, requestId: dkslfkdsfd, timestamp:20250115, images: [{~~~}]}
+            // ✅ HTTP 요청 헤더 설정
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             headers.set("X-OCR-SECRET", secretKey);
 
             HttpEntity<String> requestEntity = new HttpEntity<>(json.toString(), headers);
 
-            // 🚀 API 요청 로그 출력
+            // API 요청 로그 출력
             log.info("OCR API 요청 URL: {}", OCR_URL);
             log.info("OCR API 요청 본문: {}", json.toString(2));
             log.info("OCR API 요청 헤더: {}", headers);
 
 
-            // ✅ OCR API 요청 보내기
+            // OCR API 요청 보내기
             ResponseEntity<String> responseEntity = restTemplate.exchange(
                     OCR_URL, HttpMethod.POST, requestEntity, String.class
             );
 
-            // 🚀 응답 상태 코드 출력
+            // 응답 상태 코드 출력
             log.info("OCR API 응답 코드: {}", responseEntity.getStatusCode());
-            // 🚀 응답 본문 출력
+            // 응답 본문 출력
             log.info("OCR API 원본 응답: {}", responseEntity.getBody());
 
             // ✅ JSON 변환

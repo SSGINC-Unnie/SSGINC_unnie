@@ -8,6 +8,7 @@
         VALUES (#{receiptId}, #{receiptItemName}, #{receiptItemPrice}, #{receiptItemQuantity})
     </insert>
 
+
     <select id="findItemsByReceiptId" resultType="com.ssginc.unnie.review.dto.ReceiptItemResponse">
         SELECT * FROM RECEIPT_ITEM WHERE RECEIPT_ID = #{receiptId}
     </select>

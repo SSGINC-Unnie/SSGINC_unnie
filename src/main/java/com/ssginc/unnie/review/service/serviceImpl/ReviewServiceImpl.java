@@ -1,12 +1,13 @@
 package com.ssginc.unnie.review.service.serviceImpl;
 
+import com.ssginc.unnie.common.util.validation.Validator;
 import com.ssginc.unnie.review.dto.ReviewCreateRequest;
 import com.ssginc.unnie.review.dto.ReviewGetResponse;
+import com.ssginc.unnie.review.dto.ReviewRequestBase;
 import com.ssginc.unnie.review.dto.ReviewUpdateRequest;
 import com.ssginc.unnie.review.mapper.ReviewMapper;
 import com.ssginc.unnie.review.service.ReceiptService;
 import com.ssginc.unnie.review.service.ReviewService;
-import com.ssginc.unnie.common.util.validation.ReviewValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,7 +22,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     private final ReviewMapper reviewMapper;
     private final ReceiptService receiptService;  // 영수증 인증 검증을 위한 서비스
-    private final ReviewValidator reviewValidator;  // 리뷰 유효성 검증을 위한 클래스
+    private final Validator<ReviewRequestBase> reviewValidator;  // 리뷰 유효성 검증을 위한 클래스
 
     /**
      * 리뷰 저장: review 테이블과 review_keyword 테이블에 데이터를 등록합니다.
@@ -31,7 +32,7 @@ public class ReviewServiceImpl implements ReviewService {
      * @return 생성된 리뷰의 ID
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public long createReview(ReviewCreateRequest reviewCreateRequest) {
 
         // 1. 영수증 인증 검증: 영수증이 인증되지 않았다면 리뷰 작성을 차단합니다.

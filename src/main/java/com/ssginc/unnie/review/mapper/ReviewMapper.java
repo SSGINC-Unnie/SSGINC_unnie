@@ -46,4 +46,12 @@ public interface ReviewMapper {
      * ReviewUpdateRequest의 keywordIds 리스트와 reviewId를 활용한다.
      */
     int insertReviewKeywordsForUpdate(ReviewUpdateRequest reviewUpdateRequest);
+
+    /**
+     *
+     * @param reviewId
+     * @return
+     */
+    int softDeleteReview(long reviewId);
+
 }
