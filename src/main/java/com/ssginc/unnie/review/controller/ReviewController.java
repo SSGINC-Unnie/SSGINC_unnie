@@ -1,5 +1,6 @@
 package com.ssginc.unnie.review.controller;
 
+import com.ssginc.unnie.common.config.MemberPrincipal;
 import com.ssginc.unnie.review.dto.ReviewCreateRequest;
 import com.ssginc.unnie.review.dto.ReviewGetResponse;
 import com.ssginc.unnie.common.util.ResponseDto;
@@ -9,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -109,5 +111,26 @@ public class ReviewController {
                     .collect(Collectors.toList());
         }
         return null;
+    }
+
+    /**
+     * 리뷰 소프트 딜리트 API
+     *
+     * @param reviewId         삭제할 리뷰의 ID
+     * @param memberPrincipal  현재 로그인한 사용자 정보
+     * @return 삭제 결과 응답 DTO
+     */
+    @PatchMapping("/{reviewId}")
+    public ResponseEntity<ResponseDto<Map<String, Object>>> softDeleteReview(
+            @PathVariable("reviewId") long reviewId,
+            @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
+
+        long memberId = memberPrincipal.getMemberId();
+        log.info("리뷰 삭제 요청. reviewId: {}, 요청자: {}", reviewId, memberId);
+
+        long deletedReviewId = reviewService.softDeleteReview(reviewId, memberId);
+        return ResponseEntity.ok(
+                new ResponseDto<>(HttpStatus.OK.value(), "리뷰 삭제 성공", Map.of("reviewId", deletedReviewId))
+        );
     }
 }

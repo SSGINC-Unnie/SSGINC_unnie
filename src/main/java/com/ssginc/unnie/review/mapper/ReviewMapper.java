@@ -47,11 +47,9 @@ public interface ReviewMapper {
      */
     int insertReviewKeywordsForUpdate(ReviewUpdateRequest reviewUpdateRequest);
 
-    /**
-     *
-     * @param reviewId
-     * @return
-     */
-    int softDeleteReview(long reviewId);
+    int checkReviewId(long reviewId);
 
+    Integer checkReviewAndAuthor(@Param("reviewId") long reviewId, @Param("memberId") long memberId);
+
+    int softDeleteReview(long reviewId);
 }

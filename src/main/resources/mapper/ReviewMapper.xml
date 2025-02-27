@@ -84,7 +84,7 @@
         </foreach>
     </insert>
 
-    <!-- 8) 리뷰 소프트 딜리트(작성자) -->
+    <!-- 8) 리뷰 소프트 딜리트 -->
     <update id="softDeleteReview" useGeneratedKeys="true" keyColumn="review_id" keyProperty="reviewId">
         update review
         set
@@ -93,6 +93,25 @@
         where
             review_id = #{reviewId}
     </update>
+
+    <select id="checkReviewId" resultType="int">
+        SELECT COUNT(*)
+        FROM review
+        WHERE review_id = #{reviewId}
+          AND review_status = 0
+    </select>
+
+    <select id="checkReviewAndAuthor" resultType="java.lang.Integer">
+        SELECT
+            CASE
+                WHEN COUNT(review_id) = 0 THEN -1
+                WHEN review_member_id != #{memberId} THEN 0
+                ELSE 1
+                END AS ownership
+        FROM review
+        WHERE review_id = #{reviewId}
+          AND review_status = 0
+    </select>
 
 
 </mapper>

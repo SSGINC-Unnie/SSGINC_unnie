@@ -124,4 +124,38 @@ public class ReviewServiceImpl implements ReviewService {
     public int deleteReviewKeywords(long reviewId) {
         return reviewMapper.deleteReviewKeywords(reviewId);
     }
+
+    /**
+     * 리뷰 소프트 딜리트(삭제 요청한 회원과 작성자가 일치하는 경우에만 처리)
+     *
+     * @param reviewId  삭제할 리뷰의 ID
+     * @param memberId  삭제 요청한 회원의 ID
+     * @return 삭제 처리된 리뷰의 ID
+     */
+    @Transactional
+    @Override
+    public long softDeleteReview(long reviewId, long memberId) {
+        // 1. 리뷰 존재 여부 확인
+        int reviewCount = reviewMapper.checkReviewId(reviewId);
+        if (reviewCount == 0) {
+            log.error("리뷰가 존재하지 않거나 이미 삭제되었습니다. reviewId: {}", reviewId);
+            throw new IllegalArgumentException("리뷰를 찾을 수 없습니다.");
+        }
+
+        // 2. 리뷰 작성자와 삭제 요청자 일치 여부 확인
+        Integer ownership = reviewMapper.checkReviewAndAuthor(reviewId, memberId);
+        if (ownership == null || ownership == -1) {
+            log.error("리뷰가 존재하지 않습니다. reviewId: {}", reviewId);
+            throw new IllegalArgumentException("리뷰를 찾을 수 없습니다.");
+        }
+        if (ownership == 0) {
+            log.error("리뷰 작성자와 삭제 요청자가 일치하지 않습니다. reviewId: {}, memberId: {}", reviewId, memberId);
+            throw new IllegalArgumentException("리뷰 삭제 권한이 없습니다.");
+        }
+
+        // 3. 리뷰 소프트 딜리트 수행
+        reviewMapper.softDeleteReview(reviewId);
+        log.info("✅ 리뷰 소프트 딜리트 완료. reviewId: {}", reviewId);
+        return reviewId;
+    }
 }

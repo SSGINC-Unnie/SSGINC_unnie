@@ -3,6 +3,7 @@ package com.ssginc.unnie.review.service;
 import com.ssginc.unnie.review.dto.ReviewCreateRequest;
 import com.ssginc.unnie.review.dto.ReviewGetResponse;
 import com.ssginc.unnie.review.dto.ReviewUpdateRequest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -43,6 +44,9 @@ public interface ReviewService {
      * @return 삭제 결과
      */
     int deleteReviewKeywords(long reviewId);
+
+    @Transactional
+    long softDeleteReview(long reviewId, long memberId);
 
 
 //    List<ReviewGetResponse> getAllReviews();
