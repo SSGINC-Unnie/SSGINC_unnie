@@ -15,20 +15,14 @@ import java.util.Map;
  * MemberPrincipal은 Member 엔티티를 감싸서 스프링 시큐리티에서 사용하는
  * UserDetails 인터페이스를 구현하는 커스텀 클래스입니다.
  */
-public class MemberPrincipal implements UserDetails, OAuth2User {
+public class MemberPrincipal implements UserDetails {
 
-    private Member member;
-    private OAuth2Response oAuth2Response;
-    private Map<String, Object> attributes;
+    private final Member member;
 
 
     //일반 로그인
     public MemberPrincipal(Member member) {
         this.member = member;
-    }
-
-    public MemberPrincipal(OAuth2Response oAuth2Response) {
-        this.oAuth2Response = oAuth2Response;
     }
 
     @Override
@@ -81,15 +75,5 @@ public class MemberPrincipal implements UserDetails, OAuth2User {
 
     public Member getMember() {
         return this.member;
-    }
-
-    @Override
-    public Map<String, Object> getAttributes() {
-        return attributes;
-    }
-
-    @Override
-    public String getName() {
-        return oAuth2Response.getName();
     }
 }

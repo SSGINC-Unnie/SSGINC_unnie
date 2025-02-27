@@ -18,6 +18,16 @@
             #{memberPhone}, #{memberBirth}, #{memberGender}
         )
     </insert>
+    <insert id="insertOAuthMember">
+        INSERT INTO member (
+            member_email, member_pw, member_name, member_nickname,
+            member_phone, member_birth, member_gender
+        ) VALUES (
+             #{memberEmail}, #{memberPw}, #{memberName}, #{memberNickname},
+             #{memberPhone}, #{memberBirth}, #{memberGender}
+        )
+
+    </insert>
 
     <select id="selectMemberByEmail" resultType="com.ssginc.unnie.member.vo.Member">
         SELECT * FROM member WHERE member_email = #{memberEmail}

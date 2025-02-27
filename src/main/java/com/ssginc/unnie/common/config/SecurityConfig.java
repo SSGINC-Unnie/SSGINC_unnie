@@ -1,7 +1,6 @@
 package com.ssginc.unnie.common.config;
 
 import com.ssginc.unnie.common.util.JwtFilter;
-import com.ssginc.unnie.member.service.serviceImpl.CustomOAuth2UserService;
 import com.ssginc.unnie.member.service.serviceImpl.MemberDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -23,7 +22,7 @@ public class SecurityConfig {
 
     private final MemberDetailsServiceImpl memberDetailsService;
     private final JwtFilter jwtFilter;
-    private final CustomOAuth2UserService customOAuth2UserService;
+   // private final CustomOAuth2UserService customOAuth2UserService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -56,10 +55,10 @@ public class SecurityConfig {
 //                        .deleteCookies("JSESSIONID", "accessToken")
 //                        .permitAll()
                 )
-                .oauth2Login((oauth2) -> oauth2
-                        .loginPage("/login")
-                        .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig.userService(customOAuth2UserService))
-                )
+//                .oauth2Login((oauth2) -> oauth2
+//                        .loginPage("/login")
+//                        .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig.userService(customOAuth2UserService))
+//                )
                 // 세션 사용 안 함 (JWT 기반 인증은 Stateless)
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

@@ -1,9 +1,11 @@
 package com.ssginc.unnie.member.controller;
 
 import com.ssginc.unnie.common.config.MemberPrincipal;
+import com.ssginc.unnie.common.util.JwtUtil;
 import com.ssginc.unnie.common.util.ResponseDto;
 import com.ssginc.unnie.member.dto.MemberLoginRequest;
 import com.ssginc.unnie.member.service.AuthService;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +28,7 @@ import java.util.Map;
 public class AuthController {
 
     private final AuthService authService;
+    private final JwtUtil jwtUtil;
 
     /**
      * 로그인 API (JWT 발급) - JWT Access Token 및 Refresh Token 발급
@@ -50,5 +53,28 @@ public class AuthController {
 
         Map<String, String> tokens = authService.refreshAccessToken(refreshTokenCookie, response);
         return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "AccessToken 재발급 성공", tokens));
+    }
+
+    public Map<String, String> oauthToken( HttpServletResponse response,Long memberId, String role, String nickname) {
+        //jwt 토큰 생성
+        String accesstoken = jwtUtil.generateToken(memberId, role, nickname);
+
+        String refreshToken = jwtUtil.generateRefreshToken(memberId);
+
+        Cookie cookie = new Cookie("accessToken", accesstoken);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(3600);
+        response.addCookie(cookie);
+
+        Cookie cookie2 = new Cookie("refreshToken", refreshToken);
+        cookie2.setHttpOnly(true);
+        cookie2.setSecure(true);
+        cookie2.setPath("/");
+        cookie2.setMaxAge(21600);
+        response.addCookie(cookie2);
+
+        return Map.of("accessToken", accesstoken, "refreshToken", refreshToken);
     }
 }

@@ -16,6 +16,8 @@ public interface MemberMapper {
     int checkMemberNickname(String nickname);
     //회원 정보 추가
     int insertMember(MemberRegisterRequest member);
+    //OAuth 회원정보 저장
+    void insertOAuthMember(Member member);
     //회원 정보 조회
     Member selectMemberByEmail(String memberEmail);
     //회원번호(memberId)를 이용해 회원 정보를 조회
