@@ -31,7 +31,10 @@ public class CommentController {
     public ResponseEntity<ResponseDto<Map<String, Object>>> createComment(CommentRequest request,
                                                                           @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
 
-        long memberId = memberPrincipal.getMemberId();
+//        long memberId = memberPrincipal.getMemberId();
+        long memberId = 1;
+
+        log.info("CommentRequest = {}", request);
 
         return ResponseEntity.ok(
                 new ResponseDto<>(HttpStatus.CREATED.value(), "댓글 작성 성공", Map.of("commentId", commentService.createComment(request, memberId)))

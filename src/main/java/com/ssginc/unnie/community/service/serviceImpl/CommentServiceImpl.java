@@ -10,7 +10,13 @@ import com.ssginc.unnie.community.service.CommentService;
 import com.ssginc.unnie.common.exception.UnnieBoardException;
 import com.ssginc.unnie.common.exception.UnnieCommentException;
 import com.ssginc.unnie.common.util.ErrorCode;
+import com.ssginc.unnie.member.vo.Member;
+import com.ssginc.unnie.notification.dto.NotificationMessage;
+import com.ssginc.unnie.notification.dto.NotificationResponse;
+import com.ssginc.unnie.notification.service.ProducerService;
+import com.ssginc.unnie.notification.vo.NotificationType;
 import lombok.RequiredArgsConstructor;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +31,9 @@ import java.util.Map;
 public class CommentServiceImpl implements CommentService {
 
     private final CommentMapper commentMapper;
+
+    private final ProducerService producerService;
+
     /**
      * 댓글 작성 메서드
      */
@@ -41,6 +50,21 @@ public class CommentServiceImpl implements CommentService {
         if (res == 0) {
             throw new UnnieCommentException(ErrorCode.COMMENT_CREATE_FAILED);
         }
+
+        NotificationResponse notiRes = commentMapper.getBoardAuthorIdByCommentId(request.getCommentId());
+
+        if (notiRes == null) {
+            throw new UnnieCommentException(ErrorCode.NOTIFICATION_SERVICE_ERROR);
+        }
+
+        // 카프카 메세지 생성
+        NotificationMessage msg = NotificationMessage.builder()
+                .notificationMemberId(notiRes.getReceiverId())
+                .notificationType(NotificationType.COMMENT)
+                .notificationContents(String.format("[%s]님이 [%s]글에 댓글을 남겼어요", notiRes.getReceiverNickname(), notiRes.getTargetTitle()))
+                .build();
+
+        producerService.createNotification(msg);
 
         return request.getCommentId();
     }

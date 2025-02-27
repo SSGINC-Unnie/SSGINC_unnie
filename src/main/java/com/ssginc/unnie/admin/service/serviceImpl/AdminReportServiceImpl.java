@@ -14,6 +14,7 @@ import com.ssginc.unnie.report.mapper.ReportMapper;
 import com.ssginc.unnie.report.vo.ReportReason;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -93,6 +94,9 @@ public class AdminReportServiceImpl implements AdminReportService {
         return res;
     }
 
+    /**
+     * 신고 무시
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void ignoreReport(long reportId, String role) {

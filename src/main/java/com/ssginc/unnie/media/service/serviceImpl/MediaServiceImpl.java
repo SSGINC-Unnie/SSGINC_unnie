@@ -56,12 +56,6 @@ public class MediaServiceImpl implements MediaService {
         String fileUrn = uploadPath + newFileName;
 
 
-
-
-
-
-
-
         // 저장 경로 설정
         File destination = new File(fileUrn);
 
@@ -71,12 +65,6 @@ public class MediaServiceImpl implements MediaService {
 
             if(!destination.exists()) {
                 destination.mkdirs();
-
-
-
-
-
-
             }
             // 파일 저장
             file.transferTo(destination);
