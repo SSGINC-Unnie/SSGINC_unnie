@@ -7,7 +7,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 public interface MyPageShopService {
-    String createShop(ShopInsertRequest request) throws URISyntaxException;
+    String createShop(ShopInsertRequest request);
     String createDesigner(DesignerRequest request);
     String createProcedure(ProcedureRequest request);
     String updateShop(ShopUpdateRequest request, long memberId);

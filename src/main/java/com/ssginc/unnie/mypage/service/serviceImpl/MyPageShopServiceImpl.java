@@ -46,7 +46,7 @@ public class MyPageShopServiceImpl implements MyPageShopService {
      */
 
     @Override
-    public String createShop(ShopInsertRequest request) throws URISyntaxException {
+    public String createShop(ShopInsertRequest request) {
 
         BusinessVerificationRequest bizRequest = convertFromShopRequest(
                 request.getShopRepresentationName(),
@@ -54,7 +54,8 @@ public class MyPageShopServiceImpl implements MyPageShopService {
                 String.valueOf(request.getShopCreatedAt())
         );
 
-        boolean verified = isValidBusinessLicense(bizRequest);
+            boolean verified = isValidBusinessLicense(bizRequest);
+
         if(!verified) {
             log.error("Business license is not valid");
             return "null";
@@ -119,6 +120,7 @@ public class MyPageShopServiceImpl implements MyPageShopService {
      */
 
 
+    @Override
     public String createProcedure(ProcedureRequest request) {
 
 
@@ -375,6 +377,7 @@ public class MyPageShopServiceImpl implements MyPageShopService {
     /**
      * 업체 상세 조회
      */
+    @Override
     public MyShopDetailResponse getMyShopsDetail(int shopId) {
         MyShopDetailResponse shopdetail = myPageShopMapper.findShopNameById(shopId);
         if(shopdetail == null)
@@ -395,9 +398,15 @@ public class MyPageShopServiceImpl implements MyPageShopService {
      * ======================= 사업자 진위여부 확인 =======================
      */
 
-    public boolean isValidBusinessLicense(BusinessVerificationRequest request) throws URISyntaxException {
+    @Override
+    public boolean isValidBusinessLicense(BusinessVerificationRequest request) {
         // 1. URI 생성
-        URI uri = new URI(baseUrl + serviceKey);
+        URI uri = null;
+        try {
+            uri = new URI(baseUrl + serviceKey);
+        } catch (URISyntaxException e) {
+            throw new UnnieShopException(ErrorCode.URI_SYNTAX_ERROR);
+        }
 
         // 2. RestTemplate 및 헤더 설정
         RestTemplate restTemplate = new RestTemplate();

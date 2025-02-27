@@ -11,25 +11,25 @@
             (#{shopRepresentationName}, #{shopCreatedAt}, #{shopBusinessNumber})
     </insert>
 
-    <insert id="insertShop" parameterType="com.ssginc.unnie.mypage.dto.shop.ShopInsertRequest">
+    <insert id="insertShop" parameterType="com.ssginc.unnie.mypage.dto.shop.ShopInsertRequest" useGeneratedKeys="true" keyProperty="shopId">
         INSERT INTO shop
-        (shop_name,shop_location,shop_category,shop_business_time,shop_tel,shop_introduction,shop_closed_day,
-         shop_representation_name,shop_business_number,shop_created_at,shop_member_id)
+        (shop_name, shop_location, shop_category, shop_business_time, shop_tel, shop_introduction, shop_closed_day,
+         shop_representation_name, shop_business_number, shop_created_at, shop_member_id)
         VALUES
-            (#{shopName},#{shopLocation}, #{shopCategory},#{shopBusinessTime},#{shopTel},#{shopIntroduction},
-             #{shopClosedDay},#{shopRepresentationName},#{shopBusinessNumber},#{shopCreatedAt},#{shopMemberId})
+            (#{shopName}, #{shopLocation}, #{shopCategory}, #{shopBusinessTime}, #{shopTel}, #{shopIntroduction},
+             #{shopClosedDay}, #{shopRepresentationName}, #{shopBusinessNumber}, #{shopCreatedAt}, #{shopMemberId})
     </insert>
 
 
 
-    <insert id="insertDesigner" parameterType="com.ssginc.unnie.mypage.dto.shop.DesignerRequest">
+    <insert id="insertDesigner" parameterType="com.ssginc.unnie.mypage.dto.shop.DesignerRequest" useGeneratedKeys="true" keyProperty="designerId">
         INSERT INTO designer
         (designer_shop_id, designer_name, designer_introduction, designer_thumbnail)
         VALUES
             (#{designerShopId}, #{designerName}, #{designerIntroduction}, #{designerThumbnail})
     </insert>
 
-    <insert id="insertProcedure" parameterType="com.ssginc.unnie.mypage.dto.shop.ProcedureRequest">
+    <insert id="insertProcedure" parameterType="com.ssginc.unnie.mypage.dto.shop.ProcedureRequest" useGeneratedKeys="true" keyProperty="procedureId">
         INSERT INTO `procedure`
             (procedure_designer_id,procedure_name,procedure_price)
         VALUES

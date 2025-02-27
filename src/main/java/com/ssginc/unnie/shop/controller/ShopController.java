@@ -1,5 +1,7 @@
 package com.ssginc.unnie.shop.controller;
 
+import com.ssginc.unnie.common.exception.UnnieShopException;
+import com.ssginc.unnie.common.util.ErrorCode;
 import com.ssginc.unnie.common.util.ResponseDto;
 import com.ssginc.unnie.shop.dto.*;
 import com.ssginc.unnie.shop.service.ShopService;
@@ -25,11 +27,13 @@ public class ShopController {
 
     //위치보기에서 나오는 샵 조회
     // 메인 페이지에서 카테고리별 샵 조회 (예: "헤어샵", "네일샵" 등)
-    @GetMapping("/category/{category}")
+    @GetMapping("/category/{category:.+}")
     public ResponseEntity<ResponseDto<Map<String, Object>>> getShopByCategory(
             @PathVariable String category) {
         List<ShopResponse> shops = shopService.selectShopByCategory(category);
+        log.info("category: {}", category);
         log.info("shops: {}", shops);
+
         return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "업체 조회에 성공했습니다.", Map.of("shops", shops)));
     }
 
@@ -43,6 +47,7 @@ public class ShopController {
             @PathVariable int shopId) {
         ShopInfoResponse shop = shopService.getShopByShopId(shopId);
         log.info("shop: {}", shop);
+
 
         return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "샵 정보 조회에 성공했습니다.", Map.of("shop", shop)));
     }
@@ -63,6 +68,7 @@ public class ShopController {
             @PathVariable int shopId) {
         List<ShopProcedureResponse> procedures = shopService.getProceduresByShopId(shopId);
         log.info("procedures: {}", procedures);
+
 
         return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "시술 조회에 성공했습니다.", Map.of("procedures", procedures)));
     }
