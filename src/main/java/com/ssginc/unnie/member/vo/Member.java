@@ -28,7 +28,4 @@ public class Member {
     private int memberState; // 회원 상태 (0: 활성, 1: 정지, 2: 탈퇴)
     private LocalDateTime memberCreatedAt; // 가입일
     private LocalDateTime memberUpdatedAt; // 수정일
-
-    private String provider; //구글,네이버, 카카오
-    private String providerId; //로그인 했을 때 id (sub)
 }

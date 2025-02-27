@@ -1,5 +1,6 @@
 package com.ssginc.unnie.member.service.serviceImpl;
 
+import com.ssginc.unnie.common.exception.UnnieMemberFindException;
 import com.ssginc.unnie.common.exception.UnnieRegisterException;
 import com.ssginc.unnie.common.util.ErrorCode;
 import com.ssginc.unnie.common.util.generator.VerificationCodeGenerator;
@@ -19,12 +20,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 회원 본인인증 관련 서비스 구현체.
+ * 회원 본인인증 및 아이디/비밀번호 찾기 서비스 구현체.
  */
 @Slf4j
 @Service
@@ -35,6 +37,7 @@ public class VerificationServiceImpl implements VerificationService {
     private final MemberMapper memberMapper;
     private final JavaMailSender mailSender;       // 이메일 전송
     private final VerificationCodeGenerator verificationCodeGenerator; //인증번호(숫자 6자리) 생성
+    private final PasswordEncoder passwordEncoder; //비밀번호 암호화
 
     //이메일 인증
     @Value("${spring.mail.username}")
@@ -171,5 +174,59 @@ public class VerificationServiceImpl implements VerificationService {
     @Override
     public boolean isVerified(String key) {
         return verificationStatus.getOrDefault(key, false); // 인증 여부 반환 (없으면 false)
+    }
+
+    //아이디(이메일) 찾기
+    @Override
+    public String findId(String memberName, String memberPhone) {
+        memberValidator.validateName(memberName);  // 이름 유효성 검사
+        memberValidator.validatePhone(memberPhone); // 전화번호 유효성 검사
+
+        String email = memberMapper.selectMemberByNameAndPhone(memberName, memberPhone);
+        if (email == null || email.trim().isEmpty()) {
+            log.info("아이디 찾기 실패 - 이름: {}, 전화번호: {}", memberName, memberPhone);
+            throw new UnnieMemberFindException(ErrorCode.MEMBER_NOT_FOUND);
+        }
+
+        log.info("아이디 찾기 성공 - 이름: {}, 전화번호: {}, 이메일: {}", memberName, memberPhone, email);
+        return email;
+    }
+
+    //비밀번호 찾기 및 임시 비밀번호 발급
+    @Override
+    public void findPassword(String memberEmail) {
+        memberValidator.validateEmail(memberEmail);  // 이메일 유효성 검사
+
+        // 이메일 존재 여부 확인
+        if (memberMapper.checkMemberEmail(memberEmail) == 0) {
+            log.warn("[비밀번호 찾기 실패] 존재하지 않는 이메일: {}", memberEmail);
+            throw new UnnieMemberFindException(ErrorCode.MEMBER_NOT_FOUND);
+        }
+
+        // 6자리 임시 비밀번호 생성 및 암호화
+        //임시 비밀번호
+        String tempPassword = verificationCodeGenerator.generateVerificationCode();
+        //암호화
+        String encryptedPassword = passwordEncoder.encode(tempPassword);
+
+        // 비밀번호 업데이트
+        int updatedRows = memberMapper.updateMemberPassword(memberEmail, encryptedPassword);
+        if (updatedRows == 0) {
+            log.error("[비밀번호 업데이트 실패] 이메일: {}", memberEmail);
+            throw new UnnieMemberFindException(ErrorCode.PASSWORD_UPDATE_FAILED);
+        }
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(fromEmail);
+        message.setTo(memberEmail);
+        message.setSubject("[unnie] 임시 비밀번호 발급 안내");
+        message.setText("임시 비밀번호: " + tempPassword + "\n로그인 후 반드시 비밀번호를 변경해 주세요.");
+
+        try {
+            mailSender.send(message);
+            log.info("[임시 비밀번호 전송 완료] 이메일: {}", memberEmail);
+        } catch (MailException e) {
+            log.error("[임시 비밀번호 전송 실패] 이메일: {}", memberEmail, e);
+            throw new UnnieMemberFindException(ErrorCode.EMAIL_SEND_FAILED);
+        }
     }
 }

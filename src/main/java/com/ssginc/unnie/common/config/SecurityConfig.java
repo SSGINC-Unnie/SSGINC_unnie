@@ -34,7 +34,7 @@ public class SecurityConfig {
 //                        //회원 관련 모두 허용
 //                        .requestMatchers("/api/member/**").permitAll()
 //                        // 마이페이지 관련 - 로그인한 사용자만 접근
-//                        .requestMatchers("/api/mypage/**").authenticated()
+//                        .requestMatchers("/api/community/board/**").authenticated()
 //                        //관리자 전용 - ADMIN 권한 필요
 //                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
 //                        // 마이페이지 (업체 관리) - 업체 담당자만 접근
@@ -55,10 +55,10 @@ public class SecurityConfig {
 //                        .deleteCookies("JSESSIONID", "accessToken")
 //                        .permitAll()
                 )
-//                .oauth2Login(oauth2 -> oauth2
-//                        .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig.userService(customOAuth2UserService)))
-//                        .loginPage("/member/loginForm"))
-//                        .defaultSuccessUrl("/", true)) // 로그인 성공 후 이동할 페이지
+//                .oauth2Login((oauth2) -> oauth2
+//                        .loginPage("/login")
+//                        .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig.userService(customOAuth2UserService))
+//                )
                 // 세션 사용 안 함 (JWT 기반 인증은 Stateless)
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

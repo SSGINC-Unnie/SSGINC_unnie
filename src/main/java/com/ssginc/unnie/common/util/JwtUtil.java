@@ -60,8 +60,8 @@ public class JwtUtil {
      * Refresh Token 발급
      */
     public String generateRefreshToken(Long memberId) {
-        // 7일 = 7 * 24시간 * 60분 * 60초 * 1000ms
-        long refreshExpiration = 7 * 24 * 60 * 60 * 1000L;
+        // 6시간 = 6 * 60분 * 60초 * 1000ms
+        long refreshExpiration = 6 * 60 * 60 * 1000L;
 
         return Jwts.builder()
                 .setSubject(String.valueOf(memberId))      // 회원번호를 subject로

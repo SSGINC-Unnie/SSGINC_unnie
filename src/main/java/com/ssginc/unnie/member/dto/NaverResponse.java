@@ -7,7 +7,7 @@ public class NaverResponse implements OAuth2Response{
     private final Map<String,Object> attributes; //oauthUser.getAttributes()
 
     public NaverResponse(Map<String, Object> attributes) {
-        this.attributes = attributes;
+        this.attributes = (Map<String, Object>) attributes.get("response");
     }
 
     @Override
