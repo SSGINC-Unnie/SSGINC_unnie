@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ShopDesignerResponse {
     // 디자이너 번호
-    private Integer designerId;
+    private int designerId;
     // 디자이너 사진
     private String designerThumbnail;
     // 디자이너 이름
@@ -17,5 +17,5 @@ public class ShopDesignerResponse {
     // 디자이너 소개
     private String designerIntroduction;
     // 업체 번호 (FK)
-    private Integer designerShopId;
+    private int designerShopId;
 }
