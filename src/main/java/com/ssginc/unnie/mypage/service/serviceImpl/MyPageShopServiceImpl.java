@@ -360,6 +360,7 @@ public class MyPageShopServiceImpl implements MyPageShopService {
      * 내 업체 조회
      */
 
+    @Override
     public List<MyShopResponse> getMyShops(long memberId) {
         List<MyShopResponse> res = myPageShopMapper.findShopsByMemberId(memberId);
         if(res==null) {
@@ -374,6 +375,20 @@ public class MyPageShopServiceImpl implements MyPageShopService {
     /**
      * 업체 상세 조회
      */
+    public MyShopDetailResponse getMyShopsDetail(int shopId) {
+        MyShopDetailResponse shopdetail = myPageShopMapper.findShopNameById(shopId);
+        if(shopdetail == null)
+            throw new UnnieShopException(ErrorCode.SHOP_NOT_FOUND);
+        List<MyDesignerDetailResponse> designers = myPageShopMapper.findDesignersByShopId(shopId);
+        if (designers != null) {
+            for (MyDesignerDetailResponse designer : designers) {
+                List<MyProcedureDetailResponse> procedures = myPageShopMapper.findProceduresByDesignerId(designer.getDesignerId());
+                designer.setProcedures(procedures);
+            }
+        }
+        shopdetail.setDesigners(designers);
+        return shopdetail;
+    }
 
 
     /**

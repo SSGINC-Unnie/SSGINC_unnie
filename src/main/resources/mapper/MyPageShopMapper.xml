@@ -165,13 +165,23 @@
         WHERE d.designer_id = #{designerId}
     </select>
 
-    <select id="findShopsByMemberId" parameterType="int" resultType="com.ssginc.unnie.mypage.dto.shop.MyShopResponse">
+    <select id="findShopsByMemberId" parameterType="long" resultType="com.ssginc.unnie.mypage.dto.shop.MyShopResponse">
         SELECT shop_id, shop_name
         FROM shop
         WHERE shop_member_id = #{memberId}
     </select>
     <select id="findShopNameById" parameterType="int" resultType="com.ssginc.unnie.mypage.dto.shop.MyShopDetailResponse">
-        SELECT shop_id, shop_name
+        SELECT
+            shop_id,
+            shop_name,
+            shop_location,
+            shop_category,
+            shop_business_time,
+            shop_tel,
+            shop_introduction,
+            shop_closed_day,
+            shop_business_number,
+            shop_representation_name
         FROM shop
         WHERE shop_id = #{shopId}
     </select>

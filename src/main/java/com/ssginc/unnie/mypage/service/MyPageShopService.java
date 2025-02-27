@@ -21,5 +21,6 @@ public interface MyPageShopService {
                                                        String shopBusinessNumber,
                                                        String shopCreatedAt);
     List<MyShopResponse> getMyShops(long memberId);
+    MyShopDetailResponse getMyShopsDetail(int shopId);
 
 }

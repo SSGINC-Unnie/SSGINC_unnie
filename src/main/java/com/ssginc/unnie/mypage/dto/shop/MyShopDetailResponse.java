@@ -21,7 +21,7 @@ public class MyShopDetailResponse {
     // 업체 소개
     private String shopIntroduction;
     // 휴무일
-    private Character ShopClosedDay;
+    private Character shopClosedDay;
     // 사업자등록번호
     private String shopBusinessNumber;
     // 대표자명

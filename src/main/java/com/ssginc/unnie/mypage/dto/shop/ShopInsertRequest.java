@@ -9,6 +9,7 @@ import java.sql.Time;
 @Data
 @Builder
 public class ShopInsertRequest {
+    private int shopId;
     // 업체명
     private String shopName;
     // 업체 주소
