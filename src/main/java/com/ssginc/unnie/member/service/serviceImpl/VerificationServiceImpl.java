@@ -17,6 +17,7 @@ import net.nurigo.sdk.message.exception.NurigoUnknownException;
 import net.nurigo.sdk.message.model.Message;
 import net.nurigo.sdk.message.service.DefaultMessageService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -24,6 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 회원 본인인증 및 아이디/비밀번호 찾기 서비스 구현체.
@@ -38,6 +40,7 @@ public class VerificationServiceImpl implements VerificationService {
     private final JavaMailSender mailSender;       // 이메일 전송
     private final VerificationCodeGenerator verificationCodeGenerator; //인증번호(숫자 6자리) 생성
     private final PasswordEncoder passwordEncoder; //비밀번호 암호화
+    private final RedisTemplate<String, String> redisTemplate;
 
     //이메일 인증
     @Value("${spring.mail.username}")
@@ -74,7 +77,10 @@ public class VerificationServiceImpl implements VerificationService {
         }
 
         String verificationNum = verificationCodeGenerator.generateVerificationCode(); // 6자리 인증번호 생성
-        verificationCode.put(email, verificationNum); //인증번호 메모리에 저장
+        //verificationCode.put(email, verificationNum); //인증번호 메모리에 저장
+
+        // Redis에 인증번호 저장 (key: "email:{email}", 만료시간 3분)
+        redisTemplate.opsForValue().set("email:" + email, verificationNum, 3, TimeUnit.MINUTES);
 
         // 이메일 전송
         SimpleMailMessage message = new SimpleMailMessage(); //메시지 생성
@@ -100,7 +106,10 @@ public class VerificationServiceImpl implements VerificationService {
     //입력된 이메일 인증번호 검증
     @Override
     public boolean verifyEmailCode(String email, String code) {
-        String storedCode = verificationCode.get(email); // 메모리에서 코드 조회
+        //String storedCode = verificationCode.get(email); // 메모리에서 코드 조회
+
+        // Redis에서 저장된 인증번호 조회
+        String storedCode = redisTemplate.opsForValue().get("email:" + email);
 
         if (storedCode != null && storedCode.equals(code)) {
             verificationCode.remove(email); // 인증 성공 시 제거
@@ -128,7 +137,10 @@ public class VerificationServiceImpl implements VerificationService {
 
         //인증번호 생성 및 저장
         String verificationNum = verificationCodeGenerator.generateVerificationCode(); // 6자리 인증번호 생성
-        verificationCode.put(phoneNum, verificationNum); //인증번호 메모리에 저장
+        //verificationCode.put(phoneNum, verificationNum); //인증번호 메모리에 저장
+
+        // Redis에 전화번호 인증번호 저장 (key: "phone:{phoneNum}", 만료시간 3분)
+        redisTemplate.opsForValue().set("phone:" + phoneNum, verificationNum, 3, TimeUnit.MINUTES);
 
         DefaultMessageService messageService = NurigoApp.INSTANCE.initialize(smsApiKey, smsApiSecret, "https://api.coolsms.co.kr");
 
@@ -157,7 +169,9 @@ public class VerificationServiceImpl implements VerificationService {
     @Override
     public boolean verifyPhoneCode(String phone, String code) {
         String phoneNum = phone.replace("-", "");
-        String storedCode = verificationCode.get(phoneNum); // 메모리에서 코드 조회
+        //String storedCode = verificationCode.get(phoneNum); // 메모리에서 코드 조회
+
+        String storedCode = redisTemplate.opsForValue().get("phone:" + phoneNum);
 
         if (storedCode != null && storedCode.equals(code)) {
             verificationCode.remove(phoneNum); // 인증 성공 시 제거
