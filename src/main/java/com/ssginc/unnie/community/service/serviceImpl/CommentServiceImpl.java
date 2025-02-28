@@ -32,8 +32,6 @@ public class CommentServiceImpl implements CommentService {
 
     private final CommentMapper commentMapper;
 
-    private final ProducerService producerService;
-
     /**
      * 댓글 작성 메서드
      */
@@ -50,21 +48,6 @@ public class CommentServiceImpl implements CommentService {
         if (res == 0) {
             throw new UnnieCommentException(ErrorCode.COMMENT_CREATE_FAILED);
         }
-
-        NotificationResponse notiRes = commentMapper.getBoardAuthorIdByCommentId(request.getCommentId());
-
-        if (notiRes == null) {
-            throw new UnnieCommentException(ErrorCode.NOTIFICATION_SERVICE_ERROR);
-        }
-
-        // 카프카 메세지 생성
-        NotificationMessage msg = NotificationMessage.builder()
-                .notificationMemberId(notiRes.getReceiverId())
-                .notificationType(NotificationType.COMMENT)
-                .notificationContents(String.format("[%s]님이 [%s]글에 댓글을 남겼어요", notiRes.getReceiverNickname(), notiRes.getTargetTitle()))
-                .build();
-
-        producerService.createNotification(msg);
 
         return request.getCommentId();
     }
@@ -240,6 +223,7 @@ public class CommentServiceImpl implements CommentService {
      * 댓글 soft delete 메서드
      */
     @Override
+    @Transactional(rollbackFor = {Exception.class})
     public long deleteComment(long commentId, long memberId) {
         // 댓글 작성자와 로그인 유저 일치 여부 검증
         validateCommentOwnership(commentId, memberId);
@@ -251,5 +235,11 @@ public class CommentServiceImpl implements CommentService {
         }
 
         return res;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public NotificationResponse getBoardAuthorIdByCommentId(long commentBoardId) {
+        return commentMapper.getBoardAuthorIdByCommentId(commentBoardId);
     }
 }

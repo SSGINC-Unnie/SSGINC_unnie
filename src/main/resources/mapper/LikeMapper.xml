@@ -34,6 +34,45 @@
         WHERE like_id = #{likeId}
     </select>
 
+    <!-- 좋아요 타켓 타입과 타겟 식별번호로 타겟 대상 작성자 정보 가져오기   -->
+    <select id="getLikeTargetMemberInfoByTargetInfo"
+            resultType="com.ssginc.unnie.notification.dto.NotificationResponse">
+        SELECT
+            m.member_id AS receiverId,
+            m.member_nickname AS receiverNickname,
+            CASE
+                WHEN #{likeTargetType} = 'BOARD' THEN
+                    (SELECT b.board_title FROM board b WHERE b.board_id = #{likeTargetId})
+                WHEN #{likeTargetType} = 'COMMENT' THEN
+                    (SELECT c.comment_contents FROM comment c WHERE c.comment_id = #{likeTargetId})
+                WHEN #{likeTargetType} = 'REVIEW' THEN
+                    (SELECT r.review_content FROM review r WHERE r.review_id = #{likeTargetId})
+            END AS targetTitle
+        FROM member m
+        WHERE m.member_id = (
+            CASE
+                WHEN #{likeTargetType} = 'BOARD' THEN
+                    (SELECT b.board_author FROM board b WHERE b.board_id = #{likeTargetId})
+                WHEN #{likeTargetType} = 'COMMENT' THEN
+                    (SELECT c.comment_member_id FROM comment c WHERE c.comment_id = #{likeTargetId})
+                WHEN #{likeTargetType} = 'REVIEW' THEN
+                    (SELECT s.shop_member_id
+                     FROM review r
+                        JOIN receipt re ON (r.review_receipt_id = re.receipt_id)
+                        JOIN shop s ON (re.receipt_shop_id = s.shop_id)
+                     WHERE r.review_id = #{likeTargetId})
+                END
+            )
+    </select>
+
+    <!-- 댓글 좋아요 시 댓글 달린 게시글 식별 번호 가져옴   -->
+    <select id="getBoardIdByCommentTargetId" resultType="java.lang.Long">
+        SELECT c.comment_board_id
+        FROM `like` l
+            JOIN comment c ON (l.like_target_id = c.comment_id)
+        WHERE c.comment_isactive = 1
+    </select>
+
     <!-- 좋아요 추가  -->
     <insert id="createLike" useGeneratedKeys="true" keyProperty="likeId" keyColumn="like_id">
         INSERT INTO `like`

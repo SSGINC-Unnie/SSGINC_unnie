@@ -1,13 +1,14 @@
 package com.ssginc.unnie.notification.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * 응답 전용 DTO
  */
-@Getter
-@Setter
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class NotificationResponse {
     private long receiverId;
     private String receiverNickname;

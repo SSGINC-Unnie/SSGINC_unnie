@@ -4,6 +4,8 @@ import com.github.pagehelper.PageInfo;
 import com.ssginc.unnie.admin.dto.report.AdminReportDeleteRequest;
 import com.ssginc.unnie.admin.dto.report.AdminReportDetailResponse;
 import com.ssginc.unnie.admin.dto.report.AdminReportsResponse;
+import com.ssginc.unnie.notification.dto.NotificationMessage;
+import com.ssginc.unnie.notification.dto.NotificationResponse;
 
 /**
  * 관리자 신고 관리 인터페이스
@@ -16,4 +18,8 @@ public interface AdminReportService {
     void ignoreReport(long reportId, String role);
 
     void softDeleteReportById(AdminReportDeleteRequest reportId, String role);
+
+    NotificationResponse getReportTargetMemberInfoByTargetInfo(AdminReportDeleteRequest report);
+
+    NotificationMessage createNotificationMsg(AdminReportDeleteRequest report, NotificationResponse response);
 }

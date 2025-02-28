@@ -20,4 +20,19 @@
          #{notificationMemberId}
         )
     </insert>
+
+    <select id="getMyNotificationsByMemberId"
+            resultType="com.ssginc.unnie.notification.dto.NotificationMessage">
+        SELECT
+            notification_contents,
+            notification_urn
+        FROM
+            `notification`
+        WHERE
+            notification_member_id = #{memberId}
+         AND
+            notification_isread = 0
+        ORDER BY
+            notification_created_at DESC
+    </select>
 </mapper>

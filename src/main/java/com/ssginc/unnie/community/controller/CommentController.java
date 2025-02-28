@@ -4,6 +4,11 @@ import com.ssginc.unnie.common.config.MemberPrincipal;
 import com.ssginc.unnie.community.dto.comment.CommentRequest;
 import com.ssginc.unnie.community.service.CommentService;
 import com.ssginc.unnie.common.util.ResponseDto;
+import com.ssginc.unnie.notification.dto.NotificationMessage;
+import com.ssginc.unnie.notification.dto.NotificationResponse;
+import com.ssginc.unnie.notification.service.ProducerService;
+import com.ssginc.unnie.notification.vo.Notification;
+import com.ssginc.unnie.notification.vo.NotificationType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -23,6 +28,7 @@ import java.util.Map;
 public class CommentController {
 
     private final CommentService commentService;
+    private final ProducerService producerService;
 
     /**
      * 댓글 작성 api
@@ -31,10 +37,19 @@ public class CommentController {
     public ResponseEntity<ResponseDto<Map<String, Object>>> createComment(CommentRequest request,
                                                                           @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
 
-//        long memberId = memberPrincipal.getMemberId();
-        long memberId = 1;
+        long memberId = memberPrincipal.getMemberId();
 
-        log.info("CommentRequest = {}", request);
+        NotificationResponse notificationResponse = commentService.getBoardAuthorIdByCommentId(request.getCommentBoardId());
+
+        // 카프카 메세지 생성
+        NotificationMessage msg = NotificationMessage.builder()
+                .notificationMemberId(notificationResponse.getReceiverId())
+                .notificationType(NotificationType.COMMENT)
+                .notificationContents(String.format("[%s]님이 [%s]글에 댓글을 남겼어요", notificationResponse.getReceiverNickname(), notificationResponse.getTargetTitle()))
+                .notificationUrn(String.format("/community/board/%d", request.getCommentBoardId()))
+                .build();
+
+        producerService.createNotification(msg);
 
         return ResponseEntity.ok(
                 new ResponseDto<>(HttpStatus.CREATED.value(), "댓글 작성 성공", Map.of("commentId", commentService.createComment(request, memberId)))
@@ -48,6 +63,18 @@ public class CommentController {
     public ResponseEntity<ResponseDto<Map<String, Object>>> createReplyComment(CommentRequest request,
                                                                                @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
         long memberId = memberPrincipal.getMemberId();
+
+        NotificationResponse notificationResponse = commentService.getBoardAuthorIdByCommentId(request.getCommentBoardId());
+
+        // 카프카 메세지 생성
+        NotificationMessage msg = NotificationMessage.builder()
+                .notificationMemberId(notificationResponse.getReceiverId())
+                .notificationType(NotificationType.COMMENT)
+                .notificationContents(String.format("[%s]님이 [%s]댓글에 대댓글을 달았어요", notificationResponse.getReceiverNickname(), notificationResponse.getTargetTitle()))
+                .notificationUrn(String.format("/community/board/%d", request.getCommentBoardId()))
+                .build();
+
+        producerService.createNotification(msg);
 
         return ResponseEntity.ok(
                 new ResponseDto<>(HttpStatus.CREATED.value(), "대댓글 작성 성공", Map.of("commentId", commentService.createReplyComment(request, memberId)))
