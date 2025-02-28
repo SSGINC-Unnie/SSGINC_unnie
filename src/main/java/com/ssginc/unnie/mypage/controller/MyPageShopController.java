@@ -1,22 +1,25 @@
 package com.ssginc.unnie.mypage.controller;
 
+import com.ssginc.unnie.common.config.MemberPrincipal;
 import com.ssginc.unnie.common.util.ResponseDto;
-import com.ssginc.unnie.mypage.dto.DesignerRequest;
-import com.ssginc.unnie.mypage.dto.ProcedureRequest;
-import com.ssginc.unnie.mypage.dto.ShopInsertRequest;
-import com.ssginc.unnie.mypage.dto.ShopUpdateRequest;
+import com.ssginc.unnie.mypage.dto.shop.*;
 import com.ssginc.unnie.mypage.service.MyPageShopService;
+import com.ssginc.unnie.shop.dto.ShopInfoResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("api/mypage/")
 @RequiredArgsConstructor
+@Slf4j
 public class MyPageShopController {
 
     private final MyPageShopService myPageShopService;
@@ -25,20 +28,29 @@ public class MyPageShopController {
     /**
      * ================== 업체 등록 =======================
      */
-    @PostMapping("/shop/{memberId}")
+    @PostMapping("/shop")
     public ResponseEntity<ResponseDto<Map<String, String>>> createShop(
-            @PathVariable("memberId") int memberId,
+            @AuthenticationPrincipal MemberPrincipal memberPrincipal,
             @RequestBody ShopInsertRequest request) throws URISyntaxException {
-        request.setShopMemberId(memberId);
+        long memberId = memberPrincipal.getMemberId();
+        request.setShopMemberId((int) memberId);
+
+
         String shopId = myPageShopService.createShop(request);
         if (shopId == null || "null".equals(shopId)) {
             return new ResponseEntity<>(
-                    new ResponseDto<>(HttpStatus.BAD_REQUEST.value(),"사업자 진위 확인에 실패하였습니다.", Map.of("ShopId", "null")), HttpStatus.BAD_REQUEST);
+                    new ResponseDto<>(HttpStatus.BAD_REQUEST.value(),
+                            "사업자 진위 확인에 실패하였습니다.",
+                            Map.of("ShopId", "NULL")),
+                    HttpStatus.BAD_REQUEST);
         }
         return ResponseEntity.ok(
-                new ResponseDto<>(HttpStatus.CREATED.value(), "업체 등록이 완료되었습니다", Map.of("ShopId", shopId))
+                new ResponseDto<>(HttpStatus.CREATED.value(),
+                        "업체 등록이 완료되었습니다",
+                        Map.of("ShopId", shopId))
         );
     }
+
     /**
      * ================== 디자이너 등록 =======================
      */
@@ -48,7 +60,8 @@ public class MyPageShopController {
             @PathVariable("shopId") int shopId,
             @RequestBody DesignerRequest request) {
         request.setDesignerShopId(shopId);
-        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.CREATED.value(),"디자이너 등록이 완료되었습니다.",Map.of("DesignerId", myPageShopService.createDesigner(request))));
+        String designerid = myPageShopService.createDesigner(request);
+        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.CREATED.value(), "디자이너 등록이 완료되었습니다.", Map.of("DesignerId", designerid)));
     }
 
     /**
@@ -60,63 +73,85 @@ public class MyPageShopController {
             @RequestBody ProcedureRequest request,
             @PathVariable("designerId") int designerId) {
         request.setProcedureDesignerId(designerId);
-        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.CREATED.value(),"시술 등록이 완료되었습니다.",Map.of("ProcedureId", myPageShopService.createProcedure(request))));
+        String procedureid = myPageShopService.createProcedure(request);
+        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.CREATED.value(), "시술 등록이 완료되었습니다.", Map.of("ProcedureId", procedureid)));
     }
 
     /**
      * ======================= 업체 수정 ==========================
      */
-    @PutMapping("/shop/{shopId}")
+    @PutMapping("/manager/shop/{shopId}")
     public ResponseEntity<ResponseDto<Map<String, String>>> updateShop(
-        @PathVariable("shopId") int shopId,
-        @RequestBody ShopUpdateRequest request) {
+            @PathVariable("shopId") int shopId,
+            @RequestBody ShopUpdateRequest request,
+            @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
+        long memberId = memberPrincipal.getMemberId();
         request.setShopId(shopId);
-        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(),"업체 수정이 완료되었습니다.",Map.of("memberId", myPageShopService.updateShop(request))));
+        String result = myPageShopService.updateShop(request, memberId);
+        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "업체 수정이 완료되었습니다.", Map.of("memberId", result)));
     }
 
     /**
      * ======================= 디자이너 수정 ==========================
      */
 
-    @PutMapping("/designer/{designerId}")
+    @PutMapping("/manager/designer/{designerId}")
     public ResponseEntity<ResponseDto<Map<String, String>>> updateDesigner(
             @PathVariable("designerId") int designerId,
-            @RequestBody DesignerRequest request) {
+            @RequestBody DesignerRequest request,
+            @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
+        long MemberId = memberPrincipal.getMemberId();
         request.setDesignerId(designerId);
-        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(),"디자이너 수정이 완료되었습니다.",Map.of("shopId",myPageShopService.updateDesigner(request))));
+        String result = myPageShopService.updateDesigner(request, MemberId);
+        return ResponseEntity.ok(
+                new ResponseDto<>(HttpStatus.OK.value(), "디자이너 수정이 완료되었습니다.", Map.of("DesignerId", result))
+        );
     }
 
     /**
      * ======================= 시술 수정 ==========================
      */
 
-    @PutMapping("/procedure/{procedureId}")
+    @PutMapping("/manager/procedure/{designerId}/{procedureId}")
     public ResponseEntity<ResponseDto<Map<String, String>>> updateProcedure(
+            @PathVariable("designerId") int designerId,
             @PathVariable("procedureId") int procedureId,
-            @RequestBody ProcedureRequest request) {
+            @RequestBody ProcedureRequest request,
+            @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
+        request.setProcedureDesignerId(designerId);
         request.setProcedureId(procedureId);
-        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(),"시술 수정이 완료되었습니다.",Map.of("designerId",myPageShopService.updateProcedure(request))));
+        long memberId = memberPrincipal.getMemberId();
+        String result = myPageShopService.updateProcedure(request, memberId);
+        return ResponseEntity.ok(
+                new ResponseDto<>(HttpStatus.OK.value(), "시술 수정이 완료되었습니다.", Map.of("ProcedureId", result))
+        );
     }
 
     /**
      * ======================= 업체 삭제 ==========================
      */
 
-    @DeleteMapping("/shop/{shopId}")
+    @DeleteMapping("/manager/shop/{shopId}")
     public ResponseEntity<ResponseDto<Map<String, String>>> deleteShop(
-            @PathVariable("shopId") int shopId) {
-        String result = myPageShopService.deleteShop(shopId);
-        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "업체 삭제가 완료되었습니다.", Map.of("ShopId", result)));
+            @PathVariable("shopId") int shopId,
+            @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
+        long memberId = memberPrincipal.getMemberId();
+        String result = myPageShopService.deleteShop(shopId, memberId);
+        return ResponseEntity.ok(
+                new ResponseDto<>(HttpStatus.OK.value(), "업체 삭제가 완료되었습니다.", Map.of("ShopId", result))
+        );
     }
 
     /**
      * ======================= 디자이너 삭제 ==========================
      */
 
-    @DeleteMapping("/designer/{designerId}")
+    @DeleteMapping("/manager/designer/{designerId}")
     public ResponseEntity<ResponseDto<Map<String, String>>> deleteDesigner(
-            @PathVariable("designerId") int designerId) {
-        String result = myPageShopService.deleteDesigner(designerId);
+            @PathVariable("designerId") int designerId,
+            @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
+        long memberId = memberPrincipal.getMemberId();
+        String result = myPageShopService.deleteDesigner(designerId, memberId);
         return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "디자이너 삭제가 완료되었습니다.", Map.of("DesignerId", result)));
     }
 
@@ -124,12 +159,46 @@ public class MyPageShopController {
      * ======================= 시술 삭제 ==========================
      */
 
-    @DeleteMapping("/procedure/{procedureId}")
+    @DeleteMapping("/manager/procedure/{procedureId}")
     public ResponseEntity<ResponseDto<Map<String, String>>> deleteProcedure(
-            @PathVariable("procedureId") int procedureId) {
-        String result = myPageShopService.deleteProcedure(procedureId);
-        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "시술 삭제가 완료되었습니다.", Map.of("ProcedureId", result)));
+            @PathVariable("procedureId") int procedureId,
+            @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
+        long memberId = memberPrincipal.getMemberId();
+        {
+            String result = myPageShopService.deleteProcedure(procedureId, memberId);
+            return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "시술 삭제가 완료되었습니다.", Map.of("ProcedureId", result)));
+        }
+
     }
+
+    /**
+     * ======================= 내 업체 조회 =========================
+     */
+
+    @GetMapping("/manager/myshops")
+    public ResponseEntity<ResponseDto<Map<String, Object>>> getMyShops(
+            @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
+        long memberId = memberPrincipal.getMemberId(); // memberId 타입 확인
+        List<MyShopResponse> result = myPageShopService.getMyShops(memberId);
+        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "내 업체 목록 조회에 성공하였습니다.", Map.of("shopId",result)));
+    }
+
+    /**
+     * 업체 상세 조회
+     */
+
+    @GetMapping("/manager/shopdetail/{shopId}")
+    public ResponseEntity<ResponseDto<Map<String, Object>>> getMyShopDetail(
+            @PathVariable int shopId) {
+        MyShopDetailResponse shopdetail = myPageShopService.getMyShopsDetail(shopId);
+        if (shopdetail == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseDto<>(HttpStatus.NOT_FOUND.value(), "해당 업체를 찾을 수 없습니다.", null));
+        }
+
+        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "샵 정보 조회에 성공했습니다.", Map.of("shopId",shopdetail)));
+    }
+
 
 
 }

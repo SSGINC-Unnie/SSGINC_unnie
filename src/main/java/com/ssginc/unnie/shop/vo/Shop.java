@@ -48,4 +48,6 @@ public class Shop {
     private Double shopLongitude;
     // 승인여부
     private int shopStatus;
+    //리뷰 요약
+    private String reviewSummary;
 }

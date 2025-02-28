@@ -76,7 +76,7 @@ public class AuthServiceImpl implements AuthService {
             setCookie(response, "accessToken", accessToken, 3600); // 1시간
 
             // Refresh Token 쿠키 저장
-            setCookie(response, "refreshToken", refreshToken, 7 * 24 * 60 * 60); // 7일
+            setCookie(response, "refreshToken", refreshToken, 21600); // 6시간
 
             log.info("발급된 accessToken: {}", accessToken);
             log.info("발급된 refreshToken: {}", refreshToken);

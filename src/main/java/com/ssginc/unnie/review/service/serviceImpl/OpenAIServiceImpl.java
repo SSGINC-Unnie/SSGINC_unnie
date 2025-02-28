@@ -1,8 +1,8 @@
 package com.ssginc.unnie.review.service.serviceImpl;
 
-import com.ssginc.unnie.review.dto.ChatCompletionRequestDTO;
-import com.ssginc.unnie.review.dto.ChatCompletionResponseDTO;
-import com.ssginc.unnie.review.dto.ChatMessageDTO;
+import com.ssginc.unnie.review.dto.ChatCompletionRequest;
+import com.ssginc.unnie.review.dto.ChatCompletionResponse;
+import com.ssginc.unnie.review.dto.ChatMessage;
 import com.ssginc.unnie.review.service.OpenAIService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -27,19 +27,19 @@ public class OpenAIServiceImpl implements OpenAIService {
     @Override
     public String summarizeReview(String review) {
         // 메시지 목록 구성
-        List<ChatMessageDTO> messages = new ArrayList<>();
-        ChatMessageDTO systemMessage = new ChatMessageDTO();
+        List<ChatMessage> messages = new ArrayList<>();
+        ChatMessage systemMessage = new ChatMessage();
         systemMessage.setRole("system");
         systemMessage.setContent("You are a helpful assistant.");
         messages.add(systemMessage);
 
-        ChatMessageDTO userMessage = new ChatMessageDTO();
+        ChatMessage userMessage = new ChatMessage();
         userMessage.setRole("user");
-        userMessage.setContent("다음 리뷰를 한 문장으로 요약해줘: " + review);
+        userMessage.setContent("다음 리뷰를 100글자 이내로 요약해줘: " + review);
         messages.add(userMessage);
 
         // 요청 DTO 구성
-        ChatCompletionRequestDTO requestDTO = new ChatCompletionRequestDTO();
+        ChatCompletionRequest requestDTO = new ChatCompletionRequest();
         requestDTO.setModel("gpt-3.5-turbo");
         requestDTO.setMessages(messages);
         requestDTO.setTemperature(0.7);
@@ -48,17 +48,17 @@ public class OpenAIServiceImpl implements OpenAIService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", "Bearer " + apiKey);
-        HttpEntity<ChatCompletionRequestDTO> requestEntity = new HttpEntity<>(requestDTO, headers);
+        HttpEntity<ChatCompletionRequest> requestEntity = new HttpEntity<>(requestDTO, headers);
 
         // API 호출 (exchange 메소드 활용)
-        ResponseEntity<ChatCompletionResponseDTO> responseEntity = restTemplate.exchange(
+        ResponseEntity<ChatCompletionResponse> responseEntity = restTemplate.exchange(
                 url,
                 HttpMethod.POST,
                 requestEntity,
-                ChatCompletionResponseDTO.class
+                ChatCompletionResponse.class
         );
 
-        ChatCompletionResponseDTO responseDTO = responseEntity.getBody();
+        ChatCompletionResponse responseDTO = responseEntity.getBody();
         if(responseDTO != null && responseDTO.getChoices() != null && !responseDTO.getChoices().isEmpty()) {
             return responseDTO.getChoices().get(0).getMessage().getContent();
         }

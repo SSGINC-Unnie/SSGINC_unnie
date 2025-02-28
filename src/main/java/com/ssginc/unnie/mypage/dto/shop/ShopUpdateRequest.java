@@ -1,4 +1,4 @@
-package com.ssginc.unnie.mypage.dto;
+package com.ssginc.unnie.mypage.dto.shop;
 
 import com.ssginc.unnie.shop.vo.ShopCategory;
 import lombok.Data;

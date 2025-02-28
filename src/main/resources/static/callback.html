@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <script type="text/javascript" src="https://static.nid.naver.com/js/naverLogin_implicit-1.0.3.js" charset="utf-8"></script>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <!-- axios 라이브러리 -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+    var naver_id_login = new naver_id_login("cVXzKiI7vI8yCxFy2axQ", "http://localhost:8111/callback.html");
+    // 접근 토큰 값 출력
+    //alert(naver_id_login.oauthParams.access_token);
+    // 네이버 사용자 프로필 조회
+    naver_id_login.get_naver_userprofile("naverSignInCallback()");
+
+    function emailCheck(email) {
+        return axios.get(`/api/oauth/emailCheck/${email}`)
+            .then(response => {
+                console.log("======> " + response.data)
+                return response.data; // 서버에서 true/false 반환
+            })
+            .catch(error => {
+                console.error("이메일 확인 중 오류 발생: ", error);
+                return false; // false 반환
+            });
+    }
+    // 네이버 사용자 프로필 조회 이후 프로필 정보를 처리할 callback function
+    async function naverSignInCallback() {
+        const email = naver_id_login.getProfileData('email')
+        const isRegistered = await emailCheck(email);
+        if (isRegistered) {
+            alert("이미 가입된 계정입니다. 로그인 처리됩니다.")
+            location.href = "/";
+        } else {
+            const name = naver_id_login.getProfileData('name');
+            const nickname = naver_id_login.getProfileData('nickname');
+            const mobile = naver_id_login.getProfileData('mobile');
+            const gender = naver_id_login.getProfileData('gender');
+            const password = generateRandomPassword8();
+
+            // 동적으로 form 생성 후 POST 요청 (forward 방식)
+            var form = document.createElement("form");
+            form.method = "POST";
+            form.action = "/api/oauth/register";  // POST 방식으로 소셜 정보를 전달
+
+            form.innerHTML =
+                "<input type='hidden' name='memberEmail' value='" + email + "'/>" +
+                "<input type='hidden' name='memberPw' value='" + password + "'/>" +
+                "<input type='hidden' name='memberName' value='" + name + "'/>" +
+                "<input type='hidden' name='memberNickname' value='" + nickname + "'/>" +
+                "<input type='hidden' name='memberGender' value='" + gender + "'/>" +
+                "<input type='hidden' name='memberPhone' value='" + mobile + "'/>";
+            document.body.appendChild(form);
+            form.submit();
+        }
+    }
+    // 8자리 랜덤 비밀번호 생성 함수
+    function generateRandomPassword8() {
+        return 'xxxxxxxx'.replace(/[x]/g, function() {
+            return Math.floor(Math.random() * 16).toString(16);
+        });
+    }
+</script>
+</body>
+</html>

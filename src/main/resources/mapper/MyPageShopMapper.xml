@@ -4,38 +4,38 @@
 <mapper namespace="com.ssginc.unnie.mypage.mapper.MyPageShopMapper">
 
 
-        <insert id="insertBusinessVerification" parameterType="com.ssginc.unnie.mypage.dto.BusinessVerificationRequest">
-            INSERT INTO shop
-                (shop_representation_name, shop_created_at, shop_business_number)
-            VALUES
-                (#{shopRepresentationName}, #{shopCreatedAt}, #{shopBusinessNumber})
-        </insert>
+    <insert id="insertBusinessVerification" parameterType="com.ssginc.unnie.mypage.dto.shop.BusinessVerificationRequest">
+        INSERT INTO shop
+            (shop_representation_name, shop_created_at, shop_business_number)
+        VALUES
+            (#{shopRepresentationName}, #{shopCreatedAt}, #{shopBusinessNumber})
+    </insert>
 
-    <insert id="insertShop" parameterType="com.ssginc.unnie.mypage.dto.ShopInsertRequest">
+    <insert id="insertShop" parameterType="com.ssginc.unnie.mypage.dto.shop.ShopInsertRequest">
         INSERT INTO shop
         (shop_name,shop_location,shop_category,shop_business_time,shop_tel,shop_introduction,shop_closed_day,
-        shop_representation_name,shop_business_number,shop_created_at,shop_member_id)
+         shop_representation_name,shop_business_number,shop_created_at,shop_member_id)
         VALUES
             (#{shopName},#{shopLocation}, #{shopCategory},#{shopBusinessTime},#{shopTel},#{shopIntroduction},
-            #{shopClosedDay},#{shopRepresentationName},#{shopBusinessNumber},#{shopCreatedAt},#{shopMemberId})
+             #{shopClosedDay},#{shopRepresentationName},#{shopBusinessNumber},#{shopCreatedAt},#{shopMemberId})
     </insert>
 
 
 
-    <insert id="insertDesigner" parameterType="com.ssginc.unnie.mypage.dto.DesignerRequest">
+    <insert id="insertDesigner" parameterType="com.ssginc.unnie.mypage.dto.shop.DesignerRequest">
         INSERT INTO designer
-            (designer_shop_id, designer_name, designer_introduction, designer_thumbnail)
+        (designer_shop_id, designer_name, designer_introduction, designer_thumbnail)
         VALUES
             (#{designerShopId}, #{designerName}, #{designerIntroduction}, #{designerThumbnail})
     </insert>
 
-    <insert id="insertProcedure" parameterType="com.ssginc.unnie.mypage.dto.ProcedureRequest">
+    <insert id="insertProcedure" parameterType="com.ssginc.unnie.mypage.dto.shop.ProcedureRequest">
         INSERT INTO `procedure`
-        (procedure_designer_id,procedure_name,procedure_price)
+            (procedure_designer_id,procedure_name,procedure_price)
         VALUES
             (#{procedureDesignerId},#{procedureName},#{procedurePrice})
     </insert>
-    <update id="updateShop" parameterType="com.ssginc.unnie.mypage.dto.ShopUpdateRequest">
+    <update id="updateShop" parameterType="com.ssginc.unnie.mypage.dto.shop.ShopUpdateRequest">
         UPDATE shop
         SET
             shop_name = #{shopName},
@@ -47,7 +47,7 @@
             shop_closed_day = #{shopClosedDay}
         WHERE shop_id = #{shopId}
     </update>
-    <update id="updateDesigner" parameterType="com.ssginc.unnie.mypage.dto.DesignerRequest">
+    <update id="updateDesigner" parameterType="com.ssginc.unnie.mypage.dto.shop.DesignerRequest">
         UPDATE designer
         SET
             designer_name = #{designerName},
@@ -56,7 +56,7 @@
         WHERE designer_id = #{designerId}
     </update>
 
-    <update id="updateProcedure" parameterType="com.ssginc.unnie.mypage.dto.ProcedureRequest">
+    <update id="updateProcedure" parameterType="com.ssginc.unnie.mypage.dto.shop.ProcedureRequest">
         UPDATE `procedure`
         SET
             procedure_name = #{procedureName},
@@ -70,7 +70,7 @@
     </delete>
 
     <delete id="deleteProcedure" parameterType="int">
-        DELETE FROM procedure
+        DELETE FROM `procedure`
         WHERE procedure_id = #{procedureId}
     </delete>
 
@@ -79,7 +79,7 @@
         WHERE shop_id = #{shopId}
     </delete>
     <delete id="deleteDesignerCascade" statementType="CALLABLE" parameterType="int">
-        { CALL deleteDesignerCascade(#{designerId}) }
+        { CALL deleteDesignerCascade(#{designerId})}
     </delete>
     <select id="deleteShopCascade" statementType="CALLABLE" parameterType="int" resultType="int">
         { CALL deleteShopCascade(#{shopId}) }
@@ -115,8 +115,86 @@
     <select id="existsByShopId" resultType="java.lang.Integer">
         SELECT COUNT(*) FROM shop WHERE shop_id = #{shopId}
     </select>
+    <select id="checkShopOwnership" parameterType="map" resultType="int">
+        SELECT COUNT(*)
+        FROM shop
+        WHERE shop_id = #{shopId}
+          AND shop_member_id = #{memberId}
+    </select>
+    <select id="checkProcedureOwnership" parameterType="map" resultType="int">
+        SELECT COUNT(*) AS cnt
+        FROM `procedure` p
+                 JOIN designer d ON p.procedure_designer_id = d.designer_id
+                 JOIN shop s ON d.designer_shop_id = s.shop_id
+        WHERE p.procedure_id = #{procedureId}
+          AND d.designer_id = #{designerId}
+          AND s.shop_member_id = #{memberId}
+    </select>
+    <select id="checkDesignerOwnership" parameterType="map" resultType="int">
+        SELECT COUNT(*) AS cnt
+        FROM designer d
+                 JOIN shop s ON d.designer_shop_id = s.shop_id
+        WHERE d.designer_id = #{designerId}
+          AND s.shop_member_id = #{memberId}
+    </select>
+    <select id="findShopIdByDesignerId" parameterType="int" resultType="int">
+        SELECT designer_shop_id
+        FROM designer
+        WHERE designer_id = #{designerId}
+    </select>
+    <select id="findShopById" resultType="com.ssginc.unnie.mypage.dto.shop.ShopDeleteRequest">
+        SELECT shop_id, shop_member_id
+        FROM shop
+        WHERE shop_id = #{shopId}
+    </select>
+    <select id="findProcedureById" parameterType="int" resultType="com.ssginc.unnie.mypage.dto.shop.ProcedureDeleteRequest">
+        SELECT p.procedure_id,
+               p.procedure_designer_id,
+               s.shop_member_id
+        FROM `procedure` p
+                 JOIN designer d ON p.procedure_designer_id = d.designer_id
+                 JOIN shop s ON d.designer_shop_id = s.shop_id
+        WHERE p.procedure_id = #{procedureId}
+    </select>
+    <select id="findDesignerById" parameterType="int" resultType="com.ssginc.unnie.mypage.dto.shop.DesignerDeleteRequest">
+        SELECT d.designer_id,
+               d.designer_shop_id,
+               s.shop_member_id
+        FROM designer d
+                 JOIN shop s ON d.designer_shop_id = s.shop_id
+        WHERE d.designer_id = #{designerId}
+    </select>
 
+    <select id="findShopsByMemberId" parameterType="long" resultType="com.ssginc.unnie.mypage.dto.shop.MyShopResponse">
+        SELECT shop_id, shop_name
+        FROM shop
+        WHERE shop_member_id = #{memberId}
+    </select>
+    <select id="findShopNameById" parameterType="int" resultType="com.ssginc.unnie.mypage.dto.shop.MyShopDetailResponse">
+        SELECT
+            shop_id,
+            shop_name,
+            shop_location,
+            shop_category,
+            shop_business_time,
+            shop_tel,
+            shop_introduction,
+            shop_closed_day,
+            shop_business_number,
+            shop_representation_name
+        FROM shop
+        WHERE shop_id = #{shopId}
+    </select>
+
+    <select id="findDesignersByShopId" parameterType="int" resultType="com.ssginc.unnie.mypage.dto.shop.MyDesignerDetailResponse">
+        SELECT designer_id, designer_name, designer_introduction
+        FROM designer
+        WHERE designer_shop_id = #{shopId}
+    </select>
+
+    <select id="findProceduresByDesignerId" parameterType="int" resultType="com.ssginc.unnie.mypage.dto.shop.MyProcedureDetailResponse">
+        SELECT procedure_id, procedure_name, procedure_price
+        FROM `procedure`
+        WHERE procedure_designer_id = #{designerId}
+    </select>
 </mapper>
-
-
-

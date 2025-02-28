@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Google 로그인 콜백</title>
+  <!-- Google Identity Services 클라이언트 라이브러리 로드 -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+</head>
+<body>
+<!-- 구글 로그인 버튼을 렌더링할 div -->
+<div id="buttonDiv"></div>
+<script>
+  // 구글 로그인 성공 후 호출되는 콜백 함수
+  function handleCredentialResponse(response) {
+    // response.credential은 JWT ID 토큰입
+    const responsePayload = parseJwt(response.credential);
+    console.log("Email: " + responsePayload.email);
+    console.log("Full Name: " + responsePayload.name);
+    console.log("Given Name: " + responsePayload.given_name);
+    // 필요한 정보를 추출
+    var email = responsePayload.email;
+    var name = responsePayload.name;
+    // given_name을 별명으로 사용
+    var nickname = responsePayload.given_name;
+    var gender = "";
+    var mobile = "";
+    // 임의의 8자리 비밀번호 생성 (회원가입 시 내부용)
+    var password = generateRandomPassword8();
+
+    // 동적으로 form을 생성하여 POST 방식으로 소셜 프로필 정보를 전달
+    var form = document.createElement("form");
+    form.method = "POST";
+    form.action = "/api/oauth/register";
+    form.innerHTML =
+            "<input type='hidden' name='memberEmail' value='" + email + "'/>" +
+            "<input type='hidden' name='memberPw' value='" + password + "'/>" +
+            "<input type='hidden' name='memberName' value='" + name + "'/>" +
+            "<input type='hidden' name='memberNickname' value='" + nickname + "'/>" +
+            "<input type='hidden' name='memberGender' value='" + gender + "'/>" +
+            "<input type='hidden' name='memberPhone' value='" + mobile + "'/>";
+    document.body.appendChild(form);
+    form.submit();
+  }
+
+  // JWT 토큰 디코딩 함수
+  function parseJwt(token) {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+    return JSON.parse(jsonPayload);
+  }
+
+  // 8자리 랜덤 비밀번호 생성 함수
+  function generateRandomPassword8() {
+    return 'xxxxxxxx'.replace(/[x]/g, function() {
+      return Math.floor(Math.random() * 16).toString(16);
+    });
+  }
+
+  // 초기화: 구글 로그인 버튼 렌더링 및 One Tap prompt
+  window.onload = function() {
+    google.accounts.id.initialize({
+      client_id: "622792225889-1ct0c68forahk36vi5mtst55p0urlida.apps.googleusercontent.com", // 클라이언트 ID
+      callback: handleCredentialResponse
+    });
+    google.accounts.id.renderButton(
+            document.getElementById("buttonDiv"),
+            { theme: "outline", size: "large", type: "icon" }
+    );
+    google.accounts.id.prompt(); // One Tap 다이얼로그 표시
+  };
+</script>
+</body>
+</html>

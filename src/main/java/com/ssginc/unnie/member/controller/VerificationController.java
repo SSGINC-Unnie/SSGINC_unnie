@@ -3,6 +3,8 @@ package com.ssginc.unnie.member.controller;
 
 import com.ssginc.unnie.common.util.ResponseDto;
 import com.ssginc.unnie.common.util.SimpleResponseDto;
+import com.ssginc.unnie.member.dto.MemberFindIdRequest;
+import com.ssginc.unnie.member.dto.MemberFindPwRequest;
 import com.ssginc.unnie.member.dto.MemberRegisterRequest;
 import com.ssginc.unnie.member.service.RegisterService;
 import com.ssginc.unnie.member.service.VerificationService;
@@ -58,5 +60,21 @@ public class VerificationController {
         return ResponseEntity.ok(
                 new ResponseDto<>(HttpStatus.OK.value(), "전화번호 인증 처리 완료되었습니다.", Map.of("result", isVerified))
         );
+    }
+
+    //이메일(아이디) 찾기
+    @PostMapping("/findId")
+    public ResponseEntity<ResponseDto<String>> findId(@RequestBody MemberFindIdRequest request) {
+        log.info("[아이디 찾기 요청] 이름: {}, 전화번호: {}", request.getMemberName(), request.getMemberPhone());
+        String email = verificationService.findId(request.getMemberName(), request.getMemberPhone());
+        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "아이디 찾기 성공", email));
+    }
+
+    //비밀번호 찾기
+    @PostMapping("/findPw")
+    public ResponseEntity<SimpleResponseDto> findPassword(@RequestBody MemberFindPwRequest request) {
+        log.info("[비밀번호 찾기 요청] 이메일: {}", request.getMemberEmail());
+        verificationService.findPassword(request.getMemberEmail());
+        return ResponseEntity.ok(new SimpleResponseDto(HttpStatus.OK.value(), "임시 비밀번호가 전송되었습니다." ));
     }
 }

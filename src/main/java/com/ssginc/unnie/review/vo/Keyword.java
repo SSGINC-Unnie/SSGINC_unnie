@@ -15,5 +15,4 @@ import lombok.NoArgsConstructor;
 public class Keyword {
     private int keywordId; //키워드 번호
     private String keyword; //키워드
-    private long reviewId; //리뷰 번호
 }

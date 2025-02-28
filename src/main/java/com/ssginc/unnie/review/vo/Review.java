@@ -21,6 +21,6 @@ public class Review {
     private int reviewRate; //리뷰 별점
     private String reviewContent; //리뷰 내용
     private LocalDateTime reviewDate; //리뷰 작성 일시
-    private String reviewSummary;
-    private int reviewEmotionalScore; //리뷰 감정 분석 점수
+//    private int reviewEmotionalScore; //리뷰 감정 분석 점수
+    private int review_status; //리뷰 상태
 }
