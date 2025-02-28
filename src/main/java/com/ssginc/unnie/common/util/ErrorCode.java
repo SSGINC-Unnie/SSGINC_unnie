@@ -49,6 +49,7 @@ public enum ErrorCode {
     GEOCODING_FAILED(400, "SH025", "주소를 좌표로 변환하는 중 오류가 발생했습니다."),
     NO_BOOKMARK_FOUND(404, "SH026", "찜한 매장이 없습니다."),
     PROCEDURE_ALREADY_EXISTS(409, "SH027", "시술이 이미 등록되어 있습니다."),
+//    INVALID_NAME_FORMAT(400,"SH028","이름 형식이 올바르지 않습니다."),
     INVALID_TEL_FORMAT(400,"SH029","업체 전화번호 형식이 올바르지 않습니다."),
     INVALID_INTRODUCTION_FORMAT(400,"SH030","소개 형식이 올바르지 않습니다"),
     SHOP_CATEGORY_NOT_FOUND(404, "SH031", "카테고리가 옳지 않습니다."),

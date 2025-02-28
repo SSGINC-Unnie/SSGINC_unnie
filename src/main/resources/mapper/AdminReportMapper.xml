@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssginc.unnie.admin.mapper.AdminReportMapper">
+
+    <!--  신고 INSERT  -->
+    <insert id="insertReport" useGeneratedKeys="true" keyProperty="reportId" keyColumn="report_id">
+        INSERT INTO
+        report
+        (
+            report_target_type,
+            report_target_id,
+            report_member_id,
+            report_reason,
+            report_reason_detailed
+        )
+        VALUES
+        (
+            #{reportTargetType},
+            #{reportTargetId},
+            #{reportMemberId},
+            #{reportReason},
+            #{reportReasonDetailed}
+        )
+    </insert>
+
+    <!--  신고 무시 처리  -->
+    <update id="ignoreReport">
+        UPDATE report
+        SET
+            report_status = 2
+        WHERE
+            report_id = #{reportId}
+    </update>
+
+    <!-- 신고된 컨텐츠 삭제(soft delete)   -->
+    <update id="softDeleteReportById">
+        <choose>
+            <when test="reportTargetType == 1">
+                UPDATE board
+                SET board_isactive = 0
+                WHERE board_id = #{reportTargetId}
+            </when>
+            <when test="reportTargetType == 2">
+                UPDATE comment
+                SET comment_isactive = 0
+                WHERE comment_id = #{reportTargetId}
+            </when>
+            <when test="reportTargetType == 3">
+                UPDATE review
+                SET review_status = 3
+                WHERE review_id = #{reportTargetId}
+            </when>
+        </choose>
+    </update>
+
+    <!-- 본인 컨텐츠 여부 검증  -->
+    <select id="isOwnContent" resultType="java.lang.Boolean">
+        SELECT EXISTS (
+        <choose>
+            <when test="reportTargetType == 1">
+                SELECT 1 FROM board
+                WHERE board_id = #{reportTargetId}
+                AND board_author = #{reportMemberId}
+            </when>
+            <when test="reportTargetType == 2">
+                SELECT 1 FROM comment
+                WHERE comment_id = #{reportTargetId}
+                AND comment_member_id = #{reportMemberId}
+            </when>
+            <when test="reportTargetType == 3">
+                SELECT 1 FROM review
+                WHERE review_id = #{reportTargetId}
+                AND review_member_id = #{reportMemberId}
+            </when>
+        </choose>
+        )
+    </select>
+
+    <!-- 신고 대상 존재 여부 확인 -->
+    <select id="isTargetExists" resultType="java.lang.Boolean">
+        SELECT EXISTS (
+        <choose>
+            <when test="reportTargetType == 1">
+                SELECT 1 FROM board
+                WHERE board_id = #{reportTargetId}
+            </when>
+            <when test="reportTargetType == 2">
+                SELECT 1 FROM comment
+                WHERE comment_id = #{reportTargetId}
+            </when>
+            <when test="reportTargetType == 3">
+                SELECT 1 FROM review
+                WHERE review_id = #{reportTargetId}
+            </when>
+        </choose>
+        )
+    </select>
+
+    <!-- 중복 신고 여부 확인 -->
+    <select id="isDuplicateReport" resultType="java.lang.Boolean">
+        SELECT EXISTS (
+            SELECT 1
+            FROM `report`
+            WHERE report_target_type= #{reportTargetType}
+              AND report_target_id= #{reportTargetId}
+              AND report_member_id = #{reportMemberId}
+          ) AS "isDuplicate";
+    </select>
+
+    <!-- 신고 목록 조회  -->
+    <select id="getAllReports" resultType="com.ssginc.unnie.admin.dto.report.AdminReportsResponse">
+        SELECT
+            r.report_id AS reportId,
+            CASE
+                WHEN r.report_target_type = 1 THEN '게시글'
+                WHEN r.report_target_type = 2 THEN '댓글'
+                WHEN r.report_target_type = 3 THEN '리뷰'
+                END AS reportTargetType,
+            r.report_target_id AS reportTargetId,
+            r.report_member_id AS reportMemberId,
+            r.report_reason AS reportReason,
+            r.report_created_at,
+            r.report_resolved_at,
+            CASE
+                WHEN r.report_status = 0 THEN '미처리'
+                WHEN r.report_status = 1 THEN '처리 완료'
+                WHEN r.report_status = 2 THEN '무시'
+                END AS reportStatus
+        FROM report r
+        WHERE
+            (#{reportStatus} IS NULL OR r.report_status = #{reportStatus}) AND
+            r.report_created_at BETWEEN #{startDate} AND #{endDate}
+        ORDER BY r.report_created_at DESC
+    </select>
+
+    <!--  신고 상세 조회  -->
+    <select id="getReportById" resultType="com.ssginc.unnie.admin.dto.report.AdminReportDetailResponse">
+        SELECT
+            r.report_id AS reportId,
+            CASE
+                WHEN r.report_target_type = 1 THEN '게시글'
+                WHEN r.report_target_type = 2 THEN '댓글'
+                WHEN r.report_target_type = 3 THEN '리뷰'
+                END AS reportTargetType,
+            r.report_target_id AS reportTargetId,
+            r.report_member_id AS reportMemberId,
+            r.report_reason AS reportReason,
+            r.report_created_at,
+            r.report_resolved_at,
+            CASE
+                WHEN r.report_status = 0 THEN '미처리'
+                WHEN r.report_status = 1 THEN '처리 완료'
+                WHEN r.report_status = 2 THEN '무시'
+                END AS reportStatus
+        FROM report r
+        WHERE
+            r.report_id = #{reportId}
+    </select>
+
+    <!-- 신고 존재 여부  -->
+    <select id="checkReportId" resultType="java.lang.Boolean">
+        SELECT EXISTS(
+            SELECT 1
+            FROM report
+            WHERE report_id = #{reportId}
+        ) AS "check"
+    </select>
+
+    <select id="getReportTargetMemberInfoByTargetInfo"
+            resultType="com.ssginc.unnie.notification.dto.NotificationResponse">
+
+        SELECT
+            m.member_id AS receiverId,
+            m.member_nickname AS receiverNickname,
+            CASE
+                WHEN #{reportTargetType} = 1 THEN
+                        (SELECT b.board_title FROM board b WHERE b.board_id = #{reportTargetId})
+                WHEN #{reportTargetType} = 2 THEN
+                    (SELECT c.comment_contents FROM comment c WHERE c.comment_id = #{reportTargetId})
+                WHEN #{reportTargetType} = 3 THEN
+                    (SELECT r.review_content FROM review r WHERE r.review_id = #{reportTargetId})
+                END AS targetTitle
+        FROM member m
+        WHERE m.member_id = (
+            CASE
+                WHEN #{reportTargetType} = 1 THEN
+                        (SELECT b.board_author FROM board b WHERE b.board_id = #{reportTargetId})
+                WHEN #{reportTargetType} = 2 THEN
+                    (SELECT c.comment_member_id FROM comment c WHERE c.comment_id = #{reportTargetId})
+                WHEN #{reportTargetType} = 3 THEN
+                    (SELECT s.shop_member_id
+                     FROM review r
+                              JOIN receipt re ON (r.review_receipt_id = re.receipt_id)
+                              JOIN shop s ON (re.receipt_shop_id = s.shop_id)
+                     WHERE r.review_id = #{reportTargetId})
+                END
+            )
+
+    </select>
+
+
+</mapper>

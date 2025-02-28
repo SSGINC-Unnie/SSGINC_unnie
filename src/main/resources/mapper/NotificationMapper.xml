@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssginc.unnie.notification.mapper.NotificationMapper">
+
+    <insert id="insertNotification">
+        INSERT INTO
+        notification
+        (
+         notification_type,
+         notification_contents,
+         notification_urn,
+         notification_member_id
+        )
+        VALUES
+        (
+         #{notificationType},
+         #{notificationContents},
+         #{notificationUrn},
+         #{notificationMemberId}
+        )
+    </insert>
+
+    <select id="getMyNotificationsByMemberId"
+            resultType="com.ssginc.unnie.notification.dto.NotificationMessage">
+        SELECT
+            notification_contents,
+            notification_urn
+        FROM
+            `notification`
+        WHERE
+            notification_member_id = #{memberId}
+         AND
+            notification_isread = 0
+        ORDER BY
+            notification_created_at DESC
+    </select>
+</mapper>

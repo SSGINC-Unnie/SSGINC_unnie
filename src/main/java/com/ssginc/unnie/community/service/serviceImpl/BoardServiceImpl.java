@@ -36,9 +36,6 @@ public class BoardServiceImpl implements BoardService {
     @Transactional(rollbackFor = Exception.class)
     public String createBoard(BoardCreateRequest boardRequest) {
 
-        // => 미리 파싱해서 boardRequest 에 넣음
-        log.info("boardRequest: {}", boardRequest);
-
         // BoardParser 사용하여 HTML 파싱 후 검증
         BoardParser parser = new BoardParser(boardRequest.getBoardContents());
         
@@ -88,10 +85,6 @@ public class BoardServiceImpl implements BoardService {
      */
     @Override
     public long updateBoard(BoardUpdateRequest boardUpdateRequest, long memberId) {
-
-        // => 미리 파싱해서 boardRequest 에 넣음
-        log.info("boardUpdateRequest: {}", boardUpdateRequest);
-
         // BoardParser 사용하여 HTML 파싱 후 검증
         BoardParser parser = new BoardParser(boardUpdateRequest.getBoardContents());
 

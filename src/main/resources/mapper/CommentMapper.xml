@@ -145,6 +145,19 @@
             c.comment_created_at DESC
     </select>
 
+    <!-- 댓글 식별 번호로 게시글 작성자 정보 가져오기  -->
+    <select id="getBoardAuthorIdByCommentId" resultType="com.ssginc.unnie.notification.dto.NotificationResponse">
+        SELECT
+            b.board_author AS receiverId,
+            m.member_nickname AS receiverNickname,
+            b.board_title AS targetTitle
+        FROM
+            comment c
+            JOIN board b ON (c.comment_board_id = b.board_id)
+            JOIN member m ON (b.board_author = m.member_id)
+        WHERE c.comment_id = #{commentId}
+    </select>
+
     <!-- 댓글 삭제(soft delete)  -->
     <update id="deleteComment" useGeneratedKeys="true" keyProperty="commentId" keyColumn="comment_id">
         UPDATE comment

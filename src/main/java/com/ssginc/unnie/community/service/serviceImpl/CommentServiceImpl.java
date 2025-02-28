@@ -10,7 +10,13 @@ import com.ssginc.unnie.community.service.CommentService;
 import com.ssginc.unnie.common.exception.UnnieBoardException;
 import com.ssginc.unnie.common.exception.UnnieCommentException;
 import com.ssginc.unnie.common.util.ErrorCode;
+import com.ssginc.unnie.member.vo.Member;
+import com.ssginc.unnie.notification.dto.NotificationMessage;
+import com.ssginc.unnie.notification.dto.NotificationResponse;
+import com.ssginc.unnie.notification.service.ProducerService;
+import com.ssginc.unnie.notification.vo.NotificationType;
 import lombok.RequiredArgsConstructor;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +31,7 @@ import java.util.Map;
 public class CommentServiceImpl implements CommentService {
 
     private final CommentMapper commentMapper;
+
     /**
      * 댓글 작성 메서드
      */
@@ -216,6 +223,7 @@ public class CommentServiceImpl implements CommentService {
      * 댓글 soft delete 메서드
      */
     @Override
+    @Transactional(rollbackFor = {Exception.class})
     public long deleteComment(long commentId, long memberId) {
         // 댓글 작성자와 로그인 유저 일치 여부 검증
         validateCommentOwnership(commentId, memberId);
@@ -227,5 +235,11 @@ public class CommentServiceImpl implements CommentService {
         }
 
         return res;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public NotificationResponse getBoardAuthorIdByCommentId(long commentBoardId) {
+        return commentMapper.getBoardAuthorIdByCommentId(commentBoardId);
     }
 }

@@ -5,6 +5,9 @@ import com.ssginc.unnie.admin.service.AdminReportService;
 import com.ssginc.unnie.common.config.MemberPrincipal;
 import com.ssginc.unnie.common.util.ResponseDto;
 import com.ssginc.unnie.common.util.SimpleResponseDto;
+import com.ssginc.unnie.notification.dto.NotificationMessage;
+import com.ssginc.unnie.notification.dto.NotificationResponse;
+import com.ssginc.unnie.notification.service.ProducerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -25,6 +28,7 @@ import java.util.Map;
 public class AdminReportController {
 
     private final AdminReportService adminReportService;
+    private final ProducerService producerService;
 
     /**
      * 신고 목록 조회
@@ -82,6 +86,12 @@ public class AdminReportController {
         String role = "ADMIN";
 
         adminReportService.softDeleteReportById(report, role);
+
+        NotificationResponse response = adminReportService.getReportTargetMemberInfoByTargetInfo(report);
+
+        NotificationMessage msg = adminReportService.createNotificationMsg(report, response);
+
+        producerService.createNotification(msg);
 
         return ResponseEntity.ok(
                 new SimpleResponseDto(HttpStatus.OK.value(), "신고 컨텐츠 삭제 성공")

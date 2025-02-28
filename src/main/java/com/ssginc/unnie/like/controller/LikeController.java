@@ -5,6 +5,10 @@ import com.ssginc.unnie.common.util.ResponseDto;
 import com.ssginc.unnie.like.dto.LikeRequest;
 import com.ssginc.unnie.like.service.LikeService;
 import com.ssginc.unnie.member.vo.Member;
+import com.ssginc.unnie.notification.dto.NotificationMessage;
+import com.ssginc.unnie.notification.dto.NotificationResponse;
+import com.ssginc.unnie.notification.service.ProducerService;
+import com.ssginc.unnie.notification.vo.NotificationType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -24,6 +28,7 @@ import java.util.Map;
 public class LikeController {
 
     private final LikeService likeService;
+    private final ProducerService producerService;
 
     /**
      * 좋아요 여부 확인 컨트롤러 메서드
@@ -46,7 +51,15 @@ public class LikeController {
     public ResponseEntity<ResponseDto<Map<String, Object>>> createLike(LikeRequest like,
                                                                        @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
         long memberId = memberPrincipal.getMemberId();
+
         like.setLikeMemberId(memberId);
+
+        NotificationResponse response = likeService.getLikeTargetMemberInfoByTargetInfo(like);
+
+        NotificationMessage msg = likeService.createNotificationMsg(like, response);
+
+        producerService.createNotification(msg);
+
         return ResponseEntity.ok(
                 new ResponseDto<>(HttpStatus.CREATED.value(), "좋아요가 추가되었습니다.", Map.of("like", likeService.createLike(like)))
         );

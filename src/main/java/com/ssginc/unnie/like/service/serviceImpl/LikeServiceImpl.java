@@ -6,6 +6,9 @@ import com.ssginc.unnie.common.util.validation.Validator;
 import com.ssginc.unnie.like.dto.LikeRequest;
 import com.ssginc.unnie.like.mapper.LikeMapper;
 import com.ssginc.unnie.like.service.LikeService;
+import com.ssginc.unnie.notification.dto.NotificationMessage;
+import com.ssginc.unnie.notification.dto.NotificationResponse;
+import com.ssginc.unnie.notification.vo.NotificationType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -70,6 +73,60 @@ public class LikeServiceImpl implements LikeService {
         }
 
         return like.getLikeId();
+    }
+
+    /**
+     * 좋아요 타켓 타입과 타겟 식별번호로 타겟 대상 작성자 정보 가져오기
+     */
+    @Override
+    public NotificationResponse getLikeTargetMemberInfoByTargetInfo(LikeRequest like) {
+        return likeMapper.getLikeTargetMemberInfoByTargetInfo(like);
+    }
+
+    /**
+     * 댓글 좋아요 시 댓글 달린 게시글 식별 번호 가져오는 메서드
+     */
+    @Override
+    public long getBoardIdByCommentTargetId(long likeId) {
+        return likeMapper.getBoardIdByCommentTargetId(likeId);
+    }
+
+    /**
+     * 좋아요 대상에 따라 알림 메세지 생성해주는 메서드
+     * @return
+     */
+    @Override
+    public NotificationMessage createNotificationMsg(LikeRequest like, NotificationResponse response) {
+
+        NotificationMessage msg = NotificationMessage
+                .builder()
+                .notificationMemberId(response.getReceiverId())
+                .notificationType(NotificationType.LIKE)
+                .build();
+
+        String type = like.getLikeTargetType();
+
+        String content = null;
+        String urn = null;
+
+        switch (type) {
+            case "BOARD" :
+                content = String.format("[%s]님이 \'[%s]\'글을 좋아합니다", response.getReceiverNickname(), response.getTargetTitle());
+                urn = String.format("/community/board/%d", like.getLikeTargetId());
+                break;
+            case "COMMENT" :
+                content = String.format("[%s]님이 \'[%s]\'댓글을 좋아합니다", response.getReceiverNickname(), response.getTargetTitle());
+                urn = String.format("/community/board/%d", this.getBoardIdByCommentTargetId(like.getLikeId()));
+                break;
+//            case "REVIEW" :
+//                content = String.format("[%s]님이 \'[%s]\'리뷰를 좋아합니다", response.getReceiverId(), response.getTargetTitle());
+//                urn = String.format("/community/board/%d", like.getLikeTargetId());
+        }
+
+        msg.setNotificationContents(content);
+        msg.setNotificationUrn(urn);
+
+        return msg;
     }
 
     /**
