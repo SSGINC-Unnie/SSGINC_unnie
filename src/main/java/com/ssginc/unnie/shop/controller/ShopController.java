@@ -1,7 +1,6 @@
 package com.ssginc.unnie.shop.controller;
 
-import com.ssginc.unnie.common.exception.UnnieShopException;
-import com.ssginc.unnie.common.util.ErrorCode;
+import com.ssginc.unnie.common.config.MemberPrincipal;
 import com.ssginc.unnie.common.util.ResponseDto;
 import com.ssginc.unnie.shop.dto.*;
 import com.ssginc.unnie.shop.service.ShopService;
@@ -9,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -82,6 +82,28 @@ public class ShopController {
 
         return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(),"업체 상세정보 조회에 성공했습니다.", Map.of("shopDetails", shopDetails)));
     }
+
+    // 찜 등록
+    @PostMapping("/shopdetails/bookmark/{shopId}")
+    public ResponseEntity<ResponseDto<Map<String, Integer>>> createBookmark(
+            @AuthenticationPrincipal MemberPrincipal memberPrincipal,
+            @PathVariable("shopId") int shopId) {
+        long memberId = memberPrincipal.getMemberId();
+
+        ShopBookmarkRequest request = new ShopBookmarkRequest();
+        request.setBookmarkMemberId(memberId);
+        request.setBookmarkShopId(shopId);
+
+        int result = shopService.createBookmark(request);
+        return ResponseEntity.ok(
+                new ResponseDto<>(HttpStatus.OK.value(),
+                        "찜 목록에 추가되었습니다.",
+                        Map.of("shopId", result))
+        );
+    }
+
+
+
 
 
 

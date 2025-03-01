@@ -18,4 +18,6 @@ public class ShopDesignerResponse {
     private String designerIntroduction;
     // 업체 번호 (FK)
     private int designerShopId;
+
+
 }

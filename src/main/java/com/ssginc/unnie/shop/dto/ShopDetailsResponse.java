@@ -25,4 +25,6 @@ public class ShopDetailsResponse {
     private String shopBusinessNumber;
     // 대표자명
     private String shopRepresentationName;
+    // 업체 상태
+    private int shopStatus;
 }

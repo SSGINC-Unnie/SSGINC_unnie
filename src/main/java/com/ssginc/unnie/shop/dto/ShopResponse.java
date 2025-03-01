@@ -10,4 +10,6 @@ public class ShopResponse {
     private String shopBusinessTime;
     private double avgRate;
     private String shopLocation;
+    // 업체 상태
+    private int shopStatus;
 }

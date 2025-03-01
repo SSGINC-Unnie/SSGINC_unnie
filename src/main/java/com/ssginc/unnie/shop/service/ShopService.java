@@ -15,5 +15,6 @@ public interface ShopService {
 
     ShopDetailsResponse getShopDetailsByShopId(int shopId);
 
-    String createBookmark(ShopBookmarkRequest request);
+
+    Integer createBookmark(ShopBookmarkRequest request);
 }

@@ -7,6 +7,11 @@
             (#{bookmarkMemberId}, #{bookmarkShopId})
     </insert>
 
+    <delete id="deleteBookmark" parameterType="int">
+        DELETE FROM bookmark
+        WHERE shop_id = #{shopId}
+    </delete>
+
 
     <select id="selectShopByCategory" resultType="com.ssginc.unnie.shop.dto.ShopResponse">
         SELECT s.shop_id, s.shop_name, s.shop_business_time, ROUND(AVG(re.review_rate), 2) AS avg_rate,
@@ -14,7 +19,7 @@
         FROM shop s
                  JOIN receipt r ON r.receipt_shop_id = s.shop_id
                  JOIN review re ON r.receipt_id = re.review_receipt_id
-        WHERE s.shop_category = #{category} AND shop_status = 1
+        WHERE s.shop_category = #{category} AND s.shop_status = 1
         GROUP BY s.shop_id, s.shop_name, s.shop_business_time, s.shop_location
     </select>
 
@@ -29,7 +34,7 @@
         SELECT p.procedure_id, p.procedure_name, p.procedure_price from `procedure` p
                                                                             join designer d on d.designer_id = p.procedure_designer_id
                                                                             join shop s on s.shop_id = d.designer_shop_id
-        where s.shop_id = #{shopId};
+        where s.shop_id = #{shopId}
     </select>
 
     <select id="findShopById" resultType="com.ssginc.unnie.shop.dto.ShopInfoResponse">
@@ -48,7 +53,7 @@
                  JOIN receipt r ON r.receipt_shop_id = s.shop_id
                  JOIN review re ON r.receipt_id = re.review_receipt_id
                  JOIN member m ON re.review_member_id = m.member_id
-        WHERE s.shop_id = #{shopId}
+        WHERE s.shop_id = #{shopId} AND s.shop_status = 1
         GROUP BY s.shop_id, s.shop_name, s.shop_business_time, s.shop_member_id, s.shop_location,review_summary;
     </select>
 
@@ -65,7 +70,7 @@
             shop_business_number,
             shop_representation_name
         from shop
-        where shop_id = #{shopId};
+        where shop_id = #{shopId} AND shop_status = 1
     </select>
 
 

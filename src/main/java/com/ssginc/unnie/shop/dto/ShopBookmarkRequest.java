@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class ShopBookmarkRequest {
-    private int bookmarkMemberId;
+    private long bookmarkMemberId;
     private int bookmarkShopId;
 }
