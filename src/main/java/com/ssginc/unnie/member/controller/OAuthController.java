@@ -1,5 +1,6 @@
 package com.ssginc.unnie.member.controller;
 
+import com.ssginc.unnie.common.redis.RedisTokenService;
 import com.ssginc.unnie.common.util.JwtUtil;
 import com.ssginc.unnie.common.util.ResponseDto;
 import com.ssginc.unnie.member.dto.MemberLoginRequest;
@@ -19,7 +20,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
-
+/**
+ * OAuth 로그인 및 회원가입 관련 요청을 처리하는 컨트롤러
+ */
 @Slf4j
 @Controller
 @RequiredArgsConstructor
@@ -30,13 +33,15 @@ public class OAuthController {
     private final AuthController authController;
     private final BCryptPasswordEncoder encoder;
     private final JwtUtil jwtUtil;
+    private final RedisTokenService redisTokenService;
 
-
+    // OAuth 로그인 페이지 요청
     @GetMapping("/login")
     public String loginPage(){
         return "member/login";
     }
 
+    // 이메일 중복 체크 API
     @GetMapping("/emailCheck/{email}")
     @ResponseBody
     public boolean emailCheck(@PathVariable String email, Model model, HttpServletResponse response) {
@@ -50,7 +55,7 @@ public class OAuthController {
         return result;
     }
 
-
+    // 회원가입 폼 요청
     @PostMapping("/register")
     public String register(@ModelAttribute  Member newMember, Model model) {
         Member registerCheck = oAuthService.selectMemberByEmail(newMember.getMemberEmail());
@@ -82,15 +87,14 @@ public class OAuthController {
             //회원 등록
             oAuthService.insertOAuthMember(member);
 
-
-            // DB에 insert한 후, 같은 이메일로 회원 정보를 조회해서 memberId 가져옴
+            // DB에 insert한 후, DB에 등록된 회원 정보를 다시 조회하여 memberId 가져옴
             Member insertedMember = oAuthService.selectMemberByEmail(member.getMemberEmail());
 
             //토큰 생성
             String accesstoken = jwtUtil.generateToken(insertedMember.getMemberId(), "ROLE_USER", insertedMember.getMemberNickname());
             String refreshToken = jwtUtil.generateRefreshToken(insertedMember.getMemberId());
 
-            //쿠키에 저장
+            // access token 쿠키에 저장
             Cookie cookie = new Cookie("accessToken", accesstoken);
             cookie.setHttpOnly(true);
             cookie.setSecure(true);
@@ -98,12 +102,8 @@ public class OAuthController {
             cookie.setMaxAge(3600);
             response.addCookie(cookie);
 
-            Cookie cookie2 = new Cookie("refreshToken", refreshToken);
-            cookie2.setHttpOnly(true);
-            cookie2.setSecure(true);
-            cookie2.setPath("/");
-            cookie2.setMaxAge(21600);
-            response.addCookie(cookie2);
+            // refresh token Redis에 저장
+            redisTokenService.saveRefreshToken(String.valueOf(insertedMember.getMemberId()), refreshToken);
 
             // 최종 회원가입 완료 후 홈으로 리다이렉트 (이미 로그인된 상태)
             return "redirect:/";

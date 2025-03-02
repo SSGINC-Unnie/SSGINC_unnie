@@ -7,11 +7,14 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 /**
- * 로그인 및 AccessToken 재발급 서비스.
+ * 로그인, AccessToken 재발급, 로그아웃 기능 인터페이스
  */
 public interface AuthService {
 
+    //로그인
     Map<String, String> login(MemberLoginRequest memberLoginRequest, HttpServletResponse response);
-
-    Map<String, String> refreshAccessToken(String refreshTokenCookie, HttpServletResponse response);
+    //AccessToken 재발급
+    Map<String, String> refreshAccessToken(Long memberId, HttpServletResponse response);
+    //로그아웃
+    void logout(Long memberId, HttpServletResponse response);
 }
