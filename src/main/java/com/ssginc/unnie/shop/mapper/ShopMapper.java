@@ -21,4 +21,7 @@ public interface ShopMapper {
     int insertBookmark(ShopBookmarkRequest request);
 
     int deleteBookmark(int shopId);
+
+   ShopBookmarkRequest findBookmarkByShopIdAndMemberId(@Param("bookmarkShopId") int bookmarkShopId,
+                                                       @Param("bookmarkMemberId") long bookmarkMemberId);
 }

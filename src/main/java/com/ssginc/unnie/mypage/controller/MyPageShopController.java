@@ -158,8 +158,7 @@ public class MyPageShopController {
     public ResponseEntity<ResponseDto<Map<String, Object>>> getMyShops(
             @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
         long memberId = memberPrincipal.getMemberId(); // memberId 타입 확인
-        List<MyShopResponse> result = myPageShopService.getMyShops(memberId);
-        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "내 업체 목록 조회에 성공하였습니다.", Map.of("shop",result)));
+        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "내 업체 목록 조회에 성공하였습니다.", Map.of("shop",myPageShopService.getMyShops(memberId))));
     }
 
     /**
@@ -169,13 +168,8 @@ public class MyPageShopController {
     @GetMapping("/manager/shopdetail/{shopId}")
     public ResponseEntity<ResponseDto<Map<String, Object>>> getMyShopDetail(
             @PathVariable int shopId) {
-        MyShopDetailResponse shopdetail = myPageShopService.getMyShopsDetail(shopId);
-        if (shopdetail == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ResponseDto<>(HttpStatus.NOT_FOUND.value(), "해당 업체를 찾을 수 없습니다.", null));
-        }
 
-        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "샵 정보 조회에 성공했습니다.", Map.of("shop",shopdetail)));
+        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "샵 정보 조회에 성공했습니다.", Map.of("shop",myPageShopService.getMyShopsDetail(shopId))));
     }
 
 

@@ -87,24 +87,35 @@ public class ShopController {
     @PostMapping("/shopdetails/bookmark/{shopId}")
     public ResponseEntity<ResponseDto<Map<String, Integer>>> createBookmark(
             @AuthenticationPrincipal MemberPrincipal memberPrincipal,
+            @RequestBody ShopBookmarkRequest request,
             @PathVariable("shopId") int shopId) {
         long memberId = memberPrincipal.getMemberId();
 
-        ShopBookmarkRequest request = new ShopBookmarkRequest();
         request.setBookmarkMemberId(memberId);
         request.setBookmarkShopId(shopId);
 
-        int result = shopService.createBookmark(request);
         return ResponseEntity.ok(
                 new ResponseDto<>(HttpStatus.OK.value(),
                         "찜 목록에 추가되었습니다.",
-                        Map.of("shopId", result))
-        );
+                        Map.of("shopId", shopService.createBookmark(request))));
     }
 
+    @DeleteMapping("/shopdetails/bookmark/{shopId}")
+    public ResponseEntity<ResponseDto<Map<String, Integer>>> deleteBookmark(
+            @AuthenticationPrincipal MemberPrincipal memberPrincipal,
+            @RequestBody ShopBookmarkRequest request,
+            @PathVariable("shopId") int shopId) {
 
+        long currentMemberId = memberPrincipal.getMemberId();
 
+        request.setBookmarkShopId(shopId);
+        request.setBookmarkMemberId(currentMemberId);
 
+        return ResponseEntity.ok(
+                new ResponseDto<>(HttpStatus.OK.value(),
+                        "찜 목록에서 삭제되었습니다.",
+                        Map.of("shopId", shopService.deleteBookmark(request, currentMemberId))));
+    }
 
 
 
