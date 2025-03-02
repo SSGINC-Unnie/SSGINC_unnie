@@ -7,14 +7,19 @@
             (#{bookmarkMemberId}, #{bookmarkShopId})
     </insert>
 
+    <delete id="deleteBookmark" parameterType="int">
+        DELETE FROM bookmark
+        WHERE bookmark_shop_id = #{bookmarkShopId}
+    </delete>
+
 
     <select id="selectShopByCategory" resultType="com.ssginc.unnie.shop.dto.ShopResponse">
         SELECT s.shop_id, s.shop_name, s.shop_business_time, ROUND(AVG(re.review_rate), 2) AS avg_rate,
                s.shop_location
         FROM shop s
-                 JOIN receipt r ON r.receipt_SHOP_ID = s.shop_id
-                 JOIN review re ON r.receipt_id = re.receipt_id
-        WHERE s.shop_category = #{category}
+                 JOIN receipt r ON r.receipt_shop_id = s.shop_id
+                 JOIN review re ON r.receipt_id = re.review_receipt_id
+        WHERE s.shop_category = #{category} AND s.shop_status = 1
         GROUP BY s.shop_id, s.shop_name, s.shop_business_time, s.shop_location
     </select>
 
@@ -29,7 +34,7 @@
         SELECT p.procedure_id, p.procedure_name, p.procedure_price from `procedure` p
                                                                             join designer d on d.designer_id = p.procedure_designer_id
                                                                             join shop s on s.shop_id = d.designer_shop_id
-        where s.shop_id = #{shopId};
+        where s.shop_id = #{shopId}
     </select>
 
     <select id="findShopById" resultType="com.ssginc.unnie.shop.dto.ShopInfoResponse">
@@ -41,14 +46,15 @@
             ROUND(AVG(re.review_rate), 2) AS avg_rate,
             s.shop_location,
             MAX(re.review_date) AS latest_review_date,
+            s.review_summary,
             SUBSTRING_INDEX(GROUP_CONCAT(re.review_content ORDER BY re.review_date DESC), ',', 1) AS latest_review_content,
             SUBSTRING_INDEX(GROUP_CONCAT(m.member_nickname ORDER BY re.review_date DESC), ',', 1) AS latest_member_nickname
         FROM shop s
                  JOIN receipt r ON r.receipt_shop_id = s.shop_id
-                 JOIN review re ON r.receipt_id = re.receipt_id
+                 JOIN review re ON r.receipt_id = re.review_receipt_id
                  JOIN member m ON re.review_member_id = m.member_id
-        WHERE s.shop_id = #{shopId}
-        GROUP BY s.shop_id, s.shop_name, s.shop_business_time, s.shop_member_id, s.shop_location;
+        WHERE s.shop_id = #{shopId} AND s.shop_status = 1
+        GROUP BY s.shop_id, s.shop_name, s.shop_business_time, s.shop_member_id, s.shop_location,review_summary;
     </select>
 
 
@@ -64,7 +70,16 @@
             shop_business_number,
             shop_representation_name
         from shop
-        where shop_id = #{shopId};
+        where shop_id = #{shopId} AND shop_status = 1
+    </select>
+
+    <select id="findBookmarkByShopIdAndMemberId" parameterType="map" resultType="com.ssginc.unnie.shop.dto.ShopBookmarkRequest">
+        SELECT
+            bookmark_member_id,
+            bookmark_shop_id
+        FROM bookmark
+        WHERE bookmark_shop_id = #{bookmarkShopId}
+          AND bookmark_member_id = #{bookmarkMemberId}
     </select>
 
 

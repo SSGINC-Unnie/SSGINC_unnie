@@ -46,7 +46,7 @@ public class MyPageShopServiceImpl implements MyPageShopService {
      */
 
     @Override
-    public String createShop(ShopInsertRequest request) throws URISyntaxException {
+    public Integer createShop(ShopInsertRequest request) {
 
         BusinessVerificationRequest bizRequest = convertFromShopRequest(
                 request.getShopRepresentationName(),
@@ -54,10 +54,11 @@ public class MyPageShopServiceImpl implements MyPageShopService {
                 String.valueOf(request.getShopCreatedAt())
         );
 
-        boolean verified = isValidBusinessLicense(bizRequest);
+            boolean verified = isValidBusinessLicense(bizRequest);
+
         if(!verified) {
             log.error("Business license is not valid");
-            return "null";
+            throw new UnnieShopException(ErrorCode.INVALID_BUSINESS_NUMBER);
         }
 
 
@@ -78,7 +79,7 @@ public class MyPageShopServiceImpl implements MyPageShopService {
         {
             throw new UnnieShopException(ErrorCode.SHOP_INSERT_FAILED);
         }
-        return String.valueOf(res);
+        return request.getShopId();
 
     }
 
@@ -89,7 +90,7 @@ public class MyPageShopServiceImpl implements MyPageShopService {
      */
 
     @Override
-    public String createDesigner(DesignerRequest request) {
+    public Integer createDesigner(DesignerRequest request) {
 
         shopValidator.validateDesigner(request);
 
@@ -109,7 +110,7 @@ public class MyPageShopServiceImpl implements MyPageShopService {
             throw new UnnieShopException(ErrorCode.DESIGNER_INSERT_FAILED);
         }
 
-        return String.valueOf(res);
+        return request.getDesignerId();
     }
 
     /**
@@ -119,7 +120,8 @@ public class MyPageShopServiceImpl implements MyPageShopService {
      */
 
 
-    public String createProcedure(ProcedureRequest request) {
+    @Override
+    public Integer createProcedure(ProcedureRequest request) {
 
 
         shopValidator.validateProcedure(request);
@@ -139,7 +141,7 @@ public class MyPageShopServiceImpl implements MyPageShopService {
             throw new UnnieShopException(ErrorCode.PROCEDURE_INSERT_FAILED);
         }
         // 트랜젝션 어노테이션 추가(lollback ~)
-        return String.valueOf(res);
+        return request.getProcedureId();
     }
 
     /**
@@ -147,7 +149,7 @@ public class MyPageShopServiceImpl implements MyPageShopService {
      */
 
     @Override
-    public String updateShop(ShopUpdateRequest request, long memberId) {
+    public Integer updateShop(ShopUpdateRequest request, long memberId) {
 
         int ownerCount = myPageShopMapper.checkShopOwnership(request.getShopId(), memberId);
         if (ownerCount == 0) {
@@ -176,7 +178,7 @@ public class MyPageShopServiceImpl implements MyPageShopService {
         if (res == 0) {
             throw new UnnieShopException(ErrorCode.SHOP_UPDATE_FAILED);
         }
-        return String.valueOf(res);
+        return request.getShopId();
     }
     /**
      * ======================= 디자이너 수정 =======================
@@ -184,7 +186,7 @@ public class MyPageShopServiceImpl implements MyPageShopService {
 
 
     @Override
-    public String updateDesigner(DesignerRequest request, long memberId) {
+    public Integer updateDesigner(DesignerRequest request, long memberId) {
 
         int ownerCount = myPageShopMapper.checkDesignerOwnership(request.getDesignerId(), memberId);
         if (ownerCount == 0) {
@@ -217,7 +219,7 @@ public class MyPageShopServiceImpl implements MyPageShopService {
             throw new UnnieShopException(ErrorCode.DESIGNER_UPDATE_FAILED);
         }
 
-        return String.valueOf(res);
+        return request.getDesignerId();
     }
 
     /**
@@ -225,7 +227,7 @@ public class MyPageShopServiceImpl implements MyPageShopService {
      */
 
     @Override
-    public String updateProcedure(ProcedureRequest request, long memberId) {
+    public Integer updateProcedure(ProcedureRequest request, long memberId) {
         log.info(String.valueOf(request.getProcedureId()));
         log.info(String.valueOf(request.getProcedureDesignerId()));
 
@@ -257,7 +259,7 @@ public class MyPageShopServiceImpl implements MyPageShopService {
             throw new UnnieShopException(ErrorCode.PROCEDURE_UPDATE_FAILED);
         }
 
-        return String.valueOf(res);
+        return request.getProcedureId();
 
     }
 
@@ -267,7 +269,7 @@ public class MyPageShopServiceImpl implements MyPageShopService {
 
     @Override
     @Transactional
-    public String deleteShop(int shopId, long currentMemberId) {
+    public Integer deleteShop(int shopId, long currentMemberId) {
         // 1. shopId 유효성 검증
         if (shopId <= 0) {
             throw new UnnieShopException(ErrorCode.SHOP_NOT_FOUND);
@@ -289,7 +291,7 @@ public class MyPageShopServiceImpl implements MyPageShopService {
         if (res == 0) {
             throw new UnnieShopException(ErrorCode.SHOP_DELETE_FAILED);
         }
-        return String.valueOf(res);
+        return shopId;
     }
 
 
@@ -299,7 +301,7 @@ public class MyPageShopServiceImpl implements MyPageShopService {
 
     @Transactional
     @Override
-    public String deleteDesigner(int designerId, long currentMemberId) {
+    public Integer deleteDesigner(int designerId, long currentMemberId) {
         if (designerId <= 0) {
             throw new UnnieShopException(ErrorCode.DESIGNER_NOT_FOUND);
         }
@@ -323,7 +325,7 @@ public class MyPageShopServiceImpl implements MyPageShopService {
             throw new UnnieShopException(ErrorCode.DESIGNER_DELETE_FAILED);
         }
 
-        return String.valueOf(res);
+        return designerId;
     }
 
     /**
@@ -332,7 +334,7 @@ public class MyPageShopServiceImpl implements MyPageShopService {
 
     @Transactional
     @Override
-    public String deleteProcedure(int procedureId, long currentMemberId) {
+    public Integer deleteProcedure(int procedureId, long currentMemberId) {
         if (procedureId <= 0) {
             throw new UnnieShopException(ErrorCode.PROCEDURE_NOT_FOUND);
         }
@@ -353,7 +355,7 @@ public class MyPageShopServiceImpl implements MyPageShopService {
         if (res == 0) {
             throw new UnnieShopException(ErrorCode.PROCEDURE_DELETE_FAILED);
         }
-        return String.valueOf(res);
+        return procedureId;
     }
 
     /**
@@ -375,6 +377,7 @@ public class MyPageShopServiceImpl implements MyPageShopService {
     /**
      * 업체 상세 조회
      */
+    @Override
     public MyShopDetailResponse getMyShopsDetail(int shopId) {
         MyShopDetailResponse shopdetail = myPageShopMapper.findShopNameById(shopId);
         if(shopdetail == null)
@@ -395,9 +398,15 @@ public class MyPageShopServiceImpl implements MyPageShopService {
      * ======================= 사업자 진위여부 확인 =======================
      */
 
-    public boolean isValidBusinessLicense(BusinessVerificationRequest request) throws URISyntaxException {
+    @Override
+    public boolean isValidBusinessLicense(BusinessVerificationRequest request) {
         // 1. URI 생성
-        URI uri = new URI(baseUrl + serviceKey);
+        URI uri = null;
+        try {
+            uri = new URI(baseUrl + serviceKey);
+        } catch (URISyntaxException e) {
+            throw new UnnieShopException(ErrorCode.URI_SYNTAX_ERROR);
+        }
 
         // 2. RestTemplate 및 헤더 설정
         RestTemplate restTemplate = new RestTemplate();

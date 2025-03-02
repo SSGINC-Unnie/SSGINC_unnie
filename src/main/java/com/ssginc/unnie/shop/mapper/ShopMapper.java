@@ -9,9 +9,19 @@ import java.util.List;
 @Mapper
 public interface ShopMapper {
     List<ShopResponse> selectShopByCategory(String category);
+
     List<ShopDesignerResponse> findDesignersByShopId(@Param("shopId") int shopId);
+
     List<ShopProcedureResponse> findProceduresByShopId(int shopId);
+
     ShopInfoResponse findShopById(int shopId);
+
     ShopDetailsResponse findShopDetailsById(int shopId);
+
     int insertBookmark(ShopBookmarkRequest request);
+
+    int deleteBookmark(int shopId);
+
+   ShopBookmarkRequest findBookmarkByShopIdAndMemberId(@Param("bookmarkShopId") int bookmarkShopId,
+                                                       @Param("bookmarkMemberId") long bookmarkMemberId);
 }

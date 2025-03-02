@@ -1,6 +1,7 @@
 package com.ssginc.unnie.shop.service;
 
 import com.ssginc.unnie.shop.dto.*;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -15,5 +16,9 @@ public interface ShopService {
 
     ShopDetailsResponse getShopDetailsByShopId(int shopId);
 
-    String createBookmark(ShopBookmarkRequest request);
+
+    Integer createBookmark(ShopBookmarkRequest request);
+
+    @Transactional
+    Integer deleteBookmark(ShopBookmarkRequest request, long currentMemberId);
 }

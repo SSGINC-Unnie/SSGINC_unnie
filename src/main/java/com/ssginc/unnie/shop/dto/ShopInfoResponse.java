@@ -13,6 +13,6 @@ public class ShopInfoResponse {
     private String shopLocation;
     private LocalDateTime latestReviewDate;
     private String latestReviewContent;
-    private String latestMemberNickname;
+    private String reviewSummary;
     private long shopMemberId;
 }
