@@ -6,7 +6,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 /**
- * 회원 본인인증 관련 Service 인터페이스.
+ * 회원 본인인증 및 아이디/비밀번호 찾기 기능 관련 인터페이스
  * 이메일 본인인증
  * 전화번호 본인인증
  */

@@ -15,7 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 /**
- * OAuth 로그인 서비스 구현체.
+ * OAuth 로그인 인터페이스의 구현 클래스
  */
 @Slf4j
 @Service

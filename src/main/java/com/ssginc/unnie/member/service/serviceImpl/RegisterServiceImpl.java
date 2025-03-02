@@ -13,7 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 /**
- * 회원 가입 서비스 구현체.
+ * 회원 가입 인터페이스의 구현 클래스
  */
 @Slf4j
 @Service

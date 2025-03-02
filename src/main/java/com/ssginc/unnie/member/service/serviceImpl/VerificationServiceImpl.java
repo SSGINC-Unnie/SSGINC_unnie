@@ -28,7 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 회원 본인인증 및 아이디/비밀번호 찾기 서비스 구현체.
+ * 회원 본인인증 및 아이디/비밀번호 찾기 인터페이스의 구현 클래스
  */
 @Slf4j
 @Service

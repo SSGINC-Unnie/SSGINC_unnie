@@ -3,7 +3,7 @@ package com.ssginc.unnie.member.service;
 import com.ssginc.unnie.member.dto.MemberRegisterRequest;
 
 /**
- * 회원가입 기능 서비스.
+ * 회원가입 기능 인터페이스
  */
 public interface RegisterService {
     //회원정보 등록
