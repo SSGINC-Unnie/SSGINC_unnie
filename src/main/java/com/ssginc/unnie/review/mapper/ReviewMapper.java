@@ -17,39 +17,48 @@ public interface ReviewMapper {
 
     /**
      * 리뷰-키워드 연결 정보 등록 (생성용): review_keyword 테이블에 (keyword_id, review_id)를 삽입한다.
-     * ReviewCreateRequest의 keywordIds 리스트와 reviewId를 활용한다.
      */
     int insertReviewKeywordsForCreate(ReviewCreateRequest reviewCreateRequest);
 
     /**
-     * 단일 리뷰 상세 조회: review, member, receipt, shop 테이블을 JOIN하여 ReviewGetResponse DTO로 반환.
+     * 단일 리뷰 상세 조회: review, member, receipt, shop 테이블을 JOIN하여 ReviewGetResponse DTO로 반환한다.
      */
     ReviewGetResponse getReviewById(@Param("reviewId") long reviewId);
 
     /**
-     * 특정 리뷰의 키워드 목록 조회: review_keyword와 keyword 테이블을 JOIN하여 키워드 문자열 목록을 반환.
+     * 특정 리뷰의 키워드 목록 조회: review_keyword와 keyword 테이블을 JOIN하여 키워드 문자열 목록을 반환한다.
      */
     List<String> selectReviewKeywordsByReviewId(@Param("reviewId") long reviewId);
 
     /**
-     * 리뷰 수정: review 테이블 업데이트.
+     * 리뷰 수정: review 테이블 업데이트
      */
     int updateReview(ReviewUpdateRequest reviewUpdateRequest);
 
     /**
-     * 기존 리뷰의 키워드 삭제.
+     * 기존 리뷰의 키워드 삭제
      */
     int deleteReviewKeywords(@Param("reviewId") long reviewId);
 
     /**
      * 리뷰-키워드 연결 정보 등록 (수정용): review_keyword 테이블에 (keyword_id, review_id)를 삽입한다.
-     * ReviewUpdateRequest의 keywordIds 리스트와 reviewId를 활용한다.
      */
     int insertReviewKeywordsForUpdate(ReviewUpdateRequest reviewUpdateRequest);
 
-    int checkReviewId(long reviewId);
+    /**
+     * 리뷰 존재 여부 확인: EXISTS 함수를 사용하여 리뷰가 존재하는지 확인한다.
+     */
+    boolean existsReview(@Param("reviewId") long reviewId);
 
-    Integer checkReviewAndAuthor(@Param("reviewId") long reviewId, @Param("memberId") long memberId);
+    /**
+     * 리뷰 삭제 시 특정 리뷰가 존재하는지 + 삭제를 요청한 사용자가 작성자인지 검증한다.
+     */
+    Integer checkReviewAndAuthor(@Param("reviewId") long reviewId, @Param("reviewMemberId") long reviewMemberId);
 
-    int softDeleteReview(long reviewId);
+    /**
+     * 리뷰 소프트 딜리트: review_status -> User Delete: 1, Admin Delete: 2
+     */
+    int softDeleteReview(@Param("reviewId") long reviewId, @Param("reviewStatus") int reviewStatus);
+
+
 }
