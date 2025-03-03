@@ -22,6 +22,7 @@ public class ShopServiceImpl implements ShopService {
     private final ShopValidator validator;
 
 
+    @Transactional(readOnly = true)
     @Override
     public List<ShopResponse> selectShopByCategory(String category) {
         if (category == null || category.isEmpty() ||
@@ -36,6 +37,7 @@ public class ShopServiceImpl implements ShopService {
         return res;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<ShopDesignerResponse> getDesignersByShopId(int shopId) {
         validator.validateShopId(shopId);
@@ -46,6 +48,7 @@ public class ShopServiceImpl implements ShopService {
         return res;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<ShopProcedureResponse> getProceduresByShopId(int shopId) {
         validator.validateShopId(shopId);
@@ -56,6 +59,7 @@ public class ShopServiceImpl implements ShopService {
         return res;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public ShopInfoResponse getShopByShopId(int shopId) {
         validator.validateShopId(shopId);
@@ -66,6 +70,7 @@ public class ShopServiceImpl implements ShopService {
         return res;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public ShopDetailsResponse getShopDetailsByShopId(int shopId) {
         validator.validateShopId(shopId);
@@ -80,6 +85,7 @@ public class ShopServiceImpl implements ShopService {
      * 찜 등록
      */
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public Integer createBookmark(ShopBookmarkRequest request) {
         if (request.getBookmarkShopId() <= 0) {
@@ -99,7 +105,7 @@ public class ShopServiceImpl implements ShopService {
      * 찜 삭제
      */
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public Integer deleteBookmark(ShopBookmarkRequest request, long currentMemberId) {
         // 1. 찜할 업체 ID 유효성 검사

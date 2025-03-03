@@ -1,6 +1,7 @@
 package com.ssginc.unnie.mypage.service.serviceImpl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.pagehelper.PageInfo;
 import com.ssginc.unnie.common.exception.UnnieShopException;
 import com.ssginc.unnie.common.util.ErrorCode;
 import com.ssginc.unnie.common.util.validation.ShopValidator;
@@ -45,6 +46,7 @@ public class MyPageShopServiceImpl implements MyPageShopService {
      *
      */
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public Integer createShop(ShopInsertRequest request) {
 
@@ -64,12 +66,12 @@ public class MyPageShopServiceImpl implements MyPageShopService {
 
         shopValidator.validate(request);
 
-        boolean isDuplicateName = (myPageShopMapper.existsByShopName(request.getShopName()) > 0);
+        boolean isDuplicateName = (myPageShopMapper.existsByShopName(request.getShopName(),request.getShopId()) > 0);
         if (isDuplicateName) {
             throw new UnnieShopException(ErrorCode.SHOP_ALREADY_EXISTS);
         }
 
-        boolean isDuplicatePhone = (myPageShopMapper.existsByShopTel(request.getShopTel()) > 0);
+        boolean isDuplicatePhone = (myPageShopMapper.existsByShopTel(request.getShopTel(),request.getShopId()) > 0);
         if (isDuplicatePhone) {
             throw new UnnieShopException(ErrorCode.DUPLICATE_SHOP_TEL);
         }
@@ -89,6 +91,7 @@ public class MyPageShopServiceImpl implements MyPageShopService {
      *
      */
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public Integer createDesigner(DesignerRequest request) {
 
@@ -120,13 +123,15 @@ public class MyPageShopServiceImpl implements MyPageShopService {
      */
 
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public Integer createProcedure(ProcedureRequest request) {
 
 
         shopValidator.validateProcedure(request);
-
         boolean isDuplicateProcedure = (myPageShopMapper.existsByProcedureName(request.getProcedureName()) > 0);
+
+        log.info(String.valueOf(isDuplicateProcedure));
         if(isDuplicateProcedure) {
             throw new UnnieShopException(ErrorCode.PROCEDURE_ALREADY_EXISTS);
         }
@@ -148,6 +153,7 @@ public class MyPageShopServiceImpl implements MyPageShopService {
      * ======================= 업체 수정 =======================
      */
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public Integer updateShop(ShopUpdateRequest request, long memberId) {
 
@@ -164,12 +170,12 @@ public class MyPageShopServiceImpl implements MyPageShopService {
             throw new UnnieShopException(ErrorCode.SHOP_NOT_FOUND);
         }
 
-        boolean isDuplicateName = (myPageShopMapper.existsByShopName(request.getShopName()) > 0);
+        boolean isDuplicateName = (myPageShopMapper.existsByShopName(request.getShopName(), request.getShopId()) > 0);
         if (isDuplicateName) {
             throw new UnnieShopException(ErrorCode.SHOP_ALREADY_EXISTS);
         }
 
-        boolean isDuplicatePhone = (myPageShopMapper.existsByShopTel(request.getShopTel()) > 0);
+        boolean isDuplicatePhone = (myPageShopMapper.existsByShopTel(request.getShopTel(),request.getShopId()) > 0);
         if (isDuplicatePhone) {
             throw new UnnieShopException(ErrorCode.DUPLICATE_SHOP_TEL);
         }
@@ -184,7 +190,7 @@ public class MyPageShopServiceImpl implements MyPageShopService {
      * ======================= 디자이너 수정 =======================
      */
 
-
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public Integer updateDesigner(DesignerRequest request, long memberId) {
 
@@ -226,6 +232,7 @@ public class MyPageShopServiceImpl implements MyPageShopService {
      * ======================= 시술 수정 =======================
      */
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public Integer updateProcedure(ProcedureRequest request, long memberId) {
         log.info(String.valueOf(request.getProcedureId()));
@@ -267,8 +274,8 @@ public class MyPageShopServiceImpl implements MyPageShopService {
      * ======================= 업체 삭제 =======================
      */
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
-    @Transactional
     public Integer deleteShop(int shopId, long currentMemberId) {
         // 1. shopId 유효성 검증
         if (shopId <= 0) {
@@ -299,7 +306,7 @@ public class MyPageShopServiceImpl implements MyPageShopService {
      * ======================= 디자이너 삭제 =======================
      */
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public Integer deleteDesigner(int designerId, long currentMemberId) {
         if (designerId <= 0) {
@@ -332,7 +339,7 @@ public class MyPageShopServiceImpl implements MyPageShopService {
      * ======================= 시술 삭제 =======================
      */
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public Integer deleteProcedure(int procedureId, long currentMemberId) {
         if (procedureId <= 0) {
@@ -362,21 +369,39 @@ public class MyPageShopServiceImpl implements MyPageShopService {
      * 내 업체 조회
      */
 
+    @Transactional(readOnly = true)
     @Override
-    public List<MyShopResponse> getMyShops(long memberId) {
-        List<MyShopResponse> res = myPageShopMapper.findShopsByMemberId(memberId);
-        if(res==null) {
-            throw new UnnieShopException(ErrorCode.SHOP_NOT_FOUND);
-        }
-        if(memberId <= 0) {
+    public PageInfo<ShopResponse> getMyShops(long memberId, int page, int pageSize) {
+        if (memberId <= 0) {
             throw new UnnieShopException(ErrorCode.MEMBER_NOT_FOUND);
         }
-        return res;
+
+        // 페이지네이션을 위한 OFFSET 계산
+        int offset = (page - 1) * pageSize;
+
+        // 페이지네이션을 고려하여 업체 목록 조회
+        List<ShopResponse> res = myPageShopMapper.findShopsByMemberId(memberId, offset, pageSize);
+
+        // 전체 업체 개수 조회 (전체 페이지네이션을 위한 사용)
+        int totalCount = myPageShopMapper.getTotalShopCountByMemberId(memberId);
+
+        if (res == null || res.isEmpty()) {
+            throw new UnnieShopException(ErrorCode.SHOP_NOT_FOUND);
+        }
+
+        // PageInfo 객체 생성
+        PageInfo<ShopResponse> pageInfo = new PageInfo<>(res);
+        pageInfo.setTotal(totalCount); // 전체 데이터 개수 설정
+        pageInfo.setPageSize(pageSize); // 페이지 크기 설정
+
+        return pageInfo;
     }
 
     /**
      * 업체 상세 조회
      */
+
+    @Transactional(readOnly = true)
     @Override
     public MyShopDetailResponse getMyShopsDetail(int shopId) {
         MyShopDetailResponse shopdetail = myPageShopMapper.findShopNameById(shopId);

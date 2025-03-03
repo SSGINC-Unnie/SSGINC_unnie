@@ -1,5 +1,6 @@
 package com.ssginc.unnie.mypage.service;
 
+import com.github.pagehelper.PageInfo;
 import com.ssginc.unnie.mypage.dto.shop.*;
 
 import java.net.URISyntaxException;
@@ -19,7 +20,9 @@ public interface MyPageShopService {
     BusinessVerificationRequest convertFromShopRequest(String shopRepresentationName,
                                                        String shopBusinessNumber,
                                                        String shopCreatedAt);
-    List<MyShopResponse> getMyShops(long memberId);
+
+    PageInfo<ShopResponse> getMyShops(long memberId, int page, int pageSize);
+
     MyShopDetailResponse getMyShopsDetail(int shopId);
 
 }

@@ -4,6 +4,7 @@ import com.ssginc.unnie.shop.vo.ShopCategory;
 import lombok.Data;
 
 import java.sql.Time;
+import java.time.LocalDateTime;
 
 @Data
 public class ShopUpdateRequest {
@@ -21,6 +22,8 @@ public class ShopUpdateRequest {
     private String shopIntroduction;
     // 휴무일
     private Character shopClosedDay;
+
+    private LocalDateTime shopUpdatedAt;
 
     private int shopId;
 }

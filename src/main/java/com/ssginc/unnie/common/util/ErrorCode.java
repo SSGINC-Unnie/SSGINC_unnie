@@ -79,6 +79,7 @@ public enum ErrorCode {
     PROCEDURE_NOT_FOUND(404,"SH035","해당 시술을 찾을 수 없습니다,"),
     BOOKMARK_DELETE_FAILED(500,"SH036","찜 삭제에 실패했습니다."),
     BOOKMARK_INSERT_FAILED(500,"SH037","찜 등록에 실패했습니다."),
+    SHOP_REFUSE_FAILED(500,"SH038","승인 거절에 실패했습니다."),
 
     // 관리자(업체)
     ALREADY_APPROVED(409, "SH019", "이미 승인(또는 거부) 처리된 업체입니다."),

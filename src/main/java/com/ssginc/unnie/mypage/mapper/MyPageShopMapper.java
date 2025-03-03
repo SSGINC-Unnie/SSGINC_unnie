@@ -12,9 +12,11 @@ public interface MyPageShopMapper {
 
     int insertShop(ShopInsertRequest request);
 
-    int existsByShopName(String shopName);
+    int existsByShopName(@Param("shopName") String shopName,
+                         @Param("shopId") int shopId);
 
-    int existsByShopTel(String shopTel);
+    int existsByShopTel(@Param("shopTel") String shopTel,
+                        @Param("shopId") int shopId);
 
     int insertDesigner(DesignerRequest request);
 
@@ -59,13 +61,16 @@ public interface MyPageShopMapper {
 
     DesignerDeleteRequest findDesignerById(@Param("designerId") int designerId);
 
-    List<MyShopResponse> findShopsByMemberId(@Param("memberId") long memberId);
+    List<ShopResponse> findShopsByMemberId(@Param("memberId") long memberId, @Param("offset") int offset, @Param("pageSize") int pageSize);
 
     MyShopDetailResponse findShopNameById(@Param("shopId") int shopId);
 
     List<MyDesignerDetailResponse> findDesignersByShopId(@Param("shopId") int shopId);
 
     List<MyProcedureDetailResponse> findProceduresByDesignerId(@Param("designerId") int designerId);
+
+    int getTotalShopCountByMemberId(long memberId);
+
 
 
 }

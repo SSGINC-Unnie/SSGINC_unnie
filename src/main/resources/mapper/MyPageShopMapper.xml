@@ -20,8 +20,6 @@
              #{shopClosedDay}, #{shopRepresentationName}, #{shopBusinessNumber}, #{shopCreatedAt}, #{shopMemberId})
     </insert>
 
-
-
     <insert id="insertDesigner" parameterType="com.ssginc.unnie.mypage.dto.shop.DesignerRequest" useGeneratedKeys="true" keyProperty="designerId">
         INSERT INTO designer
         (designer_shop_id, designer_name, designer_introduction, designer_thumbnail)
@@ -35,6 +33,7 @@
         VALUES
             (#{procedureDesignerId},#{procedureName},#{procedurePrice})
     </insert>
+
     <update id="updateShop" parameterType="com.ssginc.unnie.mypage.dto.shop.ShopUpdateRequest">
         UPDATE shop
         SET
@@ -44,9 +43,11 @@
             shop_business_time = #{shopBusinessTime},
             shop_tel = #{shopTel},
             shop_introduction = #{shopIntroduction},
-            shop_closed_day = #{shopClosedDay}
-        WHERE shop_id = #{shopId}
+            shop_closed_day = #{shopClosedDay},
+            shop_updated_at = current_timestamp
+        WHERE shop_id = #{shopId} and shop_status = 1
     </update>
+
     <update id="updateDesigner" parameterType="com.ssginc.unnie.mypage.dto.shop.DesignerRequest">
         UPDATE designer
         SET
@@ -76,25 +77,30 @@
 
     <delete id="deleteShop" parameterType="int">
         DELETE FROM shop
-        WHERE shop_id = #{shopId}
+        WHERE shop_id = #{shopId} and shop_status = 1
     </delete>
+
     <delete id="deleteDesignerCascade" statementType="CALLABLE" parameterType="int">
         { CALL deleteDesignerCascade(#{designerId})}
     </delete>
+
     <select id="deleteShopCascade" statementType="CALLABLE" parameterType="int" resultType="int">
         { CALL deleteShopCascade(#{shopId}) }
     </select>
 
 
-    <select id="existsByShopName" parameterType="String" resultType="int">
+    <select id="existsByShopName" parameterType="map" resultType="int">
         SELECT COUNT(*)
         FROM shop
-        WHERE shop_name = #{shopName}
+        WHERE shop_name = #{shopName} AND
+              shop_id != #{shopId}
     </select>
-    <select id="existsByShopTel" parameterType="String" resultType="int">
+
+    <select id="existsByShopTel" parameterType="map" resultType="int">
         SELECT COUNT(*)
         FROM shop
-        WHERE shop_tel = #{shopTel}
+        WHERE shop_tel = #{shopTel} AND
+            shop_id != #{shopId}
     </select>
 
     <select id="existsByDesignerName" parameterType="String" resultType="int">
@@ -112,15 +118,18 @@
     <select id="existsByDesignerId" resultType="int">
         SELECT COUNT(*) FROM designer WHERE designer_id = #{designerId}
     </select>
+
     <select id="existsByShopId" resultType="java.lang.Integer">
         SELECT COUNT(*) FROM shop WHERE shop_id = #{shopId}
     </select>
+
     <select id="checkShopOwnership" parameterType="map" resultType="int">
         SELECT COUNT(*)
         FROM shop
         WHERE shop_id = #{shopId}
           AND shop_member_id = #{memberId}
     </select>
+
     <select id="checkProcedureOwnership" parameterType="map" resultType="int">
         SELECT COUNT(*) AS cnt
         FROM `procedure` p
@@ -130,6 +139,7 @@
           AND d.designer_id = #{designerId}
           AND s.shop_member_id = #{memberId}
     </select>
+
     <select id="checkDesignerOwnership" parameterType="map" resultType="int">
         SELECT COUNT(*) AS cnt
         FROM designer d
@@ -137,16 +147,19 @@
         WHERE d.designer_id = #{designerId}
           AND s.shop_member_id = #{memberId}
     </select>
+
     <select id="findShopIdByDesignerId" parameterType="int" resultType="int">
         SELECT designer_shop_id
         FROM designer
         WHERE designer_id = #{designerId}
     </select>
+
     <select id="findShopById" resultType="com.ssginc.unnie.mypage.dto.shop.ShopDeleteRequest">
         SELECT shop_id, shop_member_id
         FROM shop
         WHERE shop_id = #{shopId}
     </select>
+
     <select id="findProcedureById" parameterType="int" resultType="com.ssginc.unnie.mypage.dto.shop.ProcedureDeleteRequest">
         SELECT p.procedure_id,
                p.procedure_designer_id,
@@ -156,6 +169,7 @@
                  JOIN shop s ON d.designer_shop_id = s.shop_id
         WHERE p.procedure_id = #{procedureId}
     </select>
+
     <select id="findDesignerById" parameterType="int" resultType="com.ssginc.unnie.mypage.dto.shop.DesignerDeleteRequest">
         SELECT d.designer_id,
                d.designer_shop_id,
@@ -165,11 +179,13 @@
         WHERE d.designer_id = #{designerId}
     </select>
 
-    <select id="findShopsByMemberId" parameterType="long" resultType="com.ssginc.unnie.mypage.dto.shop.MyShopResponse">
+    <select id="findShopsByMemberId" parameterType="map" resultType="com.ssginc.unnie.mypage.dto.shop.ShopResponse">
         SELECT shop_id, shop_name
         FROM shop
-        WHERE shop_member_id = #{memberId}
+        WHERE shop_member_id = #{memberId} AND shop_status = 1
+            LIMIT #{offset}, #{pageSize}
     </select>
+
     <select id="findShopNameById" parameterType="int" resultType="com.ssginc.unnie.mypage.dto.shop.MyShopDetailResponse">
         SELECT
             shop_id,
@@ -183,7 +199,7 @@
             shop_business_number,
             shop_representation_name
         FROM shop
-        WHERE shop_id = #{shopId}
+        WHERE shop_id = #{shopId} and shop_status = 1
     </select>
 
     <select id="findDesignersByShopId" parameterType="int" resultType="com.ssginc.unnie.mypage.dto.shop.MyDesignerDetailResponse">
@@ -197,4 +213,9 @@
         FROM `procedure`
         WHERE procedure_designer_id = #{designerId}
     </select>
-</mapper>
+
+    <select id="getTotalShopCountByMemberId" parameterType="long" resultType="int">
+        SELECT COUNT(*)
+        FROM shop
+        WHERE shop_member_id = #{memberId} AND shop_status = 1
+    </select></mapper>
