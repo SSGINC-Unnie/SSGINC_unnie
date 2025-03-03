@@ -36,7 +36,7 @@
     <select id="selectReviewKeywordsByReviewId" resultType="java.lang.String" parameterType="long">
         SELECT k.keyword
         FROM review_keyword rk
-                 JOIN keyword k ON rk.keyword_id = k.keyword_id
+                 JOIN keywords k ON rk.keyword_id = k.keyword_id
         WHERE rk.review_id = #{reviewId}
     </select>
 
@@ -57,6 +57,7 @@
                  JOIN receipt rc ON r.review_receipt_id = rc.receipt_id
                  JOIN shop s ON rc.receipt_shop_id = s.shop_id
         WHERE r.review_id = #{reviewId}
+          AND r.review_status = 0
     </select>
 
     <!-- 5) 리뷰 수정 쿼리 -->
@@ -85,33 +86,36 @@
     </insert>
 
     <!-- 8) 리뷰 소프트 딜리트 -->
-    <update id="softDeleteReview" useGeneratedKeys="true" keyColumn="review_id" keyProperty="reviewId">
-        update review
-        set
-            review_status = 1,
-            review_date = current_timestamp
-        where
-            review_id = #{reviewId}
+    <update id="softDeleteReview" parameterType="map">
+        UPDATE review
+        SET
+            review_status = #{reviewStatus}, -- 작성자가 비활성화(삭제)시: 1, 관리자가 비활성화 시: 2 / 활성화: 0
+            review_date = CURRENT_TIMESTAMP
+        WHERE review_id = #{reviewId}
     </update>
 
-    <select id="checkReviewId" resultType="int">
-        SELECT COUNT(*)
-        FROM review
-        WHERE review_id = #{reviewId}
-          AND review_status = 0
+    <!-- 9) 리뷰 존재 여부 확인: EXISTS 함수 사용 -->
+    <select id="existsReview" resultType="boolean" parameterType="long">
+        SELECT EXISTS (
+            SELECT 1
+            FROM review
+            WHERE review_id = #{reviewId}
+              AND review_status = 0
+        )
     </select>
 
     <select id="checkReviewAndAuthor" resultType="java.lang.Integer">
         SELECT
             CASE
-                WHEN COUNT(review_id) = 0 THEN -1
-                WHEN review_member_id != #{memberId} THEN 0
-                ELSE 1
+                WHEN COUNT(review_id) = 0 THEN -1  -- 리뷰가 존재하지 않으면 -1 반환
+                WHEN review_member_id != #{reviewMemberId} THEN 0  -- 작성자가 아니면 0 반환
+                ELSE 1  -- 작성자가 맞으면 1 반환
                 END AS ownership
         FROM review
-        WHERE review_id = #{reviewId}
-          AND review_status = 0
+        WHERE review_id = #{reviewId}  -- 특정 리뷰 ID 조회
+          AND review_status = 0  -- 활성화된(삭제되지 않은) 리뷰만 조회
     </select>
+
 
 
 </mapper>
