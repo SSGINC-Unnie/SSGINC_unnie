@@ -1,5 +1,6 @@
 package com.ssginc.unnie.mypage.controller;
 
+import com.github.pagehelper.PageInfo;
 import com.ssginc.unnie.common.config.MemberPrincipal;
 import com.ssginc.unnie.common.util.ResponseDto;
 import com.ssginc.unnie.mypage.dto.shop.*;
@@ -62,7 +63,6 @@ public class MyPageShopController {
             @RequestBody ProcedureRequest request,
             @PathVariable("designerId") int designerId) {
         request.setProcedureDesignerId(designerId);
-        myPageShopService.createProcedure(request);
         return ResponseEntity.ok(new ResponseDto<>(HttpStatus.CREATED.value(), "시술 등록이 완료되었습니다.", Map.of("ProcedureId",myPageShopService.createProcedure(request))));
     }
 
@@ -156,11 +156,20 @@ public class MyPageShopController {
 
     @GetMapping("/manager/myshops")
     public ResponseEntity<ResponseDto<Map<String, Object>>> getMyShops(
-            @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
-        long memberId = memberPrincipal.getMemberId(); // memberId 타입 확인
-        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "내 업체 목록 조회에 성공하였습니다.", Map.of("shop",myPageShopService.getMyShops(memberId))));
-    }
+            @AuthenticationPrincipal MemberPrincipal memberPrincipal,
+            @RequestParam(defaultValue = "1") int page,        // 페이지 번호
+            @RequestParam(defaultValue = "5") int pageSize) { // 페이지 크기
 
+        long memberId = memberPrincipal.getMemberId();
+
+        PageInfo<ShopResponse> shopPage = myPageShopService.getMyShops(memberId, page, pageSize);
+
+        return ResponseEntity.ok(new ResponseDto<>(
+                HttpStatus.OK.value(),
+                "내 업체 목록 조회에 성공하였습니다.",
+                Map.of("shop", shopPage)
+        ));
+    }
     /**
      * 업체 상세 조회
      */
