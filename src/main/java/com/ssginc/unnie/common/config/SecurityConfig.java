@@ -33,7 +33,7 @@ public class SecurityConfig {
                           //회원 관련 모두 허용
                           //.requestMatchers("/api/member/**").permitAll()
 //                        // 마이페이지 관련 - 로그인한 사용자만 접근
-//                        .requestMatchers("/api/community/board/**").authenticated()
+//                        .requestMatchers("/api/mypage/**").authenticated()
 //                        //관리자 전용 - ADMIN 권한 필요
 //                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
 //                        // 마이페이지 (업체 관리) - 업체 담당자만 접근

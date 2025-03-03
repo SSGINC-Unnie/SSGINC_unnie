@@ -1,9 +1,11 @@
 package com.ssginc.unnie.common.util.validation;
 
 
+import com.ssginc.unnie.common.exception.UnnieMemberException;
 import com.ssginc.unnie.common.exception.UnnieRegisterException;
 import com.ssginc.unnie.common.util.ErrorCode;
 import com.ssginc.unnie.member.dto.MemberRegisterRequest;
+import com.ssginc.unnie.mypage.dto.member.MyPageMemberUpdateRequest;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -30,6 +32,9 @@ public class MemberValidator implements Validator<MemberRegisterRequest>{
         birthRegex = "^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])$";
     }
 
+    /**
+     * 회원가입 유효성 검사
+     */
     @Override
     public boolean validate(MemberRegisterRequest object) {
         if (object == null) {
@@ -87,5 +92,28 @@ public class MemberValidator implements Validator<MemberRegisterRequest>{
         if (value == null || !value.matches(regex)){
             throw new UnnieRegisterException(errorCode);
         }
+    }
+
+    /**
+     * 회원정보 수정 유효성 검사
+     * 닉네임, 전화번호, 비밀번호 : 값이 있으면 유효성 검사
+     */
+    public boolean validateUpdateRequest(MyPageMemberUpdateRequest request) {
+        if (request == null) {
+            throw new UnnieMemberException(ErrorCode.NULL_POINTER_ERROR);
+        }
+
+        if (request.getMemberNickname() != null && !request.getMemberNickname().trim().isEmpty()) {
+            validateNickname(request.getMemberNickname());
+        }
+
+        if (request.getMemberPhone() != null && !request.getMemberPhone().trim().isEmpty()) {
+            validatePhone(request.getMemberPhone());
+        }
+
+        if (request.getNewPw() != null && !request.getNewPw().trim().isEmpty()) {
+            validatePw(request.getNewPw());
+        }
+        return true;
     }
 }

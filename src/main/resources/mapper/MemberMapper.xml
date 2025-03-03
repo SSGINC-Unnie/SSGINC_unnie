@@ -6,9 +6,11 @@
     <select id="checkMemberEmail" resultType="java.lang.Integer">
         SELECT COUNT(member_id) FROM member WHERE member_email = #{email}
     </select>
+
     <select id="checkMemberNickname" resultType="java.lang.Integer">
         SELECT COUNT(member_id) FROM member WHERE member_nickname = #{nickname}
     </select>
+
     <insert id="insertMember">
         INSERT INTO member (
             member_email, member_pw, member_name, member_nickname,
@@ -18,6 +20,7 @@
             #{memberPhone}, #{memberBirth}, #{memberGender}
         )
     </insert>
+
     <insert id="insertOAuthMember">
         INSERT INTO member (
             member_email, member_pw, member_name, member_nickname,
@@ -26,7 +29,6 @@
              #{memberEmail}, #{memberPw}, #{memberName}, #{memberNickname},
              #{memberPhone}, #{memberBirth}, #{memberGender}
         )
-
     </insert>
 
     <select id="selectMemberByEmail" resultType="com.ssginc.unnie.member.vo.Member">
@@ -36,6 +38,7 @@
     <select id="selectMemberById" resultType="com.ssginc.unnie.member.vo.Member">
         SELECT * FROM member WHERE member_id = #{memberId}
     </select>
+
     <select id="selectMemberByNameAndPhone" resultType="java.lang.String">
         SELECT member_email
         FROM member
@@ -51,5 +54,4 @@
             END
         WHERE member_email = #{memberEmail}
     </update>
-
 </mapper>

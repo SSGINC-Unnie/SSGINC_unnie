@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssginc.unnie.mypage.mapper.MyPageMemberMapper">
+
+    <select id="findById" parameterType="long" resultType="com.ssginc.unnie.mypage.dto.member.MyPageMemberResponse">
+        SELECT
+            member_email,
+            member_name,
+            member_nickname,
+            member_phone,
+            member_profile,
+            member_pw
+        FROM member
+        WHERE member_id = #{memberId}
+    </select>
+
+    <select id="countByNickname" parameterType="map" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM member
+        WHERE member_nickname = #{nickname}
+        AND member_id != #{memberId}
+    </select>
+
+    <select id="findMemberById" resultType="com.ssginc.unnie.member.vo.Member">
+        SELECT * FROM member WHERE member_id = #{memberId}
+    </select>
+
+    <update id="updateMember" parameterType="com.ssginc.unnie.member.vo.Member">
+        UPDATE member
+        <set>
+            <if test="memberNickname != null and memberNickname != ''">
+                member_nickname = #{memberNickname},
+            </if>
+            <if test="memberPhone != null and memberPhone != ''">
+                member_phone = #{memberPhone},
+            </if>
+            <if test="memberPw != null and memberPw != ''">
+                member_pw = #{memberPw},
+            </if>
+            <if test="memberProfile != null and memberProfile != ''">
+                member_profile = #{memberProfile},
+            </if>
+            member_updated_at = current_timestamp
+        </set>
+        WHERE member_id = #{memberId}
+    </update>
+</mapper>
