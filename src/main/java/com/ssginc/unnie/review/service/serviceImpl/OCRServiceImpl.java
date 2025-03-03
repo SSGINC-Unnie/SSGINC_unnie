@@ -1,5 +1,7 @@
 package com.ssginc.unnie.review.service.serviceImpl;
 
+import com.ssginc.unnie.common.exception.UnnieReviewException;
+import com.ssginc.unnie.common.util.ErrorCode;
 import com.ssginc.unnie.review.service.OCRService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
@@ -13,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.UUID;
+
 @Slf4j
 @Service
 public class OCRServiceImpl implements OCRService {
@@ -45,10 +48,8 @@ public class OCRServiceImpl implements OCRService {
             JSONArray images = new JSONArray();
             images.put(image);
             json.put("images", images);
-            //{"images" : [json]}
-            //{"images" : [{format:jpg, name:filename, data:dsklfjsdflsfj}]}
-            //{version: V2, requestId: dkslfkdsfd, timestamp:20250115, images: [{~~~}]}
-            // ✅ HTTP 요청 헤더 설정
+
+            // HTTP 요청 헤더 설정
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             headers.set("X-OCR-SECRET", secretKey);
@@ -60,27 +61,28 @@ public class OCRServiceImpl implements OCRService {
             log.info("OCR API 요청 본문: {}", json.toString(2));
             log.info("OCR API 요청 헤더: {}", headers);
 
-
             // OCR API 요청 보내기
             ResponseEntity<String> responseEntity = restTemplate.exchange(
                     OCR_URL, HttpMethod.POST, requestEntity, String.class
             );
 
-            // 응답 상태 코드 출력
             log.info("OCR API 응답 코드: {}", responseEntity.getStatusCode());
-            // 응답 본문 출력
             log.info("OCR API 원본 응답: {}", responseEntity.getBody());
 
-            // ✅ JSON 변환
             return new JSONObject(responseEntity.getBody());
 
+        } catch (IOException e) {
+            log.error("파일 변환 중 오류 발생: {}", e.getMessage(), e);
+            // 파일 변환 실패에 대한 에러코드가 필요하면 새로 생성할 수 있습니다.
+            throw new UnnieReviewException(ErrorCode.OCR_PROCESSING_FAILED, e);
         } catch (Exception e) {
-            throw new RuntimeException("OCR API 요청 실패: " + e.getMessage(), e);
+            log.error("OCR API 요청 중 오류 발생: {}", e.getMessage(), e);
+            throw new UnnieReviewException(ErrorCode.OCR_PROCESSING_FAILED, e);
         }
     }
 
     /**
-     * ✅ MultipartFile을 Base64로 변환
+     * MultipartFile을 Base64로 변환하는 메서드
      */
     private String convertFileToBase64(MultipartFile file) throws IOException {
         byte[] fileBytes = file.getBytes();

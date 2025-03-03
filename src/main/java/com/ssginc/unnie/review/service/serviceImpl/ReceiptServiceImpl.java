@@ -1,15 +1,15 @@
 package com.ssginc.unnie.review.service.serviceImpl;
 
-import com.ssginc.unnie.common.util.validation.ReceiptValidator;
-import com.ssginc.unnie.common.util.validation.Validator;
-import com.ssginc.unnie.community.dto.board.BoardRequestBase;
-import com.ssginc.unnie.review.dto.ReceiptItemRequest;
-import com.ssginc.unnie.review.dto.ReceiptItemResponse;
+import com.ssginc.unnie.common.exception.UnnieReviewException;
+import com.ssginc.unnie.common.util.ErrorCode;
 import com.ssginc.unnie.review.dto.ReceiptRequest;
 import com.ssginc.unnie.review.dto.ReceiptResponse;
+import com.ssginc.unnie.review.dto.ReceiptItemRequest;
+import com.ssginc.unnie.review.dto.ReceiptItemResponse;
 import com.ssginc.unnie.review.mapper.ReceiptItemMapper;
 import com.ssginc.unnie.review.mapper.ReceiptMapper;
 import com.ssginc.unnie.review.service.ReceiptService;
+import com.ssginc.unnie.common.util.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -32,13 +32,13 @@ public class ReceiptServiceImpl implements ReceiptService {
     /**
      * OCR 데이터를 기반으로 영수증과 품목 데이터를 DB에 저장 (DTO를 통해 처리)
      */
-    @Transactional
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public ReceiptResponse saveReceipt(ReceiptRequest receiptRequest) {
         // 1. 영수증 유효성 검증
         if (!receiptValidator.validate(receiptRequest)) {
             log.error("유효하지 않은 영수증 데이터: {}", receiptRequest);
-            throw new IllegalArgumentException("유효하지 않은 영수증 데이터입니다.");
+            throw new UnnieReviewException(ErrorCode.INVALID_RECEIPT);
         }
 
         // 2. 영수증 저장
@@ -46,7 +46,8 @@ public class ReceiptServiceImpl implements ReceiptService {
         log.info("영수증 저장 완료 (ID: {})", receiptRequest.getReceiptId());
 
         // 3. 품목 저장 - OCRParser에서 임시 값 대신, DB에서 생성된 영수증 ID를 할당
-        List<ReceiptItemRequest> items = Optional.ofNullable(receiptRequest.getItems()).orElse(Collections.emptyList());
+        List<ReceiptItemRequest> items = Optional.ofNullable(receiptRequest.getItems())
+                .orElse(Collections.emptyList());
         items.forEach(item -> {
             // DB에서 생성된 영수증 ID를 각 품목에 할당
             item.setReceiptId(receiptRequest.getReceiptId());
@@ -83,7 +84,7 @@ public class ReceiptServiceImpl implements ReceiptService {
         ReceiptResponse receiptResponse = receiptMapper.findReceiptById(receiptId);
         if (receiptResponse == null) {
             log.error("영수증을 찾을 수 없음 (ID: {})", receiptId);
-            throw new IllegalArgumentException("해당 영수증을 찾을 수 없습니다.");
+            throw new UnnieReviewException(ErrorCode.RECEIPT_NOT_FOUND);
         }
 
         List<ReceiptItemResponse> receiptItems = receiptItemMapper.findItemsByReceiptId(receiptId);

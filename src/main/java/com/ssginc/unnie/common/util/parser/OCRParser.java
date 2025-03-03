@@ -47,7 +47,7 @@ public class OCRParser {
                 throw new RuntimeException("OCR 데이터가 유효하지 않습니다.");
             }
 
-            // 각종 데이터 추출 (정규식은 기존 그대로 사용)
+            // 각종 데이터 추출
             String receiptShopName = OCRValidator.extractShopName(fullText);
             LocalDateTime receiptDate = OCRValidator.extractDateTime(fields);
             String businessNumber = OCRValidator.extractBusinessNumber(fullText);
@@ -72,40 +72,35 @@ public class OCRParser {
             JSONObject field = fields.getJSONObject(i);
             ocrText.append(field.optString("inferText", "")).append(" ");
         }
-        return ocrText.toString().replaceAll("\\s+", " ").trim();
+        return ocrText.toString().replaceAll("\\s+", "").trim();
     }
 
+
     /**
-     * 품목 리스트 추출
-     * fields 배열의 연속된 4개의 필드를 하나의 품목 데이터로 가정합니다.
+     * 품목 리스트 추출 (원래 로직: fields 배열의 연속된 4개의 필드를 슬라이딩 윈도우 방식으로 추출)
      */
     private static List<ReceiptItemRequest> extractItems(JSONArray fields) {
         List<ReceiptItemRequest> items = new ArrayList<>();
-        // fields 배열의 길이가 4 미만이면 품목 데이터가 없다고 판단
-        for (int i = 0; i <= fields.length() - 4; i += 4) {
-            JSONObject fieldName = fields.getJSONObject(i);
-            JSONObject fieldPrice = fields.getJSONObject(i + 1);
-            JSONObject fieldQuantity = fields.getJSONObject(i + 2);
-            JSONObject fieldTotal = fields.getJSONObject(i + 3);
+        // 슬라이딩 윈도우 방식: 인접한 4개 필드를 하나의 품목 데이터로 판단
+        for (int i = 0; i < fields.length() - 3; i++) {
+            JSONObject field1 = fields.getJSONObject(i);
+            JSONObject field2 = fields.getJSONObject(i + 1);
+            JSONObject field3 = fields.getJSONObject(i + 2);
+            JSONObject field4 = fields.getJSONObject(i + 3);
 
-            String itemName = fieldName.optString("inferText", "").trim();
-            String priceText = fieldPrice.optString("inferText", "").trim();
-            String quantityText = fieldQuantity.optString("inferText", "").trim();
-            String totalText = fieldTotal.optString("inferText", "").trim();
+            String itemName = field1.optString("inferText", "").trim();
+            String priceText = field2.optString("inferText", "").trim();
+            String quantityText = field3.optString("inferText", "").trim();
+            String totalText = field4.optString("inferText", "").trim();
 
-            // 가격, 수량, 총액 모두 숫자인지 검증
             if (isNumeric(priceText) && isNumeric(quantityText) && isNumeric(totalText)) {
                 try {
                     int price = Integer.parseInt(priceText.replaceAll(",", ""));
                     int quantity = Integer.parseInt(quantityText);
-                    // ReceiptItemRequest 생성 시, 영수증 ID 및 품목 ID는 별도 할당 (여기서는 임시 값 1 사용)
                     items.add(new ReceiptItemRequest(1, 1, itemName, price, quantity));
                 } catch (NumberFormatException e) {
-                    log.warn("품목 데이터 변환 오류 - 아이템 이름: {}", itemName);
+                    System.out.println("품목 데이터 변환 오류: " + itemName);
                 }
-            } else {
-                log.warn("품목 데이터 형식 오류 - 아이템 이름: {}, price: {}, quantity: {}, total: {}",
-                        itemName, priceText, quantityText, totalText);
             }
         }
         return items;

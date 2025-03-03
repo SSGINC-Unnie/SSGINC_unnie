@@ -12,39 +12,45 @@ import java.util.regex.Pattern;
 
 @Component
 @Slf4j
-public class OCRValidator implements Validator<String> {
+public class OCRValidator implements Validator<Object> {
 
-    // 정규식 패턴
+    // 가게 이름 추출 (상호: 또는 대괄호 [] 내부에서 추출)
     private static final String SHOP_NAME_REGEX = "(?:상\\s*호[:\\s]*([가-힣A-Za-z0-9\\s-]+)|\\[(.*?)\\])";
+
+    // 사업자번호 추출 (하이픈 유무 포함, "사업자 번호" 형태도 가능하도록 개선)
     private static final String BUSINESS_NUMBER_REGEX = "(?:사업자\\s*번호\\s*[:]?\\s*)?(\\d{3}-?\\d{2}-?\\d{5}|\\d{10})";
+
+    // 승인번호 추출 ("승인번호"와 "승인 번호" 모두 가능하도록 개선)
     private static final String APPROVAL_NUMBER_REGEX = "승인\\s*번호\\s*[:]?\\s*(\\d{6,})";
+
+    // 결제 금액 추출 (숫자 + "원" 포함)
     private static final String AMOUNT_REGEX = "결제금액\\s*[^\\n]*?([\\d,]+)\\s*?(원)?";
+
+    //결제 일시 추출
     private static final String DATE_REGEX = "(\\d{4}[-/.]\\d{1,2}[-/.]\\d{1,2})";
-    private static final String TIME_HH_REGEX = "(\\d{1,2}):"; // HH:
-    private static final String TIME_MMSS_REGEX = "(\\d{1,2}:\\d{1,2})"; // MM:SS
+    private static final String TIME_HH_REGEX = "(\\d{1,2}):"; // HH: 형태
+    private static final String TIME_MMSS_REGEX = "(\\d{1,2}:\\d{1,2})"; // MM:SS 형태
 
     /**
-     *  OCR 데이터가 존재하는지 검증
+     * Validator 인터페이스 구현: OCR 데이터의 유효성 검사
      */
     @Override
-    public boolean validate(String ocrText) {
-        if (ocrText == null || ocrText.trim().isEmpty()) {
-            log.warn("OCR 데이터가 비어 있음");
+    public boolean validate(Object text) {
+        if (text == null) {
+            log.warn("검증 실패: OCR 텍스트가 비어 있음");
             return false;
         }
-        return true;
+        return true; // 텍스트가 존재하면 유효한 것으로 간주
     }
 
     /**
-     *  특정 패턴을 정규식을 사용해 추출
+     * 정규식을 사용하여 특정 패턴 추출
      */
-    private static String extractPattern(String text, String regex) {
-        if (text == null || text.trim().isEmpty()) return "데이터 없음";
-
+    public static String extractPattern(String text, String regex) {
         Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(text);
 
-        if (matcher.find()) {
+        if (matcher.find()) { // 패턴에 맞는 문자열이 있으면
             return matcher.group(1) != null ? matcher.group(1).trim() : matcher.group(2).trim();
         }
         log.warn("정규식 '{}'에 해당하는 데이터를 찾을 수 없음", regex);
@@ -52,35 +58,32 @@ public class OCRValidator implements Validator<String> {
     }
 
     /**
-     *  OCR 에서 상호명 추출
+     * 가게 이름 추출
      */
     public static String extractShopName(String text) {
         return extractPattern(text, SHOP_NAME_REGEX);
     }
 
     /**
-     *  OCR 에서 사업자번호 추출
+     * 사업자번호 추출
      */
     public static String extractBusinessNumber(String text) {
         return extractPattern(text, BUSINESS_NUMBER_REGEX);
     }
 
     /**
-     *  OCR 에서 승인번호 추출
+     * 승인번호 추출
      */
     public static String extractApprovalNumber(String text) {
         return extractPattern(text, APPROVAL_NUMBER_REGEX);
     }
 
     /**
-     *  OCR 에서 결제 금액 추출
+     * 결제 금액 추출
      */
     public static int extractAmount(String text) {
-        if (text == null || text.trim().isEmpty()) return 0;
-
         Pattern amountPattern = Pattern.compile(AMOUNT_REGEX);
         Matcher matcher = amountPattern.matcher(text);
-
         if (matcher.find()) {
             try {
                 return Integer.parseInt(matcher.group(1).replaceAll(",", ""));
@@ -93,42 +96,51 @@ public class OCRValidator implements Validator<String> {
     }
 
     /**
-     *  OCR 에서 날짜 및 시간을 추출하여 LocalDateTime 으로 변환
+     * 날짜 추출
      */
     public static LocalDateTime extractDateTime(JSONArray fields) {
         String datePart = null;
-        String hour = "00", minute = "00", second = "00";
+        String hour = "00", minute = "00", second = "00"; // 기본값
 
+        // 날짜 패턴은 그대로 사용 (예: "2025-02-28")
+        Pattern datePattern = Pattern.compile(DATE_REGEX);
+        // 시간 패턴: 공백 허용 - "HH:mm" 또는 "HH:mm:ss"
+        Pattern timePattern = Pattern.compile("(\\d{1,2})\\s*:\\s*(\\d{1,2})(?:\\s*:\\s*(\\d{1,2}))?");
+
+        // 모든 필드의 텍스트를 하나의 문자열로 결합
+        StringBuilder aggregatedText = new StringBuilder();
         for (int i = 0; i < fields.length(); i++) {
             JSONObject field = fields.getJSONObject(i);
             String text = field.optString("inferText", "").trim();
-
-            // 날짜 찾기
-            if (text.matches(DATE_REGEX)) {
-                datePart = text;
-                continue;
+            if (!text.isEmpty()) {
+                aggregatedText.append(text).append(" ");
             }
+        }
+        String allText = aggregatedText.toString();
 
-            // 시간 찾기 (HH: 형태)
-            if (text.matches(TIME_HH_REGEX)) {
-                String potentialHour = text.replace(":", "");
-                if (isValidNumber(potentialHour, 0, 23)) {
-                    hour = potentialHour;
-                }
+        // 날짜 추출 (날짜는 정상적으로 추출된다고 가정)
+        Matcher dateMatcher = datePattern.matcher(allText);
+        if (dateMatcher.find()) {
+            datePart = dateMatcher.group(1);
+            // 구분자가 "/" 또는 "."인 경우 "-"로 변환
+            datePart = datePart.replace("/", "-").replace(".", "-");
+        }
 
-                // 다음 항목에서 MM:SS 찾기
-                if (i + 1 < fields.length()) {
-                    String nextText = fields.getJSONObject(i + 1).optString("inferText", "").trim();
-                    if (nextText.matches(TIME_MMSS_REGEX)) {
-                        String[] timeParts = nextText.split(":");
-                        if (isValidNumber(timeParts[0], 0, 59)) {
-                            minute = timeParts[0];
-                        }
-                        if (timeParts.length > 1 && isValidNumber(timeParts[1], 0, 59)) {
-                            second = timeParts[1];
-                        }
-                    }
-                }
+        // 개선된 시간 추출: 공백을 허용하여 시간 정보를 추출합니다.
+        Matcher timeMatcher = timePattern.matcher(allText);
+        if (timeMatcher.find()) {
+            String extractedHour = timeMatcher.group(1);
+            String extractedMinute = timeMatcher.group(2);
+            String extractedSecond = timeMatcher.group(3); // 선택적 그룹
+
+            if (isValidHour(extractedHour)) {
+                hour = extractedHour;
+            }
+            if (isValidMinute(extractedMinute)) {
+                minute = extractedMinute;
+            }
+            if (extractedSecond != null && isValidSecond(extractedSecond)) {
+                second = extractedSecond;
             }
         }
 
@@ -137,29 +149,49 @@ public class OCRValidator implements Validator<String> {
             try {
                 return LocalDateTime.parse(dateTimeString, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
             } catch (Exception e) {
-                log.warn("날짜 변환 실패, 현재 시간 반환: {}", dateTimeString);
+                log.warn("날짜 변환 실패: {}", dateTimeString);
             }
         }
-
-        return LocalDateTime.now();
+        return LocalDateTime.now(); // 기본값: 변환 실패 시 현재 시간 반환
     }
 
-    /**
-     *  숫자가 특정 범위 내에 있는지 확인
-     */
-    private static boolean isValidNumber(String value, int min, int max) {
+
+
+
+    // 시간 값이 0~23 사이인지 확인
+    private static boolean isValidHour(String hour) {
         try {
-            int num = Integer.parseInt(value);
-            return num >= min && num <= max;
+            int h = Integer.parseInt(hour);
+            return h >= 0 && h <= 23;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    // 분 값이 0~59 사이인지 확인
+    private static boolean isValidMinute(String minute) {
+        try {
+            int m = Integer.parseInt(minute);
+            return m >= 0 && m <= 59;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    // 초 값이 0~59 사이인지 확인
+    private static boolean isValidSecond(String second) {
+        try {
+            int s = Integer.parseInt(second);
+            return s >= 0 && s <= 59;
         } catch (NumberFormatException e) {
             return false;
         }
     }
 
     /**
-     *  문자열이 숫자인지 확인
+     * 문자열이 숫자인지 확인
      */
     public static boolean isNumeric(String str) {
-        return str != null && str.matches("\\d+(,\\d{3})*");
+        return str.matches("\\d+(,\\d{3})*");  // 쉼표 포함된 숫자 체크
     }
 }

@@ -32,8 +32,7 @@ public class ReviewGetResponse extends ReviewResponseBase {
                              LocalDateTime reviewDate, //리뷰 작성 일시
 //                             List<String> reviewKeywords,
                              String memberNickName,
-                             String shopName
-                             ) //리뷰 키워드
+                             String shopName)
     {
         super(reviewId, reviewMemberId, reviewReceiptId, reviewImage, reviewRate, reviewContent, reviewDate);
 //        this.reviewKeywords = reviewKeywords;
