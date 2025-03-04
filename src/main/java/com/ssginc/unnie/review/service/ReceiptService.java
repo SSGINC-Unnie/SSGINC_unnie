@@ -20,7 +20,7 @@ public interface ReceiptService {
      * @param receiptId 조회할 영수증 ID
      * @return 영수증 정보 응답 DTO
      */
-    ReceiptResponse getReceiptById(Long receiptId);
+    ReceiptResponse getReceiptById(long receiptId);
 
     /**
      * 영수증이 인증되었는지 확인하는 메서드.

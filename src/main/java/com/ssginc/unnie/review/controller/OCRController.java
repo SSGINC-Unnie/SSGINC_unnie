@@ -7,6 +7,7 @@ import com.ssginc.unnie.review.service.OCRService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,6 +34,8 @@ public class OCRController {
         ReceiptRequest receiptRequest = OCRParser.parse(ocrJson);
         log.info("파싱된 영수증 데이터: {}", receiptRequest);
 
-        return ResponseEntity.ok(new ResponseDto<>(200, "OCR 분석 성공", receiptRequest));
+        return ResponseEntity.ok(
+                new ResponseDto<>(HttpStatus.OK.value(), "OCR 분석 성공", receiptRequest)
+        );
     }
 }

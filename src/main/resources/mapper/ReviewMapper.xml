@@ -3,7 +3,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ssginc.unnie.review.mapper.ReviewMapper">
 
-    <!-- 1) 리뷰 등록: review 테이블에 Insert 후 reviewId를 자동 매핑 -->
+    <!-- 1) 리뷰 등록 -->
     <insert id="insertReview" useGeneratedKeys="true" keyProperty="reviewId" parameterType="com.ssginc.unnie.review.dto.ReviewCreateRequest">
         INSERT INTO review
         (
@@ -40,7 +40,7 @@
         WHERE rk.review_id = #{reviewId}
     </select>
 
-    <!-- 4) 리뷰 상세 조회 쿼리 -->
+    <!-- 4) 리뷰 상세 조회 -->
     <select id="getReviewById" resultType="com.ssginc.unnie.review.dto.ReviewGetResponse" parameterType="long">
         SELECT
             r.review_id AS reviewId,
@@ -60,7 +60,7 @@
           AND r.review_status = 0
     </select>
 
-    <!-- 5) 리뷰 수정 쿼리 -->
+    <!-- 5) 리뷰 수정 -->
     <update id="updateReview" parameterType="com.ssginc.unnie.review.dto.ReviewUpdateRequest" keyProperty="reviewId" keyColumn="review_id">
         UPDATE review
         SET
@@ -71,7 +71,7 @@
         WHERE review_id = #{reviewId}
     </update>
 
-    <!-- 6) 리뷰 수정 시 기존의 키워드 관계 삭제 쿼리 -->
+    <!-- 6) 리뷰 수정 시 기존의 키워드 관계 삭제 -->
     <delete id="deleteReviewKeywords" parameterType="long">
         DELETE FROM review_keyword WHERE review_id = #{reviewId}
     </delete>
@@ -89,12 +89,12 @@
     <update id="softDeleteReview" parameterType="map">
         UPDATE review
         SET
-            review_status = #{reviewStatus}, -- 작성자가 비활성화(삭제)시: 1, 관리자가 비활성화 시: 2 / 활성화: 0
+            review_status = #{reviewStatus},
             review_date = CURRENT_TIMESTAMP
         WHERE review_id = #{reviewId}
     </update>
 
-    <!-- 9) 리뷰 존재 여부 확인: EXISTS 함수 사용 -->
+    <!-- 9) 리뷰 존재 여부 확인 -->
     <select id="existsReview" resultType="boolean" parameterType="long">
         SELECT EXISTS (
             SELECT 1
@@ -104,6 +104,7 @@
         )
     </select>
 
+    <!-- 10) 리뷰 소유자 확인 -->
     <select id="checkReviewAndAuthor" resultType="java.lang.Integer">
         SELECT
             CASE
@@ -112,10 +113,8 @@
                 ELSE 1  -- 작성자가 맞으면 1 반환
                 END AS ownership
         FROM review
-        WHERE review_id = #{reviewId}  -- 특정 리뷰 ID 조회
-          AND review_status = 0  -- 활성화된(삭제되지 않은) 리뷰만 조회
+        WHERE review_id = #{reviewId}
+          AND review_status = 0
     </select>
-
-
 
 </mapper>
