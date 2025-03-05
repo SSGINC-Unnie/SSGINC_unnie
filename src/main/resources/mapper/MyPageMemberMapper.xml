@@ -45,4 +45,11 @@
         </set>
         WHERE member_id = #{memberId}
     </update>
+
+    <update id="withdrawMember" parameterType="long">
+        UPDATE member
+        SET member_state = 2,
+            member_updated_at = current_timestamp
+        WHERE member_id = #{memberId}
+    </update>
 </mapper>

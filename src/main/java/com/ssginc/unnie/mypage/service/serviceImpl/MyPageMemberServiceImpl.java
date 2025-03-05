@@ -13,7 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 /**
- * 마이페이지 회원정보 수정 인터페이스 구현 클래스
+ * 마이페이지 회원정보 수정 및 탈퇴 인터페이스 구현 클래스
  */
 @Slf4j
 @Service
@@ -66,6 +66,21 @@ public class MyPageMemberServiceImpl implements MyPageMemberService {
         int res = myPageMemberMapper.updateMember(updateRequest);
         if (res == 0) {
             throw new UnnieMemberException(ErrorCode.MEMBER_UPDATE_FAILED);
+        }
+        return res;
+    }
+
+    @Override
+    public int withdrawMember(Long memberId) {
+        //회원 존재 여부 확인
+        Member member = myPageMemberMapper.findMemberById(memberId);
+        if (member == null) {
+            throw new UnnieMemberException(ErrorCode.MEMBER_NOT_FOUND);
+        }
+        //회원 상태 탈퇴(2)로 업데이트
+        int res = myPageMemberMapper.withdrawMember(memberId);
+        if (res == 0){
+            throw new UnnieMemberException(ErrorCode.MEMBER_DELETION_FAILED);
         }
         return res;
     }

@@ -24,7 +24,7 @@ public class Member {
     private String memberBirth; // 생년월일
     private String memberGender; // 성별 (M/F)
     private String memberProfile; // 프로필 이미지
-    private String memberRole; // 회원 권한 ADMIN:관리자 / USER: 일반 / MANAGER: 업체',
+    private String memberRole; // 회원 권한 ADMIN:관리자 / USER: 일반 / MANAGER: 업체
     private int memberState; // 회원 상태 (0: 활성, 1: 정지, 2: 탈퇴)
     private LocalDateTime memberCreatedAt; // 가입일
     private LocalDateTime memberUpdatedAt; // 수정일
