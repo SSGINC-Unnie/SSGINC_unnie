@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec2="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=640, user-scalable=no">
@@ -38,10 +40,9 @@
 
 
     <!-- Main -->
-    <main class="main-content">
-        <h1>메인 컨텐츠</h1>
-        <p>여기에 메인 콘텐츠를 추가하세요.</p>
-    </main>
+    <div class="container" layout:fragment="content">
+        <!-- 여기에 코드 구현 -->
+    </div>
 
     <!-- Footer -->
     <footer class="footer">
@@ -87,7 +88,6 @@
             </div>
         </div>
     </footer>
-
 
 </div>
 

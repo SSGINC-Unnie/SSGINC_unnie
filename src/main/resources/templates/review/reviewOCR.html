@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec2="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8"/>
+    <title>OCR & Receipt Test</title>
+</head>
+<body>
+<div class="container" layout:fragment="content">
+    <main class="main">
+        <!-- 1) OCR 파일 업로드 폼 -->
+        <section>
+            <h2>1. OCR 파일 업로드</h2>
+            <form id="ocrForm" enctype="multipart/form-data">
+                <label for="file">영수증 파일 선택:</label>
+                <input type="file" id="file" name="file" accept="image/*" required/>
+                <button type="submit">OCR 분석</button>
+            </form>
+            <pre id="ocrResult"></pre>
+        </section>
+        <br>
+        <br>
+        <br>
+        <br>
+        <!-- 2) DB 저장 폼 -->
+        <section>
+            <h2>2. 영수증 DB 저장</h2>
+            <p>아래 텍스트 영역에 OCR 분석 결과(JSON)가 자동으로 들어가도록 설정해 두었습니다.</p>
+            <form id="saveReceiptForm">
+                <label for="receiptData">영수증 JSON 데이터:</label><br/>
+                <textarea id="receiptData" name="receiptData" rows="6" cols="50"></textarea><br/>
+                <button type="submit">영수증 저장</button>
+            </form>
+            <pre id="saveReceiptResult"></pre>
+        </section>
+        <br>
+        <br>
+        <br>
+        <br>
+        <!-- 3) 영수증 조회 폼 -->
+        <section>
+            <h2>3. 영수증 조회</h2>
+            <form id="getReceiptForm">
+                <label for="receiptId">조회할 영수증 ID:</label>
+                <input type="number" id="receiptId" name="receiptId" required/>
+                <button type="submit">조회</button>
+            </form>
+            <pre id="getReceiptResult"></pre>
+        </section>
+    </main>
+
+<div layout:fragment="scripts">
+    <script src="/js/OCR.js"></script>
+</div>
+</div>
+</body>
+
+
+</html>

@@ -71,8 +71,7 @@ public class ReceiptServiceImpl implements ReceiptService {
                 receiptRequest.getReceiptAmount(),
                 receiptRequest.getReceiptBusinessNumber(),
                 receiptRequest.getReceiptApprovalNumber(),
-                receiptRequest.getReceiptShopName(),
-                receiptItemResponses
+                receiptRequest.getReceiptShopName()
         );
     }
 
@@ -95,8 +94,7 @@ public class ReceiptServiceImpl implements ReceiptService {
                 receiptResponse.getReceiptAmount(),
                 receiptResponse.getReceiptBusinessNumber(),
                 receiptResponse.getReceiptApprovalNumber(),
-                receiptResponse.getReceiptShopName(),
-                receiptItems
+                receiptResponse.getReceiptShopName()
         );
     }
 
