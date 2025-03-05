@@ -72,8 +72,13 @@
         from shop
         where shop_id = #{shopId} AND shop_status = 1
     </select>
+    <select id="getAllActiveShops" resultType="com.ssginc.unnie.shop.dto.ShopAllResponse">
+        SELECT shop_name, shop_latitude, shop_longitude, shop_category
+        FROM shop
+        WHERE shop_status = 1
+    </select>
 
-<!--    <select id="findBookmarkByShopIdAndMemberId" parameterType="map" resultType="com.ssginc.unnie.shop.dto.ShopBookmarkRequest">-->
+    <!--    <select id="findBookmarkByShopIdAndMemberId" parameterType="map" resultType="com.ssginc.unnie.shop.dto.ShopBookmarkRequest">-->
 <!--        SELECT-->
 <!--            bookmark_member_id,-->
 <!--            bookmark_shop_id-->

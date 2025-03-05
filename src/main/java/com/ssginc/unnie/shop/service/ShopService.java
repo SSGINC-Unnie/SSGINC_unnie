@@ -8,6 +8,8 @@ import java.util.List;
 public interface ShopService {
     List<ShopResponse> selectShopByCategory(String category);
 
+    List<ShopAllResponse> getAllActiveShops();
+
     List<ShopDesignerResponse> getDesignersByShopId(int shopId);
 
     List<ShopProcedureResponse> getProceduresByShopId(int shopId);

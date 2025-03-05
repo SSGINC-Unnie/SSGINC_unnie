@@ -37,6 +37,15 @@ public class ShopServiceImpl implements ShopService {
         return res;
     }
 
+    @Override
+    public List<ShopAllResponse> getAllActiveShops() {
+        List<ShopAllResponse> res = shopMapper.getAllActiveShops();
+        if(res.isEmpty()) {
+            throw new UnnieShopException(ErrorCode.SHOP_NOT_FOUND);
+        }
+        return res;
+    }
+
     @Transactional(readOnly = true)
     @Override
     public List<ShopDesignerResponse> getDesignersByShopId(int shopId) {
