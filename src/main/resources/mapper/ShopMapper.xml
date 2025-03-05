@@ -73,14 +73,14 @@
         where shop_id = #{shopId} AND shop_status = 1
     </select>
 
-    <select id="findBookmarkByShopIdAndMemberId" parameterType="map" resultType="com.ssginc.unnie.shop.dto.ShopBookmarkRequest">
-        SELECT
-            bookmark_member_id,
-            bookmark_shop_id
-        FROM bookmark
-        WHERE bookmark_shop_id = #{bookmarkShopId}
-          AND bookmark_member_id = #{bookmarkMemberId}
-    </select>
+<!--    <select id="findBookmarkByShopIdAndMemberId" parameterType="map" resultType="com.ssginc.unnie.shop.dto.ShopBookmarkRequest">-->
+<!--        SELECT-->
+<!--            bookmark_member_id,-->
+<!--            bookmark_shop_id-->
+<!--        FROM bookmark-->
+<!--        WHERE bookmark_shop_id = #{bookmarkShopId}-->
+<!--          AND bookmark_member_id = #{bookmarkMemberId}-->
+<!--    </select>-->
 
 
 </mapper>

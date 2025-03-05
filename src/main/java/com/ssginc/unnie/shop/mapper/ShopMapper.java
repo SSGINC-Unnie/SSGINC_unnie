@@ -18,10 +18,10 @@ public interface ShopMapper {
 
     ShopDetailsResponse findShopDetailsById(int shopId);
 
-    int insertBookmark(ShopBookmarkRequest request);
+//    int insertBookmark(ShopBookmarkRequest request);
 
     int deleteBookmark(int shopId);
 
-   ShopBookmarkRequest findBookmarkByShopIdAndMemberId(@Param("bookmarkShopId") int bookmarkShopId,
-                                                       @Param("bookmarkMemberId") long bookmarkMemberId);
+//   ShopBookmarkRequest findBookmarkByShopIdAndMemberId(@Param("bookmarkShopId") int bookmarkShopId,
+//                                                       @Param("bookmarkMemberId") long bookmarkMemberId);
 }

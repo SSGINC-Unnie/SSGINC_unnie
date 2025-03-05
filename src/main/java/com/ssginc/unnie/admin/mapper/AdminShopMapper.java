@@ -24,6 +24,11 @@ public interface AdminShopMapper {
 
     int refuseShop(@Param("shopId") int shopId);
 
+
+    Integer findShopMemberId(int shopId);
+
+    int updateMemberRole(@Param("memberId") Integer memberId, @Param("role") String role);
+
     MyShopDetailResponse findShopDetail(@Param("shopId") int shopId);
 
     List<ShopResponse> findShops(@Param("offset") int offset, @Param("pageSize") int pageSize);

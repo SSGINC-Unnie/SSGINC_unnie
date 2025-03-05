@@ -49,7 +49,7 @@ public enum ErrorCode {
     GEOCODING_FAILED(400, "SH025", "주소를 좌표로 변환하는 중 오류가 발생했습니다."),
     NO_BOOKMARK_FOUND(404, "SH026", "찜한 매장이 없습니다."),
     PROCEDURE_ALREADY_EXISTS(409, "SH027", "시술이 이미 등록되어 있습니다."),
-//    INVALID_NAME_FORMAT(400,"SH028","이름 형식이 올바르지 않습니다."),
+    //    INVALID_NAME_FORMAT(400,"SH028","이름 형식이 올바르지 않습니다."),
     INVALID_TEL_FORMAT(400,"SH029","업체 전화번호 형식이 올바르지 않습니다."),
     INVALID_INTRODUCTION_FORMAT(400,"SH030","소개 형식이 올바르지 않습니다"),
     SHOP_CATEGORY_NOT_FOUND(404, "SH031", "카테고리가 옳지 않습니다."),
@@ -80,6 +80,7 @@ public enum ErrorCode {
     BOOKMARK_DELETE_FAILED(500,"SH036","찜 삭제에 실패했습니다."),
     BOOKMARK_INSERT_FAILED(500,"SH037","찜 등록에 실패했습니다."),
     SHOP_REFUSE_FAILED(500,"SH038","승인 거절에 실패했습니다."),
+    MEMBER_ROLE_UPDATE_FAILED(500,"SH039","회원 등급 변경에 실패했습니다"),
 
     // 관리자(업체)
     ALREADY_APPROVED(409, "SH019", "이미 승인(또는 거부) 처리된 업체입니다."),
