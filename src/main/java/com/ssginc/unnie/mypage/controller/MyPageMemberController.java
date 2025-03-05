@@ -9,15 +9,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
 /**
- * 마이페이지 회원정보 수정 컨트롤러
+ * 마이페이지 회원정보 수정 및 탈퇴 컨트롤러
  */
 @Slf4j
 @RestController
@@ -39,6 +36,20 @@ public class MyPageMemberController {
         int result =  myPageMemberService.updateMember(updateRequest, memberId);
         return ResponseEntity.ok(new ResponseDto<>(
                 HttpStatus.OK.value(),"회원 정보 수정이 완료되었습니다.", Map.of("result", String.valueOf(result)))
+        );
+    }
+
+    /**
+     * 회원 탈퇴
+     */
+    @PatchMapping("/member/withdraw")
+    public ResponseEntity<ResponseDto<Map<String, String>>> withdrawMember(
+            @AuthenticationPrincipal MemberPrincipal memberPrincipal){
+
+        Long memberId = memberPrincipal.getMemberId();
+        int result = myPageMemberService.withdrawMember(memberId);
+        return ResponseEntity.ok(new ResponseDto<>(
+                HttpStatus.OK.value(),"회원탈퇴가 완료되었습니다.", Map.of("result", String.valueOf(result)))
         );
     }
 }

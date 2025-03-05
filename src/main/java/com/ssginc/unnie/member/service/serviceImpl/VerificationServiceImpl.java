@@ -61,7 +61,7 @@ public class VerificationServiceImpl implements VerificationService {
     // 인증 완료 여부 저장을 위한 Map
     private final ConcurrentHashMap<String, Boolean> verificationStatus = new ConcurrentHashMap<>();
 
-    // 이메일 인증번호 발급 및 전송
+    // 회원가입: 이메일 인증번호 발급 및 전송
     @Override
     public String sendEmail(String email) {
         if (email == null || email.trim().isEmpty()) {
@@ -103,7 +103,7 @@ public class VerificationServiceImpl implements VerificationService {
     }
 
 
-    //입력된 이메일 인증번호 검증
+    // 회원가입: 입력된 이메일 인증번호 검증
     @Override
     public boolean verifyEmailCode(String email, String code) {
         //String storedCode = verificationCode.get(email); // 메모리에서 코드 조회
@@ -122,7 +122,7 @@ public class VerificationServiceImpl implements VerificationService {
         throw new UnnieRegisterException(ErrorCode.EMAIL_VERIFICATION_FAILED);
     }
 
-    // 전화번호 인증번호 발급 및 전송
+    // 회원가입: 전화번호 인증번호 발급 및 전송
     @Override
     public String sendPhone(String phone) {
         if (phone == null || phone.trim().isEmpty()) {
@@ -165,7 +165,7 @@ public class VerificationServiceImpl implements VerificationService {
         return phone;
     }
 
-    //입력된 전화번호 인증번호 검증
+    //회원가입: 입력된 전화번호 인증번호 검증
     @Override
     public boolean verifyPhoneCode(String phone, String code) {
         String phoneNum = phone.replace("-", "");
