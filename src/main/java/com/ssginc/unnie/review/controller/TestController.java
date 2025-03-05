@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class TestController {
 
-    @GetMapping("/ocr")
-    public String uploadPage() {
-        return "ocr";  // templates/upload.html을 반환
+    @GetMapping("/test")
+    public String layoutPage() {
+        return "/layout";  // templates/layout.html을 반환
     }
 
     @GetMapping("/gpt")
