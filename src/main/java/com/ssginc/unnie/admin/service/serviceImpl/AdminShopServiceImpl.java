@@ -105,6 +105,20 @@ public class AdminShopServiceImpl implements AdminShopService {
             adminShopMapper.updateShopCoordinates(request.getShopId(), coord.getLatitude(), coord.getLongitude());
         }
 
+        Integer shopMemberId = adminShopMapper.findShopMemberId(request.getShopId());
+        if (shopMemberId != null) {
+            // 4. 회원의 역할을 'manager'로 변경
+            int roleUpdated = adminShopMapper.updateMemberRole(shopMemberId, "MANAGER");
+            if (roleUpdated == 0) {
+                log.error("회원 역할 업데이트 실패 - memberId: {}", shopMemberId);
+                throw new UnnieShopException(ErrorCode.MEMBER_ROLE_UPDATE_FAILED);
+            }
+        } else {
+            log.error("업체 소유자 정보 조회 실패 - shopId: {}", request.getShopId());
+            throw new UnnieShopException(ErrorCode.SHOP_NOT_FOUND);
+        }
+
+
         return request.getShopId();
     }
 

@@ -17,8 +17,8 @@ public interface ShopService {
     ShopDetailsResponse getShopDetailsByShopId(int shopId);
 
 
-    Integer createBookmark(ShopBookmarkRequest request);
-
-    @Transactional
-    Integer deleteBookmark(ShopBookmarkRequest request, long currentMemberId);
+//    Integer createBookmark(ShopBookmarkRequest request);
+//
+//    @Transactional
+//    Integer deleteBookmark(ShopBookmarkRequest request, long currentMemberId);
 }

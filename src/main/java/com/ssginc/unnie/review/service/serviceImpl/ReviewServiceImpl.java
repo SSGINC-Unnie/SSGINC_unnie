@@ -2,7 +2,6 @@ package com.ssginc.unnie.review.service.serviceImpl;
 
 import com.ssginc.unnie.common.exception.UnnieReviewException;
 import com.ssginc.unnie.common.util.ErrorCode;
-import com.ssginc.unnie.mypage.dto.review.MyPageReviewResponse;
 import com.ssginc.unnie.review.dto.ReviewCreateRequest;
 import com.ssginc.unnie.review.dto.ReviewGetResponse;
 import com.ssginc.unnie.review.dto.ReviewRequestBase;

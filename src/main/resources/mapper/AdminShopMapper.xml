@@ -24,6 +24,20 @@
           AND shop_status = 0
     </update>
 
+    <select id="findShopMemberId" resultType="int">
+        SELECT shop_member_id
+        FROM shop
+        WHERE shop_id = #{shopId}
+    </select>
+
+    <update id="updateMemberRole" parameterType="map">
+        UPDATE member
+        SET member_role = #{role}
+        WHERE member_id = #{memberId}
+        AND member_role != 'MANAGER'  <!-- 이미 MANAGER라면 업데이트하지 않음 -->
+    </update>
+
+
     <update id="updateShopCoordinates" parameterType="map">
         UPDATE shop
         SET shop_latitude = #{latitude}, shop_longitude = #{longitude}
@@ -41,7 +55,7 @@
         SELECT shop_id, shop_name
         FROM shop
         WHERE shop_status = 1
-        LIMIT #{offset}, #{pageSize}
+            LIMIT #{offset}, #{pageSize}
     </select>
 
     <select id="getTotalShopCount" resultType="int">
