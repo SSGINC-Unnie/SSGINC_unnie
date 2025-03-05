@@ -72,24 +72,4 @@ public class AuthController {
         authService.logout(memberId, response);
         return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "로그아웃 성공", Map.of("message", "로그아웃 성공!")));
     }
-
-    //oauth 로그인 후 토큰 발급
-    public Map<String, String> oauthToken( HttpServletResponse response,Long memberId, String role, String nickname) {
-        //jwt 토큰 생성
-        String accesstoken = jwtUtil.generateToken(memberId, role, nickname);
-        String refreshToken = jwtUtil.generateRefreshToken(memberId);
-
-        // access token 쿠키에 저장
-        Cookie cookie = new Cookie("accessToken", accesstoken);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true);
-        cookie.setPath("/");
-        cookie.setMaxAge(3600);
-        response.addCookie(cookie);
-
-        // refresh token은 Redis에 저장
-        redisTokenService.saveRefreshToken(String.valueOf(memberId), refreshToken);
-
-        return Map.of("accessToken", accesstoken, "refreshToken", refreshToken);
-    }
 }

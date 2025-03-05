@@ -30,13 +30,13 @@
                             console.error("kakao_account 정보가 없습니다.");
                             return;
                         }
-                        // 이메일, 이름(프로필의 닉네임 사용)
+                        // 이메일, 이름
                         var email = account.email;
                         var name = account.profile && account.profile.nickname ? account.profile.nickname : "";
                         var nickname = "";
                         var gender = "";
                         var mobile = "";
-                        // 8자리 임의 비밀번호 생성 (회원가입 시 내부용)
+                        // 8자리 임의 비밀번호 생성
                         var password = generateRandomPassword8();
                         // 동적으로 form을 생성하여 POST 방식으로 소셜 프로필 정보를 전달
                         var form = document.createElement("form");
@@ -48,7 +48,9 @@
                             "<input type='hidden' name='memberName' value='" + name + "'/>" +
                             "<input type='hidden' name='memberNickname' value='" + nickname + "'/>" +
                             "<input type='hidden' name='memberGender' value='" + gender + "'/>" +
-                            "<input type='hidden' name='memberPhone' value='" + mobile + "'/>";
+                            "<input type='hidden' name='memberPhone' value='" + mobile + "'/>" +
+                            "<input type='hidden' name='memberProvider' value='kakao'/>";
+
                         document.body.appendChild(form);
                         form.submit();
                     },

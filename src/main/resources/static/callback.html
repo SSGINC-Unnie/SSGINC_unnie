@@ -39,7 +39,7 @@
             const gender = naver_id_login.getProfileData('gender');
             const password = generateRandomPassword8();
 
-            // 동적으로 form 생성 후 POST 요청 (forward 방식)
+            // 동적으로 form 생성 후 POST 요청
             var form = document.createElement("form");
             form.method = "POST";
             form.action = "/api/oauth/register";  // POST 방식으로 소셜 정보를 전달
@@ -50,8 +50,10 @@
                 "<input type='hidden' name='memberName' value='" + name + "'/>" +
                 "<input type='hidden' name='memberNickname' value='" + nickname + "'/>" +
                 "<input type='hidden' name='memberGender' value='" + gender + "'/>" +
-                "<input type='hidden' name='memberPhone' value='" + mobile + "'/>";
-            document.body.appendChild(form);
+                "<input type='hidden' name='memberPhone' value='" + mobile + "'/>" +
+                "<input type='hidden' name='memberProvider' value='naver'/>";
+
+                document.body.appendChild(form);
             form.submit();
         }
     }
