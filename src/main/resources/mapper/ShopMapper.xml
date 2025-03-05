@@ -2,15 +2,15 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ssginc.unnie.shop.mapper.ShopMapper">
-    <insert id="insertBookmark" parameterType="com.ssginc.unnie.shop.dto.ShopBookmarkRequest">
-        INSERT INTO bookmark VALUES
-            (#{bookmarkMemberId}, #{bookmarkShopId})
-    </insert>
+<!--    <insert id="insertBookmark" parameterType="com.ssginc.unnie.shop.dto.ShopBookmarkRequest">-->
+<!--        INSERT INTO bookmark VALUES-->
+<!--            (#{bookmarkMemberId}, #{bookmarkShopId})-->
+<!--    </insert>-->
 
-    <delete id="deleteBookmark" parameterType="int">
-        DELETE FROM bookmark
-        WHERE bookmark_shop_id = #{bookmarkShopId}
-    </delete>
+<!--    <delete id="deleteBookmark" parameterType="int">-->
+<!--        DELETE FROM bookmark-->
+<!--        WHERE bookmark_shop_id = #{bookmarkShopId}-->
+<!--    </delete>-->
 
 
     <select id="selectShopByCategory" resultType="com.ssginc.unnie.shop.dto.ShopResponse">
