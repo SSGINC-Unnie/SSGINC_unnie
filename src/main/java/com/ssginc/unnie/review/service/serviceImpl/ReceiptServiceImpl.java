@@ -80,7 +80,7 @@ public class ReceiptServiceImpl implements ReceiptService {
      * 특정 영수증을 조회하여 응답 DTO로 변환
      */
     @Override
-    public ReceiptResponse getReceiptById(Long receiptId) {
+    public ReceiptResponse getReceiptById(long receiptId) {
         ReceiptResponse receiptResponse = receiptMapper.findReceiptById(receiptId);
         if (receiptResponse == null) {
             log.error("영수증을 찾을 수 없음 (ID: {})", receiptId);

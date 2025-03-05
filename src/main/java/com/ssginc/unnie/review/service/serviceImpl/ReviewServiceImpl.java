@@ -36,49 +36,23 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public long createReview(ReviewCreateRequest reviewCreateRequest) {
-
-        // 1. 영수증 인증 검증: 영수증이 인증되지 않았다면 리뷰 작성을 차단합니다.
+        // 1. 영수증 인증 검증
         if (!receiptService.isReceiptVerified(reviewCreateRequest.getReviewReceiptId())) {
             throw new UnnieReviewException(ErrorCode.INVALID_RECEIPT);
         }
 
-        // 2. 리뷰 데이터 유효성 검증
+        // 2. 리뷰 요청 유효성 검증 (ReviewValidator 활용)
         if (!reviewValidator.validate(reviewCreateRequest)) {
-            // 개별 조건 재검증하여 구체적인 에러 코드 적용
-            String content = reviewCreateRequest.getReviewContent();
-            if (content == null || content.trim().isEmpty()) {
-                throw new UnnieReviewException(ErrorCode.REVIEW_CONTENT_REQUIRED);
-            }
-            int length = content.trim().length();
-            if (length < 10 || length > 400) {
-                throw new UnnieReviewException(ErrorCode.REVIEW_LENGTH_EXCEEDED);
-            }
-            int rate = reviewCreateRequest.getReviewRate();
-            if (rate < 1) {
-                throw new UnnieReviewException(ErrorCode.REVIEW_RATE_REQUIRED);
-            }
-            if (rate > 5) {
-                throw new UnnieReviewException(ErrorCode.REVIEW_RATE_EXCEEDED);
-            }
-            List<Integer> keywords = reviewCreateRequest.getKeywordIds();
-            if (keywords == null || keywords.isEmpty()) {
-                throw new UnnieReviewException(ErrorCode.REVIEW_KEYWORDS_REQUIRED);
-            }
-            if (keywords.size() > 5) {
-                throw new UnnieReviewException(ErrorCode.REVIEW_KEYWORDS_EXCEEDED);
-            }
-            // 기본적으로
             throw new UnnieReviewException(ErrorCode.INVALID_REVIEW_CONTENT);
         }
 
         // 3. 리뷰 등록 (review 테이블)
         int insertCount = reviewMapper.insertReview(reviewCreateRequest);
         if (insertCount == 0) {
-            // 리뷰 등록이 실패하면(예: 중복 등) 추가 에러 코드 적용 가능
             throw new UnnieReviewException(ErrorCode.DUPLICATE_REVIEW);
         }
 
-        // 4. review_keyword 등록 (키워드는 Validator에서 검증되었으므로 바로 진행)
+        // 4. review_keyword 등록
         int keywordInsertCount = reviewMapper.insertReviewKeywordsForCreate(reviewCreateRequest);
         if (keywordInsertCount == 0) {
             throw new UnnieReviewException(ErrorCode.KEYWORDS_NOT_FOUND);
@@ -127,47 +101,28 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public long updateReview(ReviewUpdateRequest reviewUpdateRequest) {
-        // 키워드 수정이 포함된 경우, 별도로 키워드 조건 검증
-        if (reviewUpdateRequest.getKeywordIds() != null) {
-            if (reviewUpdateRequest.getKeywordIds().isEmpty()) {
-                throw new UnnieReviewException(ErrorCode.REVIEW_KEYWORDS_REQUIRED);
-            }
-            if (reviewUpdateRequest.getKeywordIds().size() > 5) {
-                throw new UnnieReviewException(ErrorCode.REVIEW_KEYWORDS_EXCEEDED);
-            }
+        // 1. 소유자 확인: 토큰에서 전달받은 reviewMemberId와 리뷰 작성자 일치 여부 확인
+        Integer ownership = reviewMapper.checkReviewAndAuthor(
+                reviewUpdateRequest.getReviewId(),
+                reviewUpdateRequest.getReviewMemberId()
+        );
+        if (ownership == null || ownership != 1) {
+            throw new UnnieReviewException(ErrorCode.INVALID_ACCESS_TOKEN);
         }
 
-        // 리뷰 내용 검증
-        String content = reviewUpdateRequest.getReviewContent();
-        if (content == null || content.trim().isEmpty()) {
-            throw new UnnieReviewException(ErrorCode.REVIEW_CONTENT_REQUIRED);
-        }
-        int length = content.trim().length();
-        if (length < 10 || length > 400) {
-            throw new UnnieReviewException(ErrorCode.REVIEW_LENGTH_EXCEEDED);
-        }
-
-        // 리뷰 별점 검증
-        int rate = reviewUpdateRequest.getReviewRate();
-        if (rate < 1) {
-            throw new UnnieReviewException(ErrorCode.REVIEW_RATE_REQUIRED);
-        }
-        if (rate > 5) {
-            throw new UnnieReviewException(ErrorCode.REVIEW_RATE_EXCEEDED);
-        }
-
-        // 추가 유효성 검증은 Validator에 위임 (검증 실패 시 기본 에러 발생)
-        if (!reviewValidator.validate(reviewUpdateRequest)) {
+        // 2. 리뷰 요청 유효성 검증 (ReviewValidator 활용)
+        // update의 경우, 키워드가 null이면 기존 키워드를 유지하므로 null인 경우에는 검증하지 않음
+        if (reviewUpdateRequest.getKeywordIds() != null && !reviewValidator.validate(reviewUpdateRequest)) {
             throw new UnnieReviewException(ErrorCode.INVALID_REVIEW_CONTENT);
         }
 
-        // 리뷰 테이블 업데이트 및 업데이트된 행 수 반환
+        // 3. 리뷰 테이블 업데이트
         int updateCount = reviewMapper.updateReview(reviewUpdateRequest);
         if (updateCount == 0) {
             throw new UnnieReviewException(ErrorCode.REVIEW_UPDATE_FAILED);
         }
 
-        // 키워드 수정이 포함된 경우 처리
+        // 4. 키워드 수정이 포함된 경우 처리
         if (reviewUpdateRequest.getKeywordIds() != null) {
             reviewMapper.deleteReviewKeywords(reviewUpdateRequest.getReviewId());
             int keywordUpdateCount = reviewMapper.insertReviewKeywordsForUpdate(reviewUpdateRequest);

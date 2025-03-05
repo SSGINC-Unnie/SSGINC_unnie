@@ -21,9 +21,16 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        // 정적 리소스 (CSS, JS, 이미지 등) 제공
+        registry.addResourceHandler("/static/**")
+                .addResourceLocations("classpath:/static/");
+
+        // 업로드된 파일 제공
         registry.addResourceHandler("/upload/**")
                 .addResourceLocations("file:src/main/resources/static/upload/");
     }
+
+
 
     /**
      * 카테고리 형식의 ENUM 을 자동으로 변환시켜주는 컨버터 등록하기

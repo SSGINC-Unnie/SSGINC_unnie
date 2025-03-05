@@ -28,14 +28,16 @@ public class ReviewController {
 
     /**
      * 리뷰 등록
-     * 클라이언트는 ReviewCreateRequest JSON과 함께 선택적으로 keywordIds (콤마 구분 문자열)를 전달합니다.
+     * JWT 토큰을 통해 인증된 회원의 memberId를 ReviewCreateRequest에 세팅합니다.
      */
     @PostMapping("")
     public ResponseEntity<ResponseDto<Map<String, String>>> createReview(
+            @AuthenticationPrincipal MemberPrincipal memberPrincipal,
             @RequestBody ReviewCreateRequest reviewCreateRequest,
             @RequestParam(value = "keywordIds", required = false) String keywordIdsStr) {
 
-        // 키워드 ID 문자열을 List<Integer>로 변환 (필요한 경우)
+        // 토큰에서 추출한 회원 ID를 DTO에 설정
+        reviewCreateRequest.setReviewMemberId(memberPrincipal.getMemberId());
         reviewCreateRequest.setKeywordIds(parseKeywordIds(keywordIdsStr));
         long reviewId = reviewService.createReview(reviewCreateRequest);
         return ResponseEntity.ok(
@@ -47,7 +49,10 @@ public class ReviewController {
      * 리뷰 상세 조회
      */
     @GetMapping("/{reviewId}")
-    public ResponseEntity<ResponseDto<Map<String, Object>>> getReview(@PathVariable("reviewId") long reviewId) {
+    public ResponseEntity<ResponseDto<Map<String, Object>>> getReview(
+            @PathVariable("reviewId") long reviewId,
+            @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
+
         ReviewGetResponse review = reviewService.getReviewById(reviewId);
         return ResponseEntity.ok(
                 new ResponseDto<>(HttpStatus.OK.value(), "리뷰 조회에 성공했습니다.", Map.of("review", review))
@@ -56,10 +61,12 @@ public class ReviewController {
 
     /**
      * 리뷰 키워드 조회
-     * URL 예시: GET /api/review/keywords/1
      */
     @GetMapping("/keywords/{reviewId}")
-    public ResponseEntity<ResponseDto<Map<String, Object>>> getReviewKeywords(@PathVariable("reviewId") long reviewId) {
+    public ResponseEntity<ResponseDto<Map<String, Object>>> getReviewKeywords(
+            @PathVariable("reviewId") long reviewId,
+            @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
+
         List<String> keywords = reviewService.selectReviewKeywordsByReviewId(reviewId);
         return ResponseEntity.ok(
                 new ResponseDto<>(HttpStatus.OK.value(), "키워드 조회에 성공했습니다.", Map.of("keywords", keywords))
@@ -68,15 +75,29 @@ public class ReviewController {
 
     /**
      * 리뷰 수정
-     * 키워드 수정이 필요한 경우 keywordIds (콤마 구분 문자열)를 전달합니다.
-     * 전달하지 않으면 기존 키워드가 유지됩니다.
+     * JWT 토큰에서 추출한 memberId를 DTO에 세팅하여, 소유자 확인 후 수정합니다.
      */
     @PutMapping("/{reviewId}")
     public ResponseEntity<ResponseDto<Map<String, String>>> updateReview(
             @PathVariable("reviewId") long reviewId,
+            @AuthenticationPrincipal MemberPrincipal memberPrincipal,
             @RequestBody ReviewUpdateRequest reviewUpdateRequest,
             @RequestParam(value = "keywordIds", required = false) String keywordIdsStr) {
 
+        // 관리자(ROLE_ADMIN)만 관리자 권한으로 처리하고, 그 외는 반드시 리뷰 작성자와 일치해야 함.
+        String role = memberPrincipal.getAuthorities().isEmpty()
+                ? "ROLE_USER"
+                : memberPrincipal.getAuthorities().iterator().next().getAuthority();
+
+        if (!"ROLE_ADMIN".equalsIgnoreCase(role)) {
+            ReviewGetResponse existingReview = reviewService.getReviewById(reviewId);
+            if (existingReview.getReviewMemberId() != memberPrincipal.getMemberId()) {
+                throw new RuntimeException("리뷰 수정 권한이 없습니다.");
+            }
+        }
+
+        // 수정 요청 시 토큰의 회원 ID를 DTO에 설정하여 소유자 확인에 사용합니다.
+        reviewUpdateRequest.setReviewMemberId(memberPrincipal.getMemberId());
         reviewUpdateRequest.setKeywordIds(parseKeywordIds(keywordIdsStr));
         reviewUpdateRequest.setReviewId(reviewId);
         long updatedReviewId = reviewService.updateReview(reviewUpdateRequest);
@@ -87,7 +108,7 @@ public class ReviewController {
 
     /**
      * 리뷰 소프트 딜리트
-     * User Delete-1, Admin Delete-2
+     * 사용자와 관리자의 삭제 권한을 토큰 정보를 통해 구분합니다.
      */
     @PatchMapping("/{reviewId}")
     public ResponseEntity<ResponseDto<Map<String, Object>>> softDeleteReview(
@@ -97,11 +118,19 @@ public class ReviewController {
         if (memberPrincipal == null) {
             throw new RuntimeException("인증 정보가 없습니다.");
         }
-
-        // 권한 정보에서 역할 추출
+        // 관리자(ROLE_ADMIN)는 별도 소유자 확인 없이 처리, 그 외는 반드시 리뷰 작성자와 일치해야 함.
         String role = memberPrincipal.getAuthorities().isEmpty()
                 ? "ROLE_USER"
                 : memberPrincipal.getAuthorities().iterator().next().getAuthority();
+
+        if (!"ROLE_ADMIN".equalsIgnoreCase(role)) {
+            ReviewGetResponse existingReview = reviewService.getReviewById(reviewId);
+            if (existingReview.getReviewMemberId() != memberPrincipal.getMemberId()) {
+                throw new RuntimeException("리뷰 삭제 권한이 없습니다.");
+            }
+        }
+
+        // 1: 사용자, 2: 관리자
         int reviewStatus = "ROLE_ADMIN".equalsIgnoreCase(role) ? 2 : 1;
         long memberId = memberPrincipal.getMemberId();
         log.info("리뷰 삭제 요청. reviewId: {}, 요청자: {}, role: {}", reviewId, memberId, role);
@@ -126,5 +155,4 @@ public class ReviewController {
         }
         return null;
     }
-
 }
