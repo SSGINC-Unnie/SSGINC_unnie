@@ -2,14 +2,10 @@ package com.ssginc.unnie.member.controller;
 
 import com.ssginc.unnie.common.redis.RedisTokenService;
 import com.ssginc.unnie.common.util.JwtUtil;
-import com.ssginc.unnie.common.util.ResponseDto;
-import com.ssginc.unnie.member.dto.MemberLoginRequest;
 import com.ssginc.unnie.member.service.AuthService;
 import com.ssginc.unnie.member.service.OAuthService;
 import com.ssginc.unnie.member.vo.Member;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -30,10 +26,10 @@ import java.util.Map;
 public class OAuthController {
 
     private final OAuthService oAuthService;
-    private final AuthController authController;
     private final BCryptPasswordEncoder encoder;
     private final JwtUtil jwtUtil;
     private final RedisTokenService redisTokenService;
+    private final AuthService authService;
 
     // OAuth 로그인 페이지 요청
     @GetMapping("/login")
@@ -49,18 +45,23 @@ public class OAuthController {
         Member member = oAuthService.selectMemberByEmail(email);
         if(member != null) {
             result = true;
+            //이미 db에 이메일 존재하면 바로 로그인 처리
             //인증 후 token 발급
-            Map<String, String> mapResult = authController.oauthToken(response, member.getMemberId(), member.getMemberRole(), member.getMemberNickname());
+            Map<String, String> mapResult = authService.oauthToken(response, member.getMemberId(), member.getMemberRole(), member.getMemberNickname());
         }
         return result;
     }
 
+    /**
+     * OAuth 첫 로그인 회원가인 페이지로 이동
+     */
     // 회원가입 폼 요청
     @PostMapping("/register")
     public String register(@ModelAttribute  Member newMember, Model model) {
         Member registerCheck = oAuthService.selectMemberByEmail(newMember.getMemberEmail());
         if (registerCheck == null) {
-            model.addAttribute("naverDto", newMember);
+            model.addAttribute("OAuthDto", newMember);
+            log.info("oauthDto: {}", newMember);
             return "member/register";  // templates/member/register.html
         } else {
             return "redirect:/";
@@ -81,29 +82,18 @@ public class OAuthController {
                     .memberNickname(newMember.getMemberNickname())
                     .memberGender(newMember.getMemberGender())
                     .memberPhone(newMember.getMemberPhone())
-                    .memberRole("ROLE_USER")
+                    .memberProvider(newMember.getMemberProvider())
+                    .memberBirth(newMember.getMemberBirth())
                     .build();
 
             //회원 등록
             oAuthService.insertOAuthMember(member);
 
-            // DB에 insert한 후, DB에 등록된 회원 정보를 다시 조회하여 memberId 가져옴
+            // DB에 등록된 회원 정보를 다시 조회하여 memberId 가져옴
             Member insertedMember = oAuthService.selectMemberByEmail(member.getMemberEmail());
 
-            //토큰 생성
-            String accesstoken = jwtUtil.generateToken(insertedMember.getMemberId(), "ROLE_USER", insertedMember.getMemberNickname());
-            String refreshToken = jwtUtil.generateRefreshToken(insertedMember.getMemberId());
-
-            // access token 쿠키에 저장
-            Cookie cookie = new Cookie("accessToken", accesstoken);
-            cookie.setHttpOnly(true);
-            cookie.setSecure(true);
-            cookie.setPath("/");
-            cookie.setMaxAge(3600);
-            response.addCookie(cookie);
-
-            // refresh token Redis에 저장
-            redisTokenService.saveRefreshToken(String.valueOf(insertedMember.getMemberId()), refreshToken);
+            //토큰 생성, 저장
+            authService.oauthToken(response, insertedMember.getMemberId(),"ROLE_USER",  insertedMember.getMemberNickname());
 
             // 최종 회원가입 완료 후 홈으로 리다이렉트 (이미 로그인된 상태)
             return "redirect:/";

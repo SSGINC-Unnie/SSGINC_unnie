@@ -17,4 +17,6 @@ public interface AuthService {
     Map<String, String> refreshAccessToken(Long memberId, HttpServletResponse response);
     //로그아웃
     void logout(Long memberId, HttpServletResponse response);
+    //OAuth 로그인, 회원가입 후 토큰 생성
+    Map<String,String> oauthToken(HttpServletResponse response, Long memberId, String role, String nickname);
 }

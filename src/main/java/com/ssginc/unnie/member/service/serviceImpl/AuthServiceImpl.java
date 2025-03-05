@@ -118,7 +118,7 @@ public class AuthServiceImpl implements AuthService {
         String newAccessToken = jwtUtil.generateToken(memberId, member.getMemberRole(), member.getMemberNickname());
 
         // 쿠키에 새 Access Token 저장
-       setCookie(response, "accessToken", newAccessToken, 3600); // 1시간
+        setCookie(response, "accessToken", newAccessToken, 3600); // 1시간
 
         log.info("새로운 AccessToken 발급: {}", newAccessToken);
 
@@ -147,5 +147,23 @@ public class AuthServiceImpl implements AuthService {
         cookie.setPath("/");
         cookie.setMaxAge(maxAge);
         response.addCookie(cookie);
+    }
+
+    /**
+     * OAuth 로그인, 회원가입 후 토큰 생성, 저장 메서드
+     */
+    @Override
+    public Map<String, String> oauthToken(HttpServletResponse response, Long memberId, String role, String nickname) {
+        //jwt 토큰 생성
+        String accessToken = jwtUtil.generateToken(memberId, role, nickname);
+        String refreshToken = jwtUtil.generateRefreshToken(memberId);
+
+        //access token 쿠키에 저장
+        setCookie(response, "accessToken", accessToken, 3600); // 1시간
+
+        // refresh token은 Redis에 저장
+        redisTokenService.saveRefreshToken(String.valueOf(memberId), refreshToken);
+
+        return Map.of("accessToken", accessToken, "refreshToken", refreshToken);
     }
 }

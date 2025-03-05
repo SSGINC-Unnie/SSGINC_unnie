@@ -13,20 +13,19 @@
 <script>
   // 구글 로그인 성공 후 호출되는 콜백 함수
   function handleCredentialResponse(response) {
-    // response.credential은 JWT ID 토큰입
+    // response.credential JWT ID 토큰
     const responsePayload = parseJwt(response.credential);
-    console.log("Email: " + responsePayload.email);
+    console.log("Email: " + responsePayload.email); //이메일
     console.log("Full Name: " + responsePayload.name);
-    console.log("Given Name: " + responsePayload.given_name);
+
     // 필요한 정보를 추출
     var email = responsePayload.email;
     var name = responsePayload.name;
-    // given_name을 별명으로 사용
-    var nickname = responsePayload.given_name;
+    var nickname = "";
     var gender = "";
     var mobile = "";
-    // 임의의 8자리 비밀번호 생성 (회원가입 시 내부용)
-    var password = generateRandomPassword8();
+    // 임의의 8자리 비밀번호 생성
+   var password = generateRandomPassword8();
 
     // 동적으로 form을 생성하여 POST 방식으로 소셜 프로필 정보를 전달
     var form = document.createElement("form");
@@ -38,7 +37,9 @@
             "<input type='hidden' name='memberName' value='" + name + "'/>" +
             "<input type='hidden' name='memberNickname' value='" + nickname + "'/>" +
             "<input type='hidden' name='memberGender' value='" + gender + "'/>" +
-            "<input type='hidden' name='memberPhone' value='" + mobile + "'/>";
+            "<input type='hidden' name='memberPhone' value='" + mobile + "'/>" +
+            "<input type='hidden' name='memberProvider' value='google'/>";
+
     document.body.appendChild(form);
     form.submit();
   }

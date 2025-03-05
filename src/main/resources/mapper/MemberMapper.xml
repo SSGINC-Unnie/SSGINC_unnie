@@ -24,10 +24,10 @@
     <insert id="insertOAuthMember">
         INSERT INTO member (
             member_email, member_pw, member_name, member_nickname,
-            member_phone, member_birth, member_gender
+            member_phone, member_birth, member_gender, member_provider
         ) VALUES (
              #{memberEmail}, #{memberPw}, #{memberName}, #{memberNickname},
-             #{memberPhone}, #{memberBirth}, #{memberGender}
+             #{memberPhone}, #{memberBirth}, #{memberGender}, #{memberProvider}
         )
     </insert>
 

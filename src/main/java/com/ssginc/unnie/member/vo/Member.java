@@ -28,4 +28,6 @@ public class Member {
     private int memberState; // 회원 상태 (0: 활성, 1: 정지, 2: 탈퇴)
     private LocalDateTime memberCreatedAt; // 가입일
     private LocalDateTime memberUpdatedAt; // 수정일
+
+    private String memberProvider; //소셜로그인 naver, google, kakao
 }
