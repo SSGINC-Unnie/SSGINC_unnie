@@ -7,9 +7,7 @@ import lombok.Data;
 public class ShopResponse {
     private Long shopId;
     private String shopName;
-    private String shopBusinessTime;
     private double avgRate;
+    private int review_count;
     private String shopLocation;
-    // 업체 상태
-    private int shopStatus;
 }

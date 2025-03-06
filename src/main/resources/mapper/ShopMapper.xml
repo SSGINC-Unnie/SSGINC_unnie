@@ -14,13 +14,18 @@
 
 
     <select id="selectShopByCategory" resultType="com.ssginc.unnie.shop.dto.ShopResponse">
-        SELECT s.shop_id, s.shop_name, s.shop_business_time, ROUND(AVG(re.review_rate), 2) AS avg_rate,
-               s.shop_location
+        SELECT
+            s.shop_id,
+            s.shop_name,
+            COUNT(re.review_id) AS review_count,
+            COALESCE(ROUND(AVG(re.review_rate), 2), 0) AS avg_rate,
+            s.shop_location
         FROM shop s
-                 JOIN receipt r ON r.receipt_shop_id = s.shop_id
-                 JOIN review re ON r.receipt_id = re.review_receipt_id
-        WHERE s.shop_category = #{category} AND s.shop_status = 1
-        GROUP BY s.shop_id, s.shop_name, s.shop_business_time, s.shop_location
+                 LEFT JOIN receipt r ON r.receipt_shop_id = s.shop_id
+                 LEFT JOIN review re ON r.receipt_id = re.review_receipt_id
+        WHERE s.shop_category = #{shopCategory}
+          AND s.shop_status = 1
+        GROUP BY s.shop_id, s.shop_name, s.shop_location;
     </select>
 
 
