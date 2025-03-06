@@ -9,5 +9,8 @@ import org.apache.ibatis.annotations.Param;
 public interface ReceiptMapper {
     void insertReceipt(ReceiptRequest receiptRequest);
 
-    ReceiptResponse findReceiptById(@Param("receiptId")Long receiptId);
+    ReceiptResponse findReceiptById(@Param("receiptId") Long receiptId);
+
+    Integer findShopIdByName(@Param("shopName") String shopName);
+
 }

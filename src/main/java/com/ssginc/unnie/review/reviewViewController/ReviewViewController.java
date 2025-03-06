@@ -6,12 +6,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/review")
-public class ReviewOCRViewController {
+public class ReviewViewController {
 
     @GetMapping("/ocr")
-    public String review() {
+    public String reviewOCR() {
 
         return "/review/reviewOCR";
+    }
+
+    @GetMapping("/create")
+    public String reviewCreate() {
+
+        return "/review/reviewCreate";
     }
 }
 

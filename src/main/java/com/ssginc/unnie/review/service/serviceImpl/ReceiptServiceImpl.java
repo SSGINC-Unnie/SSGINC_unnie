@@ -41,6 +41,14 @@ public class ReceiptServiceImpl implements ReceiptService {
             throw new UnnieReviewException(ErrorCode.INVALID_RECEIPT);
         }
 
+        // shop_name을 기반으로 shop_id 조회
+        Integer shopId = receiptMapper.findShopIdByName(receiptRequest.getReceiptShopName());
+
+        // 조회된 shop_id를 receipt 객체에 설정
+        if (shopId != null) {
+            receiptRequest.setReceiptShopId(shopId);
+        }
+
         // 2. 영수증 저장
         receiptMapper.insertReceipt(receiptRequest);
         log.info("영수증 저장 완료 (ID: {})", receiptRequest.getReceiptId());

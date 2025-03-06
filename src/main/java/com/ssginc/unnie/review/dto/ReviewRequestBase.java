@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -23,4 +24,5 @@ public class ReviewRequestBase {
     private int reviewRate;         // 리뷰 별점
     private String reviewContent;   // 리뷰 내용
     private List<Integer> keywordIds; //리뷰 키워드
+    private MultipartFile file;
 }

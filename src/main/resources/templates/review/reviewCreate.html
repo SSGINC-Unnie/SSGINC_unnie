@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec2="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Review Test</title>
+    <style>
+        .review-form-container {
+            max-width: 600px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .review-title {
+            color: #FF3479;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .btn-submit {
+            background-color: #FF3479;
+            color: white;
+            border: none;
+        }
+
+        .btn-submit:hover {
+            background-color: #e0326b;
+        }
+
+        .form-label {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<div class="container" layout:fragment="content">
+    <main class="main">
+        <div class="review-form-container">
+            <h2 class="review-title">리뷰 작성</h2>
+            <form id="reviewForm">
+                <div class="mb-3">
+                    <label for="reviewReceiptId" class="form-label">영수증 ID</label>
+                    <input type="number" id="reviewReceiptId" name="review_receipt_id" class="form-control" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="file" class="form-label">리뷰 이미지</label>
+                    <input type="file" id="file" name="file" class="form-control" accept="image/*">
+                </div>
+
+                <div class="mb-3">
+                    <label for="reviewRate" class="form-label">평점</label>
+                    <select id="reviewRate" name="review_rate" class="form-select" required>
+                        <option value="5">★★★★★ (5점)</option>
+                        <option value="4">★★★★☆ (4점)</option>
+                        <option value="3">★★★☆☆ (3점)</option>
+                        <option value="2">★★☆☆☆ (2점)</option>
+                        <option value="1">★☆☆☆☆ (1점)</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="reviewContent" class="form-label">리뷰 내용</label>
+                    <textarea id="reviewContent" name="review_content" class="form-control" rows="4"
+                              placeholder="리뷰 내용을 입력하세요." required></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label for="keywordIds" class="form-label">키워드 ID (쉼표로 구분)</label>
+                    <input type="text" id="keywordIds" name="keywordIds" class="form-control" placeholder="예: 1,2,3">
+                </div>
+
+                <button type="button" id="submitReview" class="btn btn-submit w-100">리뷰 제출</button>
+            </form>
+        </div>
+    </main>
+
+    <div layout:fragment="scripts">
+        <script src="/js/review/reviewCreate.js"></script>
+    </div>
+</div>
+</body>
+
+
+</html>

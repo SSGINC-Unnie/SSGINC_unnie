@@ -36,6 +36,10 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public long createReview(ReviewCreateRequest reviewCreateRequest) {
+        System.out.println("*******************************");
+        System.out.println(reviewCreateRequest);
+        System.out.println("*******************************");
+
         // 1. 영수증 인증 검증
         if (!receiptService.isReceiptVerified(reviewCreateRequest.getReviewReceiptId())) {
             throw new UnnieReviewException(ErrorCode.INVALID_RECEIPT);
