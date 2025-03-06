@@ -15,11 +15,13 @@
             position: relative;
             border: 1px solid #ccc;
         }
+
         /* 지도 영역 */
         #map {
             width: 100%;
             height: 100%;
         }
+
         /* "이 지역 재검색" 버튼 */
         #reSearchBtn {
             position: absolute;
@@ -27,7 +29,7 @@
             left: 50%;
             transform: translateX(-50%);
             z-index: 9999;
-            background-color: white;
+            background-color: #ffffff;
             border: 1px solid #ccc;
             padding: 8px 12px;
             border-radius: 20px;
@@ -38,6 +40,7 @@
         #reSearchBtn:hover {
             background-color: #eee;
         }
+
         /* "목록보기" 버튼 (하단 중앙) */
         #listViewBtn {
             position: absolute;
@@ -55,6 +58,7 @@
         #listViewBtn:hover {
             background-color: #eee;
         }
+
         /* 바텀시트 (지도의 가로 너비와 동일) */
         #bottomSheet {
             position: fixed;
@@ -73,6 +77,7 @@
         #bottomSheet.open {
             transform: translate(-50%, 0);
         }
+
         /* 바텀시트 내용 (스크롤 영역) */
         .bottomSheetContent {
             padding: 0;
@@ -80,6 +85,7 @@
             overflow-y: auto;
             position: relative;
         }
+
         /* 상단 헤더 영역 (닫기 버튼, 현재 위치, 카테고리 탭) - 스크롤 시 고정 */
         .bottomSheetHeader {
             position: sticky;
@@ -91,21 +97,33 @@
             flex-direction: column;
             gap: 8px;
         }
+
+        /* 상단 X버튼과 '내 위치'를 한 줄에 배치 */
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between; /* 왼쪽: 텍스트, 오른쪽: 버튼 */
+            margin-bottom: 8px;
+        }
+
+        /* '내 위치' 텍스트 (테두리/배경/패딩 제거) */
+        #myLocationText {
+            margin: 0;
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            /* border, background, padding 모두 제거 */
+        }
+
         /* 닫기 버튼 */
         #closeBottomSheetBtn {
-            align-self: flex-end;
             border: none;
             background: none;
             cursor: pointer;
             font-size: 16px;
             color: #aaa;
         }
-        /* 현재 위치 텍스트 */
-        #myLocationText {
-            margin: 0;
-            font-size: 16px;
-            font-weight: bold;
-        }
+
         /* 카테고리 탭 */
         .category-tabs {
             display: flex;
@@ -114,10 +132,11 @@
         }
         .category-btn {
             border: none;
-            background-color: #f0f0f0;
+            background-color: #FFFFFF;
             color: #333;
             padding: 8px 12px;
             border-radius: 20px;
+            border: 1px solid #E6E6E6;
             cursor: pointer;
             white-space: nowrap;
         }
@@ -125,6 +144,7 @@
             background-color: #FF3479;
             color: #fff;
         }
+
         /* 매장 목록(세로 리스트) */
         .shop-list {
             display: flex;
@@ -132,12 +152,8 @@
             gap: 16px;
             padding: 16px;
         }
-        /* 매장 아이템 */
-        .shop-item {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
+
+
         /* 썸네일 3장 가로 배치 */
         .shop-thumbs {
             display: flex;
@@ -149,6 +165,7 @@
             object-fit: cover;
             border-radius: 4px;
         }
+
         /* 매장 텍스트 정보 */
         .shop-info {
             line-height: 1.4;
@@ -157,6 +174,16 @@
             margin: 0 0 4px;
             font-size: 16px;
         }
+        .shop-info h3 a {
+            color: #333;          /* 원하는 텍스트 색상 */
+            text-decoration: none; /* 밑줄 제거 */
+        }
+
+        /* 방문 후(visited) 색상도 동일하게 */
+        .shop-info h3 a:visited {
+            color: #333;
+        }
+
         .shop-info p {
             margin: 0;
             font-size: 14px;
@@ -185,9 +212,14 @@
 <div id="bottomSheet">
     <div class="bottomSheetContent">
         <!-- 상단 헤더: 고정 (닫기 버튼, 내 위치, 카테고리 탭) -->
+        <!-- 상단 헤더 영역 -->
         <div class="bottomSheetHeader">
-            <button id="closeBottomSheetBtn">X</button>
-            <h2 id="myLocationText">내 위치 불러오는 중...</h2>
+            <!-- 닫기 버튼과 위치·카테고리를 묶을 래퍼 -->
+            <div class="header-top">
+                <div id="myLocationText">내 위치 불러오는 중...</div>
+                <button id="closeBottomSheetBtn">X</button>
+            </div>
+
             <div class="category-tabs">
                 <button class="category-btn" data-category="헤어샵">헤어샵</button>
                 <button class="category-btn active" data-category="네일샵">네일샵</button>
@@ -373,21 +405,29 @@
             const item = document.createElement('div');
             item.classList.add('shop-item');
 
+            // shopId가 Long/Integer일 경우, 문자열 보간 시 자동으로 변환됨
             item.innerHTML = `
-          <div class="shop-thumbs">
-            <img src="/img/shop/download.jpg" alt="이미지1" />
-            <img src="/img/shop/download.jpg" alt="이미지2" />
-            <img src="/img/shop/download.jpg" alt="이미지3" />
-          </div>
-          <div class="shop-info">
-            <h3>${shop.shopName}</h3>
-            <p class="shop-location">${shop.shopLocation}</p>
-            <p>평점 ${shop.avgRate} / 리뷰 ${shop.review_count}</p>
-          </div>
-        `;
+      <div class="shop-thumbs">
+        <img src="/img/shop/download.jpg" alt="이미지1" />
+        <img src="/img/shop/download.jpg" alt="이미지2" />
+        <img src="/img/shop/download.jpg" alt="이미지3" />
+      </div>
+      <div class="shop-info">
+        <!-- 여기서 shopId를 쿼리파라미터로 전달 -->
+        <h3>
+          <a href="/shopdetail?shopId=${shop.shopId}">
+            ${shop.shopName}
+          </a>
+        </h3>
+        <p class="shop-location">${shop.shopLocation}</p>
+        <p>평점 ${shop.avgRate} / 리뷰 ${shop.review_count}</p>
+      </div>
+    `;
             shopListEl.appendChild(item);
         });
     }
+
+
 
     // 페이지 로드 시 실행
     document.addEventListener('DOMContentLoaded', () => {

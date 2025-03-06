@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=640, initial-scale=1.0">
+    <title>샵 상세 페이지</title>
+    <style>
+        /* 기본 레이아웃 */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: sans-serif;
+            background-color: #f9f9f9;
+        }
+
+        .shop-detail-container {
+            width: 640px;
+            margin: 0 auto;
+            background-color: #fff;
+            min-height: 100vh;
+            box-shadow: 0 0 4px rgba(0,0,0,0.1);
+        }
+
+        /* 상단 이미지 영역 (임시) */
+        .shop-hero {
+            width: 100%;
+            height: 200px;
+            background: #eee url("https://via.placeholder.com/640x200?text=Shop+Image") center/cover no-repeat;
+            /* 실제로는 DB에서 이미지 URL을 받아와서 <img>로 교체하거나 background-image로 적용 */
+        }
+
+        /* 상단 정보 섹션 */
+        .shop-info {
+            padding: 16px;
+            border-bottom: 1px solid #eee;
+        }
+        .shop-info h1 {
+            margin: 0 0 8px;
+            font-size: 20px;
+        }
+        .shop-info .rating {
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* 탭 버튼 (시술/디자이너/정보) - 예시 */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            padding: 0 16px;
+            margin-top: 12px;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            background-color: #fff;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 14px;
+            text-align: center;
+        }
+        .tab-btn:hover {
+            background-color: #f5f5f5;
+        }
+
+        /* 샵 기본 정보 영역 */
+        .shop-description {
+            padding: 16px;
+            border-bottom: 1px solid #eee;
+        }
+        .shop-description p {
+            margin: 6px 0;
+            font-size: 14px;
+            color: #333;
+        }
+
+        /* 리뷰 영역 */
+        .review-section {
+            padding: 16px;
+        }
+        .review-section h2 {
+            margin: 0 0 8px;
+            font-size: 16px;
+        }
+        .review-box {
+            border: 1px solid #eee;
+            border-radius: 4px;
+            padding: 8px;
+            background-color: #fafafa;
+            margin-bottom: 8px;
+        }
+        .review-box .nickname {
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        .review-box .date {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 6px;
+        }
+        .review-box .content {
+            font-size: 14px;
+            color: #444;
+        }
+    </style>
+</head>
+<body>
+
+<div class="shop-detail-container">
+
+    <!-- 상단 이미지(예시) -->
+    <div class="shop-hero"></div>
+
+    <!-- 샵 이름, 평점, 리뷰수 등 -->
+    <div class="shop-info">
+        <h1 id="shopName">샵 이름</h1>
+        <div class="rating">
+            <span id="avgRate">0.0</span> / 리뷰 <span id="reviewCount">0</span>
+        </div>
+    </div>
+
+    <!-- 탭 버튼 (시술, 디자이너, 정보) - 실제 구현은 JS로 탭 전환 가능 -->
+    <div class="tabs">
+        <button class="tab-btn">시술</button>
+        <button class="tab-btn">디자이너</button>
+        <button class="tab-btn">정보</button>
+    </div>
+
+    <!-- 샵 기본 정보 표시 -->
+    <div class="shop-description">
+        <p><strong>위치:</strong> <span id="shopLocation"></span></p>
+        <p><strong>영업 시간:</strong> <span id="shopBusinessTime"></span></p>
+        <p><strong>전화번호(예시):</strong>
+            <span id="shopPhone">0507-xxxx-xxxx (추측)</span>
+        </p>
+        <p><strong>리뷰 요약:</strong> <span id="reviewSummary"></span></p>
+    </div>
+
+    <!-- 리뷰 섹션 -->
+    <div class="review-section">
+        <h2>리뷰</h2>
+        <!-- 최신 리뷰 예시 -->
+        <div class="review-box">
+            <div class="nickname" id="latestMemberNickname">닉네임</div>
+            <div class="date" id="latestReviewDate">2025-01-01</div>
+            <div class="content" id="latestReviewContent">리뷰 내용</div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    /**
+     * shopId를 받아서 /shopdetails/home/{shopId} API로부터
+     * ShopInfoResponse( shop, … )를 가져와 화면에 반영한다.
+     * 실제 shopId는 URL 파라미터 또는 다른 로직으로 가져올 수 있음.
+     */
+    function loadShopDetails(shopId) {
+        fetch('/shopdetails/home/' + shopId)
+            .then(response => response.json())
+            .then(data => {
+                if (!data || !data.data || !data.data.shop) {
+                    console.error('샵 정보가 유효하지 않습니다.');
+                    return;
+                }
+                const shop = data.data.shop;
+
+                // 1) 상단 정보
+                document.getElementById('shopName').textContent = shop.shopName || '이름 없음';
+                document.getElementById('avgRate').textContent = shop.avgRate?.toFixed(1) || '0.0';
+
+                // ★ 리뷰 개수는 현재 SQL에서 가져오지 않으므로 임의로 0 처리 (또는 별도 API 필요)
+                document.getElementById('reviewCount').textContent = 0; // 추측값
+
+                // 2) 샵 기본 정보
+                document.getElementById('shopLocation').textContent = shop.shopLocation || '주소 정보 없음';
+                document.getElementById('shopBusinessTime').textContent = shop.shopBusinessTime || '정보 없음';
+
+                // ★ 전화번호는 쿼리 결과에 없으므로 임의 표시
+                // document.getElementById('shopPhone').textContent = shop.shopPhone || '미등록';
+
+                document.getElementById('reviewSummary').textContent = shop.reviewSummary || '리뷰 요약 없음';
+
+                // 3) 최신 리뷰 (닉네임, 날짜, 내용)
+                const latestNicknameEl = document.getElementById('latestMemberNickname');
+                const latestReviewDateEl = document.getElementById('latestReviewDate');
+                const latestReviewContentEl = document.getElementById('latestReviewContent');
+
+                // latest_member_nickname
+                latestNicknameEl.textContent = shop.latestMemberNickname || '닉네임 없음';
+
+                // latestReviewDate (LocalDateTime이므로 문자열로 변환)
+                if (shop.latestReviewDate) {
+                    // 간단히 YYYY-MM-DD 형태로 파싱 (추가 파싱 로직은 필요시 작성)
+                    const dateObj = new Date(shop.latestReviewDate);
+                    const yyyy = dateObj.getFullYear();
+                    const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
+                    const dd = String(dateObj.getDate()).padStart(2, '0');
+                    latestReviewDateEl.textContent = `${yyyy}-${mm}-${dd}`;
+                } else {
+                    latestReviewDateEl.textContent = '리뷰 날짜 없음';
+                }
+
+                // latestReviewContent
+                latestReviewContentEl.textContent = shop.latestReviewContent || '리뷰 내용 없음';
+            })
+            .catch(err => {
+                console.error('샵 상세 조회 실패:', err);
+            });
+    }
+
+    // 페이지 로드 시, 임의의 shopId로 호출 (실제 로직에 맞춰 수정)
+    document.addEventListener('DOMContentLoaded', () => {
+        const exampleShopId = 1; // 실제 shopId
+        loadShopDetails(exampleShopId);
+    });
+</script>
+</body>
+</html>

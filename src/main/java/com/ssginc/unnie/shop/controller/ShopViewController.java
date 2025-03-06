@@ -8,7 +8,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class ShopViewController {
 
     @GetMapping("/shop-map")
-    public String getShopMapPage(Model model) {
+    public String getShopMapPage() {
         return "map/map";
     }
+
+    @GetMapping("/shopdetail")
+    public String getShopdetailPage() {
+        return "map/shopdetail";
+}
 }
