@@ -4,198 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=640, initial-scale=1.0">
     <title>내주변</title>
+
+    <!-- Pretendard 폰트 CDN 링크 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" crossorigin>
+
+    <!-- 외부 CSS 파일 -->
+    <link rel="stylesheet" href="/css/shop/map.css">
+
     <!-- 네이버 지도 API (submodules=geocoder 포함) -->
-    <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=mt2l2d8ewa&submodules=geocoder"></script>
-    <style>
-        /* 지도 컨테이너 스타일 */
-        #map-container {
-            width: 640px;
-            height: 820px;
-            margin: 50px auto;
-            position: relative;
-            border: 1px solid #ccc;
-        }
-
-        /* 지도 영역 */
-        #map {
-            width: 100%;
-            height: 100%;
-        }
-
-        /* "이 지역 재검색" 버튼 */
-        #reSearchBtn {
-            position: absolute;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 9999;
-            background-color: #ffffff;
-            border: 1px solid #ccc;
-            padding: 8px 12px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 14px;
-            color: #FF3479;
-        }
-        #reSearchBtn:hover {
-            background-color: #eee;
-        }
-
-        /* "목록보기" 버튼 (하단 중앙) */
-        #listViewBtn {
-            position: absolute;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 9999;
-            background-color: white;
-            border: 1px solid #ccc;
-            padding: 8px 12px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        #listViewBtn:hover {
-            background-color: #eee;
-        }
-
-        /* 바텀시트 (지도의 가로 너비와 동일) */
-        #bottomSheet {
-            position: fixed;
-            width: 640px;
-            left: 50%;
-            bottom: 0;
-            transform: translate(-50%, 100%);
-            height: 50%; /* 필요 시 조정 */
-            background-color: #fff;
-            box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.2);
-            z-index: 10000;
-            transition: transform 0.3s ease;
-            border-radius: 16px 16px 0 0;
-        }
-        /* 바텀시트 열렸을 때 */
-        #bottomSheet.open {
-            transform: translate(-50%, 0);
-        }
-
-        /* 바텀시트 내용 (스크롤 영역) */
-        .bottomSheetContent {
-            padding: 0;
-            height: 100%;
-            overflow-y: auto;
-            position: relative;
-        }
-
-        /* 상단 헤더 영역 (닫기 버튼, 현재 위치, 카테고리 탭) - 스크롤 시 고정 */
-        .bottomSheetHeader {
-            position: sticky;
-            top: 0;
-            background-color: #fff;
-            padding: 16px;
-            z-index: 10;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        /* 상단 X버튼과 '내 위치'를 한 줄에 배치 */
-        .header-top {
-            display: flex;
-            align-items: center;
-            justify-content: space-between; /* 왼쪽: 텍스트, 오른쪽: 버튼 */
-            margin-bottom: 8px;
-        }
-
-        /* '내 위치' 텍스트 (테두리/배경/패딩 제거) */
-        #myLocationText {
-            margin: 0;
-            font-size: 16px;
-            font-weight: bold;
-            color: #333;
-            /* border, background, padding 모두 제거 */
-        }
-
-        /* 닫기 버튼 */
-        #closeBottomSheetBtn {
-            border: none;
-            background: none;
-            cursor: pointer;
-            font-size: 16px;
-            color: #aaa;
-        }
-
-        /* 카테고리 탭 */
-        .category-tabs {
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-        }
-        .category-btn {
-            border: none;
-            background-color: #FFFFFF;
-            color: #333;
-            padding: 8px 12px;
-            border-radius: 20px;
-            border: 1px solid #E6E6E6;
-            cursor: pointer;
-            white-space: nowrap;
-        }
-        .category-btn.active {
-            background-color: #FF3479;
-            color: #fff;
-        }
-
-        /* 매장 목록(세로 리스트) */
-        .shop-list {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            padding: 16px;
-        }
-
-
-        /* 썸네일 3장 가로 배치 */
-        .shop-thumbs {
-            display: flex;
-            gap: 8px;
-        }
-        .shop-thumbs img {
-            width: 33%;
-            height: 100px;
-            object-fit: cover;
-            border-radius: 4px;
-        }
-
-        /* 매장 텍스트 정보 */
-        .shop-info {
-            line-height: 1.4;
-        }
-        .shop-info h3 {
-            margin: 0 0 4px;
-            font-size: 16px;
-        }
-        .shop-info h3 a {
-            color: #333;          /* 원하는 텍스트 색상 */
-            text-decoration: none; /* 밑줄 제거 */
-        }
-
-        /* 방문 후(visited) 색상도 동일하게 */
-        .shop-info h3 a:visited {
-            color: #333;
-        }
-
-        .shop-info p {
-            margin: 0;
-            font-size: 14px;
-            color: #666;
-        }
-        .shop-info .shop-location {
-            color: #999;
-            font-size: 13px;
-        }
-    </style>
+    <script type="text/javascript"
+            src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=mt2l2d8ewa&submodules=geocoder">
+    </script>
 </head>
 <body>
+<!-- 본문 내용 -->
 <div id="map-container">
     <div id="map"></div>
     <button id="reSearchBtn">
@@ -211,15 +33,11 @@
 <!-- 바텀시트 -->
 <div id="bottomSheet">
     <div class="bottomSheetContent">
-        <!-- 상단 헤더: 고정 (닫기 버튼, 내 위치, 카테고리 탭) -->
-        <!-- 상단 헤더 영역 -->
         <div class="bottomSheetHeader">
-            <!-- 닫기 버튼과 위치·카테고리를 묶을 래퍼 -->
             <div class="header-top">
                 <div id="myLocationText">내 위치 불러오는 중...</div>
                 <button id="closeBottomSheetBtn">X</button>
             </div>
-
             <div class="category-tabs">
                 <button class="category-btn" data-category="헤어샵">헤어샵</button>
                 <button class="category-btn active" data-category="네일샵">네일샵</button>
@@ -228,241 +46,13 @@
                 <button class="category-btn" data-category="에스테틱">에스테틱</button>
             </div>
         </div>
-        <!-- 매장 목록 -->
         <div class="shop-list" id="shopList">
             <!-- JS로 동적 생성 -->
         </div>
     </div>
 </div>
 
-<script>
-    let map;
-    let markers = []; // 상점 마커 저장 배열
-    let userMarker = null; // 사용자 위치 마커
-
-    // 카테고리에 따른 마커 아이콘 반환 함수
-    function getMarkerIcon(category) {
-        const normalized = category.trim();
-        switch(normalized) {
-            case "헤어샵":
-                return '/img/shop/map_hair.png';
-            case "네일샵":
-                return '/img/shop/map_neil.png';
-            case "에스테틱":
-                return '/img/shop/map_aesthetic.png';
-            case "왁싱샵":
-                return '/img/shop/map_waxing.png';
-            case "바버샵":
-                return '/img/shop/map_barber.png';
-            default:
-                console.warn("지원하지 않는 카테고리:", category);
-                return '/img/map_default.png';
-        }
-    }
-
-    // 지도 영역 내 상점만 필터링 (옵션)
-    function filterShopsInView(shops) {
-        const bounds = map.getBounds();
-        return shops.filter(shop => {
-            const shopLatLng = new naver.maps.LatLng(shop.shopLatitude, shop.shopLongitude);
-            return bounds.hasLatLng(shopLatLng);
-        });
-    }
-
-    // 기존 마커 제거
-    function removeMarkers() {
-        markers.forEach(marker => marker.setMap(null));
-        markers = [];
-    }
-
-    // 마커 업데이트
-    function updateMarkers(shops) {
-        removeMarkers();
-        const visibleShops = filterShopsInView(shops);
-        visibleShops.forEach(shop => {
-            const marker = new naver.maps.Marker({
-                position: new naver.maps.LatLng(shop.shopLatitude, shop.shopLongitude),
-                map: map,
-                title: `${shop.shopName} - ${shop.shopCategory}`,
-                icon: {
-                    url: getMarkerIcon(shop.shopCategory),
-                    size: new naver.maps.Size(40, 40),
-                    anchor: new naver.maps.Point(20, 20)
-                }
-            });
-            markers.push(marker);
-        });
-    }
-
-    // 지도 초기화 함수
-    function initMap(lat, lng, shops) {
-        const mapOptions = {
-            center: new naver.maps.LatLng(lat, lng),
-            zoom: 15
-        };
-        map = new naver.maps.Map('map', mapOptions);
-        updateMarkers(shops);
-
-        // 사용자 위치 마커 생성
-        userMarker = new naver.maps.Marker({
-            position: new naver.maps.LatLng(lat, lng),
-            map: map,
-            title: '현재 위치'
-        });
-    }
-
-    // 사용자 위치와 상점 데이터 로드 후 지도 초기화
-    function getLocationAndInit() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(position => {
-                const lat = position.coords.latitude;
-                const lng = position.coords.longitude;
-
-                // Reverse Geocoding을 통해 내 위치 업데이트
-                updateMyLocationText(lat, lng);
-
-                // 지도 초기화 및 상점 데이터 로드
-                fetch('/api/shop')
-                    .then(response => response.json())
-                    .then(data => {
-                        initMap(lat, lng, data.data.shops);
-                    })
-                    .catch(error => {
-                        console.error('상점 데이터를 가져오는 데 실패했습니다:', error);
-                    });
-            }, error => {
-                console.error('위치 정보를 가져올 수 없습니다:', error.message);
-            }, { enableHighAccuracy: true });
-        } else {
-            console.error('브라우저가 위치 정보를 지원하지 않습니다.');
-        }
-    }
-
-    // Reverse Geocoding: 현재 위치 주소 업데이트 함수
-    function updateMyLocationText(lat, lng) {
-        naver.maps.Service.reverseGeocode(
-            {
-                coords: new naver.maps.LatLng(lat, lng),
-                orders: [naver.maps.Service.OrderType.ADDR, naver.maps.Service.OrderType.ROAD_ADDR].join(',')
-            },
-            function(status, response) {
-                if (status === naver.maps.Service.Status.OK) {
-                    const result = response.v2.results[0];
-                    if (result) {
-                        const { region } = result;
-                        const area1 = region.area1.name || '';
-                        const area2 = region.area2.name || '';
-                        const shortAddress = `${area1} ${area2}`.trim();
-                        document.getElementById('myLocationText').textContent = shortAddress || '현재 위치';
-                    } else {
-                        document.getElementById('myLocationText').textContent = '주소 정보를 찾을 수 없습니다.';
-                    }
-                } else {
-                    console.error('Reverse Geocoding 실패:', status);
-                    document.getElementById('myLocationText').textContent = '주소 정보를 불러오지 못했습니다.';
-                }
-            }
-        );
-    }
-
-    // "이 지역 재검색" 버튼 클릭 이벤트
-    document.getElementById('reSearchBtn').addEventListener('click', () => {
-        const center = map.getCenter();
-        const lat = center.lat();
-        const lng = center.lng();
-        const currentZoom = map.getZoom();
-        fetch('/api/shop')
-            .then(response => response.json())
-            .then(data => {
-                updateMarkers(data.data.shops);
-                map.setCenter(new naver.maps.LatLng(lat, lng));
-                map.setZoom(currentZoom);
-            })
-            .catch(error => {
-                console.error('상점 데이터를 가져오는 데 실패했습니다:', error);
-            });
-    });
-
-    // 카테고리별 매장 불러오기 함수
-    function loadShopsByCategory(category) {
-        fetch(`/api/shop/category/${category}`)
-            .then(res => res.json())
-            .then(response => {
-                const shops = response.data.shops;
-                renderShopList(shops);
-            })
-            .catch(err => {
-                console.error('카테고리별 상점 조회 실패:', err);
-            });
-    }
-
-    // 매장 목록을 DOM에 렌더링하는 함수
-    function renderShopList(shops) {
-        const shopListEl = document.getElementById('shopList');
-        shopListEl.innerHTML = ''; // 기존 목록 초기화
-
-        shops.forEach(shop => {
-            const item = document.createElement('div');
-            item.classList.add('shop-item');
-
-            // shopId가 Long/Integer일 경우, 문자열 보간 시 자동으로 변환됨
-            item.innerHTML = `
-      <div class="shop-thumbs">
-        <img src="/img/shop/download.jpg" alt="이미지1" />
-        <img src="/img/shop/download.jpg" alt="이미지2" />
-        <img src="/img/shop/download.jpg" alt="이미지3" />
-      </div>
-      <div class="shop-info">
-        <!-- 여기서 shopId를 쿼리파라미터로 전달 -->
-        <h3>
-          <a href="/shopdetail?shopId=${shop.shopId}">
-            ${shop.shopName}
-          </a>
-        </h3>
-        <p class="shop-location">${shop.shopLocation}</p>
-        <p>평점 ${shop.avgRate} / 리뷰 ${shop.review_count}</p>
-      </div>
-    `;
-            shopListEl.appendChild(item);
-        });
-    }
-
-
-
-    // 페이지 로드 시 실행
-    document.addEventListener('DOMContentLoaded', () => {
-        getLocationAndInit();
-
-        // 바텀시트 열기/닫기 이벤트
-        const listViewBtn = document.getElementById('listViewBtn');
-        const bottomSheet = document.getElementById('bottomSheet');
-        const closeBottomSheetBtn = document.getElementById('closeBottomSheetBtn');
-
-        listViewBtn.addEventListener('click', () => {
-            bottomSheet.classList.add('open');
-        });
-        closeBottomSheetBtn.addEventListener('click', () => {
-            bottomSheet.classList.remove('open');
-        });
-
-        // 카테고리 탭 버튼 클릭 이벤트
-        const categoryBtns = document.querySelectorAll('.category-btn');
-        categoryBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                categoryBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-
-                const selectedCategory = btn.getAttribute('data-category');
-                loadShopsByCategory(selectedCategory);
-            });
-        });
-
-        // 기본 탭(네일샵) 데이터 로드
-        const defaultCategory = document.querySelector('.category-btn.active')?.getAttribute('data-category');
-        if (defaultCategory) {
-            loadShopsByCategory(defaultCategory);
-        }
-    });
-</script>
+<!-- 외부 JS 파일 -->
+<script src="/js/shop/map.js"></script>
 </body>
 </html>
