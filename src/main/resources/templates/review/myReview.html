@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec2="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8"/>
+    <title>마이페이지</title>
+    <link rel="stylesheet" href="/static/css/myReview.css">
+</head>
+<body>
+<div class="container" layout:fragment="content">
+    <main class="main">
+        <!-- 프로필 섹션 -->
+        <section class="profile-section">
+            <div class="profile-image">
+                <!-- 유저 프로필 이미지 -->
+                <img src="/img/profile.png" alt="Profile Image">
+            </div>
+            <div class="profile-info">
+                <!-- 유저 이름/닉네임 -->
+                <h2>ABCDlex 님</h2>
+                <!-- 리뷰 수, 좋아요 수 -->
+                <p>
+                    리뷰 <span>48</span>
+                    &nbsp;·&nbsp;
+                    좋아요 <span>8</span>
+                </p>
+            </div>
+            <!-- 로그아웃 버튼 -->
+            <button type="button" class="logout-btn">로그아웃</button>
+        </section>
+
+        <!-- 나의 리뷰 목록 -->
+        <section class="my-reviews">
+            <h3 id="myReviewTitle">나의 리뷰</h3>
+            <br>
+            <h3 id="filter">최신순</h3>
+
+            <div class="reviews-grid">
+                <!-- 각각의 리뷰 아이템 (이미지) -->
+                <div class="review-item">
+                    <img src="/img/reviewImg.png" alt="Review Image 1">
+                </div>
+                <div class="review-item">
+                    <img src="/img/reviewImg2.png" alt="Review Image 2">
+                </div>
+                <div class="review-item">
+                    <img src="/img/reviewImg3.png" alt="Review Image 3">
+                </div>
+                <div class="review-item">
+                    <img src="/img/reviewImg4.png" alt="Review Image 4">
+                </div>
+                <div class="review-item">
+                    <img src="/img/reviewImg5.png" alt="Review Image 5">
+                </div>
+                <div class="review-item">
+                    <img src="/img/reviewImg6.png" alt="Review Image 6">
+                </div>
+                <div class="review-item">
+                    <img src="/img/reviewImg7.png" alt="Review Image 7">
+                </div>
+                <div class="review-item">
+                    <img src="/img/reviewImg8.png" alt="Review Image 8">
+                </div>
+                <div class="review-item">
+                    <img src="/img/reviewImg9.png" alt="Review Image 9">
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+</body>
+</html>

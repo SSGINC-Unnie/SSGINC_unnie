@@ -5,10 +5,11 @@
 
     <!-- 영수증 삽입 -->
     <insert id="insertReceipt" useGeneratedKeys="true" keyProperty="receiptId">
-        INSERT INTO RECEIPT (RECEIPT_DATE, RECEIPT_AMOUNT, RECEIPT_BUSINESS_NUMBER, RECEIPT_APPROVAL_NUMBER, RECEIPT_SHOP_NAME)
-        VALUES (#{receiptDate}, #{receiptAmount}, #{receiptBusinessNumber}, #{receiptApprovalNumber}, #{receiptShopName})
+        INSERT INTO RECEIPT (RECEIPT_SHOP_ID ,RECEIPT_DATE, RECEIPT_AMOUNT, RECEIPT_BUSINESS_NUMBER, RECEIPT_APPROVAL_NUMBER, RECEIPT_SHOP_NAME)
+        VALUES (#{receiptShopId}, #{receiptDate}, #{receiptAmount}, #{receiptBusinessNumber}, #{receiptApprovalNumber}, #{receiptShopName})
     </insert>
 
+    <!-- 영수증 조회 -->
     <select id="findReceiptById" parameterType="long" resultType="com.ssginc.unnie.review.dto.ReceiptResponse">
         SELECT
             receipt_id AS receiptId,
@@ -20,4 +21,10 @@
         FROM receipt
         WHERE receipt_id = #{receiptId}
     </select>
+
+    <!-- 업체 이름으로 샵ID 조회 (receipt insert + 리뷰 단일 조회용) -->
+    <select id="findShopIdByName" resultType="int">
+        SELECT shop_id FROM shop WHERE shop_name = #{shopName} LIMIT 1
+    </select>
+
 </mapper>

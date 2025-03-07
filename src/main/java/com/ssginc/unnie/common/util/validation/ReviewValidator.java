@@ -28,7 +28,7 @@ public class ReviewValidator implements Validator<ReviewRequestBase> {
         }
         return validateReviewContent(review.getReviewContent()) &&
                 validateReviewRate(review.getReviewRate()) &&
-                validateReviewKeywords(review.getKeywordIds());
+                validateReviewKeywords(review.getKeywordId());
     }
 
     /**
@@ -63,12 +63,12 @@ public class ReviewValidator implements Validator<ReviewRequestBase> {
     /**
      * 리뷰 키워드가 최소 MIN_KEYWORDS개 이상 MAX_KEYWORDS개 이하인지 검증
      */
-    private boolean validateReviewKeywords(List<Integer> keywordIds) {
-        if (keywordIds == null || keywordIds.isEmpty()) {
+    private boolean validateReviewKeywords(List<Integer> keywordId) {
+        if (keywordId == null || keywordId.isEmpty()) {
             log.error("최소 하나 이상의 키워드를 선택해야 합니다.");
             return false;
         }
-        int count = keywordIds.size();
+        int count = keywordId.size();
         if (count < MIN_KEYWORDS || count > MAX_KEYWORDS) {
             log.error("키워드 개수가 유효하지 않습니다. (입력값: {}, 허용 범위: {}~{})",
                     count, MIN_KEYWORDS, MAX_KEYWORDS);

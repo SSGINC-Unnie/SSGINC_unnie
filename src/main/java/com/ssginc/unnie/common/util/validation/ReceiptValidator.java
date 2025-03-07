@@ -87,7 +87,7 @@ public class ReceiptValidator implements Validator<ReceiptRequest> {
      * 사업자 번호 형식 검증
      */
     private boolean validateBusinessNumber(String businessNumber) {
-        if (businessNumber == null || !businessNumber.matches("\\d{3}-\\d{2}-\\d{5}")) {
+        if (businessNumber == null || !businessNumber.matches("\\d{3}-?\\d{2}-?\\d{5}|\\d{10}")) {
             log.error("사업자 번호 형식이 잘못되었습니다. (businessNumber={})", businessNumber);
             return false;
         }

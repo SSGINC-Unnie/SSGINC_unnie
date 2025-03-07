@@ -56,7 +56,7 @@ public class OCRParser {
             List<ReceiptItemRequest> items = extractItems(fields);
 
             // ReceiptRequest 생성 (영수증 ID는 이후 DB에서 생성 혹은 별도 처리)
-            return new ReceiptRequest(1L, receiptDate, receiptAmount, businessNumber, approvalNumber, receiptShopName, items);
+            return new ReceiptRequest(1L, 1, receiptDate, receiptAmount, businessNumber, approvalNumber, receiptShopName, items);
 
         } catch (Exception e) {
             throw new RuntimeException("JSON 파싱 오류: " + e.getMessage(), e);

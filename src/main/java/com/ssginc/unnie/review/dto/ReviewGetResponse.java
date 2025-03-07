@@ -30,12 +30,10 @@ public class ReviewGetResponse extends ReviewResponseBase {
                              int reviewRate, //리뷰 별점
                              String reviewContent, //리뷰 내용
                              LocalDateTime reviewDate, //리뷰 작성 일시
-//                             List<String> reviewKeywords,
                              String memberNickName,
                              String shopName)
     {
         super(reviewId, reviewMemberId, reviewReceiptId, reviewImage, reviewRate, reviewContent, reviewDate);
-//        this.reviewKeywords = reviewKeywords;
         this.memberNickName = memberNickName;
         this.shopName = shopName;
     }
