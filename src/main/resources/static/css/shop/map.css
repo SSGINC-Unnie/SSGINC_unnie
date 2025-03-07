@@ -1,6 +1,5 @@
 /* 전역 폰트 적용 */
-body {
-    margin: 0;
+* {
     font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto,
     'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', sans-serif;
 }
@@ -27,6 +26,7 @@ body {
     left: 50%;
     transform: translateX(-50%);
     z-index: 9999;
+    font-weight: bold;
     background-color: #ffffff;
     border: 1px solid #ccc;
     padding: 8px 12px;
@@ -70,6 +70,14 @@ body {
     z-index: 10000;
     transition: transform 0.3s ease;
     border-radius: 16px 16px 0 0;
+}
+.drag-handle {
+    width: 40px;
+    height: 5px;
+    background: #ccc;
+    border-radius: 3px;
+    margin: 8px auto;
+    cursor: ns-resize; /* 상하 조절 가능함을 표시 */
 }
 /* 바텀시트 열렸을 때 */
 #bottomSheet.open {

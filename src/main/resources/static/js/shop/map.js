@@ -53,6 +53,11 @@ function updateMarkers(shops) {
             }
         });
         markers.push(marker);
+
+        // 마커 클릭 시 상세 페이지로 이동
+        naver.maps.Event.addListener(marker, 'click', function() {
+            window.location.href = `shopdetail?shopId=${shop.shopId}`;
+        });
     });
 }
 
@@ -76,25 +81,29 @@ function initMap(lat, lng, shops) {
 // 사용자 위치와 상점 데이터 로드 후 지도 초기화
 function getLocationAndInit() {
     if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(position => {
-            const lat = position.coords.latitude;
-            const lng = position.coords.longitude;
-
-            // Reverse Geocoding을 통해 내 위치 업데이트
-            updateMyLocationText(lat, lng);
-
-            // 지도 초기화 및 상점 데이터 로드
-            fetch('/api/shop')
-                .then(response => response.json())
-                .then(data => {
-                    initMap(lat, lng, data.data.shops);
-                })
-                .catch(error => {
-                    console.error('상점 데이터를 가져오는 데 실패했습니다:', error);
-                });
-        }, error => {
-            console.error('위치 정보를 가져올 수 없습니다:', error.message);
-        }, { enableHighAccuracy: true });
+        navigator.geolocation.getCurrentPosition(
+            position => {
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+                // Reverse Geocoding을 통해 내 위치 업데이트
+                updateMyLocationText(lat, lng);
+                // 지도 초기화 및 상점 데이터 로드
+                fetch('/api/shop')
+                    .then(response => response.json())
+                    .then(data => {
+                        initMap(lat, lng, data.data.shops);
+                    })
+                    .catch(error => {
+                        console.error('상점 데이터를 가져오는 데 실패했습니다:', error);
+                    });
+            },
+            error => {
+                console.error('위치 정보를 가져올 수 없습니다:', error.message);
+                // 위치 권한 거부 시 fallback: 주소 입력 폼 표시
+                document.getElementById('addressFallback').style.display = 'block';
+            },
+            { enableHighAccuracy: true }
+        );
     } else {
         console.error('브라우저가 위치 정보를 지원하지 않습니다.');
     }
@@ -174,17 +183,127 @@ function renderShopList(shops) {
             <img src="/img/shop/download.jpg" alt="이미지3" />
           </div>
           <div class="shop-info">
-        <h3>
-          <a href="/shopdetail?shopId=${shop.shopId}">
-            ${shop.shopName}
-          </a>            
-          <p class="shop-location">${shop.shopLocation}</p>
+            <h3>
+              <a href="/shopdetail?shopId=${shop.shopId}">
+                ${shop.shopName}
+              </a>
+            </h3>
+            <p class="shop-location">${shop.shopLocation}</p>
             <p>평점 ${shop.avgRate} / 리뷰 ${shop.review_count}</p>
           </div>
         `;
         shopListEl.appendChild(item);
     });
 }
+
+// Daum 우편번호 서비스로 주소 검색 팝업 열기
+function openDaumPostcode() {
+    new daum.Postcode({
+        oncomplete: function(data) {
+            // 선택된 주소 (기본 주소)
+            var fullAddr = data.address;
+            searchAddressToCoordinate(fullAddr);
+        }
+    }).open();
+}
+
+// 주소 검색을 통한 좌표 변환 함수 (네이버 지도 Geocoder 사용)
+function searchAddressToCoordinate(address) {
+    naver.maps.Service.geocode(
+        { query: address },
+        function(status, response) {
+            if (status === naver.maps.Service.Status.OK) {
+                const result = response.v2.addresses[0];
+                if (!result) {
+                    console.error("주소 검색 결과가 없습니다.");
+                    return;
+                }
+                const lat = parseFloat(result.y);
+                const lng = parseFloat(result.x);
+
+                // 여기서 직접 입력한 주소를 #myLocationText에 표시
+                document.getElementById('myLocationText').textContent = address;
+
+                // 지도 초기화 (상점 데이터 다시 fetch)
+                fetch('/api/shop')
+                    .then(response => response.json())
+                    .then(data => {
+                        initMap(lat, lng, data.data.shops);
+                        // 주소 입력 폼 숨기기
+                        document.getElementById('addressFallback').style.display = 'none';
+                    })
+                    .catch(error => {
+                        console.error('상점 데이터를 가져오는 데 실패했습니다:', error);
+                    });
+            } else {
+                alert('주소 검색에 실패했습니다. 올바른 주소를 입력해 주세요.');
+            }
+        }
+    );
+}
+
+
+// 주소 입력 fallback의 "주소 검색" 버튼 클릭 이벤트
+document.getElementById('openPostcodeBtn').addEventListener('click', function(){
+    openDaumPostcode();
+});
+
+// 바텀시트 높이 조절 기능 구현 (마우스/터치 이벤트)
+(function() {
+    const bottomSheet = document.getElementById('bottomSheet');
+    const dragHandle = document.querySelector('.drag-handle');
+    let startY, startHeight;
+
+    // 마우스 이벤트
+    dragHandle.addEventListener('mousedown', (e) => {
+        startY = e.clientY;
+        startHeight = bottomSheet.offsetHeight;
+        document.documentElement.style.cursor = 'ns-resize';
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp);
+    });
+
+    function onMouseMove(e) {
+        const dy = startY - e.clientY;
+        let newHeight = startHeight + dy;
+        const containerHeight = document.getElementById('map-container').clientHeight;
+        const maxHeight = containerHeight * 0.9;  // 최대 90%
+        const minHeight = containerHeight * 0.3;  // 최소 30%
+        newHeight = Math.min(newHeight, maxHeight);
+        newHeight = Math.max(newHeight, minHeight);
+        bottomSheet.style.height = `${newHeight}px`;
+    }
+
+    function onMouseUp() {
+        document.documentElement.style.cursor = 'default';
+        document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('mouseup', onMouseUp);
+    }
+
+    // 터치 이벤트 (모바일 대응)
+    dragHandle.addEventListener('touchstart', (e) => {
+        startY = e.touches[0].clientY;
+        startHeight = bottomSheet.offsetHeight;
+        document.addEventListener('touchmove', onTouchMove);
+        document.addEventListener('touchend', onTouchEnd);
+    });
+
+    function onTouchMove(e) {
+        const dy = startY - e.touches[0].clientY;
+        let newHeight = startHeight + dy;
+        const containerHeight = document.getElementById('map-container').clientHeight;
+        const maxHeight = containerHeight * 0.9;
+        const minHeight = containerHeight * 0.3;
+        newHeight = Math.min(newHeight, maxHeight);
+        newHeight = Math.max(newHeight, minHeight);
+        bottomSheet.style.height = `${newHeight}px`;
+    }
+
+    function onTouchEnd() {
+        document.removeEventListener('touchmove', onTouchMove);
+        document.removeEventListener('touchend', onTouchEnd);
+    }
+})();
 
 // 페이지 로드 시 실행
 document.addEventListener('DOMContentLoaded', () => {
