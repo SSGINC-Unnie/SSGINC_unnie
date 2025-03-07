@@ -6,7 +6,7 @@
 }
 
 body {
-    font-family: 'Arial', sans-serif;
+    font-family: Pretendard;
     background-color: #fff;
     display: flex;
     justify-content: center;
@@ -40,7 +40,7 @@ body {
 }
 
 .logo img {
-    height: 40px;
+    height: 30px;
 }
 
 .profile img {
@@ -90,133 +90,126 @@ body {
     align-items: center;
     text-align: center;
     width: 640px;
-    padding: 20px 0;
-    /* 필요하다면 아래처럼 스크롤 설정을 개별로 줄 수도 있음
-       overflow-y: auto;
-       max-height: 80vh;
-       등등 */
+    padding: 24px 0;
 }
 
 /* Footer */
 .footer {
     width: 640px;
     background: #f8f8f8;
-    padding: 60px 24px;
+    padding: 24px 140.844px;
+    padding-top: 70px;
     font-size: 14px;
     color: #333;
     display: flex;
     flex-direction: column;
     align-items: center;
-
+    justify-content: center;
     /* position: absolute;  <-- 제거 */
     /* bottom: 0;           <-- 제거 */
+}
 
-    /* 푸터 내부 컨테이너 */
-    .footer-container {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 32px;
-    }
+/* 푸터 내부 컨테이너 */
+.footer-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+}
 
-    /* 푸터 로고 */
-    .footer-logo {
-        width: 100%;
-        display: flex;
-        justify-content: flex-start; /* 왼쪽 정렬 */
-        padding-left: 44px; /* TEAM과 같은 정렬을 위해 왼쪽 패딩 추가 */
-    }
+/* 푸터 로고 */
+.footer-logo {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start; /* 왼쪽 정렬 */
+}
 
-    .footer-logo img {
-        height: 30px;
-    }
+.footer-logo img {
+    height: 30px;
+}
 
-    /* 푸터 메인 콘텐츠 */
-    .footer-content {
-        width: 100%;
-        display: flex;
-        justify-content: space-between;
-        text-align: left;
-        padding: 0 44px;
-    }
+/* 푸터 메인 콘텐츠 */
+.footer-content {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    text-align: left;
+}
 
-    /* Team 섹션 */
-    .team-section {
-        flex: 1;
-    }
+/* Team 섹션 */
+.team-section {
+    flex: 1;
+}
 
-    .team-section .title {
-        font-size: 16px;
-        font-weight: bold;
-        color: #111;
-        margin-bottom: 12px;
-    }
+.team-section .title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #111;
+    margin-bottom: 12px;
+}
 
-    .team-list {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
-    }
+.team-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
 
-    .team-item {
-        font-size: 14px;
-        color: #555;
-    }
+.team-item {
+    font-size: 14px;
+    color: #555;
+}
 
-    /* 서비스센터 섹션 */
-    .service-section {
-        flex: 1;
-    }
+/* 서비스센터 섹션 */
+.service-section {
+    flex: 1;
+}
 
-    .service-section .title {
-        font-size: 16px;
-        font-weight: bold;
-        color: #111;
-        margin-bottom: 12px;
-    }
+.service-section .title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #111;
+    margin-bottom: 12px;
+}
 
-    .service-section p {
-        font-size: 13px;
-        color: #666;
-        line-height: 1.8;
-        margin: 4px 0;
-    }
+.service-section p {
+    font-size: 13px;
+    color: #666;
+    line-height: 1.8;
+    margin: 4px 0;
+}
 
-    .inquiry-container {
-        display: flex;
-        justify-content: flex-start; /* 왼쪽 정렬 */
-        width: 100%; /* 전체 폭 사용 */
-        margin-top: 10px;
-    }
+.inquiry-container {
+    display: flex;
+    justify-content: flex-start; /* 왼쪽 정렬 */
+    width: 100%; /* 전체 폭 사용 */
+    margin-top: 10px;
+}
 
-    /* 신규 입점 문의 - 텍스트 링크 스타일 */
-    .inquiry-link {
-        margin-top: 10px;
-        font-size: 14px;
-        padding-left: 44px;
-    }
+/* 신규 입점 문의 - 텍스트 링크 스타일 */
+.inquiry-link {
+    margin-top: 10px;
+    font-size: 14px;
+}
 
-    .inquiry-link a {
-        color: #ff4081;
-        text-decoration: underline;
-        font-weight: bold;
-    }
+.inquiry-link a {
+    color: #ff4081;
+    text-decoration: underline;
+    font-weight: bold;
+}
 
-    .inquiry-link:hover {
-        color: #e83670; /* 호버 시 색상 변경 */
-    }
+.inquiry-link:hover {
+    color: #e83670; /* 호버 시 색상 변경 */
+}
 
-    /* 하단 회사 정보 */
-    .footer-bottom {
-        width: 100%;
-        text-align: left; /* 왼쪽 정렬 */
-        font-size: 12px;
-        color: #888;
-        margin-top: 20px;
-        display: flex;
-        flex-direction: column; /* 여러 줄 정렬을 위해 세로 배치 */
-        align-items: flex-start; /* 왼쪽 정렬 */
-        padding-left: 44px; /* 왼쪽 여백 추가 */
-    }
+/* 하단 회사 정보 */
+.footer-bottom {
+    width: 100%;
+    text-align: left; /* 왼쪽 정렬 */
+    font-size: 12px;
+    color: #888;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column; /* 여러 줄 정렬을 위해 세로 배치 */
+    align-items: flex-start; /* 왼쪽 정렬 */
 }
