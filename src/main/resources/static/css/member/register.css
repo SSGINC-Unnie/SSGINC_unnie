@@ -1,0 +1,141 @@
+/* 전체 페이지 설정 */
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #ffffff;
+    box-sizing: border-box;
+}
+
+/* wrapper: 가운데 424px 박스 */
+.wrapper {
+    width: 640px; /* 전체 페이지 폭: 640px */
+    margin: 0 auto;
+    background-color: #fff;
+    min-height: 1181px; /* 전체 높이 */
+    position: relative;
+}
+
+/* 로고 영역 */
+.logo-container {
+    width: 424px;
+    height: 35px; /* 실제 높이 */
+    margin: 0 auto;
+    margin-top: 40px; /* 임의 여백 */
+    text-align: center;
+}
+
+.logo {
+    width: 160px;
+    height: 35px;
+    object-fit: contain;
+}
+
+
+/* 회원가입 타이틀 */
+.title {
+    width: 424px;
+    margin: 0 auto;
+    margin-top: 20px;
+    font-size: 20px; /* semibold 20 */
+    font-weight: 600; /* 세미볼드 */
+    text-align: left;
+}
+
+/* 폼 컨테이너 */
+.join-form {
+    width: 424px;
+    margin: 0 auto;
+    margin-top: 20px;
+}
+
+.form-group {
+    width: 100%;
+    min-height: 82px;
+    margin-bottom: 10px;
+    position: relative;
+}
+
+/* 라벨 텍스트 (아이디, 비밀번호, 등) */
+.label-text {
+    display: block;
+    font-size: 16px; /* semibold 16 */
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+/* input 박스 */
+.input-box {
+    width: 100%;
+    height: 48px; /* 실제 입력박스 높이 */
+    padding: 0 12px;
+    font-size: 14px; /* placeholder regular 14 */
+    border: 1px solid #ccc;
+    outline: none;
+    box-sizing: border-box;
+    border-radius: 4px;
+}
+
+/* input-row: input + button 같이 있는 행 */
+.input-row {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* 간격 */
+}
+
+/* 에러/메시지 영역 */
+.error-msg {
+    margin-top: 4px;
+    font-size: 14px;
+    color: red;
+}
+
+/* 버튼 (작은 버튼: 인증번호 전송, 인증하기 등) */
+.btn-small {
+    height: 48px;
+    padding: 0 16px;
+    font-size: 16px; /* semibold 16 */
+    font-weight: 600;
+    /* 텍스트 & 배경 */
+    color: #000;           /* 글자색: 검정 */
+    background-color: #fff; /* 배경: 흰색 */
+    /* 두꺼운 검정 테두리 */
+    border: 1px solid #000;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* 타이머 텍스트 (입력박스 오른쪽에 배치) */
+.timer-text {
+    font-size: 14px;
+    color: #FF3479; /* 분홍색 */
+    display: none;  /* JS로 show/hide */
+    align-self: center;
+}
+
+/* 회원가입하기 버튼 (177×48) */
+.btn-submit-wrapper {
+    width: 100%;
+    text-align: center;
+    margin-top: 20px;
+}
+.btn-submit {
+    width: 177px;
+    height: 48px;
+    background-color: #FF3479; /* 예시 */
+    border: none;
+    border-radius: 4px;
+    font-size: 16px; /* semibold 16 */
+    font-weight: 600;
+    color: #ffffff;
+    cursor: pointer;
+}
+
+/* 성공 메시지 */
+#successMessage {
+    margin-top: 16px;
+    font-size: 16px;
+    color: green;
+    text-align: center;
+}

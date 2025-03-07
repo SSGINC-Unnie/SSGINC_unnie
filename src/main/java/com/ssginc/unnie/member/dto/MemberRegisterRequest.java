@@ -11,6 +11,6 @@ public class MemberRegisterRequest {
     private String memberName; // 이름
     private String memberNickname; // 닉네임
     private String memberPhone; // 전화번호
-    private String memberBirth; // 생년월일
-    private char memberGender; // 성별 (M/F)
+//    private String memberBirth; // 생년월일
+//    private char memberGender; // 성별 (M/F)
 }

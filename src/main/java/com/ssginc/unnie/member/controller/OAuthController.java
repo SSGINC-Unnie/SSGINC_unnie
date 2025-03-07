@@ -34,7 +34,7 @@ public class OAuthController {
     // OAuth 로그인 페이지 요청
     @GetMapping("/login")
     public String loginPage(){
-        return "member/login";
+        return "naverLogin";
     }
 
     // 이메일 중복 체크 API
@@ -80,10 +80,8 @@ public class OAuthController {
                     .memberPw(encoder.encode(newMember.getMemberPw()))
                     .memberName(newMember.getMemberName())
                     .memberNickname(newMember.getMemberNickname())
-                    .memberGender(newMember.getMemberGender())
                     .memberPhone(newMember.getMemberPhone())
                     .memberProvider(newMember.getMemberProvider())
-                    .memberBirth(newMember.getMemberBirth())
                     .build();
 
             //회원 등록
