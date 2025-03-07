@@ -13,21 +13,19 @@
 
     <insert id="insertMember">
         INSERT INTO member (
-            member_email, member_pw, member_name, member_nickname,
-            member_phone, member_birth, member_gender
+            member_email, member_pw, member_name, member_nickname,member_phone
         ) VALUES (
-            #{memberEmail}, #{memberPw}, #{memberName}, #{memberNickname},
-            #{memberPhone}, #{memberBirth}, #{memberGender}
+            #{memberEmail}, #{memberPw}, #{memberName}, #{memberNickname},#{memberPhone}
         )
     </insert>
 
     <insert id="insertOAuthMember">
         INSERT INTO member (
             member_email, member_pw, member_name, member_nickname,
-            member_phone, member_birth, member_gender, member_provider
+            member_phone, member_provider
         ) VALUES (
              #{memberEmail}, #{memberPw}, #{memberName}, #{memberNickname},
-             #{memberPhone}, #{memberBirth}, #{memberGender}, #{memberProvider}
+             #{memberPhone}, #{memberProvider}
         )
     </insert>
 

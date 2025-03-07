@@ -1,27 +1,67 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="utf-8">
-    <title>네이버 로그인</title>
+    <meta charset="UTF-8" />
+    <title>언니어때 로그인</title>
+    <!-- CSS 연결 -->
+    <link rel="stylesheet" href="/css/member/login.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.slim.js"></script>
+    <!-- AXIOS -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <!-- 네이버 로그인 -->
     <script type="text/javascript" src="https://static.nid.naver.com/js/naverLogin_implicit-1.0.3.js" charset="utf-8"></script>
+    <!-- Google Identity Services 클라이언트 라이브러리 로드 -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
-<!-- 네이버 로그인 버튼 노출 영역 -->
-<div id="naver_id_login"></div>
+<!--  div, 숨김 처리 -->
+<div id="naver_id_login" style="display:none;"></div>
+<div class="login-page">
+    <!-- 가운데 로그인 박스(420 x 516) -->
+    <div class="login-container">
+        <!-- 로고(220 x 48) -->
+        <img src="logo.png" alt="언니어때 로고" class="logo" />
+
+        <!-- 아이디/비밀번호 입력영역 (420 x 108) -->
+        <div class="input-container">
+            <input type="text" placeholder="아이디" class="login-input" />
+            <input type="password" placeholder="비밀번호" class="login-input" />
+        </div>
+
+        <!-- 로그인 버튼 (420 x 63) -->
+        <button class="login-button">로그인</button>
+
+        <!-- 아이디 찾기 / 비밀번호 찾기 (178 x 24) -->
+        <div class="find-info">
+            <a href="#" class="find-id">아이디 찾기</a>
+            <span class="divider">|</span>
+            <a href="#" class="find-pw">비밀번호 찾기</a>
+        </div>
+
+        <!-- 다른 방법으로 로그인 + 소셜 로그인 (420 x 111) -->
+        <div class="other-login">
+            <p>다른 방법으로 로그인</p>
+            <div class="social-buttons">
+                <div class="oauth-login">
+                    <div id="google_button_div"></div>
+                </div>
+                <div class="oauth-login">
+                    <button id="naver-login" class="social-button">
+                        <img src="/img/member/naver_login.png" alt="네이버 로그인">
+                    </button>
+                </div>
+                <div class="oauth-login">
+                    <button id="kakao-login" class="social-button">
+                        <img src="/img/member/kakao.png" alt="카카오 로그인">
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 
-
-<!-- //네이버 로그인 버튼 노출 영역 -->
-<script type="text/javascript">
-    var naver_id_login = new naver_id_login("cVXzKiI7vI8yCxFy2axQ", "http://localhost:8111/callback.html");
-    var state = naver_id_login.getUniqState();
-    naver_id_login.setButton("white", 2,40);
-    naver_id_login.setDomain("http://localhost:8111");
-    naver_id_login.setState(state);
-    //naver_id_login.setPopup();
-    naver_id_login.init_naver_id_login();
-
-
-</script>
+<!-- JS 연결 -->
+<script src="/js/member/login.js"></script>
+</body>
 </html>

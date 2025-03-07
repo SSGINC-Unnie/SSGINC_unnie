@@ -21,7 +21,7 @@ public class MemberValidator implements Validator<MemberRegisterRequest>{
     private final String nameRegex;     // 이름 정규식
     private final String nicknameRegex; // 닉네임 정규식
     private final String phoneRegex;    // 전화번호 정규식
-    private final String birthRegex;    // 생년월일 정규식
+//    private final String birthRegex;    // 생년월일 정규식
 
     public MemberValidator() {
         emailRegex = "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$";
@@ -29,7 +29,7 @@ public class MemberValidator implements Validator<MemberRegisterRequest>{
         nameRegex = "^[가-힣]{2,10}$";
         nicknameRegex = "^[가-힣a-zA-Z0-9]{2,20}$";
         phoneRegex = "^01[0-9]-\\d{3,4}-\\d{4}$";
-        birthRegex = "^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])$";
+//        birthRegex = "^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])$";
     }
 
     /**
@@ -45,7 +45,7 @@ public class MemberValidator implements Validator<MemberRegisterRequest>{
         validateName(object.getMemberName());
         validateNickname(object.getMemberNickname());
         validatePhone(object.getMemberPhone());
-        validateBirth(object.getMemberBirth());
+//        validateBirth(object.getMemberBirth());
         return true;
     }
 
@@ -75,17 +75,17 @@ public class MemberValidator implements Validator<MemberRegisterRequest>{
     }
 
     //생년월일 유효성 검사
-    public void validateBirth(String birth){
-        validateValue(birth,birthRegex,ErrorCode.INVALID_BIRTH_FORMAT);
-
-        //날짜 유효성 검증
-        LocalDate birthDate = LocalDate.parse(birth); //yyyy-MM-dd 형식 파싱
-        LocalDate today = LocalDate.now();
-
-        if (birthDate.isAfter(today) || birthDate.isBefore(today.minusYears(150))) {
-            throw new UnnieRegisterException(ErrorCode.INVALID_BIRTH_FORMAT);
-        }
-    }
+//    public void validateBirth(String birth){
+//        validateValue(birth,birthRegex,ErrorCode.INVALID_BIRTH_FORMAT);
+//
+//        //날짜 유효성 검증
+//        LocalDate birthDate = LocalDate.parse(birth); //yyyy-MM-dd 형식 파싱
+//        LocalDate today = LocalDate.now();
+//
+//        if (birthDate.isAfter(today) || birthDate.isBefore(today.minusYears(150))) {
+//            throw new UnnieRegisterException(ErrorCode.INVALID_BIRTH_FORMAT);
+//        }
+//    }
 
     //공통 정규식 검증
     private void validateValue(String value, String regex, ErrorCode errorCode) {

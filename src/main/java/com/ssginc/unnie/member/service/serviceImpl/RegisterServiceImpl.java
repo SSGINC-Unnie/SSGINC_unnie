@@ -51,4 +51,14 @@ public class RegisterServiceImpl implements RegisterService {
         }
         return result;
     }
+
+    @Override
+    public int checkMemberEmail(String email) {
+        return memberMapper.checkMemberEmail(email);
+    }
+
+    @Override
+    public int checkMemberNickname(String nickname) {
+        return memberMapper.checkMemberNickname(nickname);
+    }
 }

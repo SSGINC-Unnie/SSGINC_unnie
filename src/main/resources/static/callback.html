@@ -34,9 +34,8 @@
             location.href = "/";
         } else {
             const name = naver_id_login.getProfileData('name');
-            const nickname = naver_id_login.getProfileData('nickname');
-            const mobile = naver_id_login.getProfileData('mobile');
-            const gender = naver_id_login.getProfileData('gender');
+            const nickname = "";
+            const mobile = "";
             const password = generateRandomPassword8();
 
             // 동적으로 form 생성 후 POST 요청
@@ -49,11 +48,10 @@
                 "<input type='hidden' name='memberPw' value='" + password + "'/>" +
                 "<input type='hidden' name='memberName' value='" + name + "'/>" +
                 "<input type='hidden' name='memberNickname' value='" + nickname + "'/>" +
-                "<input type='hidden' name='memberGender' value='" + gender + "'/>" +
                 "<input type='hidden' name='memberPhone' value='" + mobile + "'/>" +
                 "<input type='hidden' name='memberProvider' value='naver'/>";
 
-                document.body.appendChild(form);
+            document.body.appendChild(form);
             form.submit();
         }
     }

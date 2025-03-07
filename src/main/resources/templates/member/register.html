@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+    <meta charset="UTF-8" />
+    <title>회원가입</title>
+    <link rel="stylesheet" href="/css/member/register.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.slim.js"></script>
+    <!-- AXIOS -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+</head>
+<body>
+<div class="wrapper">
+    <!-- 로고 이미지를 사용할 경우 <img> 태그로 교체 가능 -->
+    <!-- 예: <img src="logo.png" alt="언니어때 로고" class="logo" /> -->
+    <!-- 로고 -->
+    <div class="logo-container">
+        <img src="logo.png" alt="언니어때 로고" class="logo" />
+    </div>
+    <!-- 타이틀 -->
+    <h1 class="title">회원가입</h1>
+
+    <form class="join-form" id="registrationForm">
+
+        <!-- 아이디(이메일) 소셜로그인 회원은 이메일 가져와서 readonly로, 일반 회원가입은 입력 -->
+        <div class="form-group">
+            <label for="memberEmail" class="label-text">아이디</label>
+            <div class="input-row">
+                <input type="email" id="memberEmail" name="memberEmail"
+                       class="input-box"
+                       th:value="${OAuthDto != null ? OAuthDto.memberEmail : ''}"
+                       th:readonly="${OAuthDto != null}"
+                       placeholder="이메일 입력" required />
+                <!-- 소셜 로그인인 경우엔 인증번호 전송 버튼 제거 -->
+                <button type="button" id="sendEmailVerification" class="btn-small" th:if="${OAuthDto == null}">
+                    인증번호 전송
+                </button>
+            </div>
+            <div id="emailError" class="error-msg" th:if="${OAuthDto == null}"></div>
+        </div>
+
+
+        <!-- 이메일 인증번호 입력 & 타이머 & 인증하기 버튼 -->
+        <div class="form-group" id="emailAuthGroup" style="display: none;">
+            <label for="emailAuthCode" class="label-text"></label>
+            <div class="input-row">
+                <!-- 인증번호 입력 -->
+                <input type="text" id="emailAuthCode" class="input-box" placeholder="인증번호 입력" />
+                <!-- 타이머 (오른쪽에 배치) -->
+                <div class="timer-text" id="email-auth-timer"></div>
+                <!-- 인증하기 버튼 -->
+                <button type="button" id="verifyEmailCode" class="btn-small">인증번호 확인</button>
+            </div>
+            <!-- 이메일 인증 결과 메시지(성공 or 실패) -->
+            <div id="emailAuthSection" class="error-msg"></div>
+        </div>
+
+        <!-- 비밀번호   -->
+        <!-- 소셜로그인 회원은 칸 안보이게 -->
+        <div class="form-group" th:if="${OAuthDto == null}">
+            <label for="memberPw" class="label-text">비밀번호</label>
+            <input type="password" id="memberPw" class="input-box" placeholder="비밀번호 입력" required />
+            <div id="pwError" class="error-msg"></div>
+        </div>
+
+        <!-- 비밀번호 확인 -->
+        <div class="form-group" th:if="${OAuthDto == null}">
+            <label for="memberPwConfirm" class="label-text">비밀번호 확인</label>
+            <div class="input-row">
+                <input type="password" id="memberPwConfirm" class="input-box" placeholder="비밀번호 재입력" required />
+                <div id="pwConfirmError" class="error-msg"></div>
+            </div>
+        </div>
+
+        <!-- 이름 -->
+        <div class="form-group">
+            <label for="memberName" class="label-text">이름</label>
+            <input type="text" id="memberName" name="memberName" class="input-box"
+                   th:value="${OAuthDto != null ? OAuthDto.memberName : ''}"
+                   th:readonly="${OAuthDto != null}"
+                   placeholder="이름 입력" required />
+            <div id="nameError" class="error-msg" th:if="${OAuthDto == null}"></div>
+        </div>
+
+        <!-- 닉네임 -->
+        <div class="form-group">
+            <label for="memberNickname" class="label-text">닉네임</label>
+            <div class="input-row">
+                <input type="text" id="memberNickname" class="input-box" placeholder="닉네임 입력" required />
+                <button type="button" id="checkNickname" class="btn-small">중복 확인</button>
+            </div>
+            <div id="nicknameError" class="error-msg"></div>
+        </div>
+
+        <!-- 전화번호 -->
+        <div class="form-group">
+            <label for="memberPhone" class="label-text">전화번호</label>
+            <div class="input-row">
+                <input type="tel" id="memberPhone" class="input-box" placeholder="전화번호 입력(010-1234-5678)" required />
+                <button type="button" id="sendPhoneVerification" class="btn-small">인증번호 전송</button>
+            </div>
+            <div id="phoneError" class="error-msg"></div>
+        </div>
+
+        <!-- 전화번호 인증번호 입력 -->
+        <div class="form-group" id="phoneAuthGroup" style="display: none;">
+            <label for="phoneAuthCode" class="label-text"></label>
+            <div class="input-row">
+                <input type="text" id="phoneAuthCode" class="input-box" placeholder="인증번호 입력" />
+                <!-- 타이머 (오른쪽에 배치) -->
+                <div class="timer-text" id="phone-auth-timer"></div>
+                <!-- 인증하기 버튼 -->
+                <button type="button" id="verifyPhoneCode" class="btn-small">인증번호 확인</button>
+            </div>
+            <!-- 전화번호 인증 결과 메시지(성공/실패) -->
+            <div id="phoneAuthSection" class="error-msg"></div>
+        </div>
+
+        <!-- 회원가입 버튼 -->
+        <div class="btn-submit-wrapper">
+            <button type="submit" class="btn-submit" id="registerBtn">회원가입하기</button>
+        </div>
+    <div id="successMessage"></div>
+    </form>
+</div>
+
+<script src="/js/member/register.js"></script>
+</body>
+</html>
+
