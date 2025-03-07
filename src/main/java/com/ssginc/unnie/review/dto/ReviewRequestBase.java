@@ -23,6 +23,6 @@ public class ReviewRequestBase {
     private String reviewImage;     // 리뷰 대표 이미지
     private int reviewRate;         // 리뷰 별점
     private String reviewContent;   // 리뷰 내용
-    private List<Integer> keywordIds; //리뷰 키워드
+    private List<Integer> keywordId; //리뷰 키워드
     private MultipartFile file;
 }

@@ -26,9 +26,9 @@ public class ReviewUpdateRequest extends ReviewRequestBase{
                                int reviewRate, // 리뷰 별점
                                String reviewContent, // 리뷰 내용
                                LocalDateTime reviewDate, // 리뷰 작성 일시 수정
-                               List<Integer> keywordIds,
-                                MultipartFile file) {// 수정될 키워드 목록
-        super(reviewId, reviewMemberId, reviewReceiptId, reviewImage, reviewRate, reviewContent, keywordIds, file);
+                               List<Integer> keywords, // 수정될 키워드 목록
+                                MultipartFile file) {
+        super(reviewId, reviewMemberId, reviewReceiptId, reviewImage, reviewRate, reviewContent, keywords, file);
         this.reviewDate = reviewDate;
         this.file = file;
     }

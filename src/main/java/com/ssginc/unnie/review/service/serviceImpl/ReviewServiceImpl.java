@@ -116,7 +116,7 @@ public class ReviewServiceImpl implements ReviewService {
 
         // 2. 리뷰 요청 유효성 검증 (ReviewValidator 활용)
         // update의 경우, 키워드가 null이면 기존 키워드를 유지하므로 null인 경우에는 검증하지 않음
-        if (reviewUpdateRequest.getKeywordIds() != null && !reviewValidator.validate(reviewUpdateRequest)) {
+        if (reviewUpdateRequest.getKeywordId() != null && !reviewValidator.validate(reviewUpdateRequest)) {
             throw new UnnieReviewException(ErrorCode.INVALID_REVIEW_CONTENT);
         }
 
@@ -127,7 +127,7 @@ public class ReviewServiceImpl implements ReviewService {
         }
 
         // 4. 키워드 수정이 포함된 경우 처리
-        if (reviewUpdateRequest.getKeywordIds() != null) {
+        if (reviewUpdateRequest.getKeywordId() != null) {
             reviewMapper.deleteReviewKeywords(reviewUpdateRequest.getReviewId());
             int keywordUpdateCount = reviewMapper.insertReviewKeywordsForUpdate(reviewUpdateRequest);
             if (keywordUpdateCount == 0) {

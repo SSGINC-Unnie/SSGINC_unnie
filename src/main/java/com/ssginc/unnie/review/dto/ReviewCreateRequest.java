@@ -23,10 +23,10 @@ public class ReviewCreateRequest extends ReviewRequestBase{
                                String reviewImage, // 리뷰 대표 이미지
                                int reviewRate, // 리뷰 별점
                                String reviewContent, // 리뷰 내용
-                               List<Integer> keywordIds,
-                               MultipartFile file) // 선택한 키워드들의 ID 목록
+                               List<Integer> keywordId,// 선택한 키워드들의 ID 목록
+                               MultipartFile file)
     {
-        super(reviewId, reviewMemberId, reviewReceiptId, reviewImage, reviewRate, reviewContent, keywordIds, file);
+        super(reviewId, reviewMemberId, reviewReceiptId, reviewImage, reviewRate, reviewContent, keywordId, file);
         this.file = file;
     }
 }

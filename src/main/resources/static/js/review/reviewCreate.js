@@ -7,10 +7,9 @@ submitButton.addEventListener("click", function () {
     const file = document.getElementById("file").files[0];
     const reviewRate = document.getElementById("reviewRate").value;
     const reviewContent = document.getElementById("reviewContent").value;
-    // const keywordIds = document.getElementById("keywordIds").value; // 콤마로 구분된 키워드 ID
-    const keywords = document.getElementById("keywordIds").value; // 콤마로 구분된 키워드 ID
+    const keywordId = document.getElementById("keywordId").value; // 콤마로 구분된 키워드 ID
 
-    if (!reviewReceiptId || !file || !reviewRate || !reviewContent || !keywords) {
+    if (!reviewReceiptId || !file || !reviewRate || !reviewContent || !keywordId) {
         alert("필수 입력 항목을 모두 채워주세요.");
         return;
     }
@@ -22,23 +21,20 @@ submitButton.addEventListener("click", function () {
     formData.append("reviewRate", reviewRate);
     // formData.append("review_content", reviewContent);
     formData.append("reviewContent", reviewContent);
+    formData.append("keywordId", keywordId);
+    formData.forEach((value, key) => {
+        console.log(`${key}:`, value);
+    });
     if (file) {
         formData.append("file", file);
     }
     // 추가한 부분
-    formData.append("keywords", keywords);
+    console.log(keywordId)
 
-    formData.forEach((value, key) => {
-        console.log(`${key}:`, value);
-    });
-    // console.log(keywordIds)
-    // console.log(typeof keywordIds)
-
-    fetch("http://localhost:8111/api/review", {
+    fetch("/api/review",{
         method: "POST",
-        // headers: {
-        //     // "Authorization": "Bearer " + localStorage.getItem("accessToken") // ✅ Content-Type 자동 처리
-        // },
+        // 쿠키 전송을 허용 (same-origin or include)
+        credentials: "include",
         body: formData
     })
         .then(response => response.json())
@@ -54,11 +50,6 @@ submitButton.addEventListener("click", function () {
             console.error("Error:", error);
             alert("서버 오류가 발생했습니다.");
         });
-    // const token = localStorage.getItem("accessToken");
-    // if (!token) {
-    //     alert("로그인이 필요합니다.");
-    // }
-    //
-    // console.log("Sending Authorization header:", localStorage.getItem("accessToken"));
+
 });
 });

@@ -34,24 +34,22 @@ public class ReviewController {
     // ✅ 업로드 디렉토리 (프로젝트 내 static 폴더)
     private static final String UPLOAD_DIR = "C:/workSpace/SSGINC_Unnie/src/main/resources/static/upload";
 
-
     /**
      * 리뷰 등록
      * JWT 토큰을 통해 인증된 회원의 memberId를 ReviewCreateRequest에 세팅합니다.
      */
     @PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ResponseDto<Map<String, String>>> createReview(
-//            @AuthenticationPrincipal MemberPrincipal memberPrincipal,
+            @AuthenticationPrincipal MemberPrincipal memberPrincipal,
             @ModelAttribute ReviewCreateRequest reviewCreateRequest,
-            @RequestParam(value = "keywords", required = true) String keywordIdsStr) {
-
-        System.out.println("Controller $$$$$$$$$$$$$$$$$$$$");
-        System.out.println(reviewCreateRequest);
-        System.out.println("$$$$$$$$$$$$$$$$$$$$");
+            @RequestParam(value = "keywordId", required = true) String keywordId) {
 
         // JWT에서 사용자 ID 설정
-//        reviewCreateRequest.setReviewMemberId(memberPrincipal.getMemberId());
-        reviewCreateRequest.setKeywordIds(parseKeywordIds(keywordIdsStr));
+        System.out.println("Authenticated Member ID: " + memberPrincipal.getMemberId());
+        log.info("Authenticated Member ID: " + memberPrincipal.getMemberId());
+
+        reviewCreateRequest.setReviewMemberId(memberPrincipal.getMemberId());
+        reviewCreateRequest.setKeywordId(parseKeywordIds(keywordId));
 
         MultipartFile file = reviewCreateRequest.getFile(); // ✅ 'file' 그대로 유지
         String filePath = null;
@@ -62,11 +60,13 @@ public class ReviewController {
 
         // DTO에 파일 경로 저장 (MyBatis에서 사용할 필드)
         reviewCreateRequest.setReviewImage(filePath); // ✅ DB에는 파일 경로만 저장
-
+//        reviewCreateRequest.setReviewMemberId(4);
         long reviewId = reviewService.createReview(reviewCreateRequest);
+
         return ResponseEntity.ok(
                 new ResponseDto<>(HttpStatus.CREATED.value(), "리뷰 작성에 성공했습니다.", Map.of("reviewId", String.valueOf(reviewId)))
         );
+
     }
 
     public String saveFile(MultipartFile file) {
@@ -129,7 +129,7 @@ public class ReviewController {
             @PathVariable("reviewId") long reviewId,
             @AuthenticationPrincipal MemberPrincipal memberPrincipal,
             @RequestBody ReviewUpdateRequest reviewUpdateRequest,
-            @RequestParam(value = "keywordIds", required = false) String keywordIdsStr) {
+            @RequestParam(value = "keywordId", required = false) String keywordId) {
 
         // 관리자(ROLE_ADMIN)만 관리자 권한으로 처리하고, 그 외는 반드시 리뷰 작성자와 일치해야 함.
         String role = memberPrincipal.getAuthorities().isEmpty()
@@ -145,7 +145,7 @@ public class ReviewController {
 
         // 수정 요청 시 토큰의 회원 ID를 DTO에 설정하여 소유자 확인에 사용합니다.
         reviewUpdateRequest.setReviewMemberId(memberPrincipal.getMemberId());
-        reviewUpdateRequest.setKeywordIds(parseKeywordIds(keywordIdsStr));
+        reviewUpdateRequest.setKeywordId(parseKeywordIds(keywordId));
         reviewUpdateRequest.setReviewId(reviewId);
         long updatedReviewId = reviewService.updateReview(reviewUpdateRequest);
         return ResponseEntity.ok(
@@ -192,9 +192,9 @@ public class ReviewController {
      * 콤마 구분된 키워드 ID 문자열을 List<Integer>로 변환하는 헬퍼 메서드.
      * 입력이 없으면 null을 반환하여 키워드 수정 없이 기존 키워드를 유지합니다.
      */
-    private List<Integer> parseKeywordIds(String keywordIdsStr) {
-        if (keywordIdsStr != null && !keywordIdsStr.trim().isEmpty()) {
-            return Arrays.stream(keywordIdsStr.split(","))
+    private List<Integer> parseKeywordIds(String keywordId) {
+        if (keywordId != null && !keywordId.trim().isEmpty()) {
+            return Arrays.stream(keywordId.split(","))
                     .map(String::trim)
                     .filter(s -> !s.isEmpty())
                     .map(Integer::valueOf)

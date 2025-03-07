@@ -4,30 +4,26 @@
 <mapper namespace="com.ssginc.unnie.review.mapper.ReviewMapper">
 
     <!-- 1) 리뷰 등록 -->
-    <insert id="insertReview" useGeneratedKeys="true" keyProperty="reviewId" parameterType="com.ssginc.unnie.review.dto.ReviewCreateRequest">
+    <insert id="insertReview" useGeneratedKeys="true" keyProperty="reviewId"
+            parameterType="com.ssginc.unnie.review.dto.ReviewCreateRequest">
         INSERT INTO review
-        (
-            review_member_id,
-            review_receipt_id,
-            review_image,
-            review_rate,
-            review_content
-        )
-        VALUES
-            (
-                #{reviewMemberId},
+        (review_member_id,
+         review_receipt_id,
+         review_image,
+         review_rate,
+         review_content)
+        VALUES (#{reviewMemberId},
                 #{reviewReceiptId},
                 #{reviewImage},
                 #{reviewRate},
-                #{reviewContent}
-            )
+                #{reviewContent})
     </insert>
 
     <!-- 2) 리뷰-키워드 연결 정보 등록 (생성용) -->
     <insert id="insertReviewKeywordsForCreate" parameterType="com.ssginc.unnie.review.dto.ReviewCreateRequest">
         INSERT INTO review_keyword (keyword_id, review_id)
         VALUES
-        <foreach collection="keywordIds" item="keywordId" separator=",">
+        <foreach collection="keywordId" item="keywordId" separator=",">
             (#{keywordId}, #{reviewId})
         </foreach>
     </insert>
@@ -42,16 +38,15 @@
 
     <!-- 4) 리뷰 상세 조회 -->
     <select id="getReviewById" resultType="com.ssginc.unnie.review.dto.ReviewGetResponse" parameterType="long">
-        SELECT
-            r.review_id AS reviewId,
-            r.review_member_id AS reviewMemberId,
-            r.review_receipt_id AS reviewReceiptId,
-            r.review_image AS reviewImage,
-            r.review_rate AS reviewRate,
-            r.review_content AS reviewContent,
-            r.review_date AS reviewDate,
-            m.member_nickname AS memberNickName,
-            s.shop_name AS shopName
+        SELECT r.review_id         AS reviewId,
+               r.review_member_id  AS reviewMemberId,
+               r.review_receipt_id AS reviewReceiptId,
+               r.review_image      AS reviewImage,
+               r.review_rate       AS reviewRate,
+               r.review_content    AS reviewContent,
+               r.review_date       AS reviewDate,
+               m.member_nickname   AS memberNickName,
+               s.shop_name         AS shopName
         FROM review r
                  JOIN member m ON r.review_member_id = m.member_id
                  JOIN receipt rc ON r.review_receipt_id = rc.receipt_id
@@ -61,26 +56,32 @@
     </select>
 
     <!-- 5) 리뷰 수정 -->
-    <update id="updateReview" parameterType="com.ssginc.unnie.review.dto.ReviewUpdateRequest" keyProperty="reviewId" keyColumn="review_id">
+    <update id="updateReview" parameterType="com.ssginc.unnie.review.dto.ReviewUpdateRequest" keyProperty="reviewId"
+            keyColumn="review_id">
         UPDATE review
-        SET
-            review_image = #{reviewImage},
+        <set>
             review_rate = #{reviewRate},
             review_content = #{reviewContent},
             review_date = CURRENT_TIMESTAMP
+            <if test="reviewImage != null and reviewImage != ''">
+                , review_image = #{reviewImage}
+            </if>
+        </set>
         WHERE review_id = #{reviewId}
     </update>
 
     <!-- 6) 리뷰 수정 시 기존의 키워드 관계 삭제 -->
     <delete id="deleteReviewKeywords" parameterType="long">
-        DELETE FROM review_keyword WHERE review_id = #{reviewId}
+        DELETE
+        FROM review_keyword
+        WHERE review_id = #{reviewId}
     </delete>
 
     <!-- 7) 리뷰-키워드 연결 정보 등록 (수정용) -->
     <insert id="insertReviewKeywordsForUpdate" parameterType="com.ssginc.unnie.review.dto.ReviewUpdateRequest">
         INSERT INTO review_keyword (keyword_id, review_id)
         VALUES
-        <foreach collection="keywordIds" item="keywordId" separator=",">
+        <foreach collection="keywordId" item="keywordId" separator=",">
             (#{keywordId}, #{reviewId})
         </foreach>
     </insert>
@@ -88,30 +89,26 @@
     <!-- 8) 리뷰 소프트 딜리트 -->
     <update id="softDeleteReview" parameterType="map">
         UPDATE review
-        SET
-            review_status = #{reviewStatus},
-            review_date = CURRENT_TIMESTAMP
+        SET review_status = #{reviewStatus},
+            review_date   = CURRENT_TIMESTAMP
         WHERE review_id = #{reviewId}
     </update>
 
     <!-- 9) 리뷰 존재 여부 확인 -->
     <select id="existsReview" resultType="boolean" parameterType="long">
-        SELECT EXISTS (
-            SELECT 1
-            FROM review
-            WHERE review_id = #{reviewId}
-              AND review_status = 0
-        )
+        SELECT EXISTS (SELECT 1
+                       FROM review
+                       WHERE review_id = #{reviewId}
+                         AND review_status = 0)
     </select>
 
     <!-- 10) 리뷰 소유자 확인 -->
     <select id="checkReviewAndAuthor" resultType="java.lang.Integer">
-        SELECT
-            CASE
-                WHEN COUNT(review_id) = 0 THEN -1  -- 리뷰가 존재하지 않으면 -1 반환
-                WHEN review_member_id != #{reviewMemberId} THEN 0  -- 작성자가 아니면 0 반환
-                ELSE 1  -- 작성자가 맞으면 1 반환
-                END AS ownership
+        SELECT CASE
+                   WHEN COUNT(review_id) = 0 THEN -1 -- 리뷰가 존재하지 않으면 -1 반환
+                   WHEN review_member_id != #{reviewMemberId} THEN 0 -- 작성자가 아니면 0 반환
+                   ELSE 1 -- 작성자가 맞으면 1 반환
+                   END AS ownership
         FROM review
         WHERE review_id = #{reviewId}
           AND review_status = 0
