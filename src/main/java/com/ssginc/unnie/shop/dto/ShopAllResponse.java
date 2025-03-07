@@ -18,4 +18,6 @@ public class ShopAllResponse {
 
     private ShopCategory shopCategory;
 
+    private int shopId;
+
 }

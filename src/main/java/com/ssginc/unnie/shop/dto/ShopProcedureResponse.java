@@ -16,6 +16,5 @@ public class ShopProcedureResponse {
     private int procedurePrice;
     // 디자이너 번호 (FK)
     private int procedureDesignerId;
-    // 업체 상태
-    private int shopStatus;
+
 }
