@@ -1,6 +1,8 @@
 let map;
 let markers = []; // 상점 마커 저장 배열
 let userMarker = null; // 사용자 위치 마커
+let currentShopList = []; // 현재 불러온 상점 데이터
+let currentSortOrder = 'asc'; // 'asc': 가나다순, 'desc': 역순
 
 // 카테고리에 따른 마커 아이콘 반환 함수
 function getMarkerIcon(category) {
@@ -91,7 +93,9 @@ function getLocationAndInit() {
                 fetch('/api/shop')
                     .then(response => response.json())
                     .then(data => {
-                        initMap(lat, lng, data.data.shops);
+                        currentShopList = data.data.shops;
+                        renderShopList(currentShopList);
+                        initMap(lat, lng, currentShopList);
                     })
                     .catch(error => {
                         console.error('상점 데이터를 가져오는 데 실패했습니다:', error);
@@ -145,7 +149,8 @@ document.getElementById('reSearchBtn').addEventListener('click', () => {
     fetch('/api/shop')
         .then(response => response.json())
         .then(data => {
-            updateMarkers(data.data.shops);
+            currentShopList = data.data.shops;
+            renderShopList(currentShopList);
             map.setCenter(new naver.maps.LatLng(lat, lng));
             map.setZoom(currentZoom);
         })
@@ -159,20 +164,31 @@ function loadShopsByCategory(category) {
     fetch(`/api/shop/category/${category}`)
         .then(res => res.json())
         .then(response => {
-            const shops = response.data.shops;
-            renderShopList(shops);
+            currentShopList = response.data.shops;
+            renderShopList(currentShopList);
         })
         .catch(err => {
             console.error('카테고리별 상점 조회 실패:', err);
         });
 }
 
-// 매장 목록을 DOM에 렌더링하는 함수
+// 매장 목록을 DOM에 렌더링하는 함수 (정렬 포함)
 function renderShopList(shops) {
+    const sortMode = document.getElementById('sortSelect').value;
+
+    let sortedShops = shops.slice(); // 원본 배열 복사
+    if (sortMode === 'asc') {
+        // 이름 오름차순 (가나다 / ABC)
+        sortedShops.sort((a, b) => a.shopName.localeCompare(b.shopName));
+    } else if (sortMode === 'desc') {
+        // 이름 내림차순 (역순)
+        sortedShops.sort((a, b) => b.shopName.localeCompare(a.shopName));
+    }
+
     const shopListEl = document.getElementById('shopList');
     shopListEl.innerHTML = ''; // 기존 목록 초기화
 
-    shops.forEach(shop => {
+    sortedShops.forEach(shop => {
         const item = document.createElement('div');
         item.classList.add('shop-item');
 
@@ -228,7 +244,8 @@ function searchAddressToCoordinate(address) {
                 fetch('/api/shop')
                     .then(response => response.json())
                     .then(data => {
-                        initMap(lat, lng, data.data.shops);
+                        currentShopList = data.data.shops;
+                        initMap(lat, lng, currentShopList);
                         // 주소 입력 폼 숨기기
                         document.getElementById('addressFallback').style.display = 'none';
                     })
@@ -242,11 +259,18 @@ function searchAddressToCoordinate(address) {
     );
 }
 
-
 // 주소 입력 fallback의 "주소 검색" 버튼 클릭 이벤트
 document.getElementById('openPostcodeBtn').addEventListener('click', function(){
     openDaumPostcode();
 });
+
+// 드롭다운으로 정렬을 선택할 때마다 목록 재렌더링
+document.getElementById('sortSelect').addEventListener('change', function() {
+    // 이미 currentShopList에 상점 목록이 저장되어 있으므로,
+    // renderShopList(currentShopList)를 다시 호출하면 됩니다.
+    renderShopList(currentShopList);
+});
+
 
 // 바텀시트 높이 조절 기능 구현 (마우스/터치 이벤트)
 (function() {
