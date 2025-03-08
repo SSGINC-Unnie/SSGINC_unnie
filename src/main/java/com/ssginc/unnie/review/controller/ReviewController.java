@@ -32,7 +32,10 @@ public class ReviewController {
 
     private final ReviewService reviewService;
     // ✅ 업로드 디렉토리 (프로젝트 내 static 폴더)
-    private static final String UPLOAD_DIR = "C:/workSpace/SSGINC_Unnie/src/main/resources/static/upload";
+//    private static final String UPLOAD_DIR = "C:/workSpace/SSGINC_Unnie/src/main/resources/static/upload";
+
+    // ✅ 업로드 디렉토리 (프로젝트 내 static 폴더)
+    private static final String UPLOAD_DIR = "/Users/wish/IdeaProjects/SSGINC_unnie/src/main/resources/static/upload";
 
     /**
      * 리뷰 등록
@@ -44,10 +47,13 @@ public class ReviewController {
             @ModelAttribute ReviewCreateRequest reviewCreateRequest,
             @RequestParam(value = "keywordId", required = true) String keywordId) {
 
-        // JWT에서 사용자 ID 설정
-        System.out.println("Authenticated Member ID: " + memberPrincipal.getMemberId());
-        log.info("Authenticated Member ID: " + memberPrincipal.getMemberId());
+        if (memberPrincipal == null) {
+            System.out.println("MemberPrincipal이 주입되지 않음.");
+        } else {
+            System.out.println("Authenticated Member ID: " + memberPrincipal.getMemberId());
+        }
 
+        // JWT에서 사용자 ID 설정
         reviewCreateRequest.setReviewMemberId(memberPrincipal.getMemberId());
         reviewCreateRequest.setKeywordId(parseKeywordIds(keywordId));
 
@@ -60,7 +66,7 @@ public class ReviewController {
 
         // DTO에 파일 경로 저장 (MyBatis에서 사용할 필드)
         reviewCreateRequest.setReviewImage(filePath); // ✅ DB에는 파일 경로만 저장
-//        reviewCreateRequest.setReviewMemberId(4);
+
         long reviewId = reviewService.createReview(reviewCreateRequest);
 
         return ResponseEntity.ok(
@@ -111,8 +117,7 @@ public class ReviewController {
      */
     @GetMapping("/keywords/{reviewId}")
     public ResponseEntity<ResponseDto<Map<String, Object>>> getReviewKeywords(
-            @PathVariable("reviewId") long reviewId,
-            @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
+            @PathVariable("reviewId") long reviewId) {
 
         List<String> keywords = reviewService.selectReviewKeywordsByReviewId(reviewId);
         return ResponseEntity.ok(
