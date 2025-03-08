@@ -40,6 +40,7 @@
                 <div id="myLocationText">내 위치 불러오는 중...</div>
                 <button id="closeBottomSheetBtn">X</button>
             </div>
+            <div class="category-and-sort">
             <div class="category-tabs">
                 <button class="category-btn" data-category="헤어샵">헤어샵</button>
                 <button class="category-btn active" data-category="네일샵">네일샵</button>
@@ -47,7 +48,15 @@
                 <button class="category-btn" data-category="왁싱샵">왁싱샵</button>
                 <button class="category-btn" data-category="에스테틱">에스테틱</button>
             </div>
+                <div class="sorting-dropdown">
+                <select id="sortSelect">
+                    <option value="default">기본</option>
+                    <option value="asc">이름순 ↓</option>
+                    <option value="desc">이름순 ↑</option>
+                </select>
+            </div>
         </div>
+    </div>
         <div class="shop-list" id="shopList">
             <!-- JS로 동적 생성 -->
         </div>

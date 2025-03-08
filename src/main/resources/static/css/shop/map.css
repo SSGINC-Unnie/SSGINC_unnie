@@ -104,6 +104,28 @@
     gap: 8px;
 }
 
+/* 카테고리 + 정렬 드롭다운을 같은 줄에 배치 */
+.category-and-sort {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /* gap: 8px; // 필요하면 사용 */
+    margin-bottom: 8px; /* 여백 조정 */
+}
+
+/* 기존 .category-tabs는 그대로 둠 */
+
+/* 정렬 드롭다운 */
+.sorting-dropdown select {
+    /* 공통 버튼 스타일에 맞춰서 padding/border 등 조정 */
+    padding: 8px 12px;
+    border-radius: 20px;
+    border: 1px solid #E6E6E6;
+    cursor: pointer;
+    font-size: 14px;
+    outline: none;
+}
+
 /* 상단 X버튼과 '내 위치'를 한 줄에 배치 */
 .header-top {
     display: flex;
