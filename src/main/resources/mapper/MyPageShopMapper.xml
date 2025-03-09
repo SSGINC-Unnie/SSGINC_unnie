@@ -172,7 +172,7 @@
     </select>
 
     <select id="findShopsByMemberId" parameterType="map" resultType="com.ssginc.unnie.mypage.dto.shop.ShopResponse">
-        SELECT shop_id, shop_name
+        SELECT shop_id, shop_name, shop_representation_name, shop_category, shop_location
         FROM shop
         WHERE shop_member_id = #{memberId} AND shop_status = 1
             LIMIT #{offset}, #{pageSize}
@@ -195,7 +195,7 @@
     </select>
 
     <select id="findDesignersByShopId" parameterType="int" resultType="com.ssginc.unnie.mypage.dto.shop.MyDesignerDetailResponse">
-        SELECT designer_id, designer_name, designer_introduction
+        SELECT designer_id, designer_name, designer_introduction, designer_thumbnail
         FROM designer
         WHERE designer_shop_id = #{shopId}
     </select>

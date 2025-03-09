@@ -13,7 +13,7 @@ function execDaumPostcode() {
  * 2) "다음" 버튼 클릭 시 -> /api/mypage/shop 엔드포인트로 JSON POST 후,
  * POST 성공 시 /api/mypage/designer 페이지로 이동
  */
-document.getElementById('submitBtn').addEventListener('click', function() {
+document.getElementById('submitBtn').addEventListener('click', async function() {
     // 폼 유효성 체크(간단 예시)
     const form = document.getElementById('shopForm');
     if (!form.checkValidity()) {
@@ -55,27 +55,25 @@ document.getElementById('submitBtn').addEventListener('click', function() {
         shopCreatedAt: shopCreatedAt
     };
 
-    // 서버로 JSON POST
-    fetch('/api/mypage/shop', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestBody)
-    })
-        .then(response => {
-            if (!response.ok) {
-                return response.json().then(err => {
-                    throw new Error(err.message || '업체 등록 실패');
-                });
-            }
-            return response.json();
-        })
-        .then(data => {
-            alert(data.message || '업체 등록이 완료되었습니다.' + data.data.shopId);
-            console.log('등록된 shopId', data.data.shopId);
-            let shopId = data.data.shopId;
-            window.location.href = `/mypage/designer/${shopId}`;
-        })
-        .catch(err => {
-            alert(err.message);
+    try {
+        // 서버로 JSON POST
+        const response = await fetch('/api/mypage/shop', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(requestBody)
         });
+
+        if (!response.ok) {
+            const err = await response.json();
+            throw new Error(err.message || '업체 등록 실패');
+        }
+
+        const data = await response.json();
+        alert(data.message || '업체 등록이 완료되었습니다.' + data.data.shopId);
+        console.log('등록된 shopId', data.data.shopId);
+        let shopId = data.data.shopId;
+        window.location.href = `/mypage/designer/${shopId}`;
+    } catch (err) {
+        alert(err.message);
+    }
 });

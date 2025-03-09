@@ -142,6 +142,7 @@ document.querySelector('.btn-next').addEventListener('click', async function(eve
         // 성공 후, pendingProcedures 배열 및 UI 초기화
         pendingProcedures = [];
         document.querySelector('.procedure-list').innerHTML = '';
+        window.location.href = `/mypage/procedure/${shopId}`;
 
     } catch (error) {
         console.error(error);

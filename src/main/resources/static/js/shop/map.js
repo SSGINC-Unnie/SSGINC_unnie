@@ -7,7 +7,7 @@ let currentSortOrder = 'asc'; // 'asc': 가나다순, 'desc': 역순
 // 카테고리에 따른 마커 아이콘 반환 함수
 function getMarkerIcon(category) {
     const normalized = category.trim();
-    switch(normalized) {
+    switch (normalized) {
         case "헤어샵":
             return '/img/shop/map_hair.png';
         case "네일샵":
@@ -40,7 +40,7 @@ function removeMarkers() {
 }
 
 // 마커 업데이트
-function updateMarkers(shops) {
+async function updateMarkers(shops) {
     removeMarkers();
     const visibleShops = filterShopsInView(shops);
     visibleShops.forEach(shop => {
@@ -57,20 +57,20 @@ function updateMarkers(shops) {
         markers.push(marker);
 
         // 마커 클릭 시 상세 페이지로 이동
-        naver.maps.Event.addListener(marker, 'click', function() {
+        naver.maps.Event.addListener(marker, 'click', function () {
             window.location.href = `shopdetail?shopId=${shop.shopId}`;
         });
     });
 }
 
 // 지도 초기화 함수
-function initMap(lat, lng, shops) {
+async function initMap(lat, lng, shops) {
     const mapOptions = {
         center: new naver.maps.LatLng(lat, lng),
         zoom: 15
     };
     map = new naver.maps.Map('map', mapOptions);
-    updateMarkers(shops);
+    await updateMarkers(shops);
 
     // 사용자 위치 마커 생성
     userMarker = new naver.maps.Marker({
@@ -81,25 +81,24 @@ function initMap(lat, lng, shops) {
 }
 
 // 사용자 위치와 상점 데이터 로드 후 지도 초기화
-function getLocationAndInit() {
+async function getLocationAndInit() {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
-            position => {
+            async (position) => {
                 const lat = position.coords.latitude;
                 const lng = position.coords.longitude;
                 // Reverse Geocoding을 통해 내 위치 업데이트
-                updateMyLocationText(lat, lng);
+                await updateMyLocationText(lat, lng);
                 // 지도 초기화 및 상점 데이터 로드
-                fetch('/api/shop')
-                    .then(response => response.json())
-                    .then(data => {
-                        currentShopList = data.data.shops;
-                        renderShopList(currentShopList);
-                        initMap(lat, lng, currentShopList);
-                    })
-                    .catch(error => {
-                        console.error('상점 데이터를 가져오는 데 실패했습니다:', error);
-                    });
+                try {
+                    const response = await fetch('/api/shop');
+                    const data = await response.json();
+                    currentShopList = data.data.shops;
+                    renderShopList(currentShopList);
+                    await initMap(lat, lng, currentShopList);
+                } catch (error) {
+                    console.error('상점 데이터를 가져오는 데 실패했습니다:', error);
+                }
             },
             error => {
                 console.error('위치 정보를 가져올 수 없습니다:', error.message);
@@ -114,62 +113,65 @@ function getLocationAndInit() {
 }
 
 // Reverse Geocoding: 현재 위치 주소 업데이트 함수
-function updateMyLocationText(lat, lng) {
-    naver.maps.Service.reverseGeocode(
-        {
-            coords: new naver.maps.LatLng(lat, lng),
-            orders: [naver.maps.Service.OrderType.ADDR, naver.maps.Service.OrderType.ROAD_ADDR].join(',')
-        },
-        function(status, response) {
-            if (status === naver.maps.Service.Status.OK) {
-                const result = response.v2.results[0];
-                if (result) {
-                    const { region } = result;
-                    const area1 = region.area1.name || '';
-                    const area2 = region.area2.name || '';
-                    const shortAddress = `${area1} ${area2}`.trim();
-                    document.getElementById('myLocationText').textContent = shortAddress || '현재 위치';
+async function updateMyLocationText(lat, lng) {
+    return new Promise((resolve, reject) => {
+        naver.maps.Service.reverseGeocode(
+            {
+                coords: new naver.maps.LatLng(lat, lng),
+                orders: [naver.maps.Service.OrderType.ADDR, naver.maps.Service.OrderType.ROAD_ADDR].join(',')
+            },
+            (status, response) => {
+                if (status === naver.maps.Service.Status.OK) {
+                    const result = response.v2.results[0];
+                    if (result) {
+                        const { region } = result;
+                        const area1 = region.area1.name || '';
+                        const area2 = region.area2.name || '';
+                        const shortAddress = `${area1} ${area2}`.trim();
+                        document.getElementById('myLocationText').textContent = shortAddress || '현재 위치';
+                        resolve();
+                    } else {
+                        document.getElementById('myLocationText').textContent = '주소 정보를 찾을 수 없습니다.';
+                        reject('주소를 찾을 수 없음');
+                    }
                 } else {
-                    document.getElementById('myLocationText').textContent = '주소 정보를 찾을 수 없습니다.';
+                    console.error('Reverse Geocoding 실패:', status);
+                    document.getElementById('myLocationText').textContent = '주소 정보를 불러오지 못했습니다.';
+                    reject('Geocoding 실패');
                 }
-            } else {
-                console.error('Reverse Geocoding 실패:', status);
-                document.getElementById('myLocationText').textContent = '주소 정보를 불러오지 못했습니다.';
             }
-        }
-    );
+        );
+    });
 }
 
 // "이 지역 재검색" 버튼 클릭 이벤트
-document.getElementById('reSearchBtn').addEventListener('click', () => {
+document.getElementById('reSearchBtn').addEventListener('click', async () => {
     const center = map.getCenter();
     const lat = center.lat();
     const lng = center.lng();
     const currentZoom = map.getZoom();
-    fetch('/api/shop')
-        .then(response => response.json())
-        .then(data => {
-            currentShopList = data.data.shops;
-            renderShopList(currentShopList);
-            map.setCenter(new naver.maps.LatLng(lat, lng));
-            map.setZoom(currentZoom);
-        })
-        .catch(error => {
-            console.error('상점 데이터를 가져오는 데 실패했습니다:', error);
-        });
+    try {
+        const response = await fetch('/api/shop');
+        const data = await response.json();
+        currentShopList = data.data.shops;
+        renderShopList(currentShopList);
+        map.setCenter(new naver.maps.LatLng(lat, lng));
+        map.setZoom(currentZoom);
+    } catch (error) {
+        console.error('상점 데이터를 가져오는 데 실패했습니다:', error);
+    }
 });
 
 // 카테고리별 매장 불러오기 함수
-function loadShopsByCategory(category) {
-    fetch(`/api/shop/category/${category}`)
-        .then(res => res.json())
-        .then(response => {
-            currentShopList = response.data.shops;
-            renderShopList(currentShopList);
-        })
-        .catch(err => {
-            console.error('카테고리별 상점 조회 실패:', err);
-        });
+async function loadShopsByCategory(category) {
+    try {
+        const res = await fetch(`/api/shop/category/${category}`);
+        const response = await res.json();
+        currentShopList = response.data.shops;
+        renderShopList(currentShopList);
+    } catch (err) {
+        console.error('카테고리별 상점 조회 실패:', err);
+    }
 }
 
 // 매장 목록을 DOM에 렌더링하는 함수 (정렬 포함)
@@ -224,39 +226,30 @@ function openDaumPostcode() {
 }
 
 // 주소 검색을 통한 좌표 변환 함수 (네이버 지도 Geocoder 사용)
-function searchAddressToCoordinate(address) {
-    naver.maps.Service.geocode(
-        { query: address },
-        function(status, response) {
-            if (status === naver.maps.Service.Status.OK) {
-                const result = response.v2.addresses[0];
-                if (!result) {
-                    console.error("주소 검색 결과가 없습니다.");
-                    return;
-                }
-                const lat = parseFloat(result.y);
-                const lng = parseFloat(result.x);
-
-                // 여기서 직접 입력한 주소를 #myLocationText에 표시
-                document.getElementById('myLocationText').textContent = address;
-
-                // 지도 초기화 (상점 데이터 다시 fetch)
-                fetch('/api/shop')
-                    .then(response => response.json())
-                    .then(data => {
-                        currentShopList = data.data.shops;
-                        initMap(lat, lng, currentShopList);
-                        // 주소 입력 폼 숨기기
-                        document.getElementById('addressFallback').style.display = 'none';
-                    })
-                    .catch(error => {
-                        console.error('상점 데이터를 가져오는 데 실패했습니다:', error);
-                    });
-            } else {
-                alert('주소 검색에 실패했습니다. 올바른 주소를 입력해 주세요.');
-            }
+async function searchAddressToCoordinate(address) {
+    try {
+        const res = await naver.maps.Service.geocode({ query: address });
+        const result = res.v2.addresses[0];
+        if (!result) {
+            console.error("주소 검색 결과가 없습니다.");
+            return;
         }
-    );
+        const lat = parseFloat(result.y);
+        const lng = parseFloat(result.x);
+
+        // 여기서 직접 입력한 주소를 #myLocationText에 표시
+        document.getElementById('myLocationText').textContent = address;
+
+        // 지도 초기화 (상점 데이터 다시 fetch)
+        const response = await fetch('/api/shop');
+        const data = await response.json();
+        currentShopList = data.data.shops;
+        initMap(lat, lng, currentShopList);
+        // 주소 입력 폼 숨기기
+        document.getElementById('addressFallback').style.display = 'none';
+    } catch (error) {
+        alert('주소 검색에 실패했습니다. 올바른 주소를 입력해 주세요.');
+    }
 }
 
 // 주소 입력 fallback의 "주소 검색" 버튼 클릭 이벤트
@@ -271,65 +264,6 @@ document.getElementById('sortSelect').addEventListener('change', function() {
     renderShopList(currentShopList);
 });
 
-
-// 바텀시트 높이 조절 기능 구현 (마우스/터치 이벤트)
-(function() {
-    const bottomSheet = document.getElementById('bottomSheet');
-    const dragHandle = document.querySelector('.drag-handle');
-    let startY, startHeight;
-
-    // 마우스 이벤트
-    dragHandle.addEventListener('mousedown', (e) => {
-        startY = e.clientY;
-        startHeight = bottomSheet.offsetHeight;
-        document.documentElement.style.cursor = 'ns-resize';
-        document.addEventListener('mousemove', onMouseMove);
-        document.addEventListener('mouseup', onMouseUp);
-    });
-
-    function onMouseMove(e) {
-        const dy = startY - e.clientY;
-        let newHeight = startHeight + dy;
-        const containerHeight = document.getElementById('map-container').clientHeight;
-        const maxHeight = containerHeight * 0.9;  // 최대 90%
-        const minHeight = containerHeight * 0.3;  // 최소 30%
-        newHeight = Math.min(newHeight, maxHeight);
-        newHeight = Math.max(newHeight, minHeight);
-        bottomSheet.style.height = `${newHeight}px`;
-    }
-
-    function onMouseUp() {
-        document.documentElement.style.cursor = 'default';
-        document.removeEventListener('mousemove', onMouseMove);
-        document.removeEventListener('mouseup', onMouseUp);
-    }
-
-    // 터치 이벤트 (모바일 대응)
-    dragHandle.addEventListener('touchstart', (e) => {
-        startY = e.touches[0].clientY;
-        startHeight = bottomSheet.offsetHeight;
-        document.addEventListener('touchmove', onTouchMove);
-        document.addEventListener('touchend', onTouchEnd);
-    });
-
-    function onTouchMove(e) {
-        const dy = startY - e.touches[0].clientY;
-        let newHeight = startHeight + dy;
-        const containerHeight = document.getElementById('map-container').clientHeight;
-        const maxHeight = containerHeight * 0.9;
-        const minHeight = containerHeight * 0.3;
-        newHeight = Math.min(newHeight, maxHeight);
-        newHeight = Math.max(newHeight, minHeight);
-        bottomSheet.style.height = `${newHeight}px`;
-    }
-
-    function onTouchEnd() {
-        document.removeEventListener('touchmove', onTouchMove);
-        document.removeEventListener('touchend', onTouchEnd);
-    }
-})();
-
-// 페이지 로드 시 실행
 document.addEventListener('DOMContentLoaded', () => {
     getLocationAndInit();
 

@@ -427,6 +427,7 @@ public class MyPageShopServiceImpl implements MyPageShopService {
 
         // 페이지네이션을 고려하여 업체 목록 조회
         List<ShopResponse> res = myPageShopMapper.findShopsByMemberId(memberId, offset, pageSize);
+        log.info(String.valueOf(res));
 
         // 전체 업체 개수 조회 (전체 페이지네이션을 위한 사용)
         int totalCount = myPageShopMapper.getTotalShopCountByMemberId(memberId);

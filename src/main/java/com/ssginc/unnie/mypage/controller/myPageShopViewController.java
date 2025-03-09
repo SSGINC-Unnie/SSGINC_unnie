@@ -31,4 +31,9 @@ public class myPageShopViewController {
         return "mypage/shop/procedureInsert";
     }
 
+    @GetMapping("/myshop")
+    public String GetSHops() {
+        return "mypage/shop/getshop";
+    }
+
 }
