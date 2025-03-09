@@ -13,11 +13,8 @@
 </head>
 <body>
 <div class="wrapper">
-    <!-- 로고 이미지를 사용할 경우 <img> 태그로 교체 가능 -->
-    <!-- 예: <img src="logo.png" alt="언니어때 로고" class="logo" /> -->
-    <!-- 로고 -->
     <div class="logo-container">
-        <img src="logo.png" alt="언니어때 로고" class="logo" />
+        <img src="/img/logo.png" alt="언니어때 로고" class="logo" />
     </div>
     <!-- 타이틀 -->
     <h1 class="title">회원가입</h1>
@@ -28,9 +25,9 @@
         <div class="form-group">
             <label for="memberEmail" class="label-text">아이디</label>
             <div class="input-row">
-                <input type="email" id="memberEmail" name="memberEmail"
-                       class="input-box"
+                <input type="email" id="memberEmail" class="input-box"
                        th:value="${OAuthDto != null ? OAuthDto.memberEmail : ''}"
+                       th:attr="name=${OAuthDto == null} ? 'memberEmail' : null"
                        th:readonly="${OAuthDto != null}"
                        placeholder="이메일 입력" required />
                 <!-- 소셜 로그인인 경우엔 인증번호 전송 버튼 제거 -->
@@ -41,15 +38,24 @@
             <div id="emailError" class="error-msg" th:if="${OAuthDto == null}"></div>
         </div>
 
+        <!-- 소셜 로그인일 때, OAuthDto 값들을 숨은 필드로 추가 -->
+        <th:block th:if="${OAuthDto != null}">
+            <input type="hidden" id="oauthMemberEmail" name="memberEmail" th:value="${OAuthDto.memberEmail}" />
+            <input type="hidden" id="oauthMemberPw" name="memberPw" th:value="${OAuthDto.memberPw}" />
+            <input type="hidden" id="oauthMemberProvider" name="memberProvider" th:value="${OAuthDto.memberProvider}" />
+        </th:block>
+
 
         <!-- 이메일 인증번호 입력 & 타이머 & 인증하기 버튼 -->
         <div class="form-group" id="emailAuthGroup" style="display: none;">
             <label for="emailAuthCode" class="label-text"></label>
             <div class="input-row">
-                <!-- 인증번호 입력 -->
-                <input type="text" id="emailAuthCode" class="input-box" placeholder="인증번호 입력" />
-                <!-- 타이머 (오른쪽에 배치) -->
-                <div class="timer-text" id="email-auth-timer"></div>
+                <div class="input-with-timer">
+                    <!-- 인증번호 입력 -->
+                    <input type="text" id="emailAuthCode" class="input-box" placeholder="인증번호 입력" />
+                    <!-- 타이머 -->
+                    <span id="email-auth-timer" class="timer-overlay"></span>
+                </div>
                 <!-- 인증하기 버튼 -->
                 <button type="button" id="verifyEmailCode" class="btn-small">인증번호 확인</button>
             </div>
@@ -68,10 +74,8 @@
         <!-- 비밀번호 확인 -->
         <div class="form-group" th:if="${OAuthDto == null}">
             <label for="memberPwConfirm" class="label-text">비밀번호 확인</label>
-            <div class="input-row">
-                <input type="password" id="memberPwConfirm" class="input-box" placeholder="비밀번호 재입력" required />
-                <div id="pwConfirmError" class="error-msg"></div>
-            </div>
+            <input type="password" id="memberPwConfirm" class="input-box" placeholder="비밀번호 재입력" required />
+            <div id="pwConfirmError" class="error-msg"></div>
         </div>
 
         <!-- 이름 -->
@@ -108,9 +112,11 @@
         <div class="form-group" id="phoneAuthGroup" style="display: none;">
             <label for="phoneAuthCode" class="label-text"></label>
             <div class="input-row">
-                <input type="text" id="phoneAuthCode" class="input-box" placeholder="인증번호 입력" />
-                <!-- 타이머 (오른쪽에 배치) -->
-                <div class="timer-text" id="phone-auth-timer"></div>
+                <div class="input-with-timer">
+                    <input type="text" id="phoneAuthCode" class="input-box" placeholder="인증번호 입력" />
+                    <!-- 타이머 -->
+                    <span id="phone-auth-timer" class="timer-overlay"></span>
+                </div>
                 <!-- 인증하기 버튼 -->
                 <button type="button" id="verifyPhoneCode" class="btn-small">인증번호 확인</button>
             </div>

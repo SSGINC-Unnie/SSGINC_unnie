@@ -79,9 +79,10 @@ html, body {
 
 /* input-row: input + button 같이 있는 행 */
 .input-row {
+    width: 100%;
     display: flex;
     align-items: center;
-    gap: 8px; /* 간격 */
+    gap: 8px; /* 입력칸과 버튼 사이 간격 */
 }
 
 /* 에러/메시지 영역 */
@@ -94,8 +95,11 @@ html, body {
 /* 버튼 (작은 버튼: 인증번호 전송, 인증하기 등) */
 .btn-small {
     height: 48px;
+    width: 130px;       /* 모든 작은 버튼 동일 너비 */
+    text-align: center; /* 텍스트 가운데 정렬 */
+    white-space: nowrap;/* 줄바꿈 방지 */
     padding: 0 16px;
-    font-size: 16px; /* semibold 16 */
+    font-size: 16px;
     font-weight: 600;
     /* 텍스트 & 배경 */
     color: #000;           /* 글자색: 검정 */
@@ -106,12 +110,26 @@ html, body {
     cursor: pointer;
 }
 
-/* 타이머 텍스트 (입력박스 오른쪽에 배치) */
-.timer-text {
-    font-size: 14px;
-    color: #FF3479; /* 분홍색 */
-    display: none;  /* JS로 show/hide */
-    align-self: center;
+/* 입력칸 + 타이머 컨테이너 */
+.input-with-timer {
+    flex: 1;
+    position: relative;
+}
+
+/* 입력칸에 오른쪽 여백을 줘서 타이머와 겹치지 않게 */
+.input-with-timer .input-box {
+    width: 100%;
+    height: 48px;
+    padding-right: 50px; /* 타이머 들어갈 공간 */
+}
+
+/* 타이머를 입력칸 오른쪽에 겹쳐 표시 */
+.timer-overlay {
+    position: absolute;
+    right: 10px;        /* 버튼과 겹치지 않게 */
+    top: 50%;
+    transform: translateY(-50%);
+    color: #FF3479;
 }
 
 /* 회원가입하기 버튼 (177×48) */

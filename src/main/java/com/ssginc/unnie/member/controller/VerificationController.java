@@ -34,7 +34,7 @@ public class VerificationController {
     @PostMapping("/sendEmail")
     public ResponseEntity<SimpleResponseDto> sendEmail(@RequestBody Map<String, String> requestData ) {
         verificationService.sendEmail(requestData.get("memberEmail"));
-        return ResponseEntity.ok(new SimpleResponseDto(HttpStatus.OK.value(), "인증 코드가 발송되었습니다."));
+        return ResponseEntity.ok(new SimpleResponseDto(HttpStatus.OK.value(), "인증번호가 발송되었습니다."));
     }
 
     //이메일 인증번호 검증
@@ -42,7 +42,7 @@ public class VerificationController {
     public ResponseEntity<ResponseDto<Map<String, Boolean>>> verifyEmailCode(@RequestBody Map<String, String> requestData) {
         boolean isVerified = verificationService.verifyEmailCode(requestData.get("memberEmail"), requestData.get("code"));
         return ResponseEntity.ok(
-                new ResponseDto<>(HttpStatus.OK.value(), "이메일 인증 처리 완료되었습니다.", Map.of("result", isVerified))
+                new ResponseDto<>(HttpStatus.OK.value(), "인증 완료되었습니다.", Map.of("result", isVerified))
         );
     }
 
@@ -50,7 +50,7 @@ public class VerificationController {
     @PostMapping("/sendPhone")
     public ResponseEntity<SimpleResponseDto> sendPhone(@RequestBody Map<String, String> requestData) {
         verificationService.sendPhone(requestData.get("memberPhone"));
-        return ResponseEntity.ok(new SimpleResponseDto(HttpStatus.OK.value(), "인증 코드가 발송되었습니다."));
+        return ResponseEntity.ok(new SimpleResponseDto(HttpStatus.OK.value(), "인증번호가 발송되었습니다."));
     }
 
     //전화번호 인증번호 검증
@@ -58,7 +58,7 @@ public class VerificationController {
     public ResponseEntity<ResponseDto<Map<String, Boolean>>> verifyPhoneCode(@RequestBody Map<String, String> requestData) {
         boolean isVerified = verificationService.verifyPhoneCode(requestData.get("memberPhone"), requestData.get("code")); // 인증번호 검증
         return ResponseEntity.ok(
-                new ResponseDto<>(HttpStatus.OK.value(), "전화번호 인증 처리 완료되었습니다.", Map.of("result", isVerified))
+                new ResponseDto<>(HttpStatus.OK.value(), "인증 완료되었습니다.", Map.of("result", isVerified))
         );
     }
 

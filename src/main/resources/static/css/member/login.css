@@ -159,3 +159,10 @@ body {
     height: 100%;
     object-fit: contain;
 }
+
+/* 에러/메시지 영역 */
+.error-msg {
+    margin-top: 4px;
+    font-size: 14px;
+    color: red;
+}
