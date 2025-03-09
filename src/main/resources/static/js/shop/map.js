@@ -200,7 +200,7 @@ function renderShopList(shops) {
           </div>
           <div class="shop-info">
             <h3>
-              <a href="/shopdetail?shopId=${shop.shopId}">
+              <a href="/map/shopdetail?shopId=${shop.shopId}">
                 ${shop.shopName}
               </a>
             </h3>

@@ -36,10 +36,9 @@
     </select>
 
     <select id="findProceduresByShopId" resultType="com.ssginc.unnie.shop.dto.ShopProcedureResponse">
-        SELECT p.procedure_id, p.procedure_name, p.procedure_price from `procedure` p
-        JOIN designer d on d.designer_id = p.procedure_designer_id
-        JOIN shop s on s.shop_id = d.designer_shop_id
-        where s.shop_id = #{shopId}
+        SELECT procedure_id, procedure_name, procedure_price, procedure_thumbnail
+        from `procedure`
+        where procedure_shop_id = #{shopId}
     </select>
 
     <select id="findShopById" resultType="com.ssginc.unnie.shop.dto.ShopInfoResponse">

@@ -7,4 +7,5 @@ public class MyProcedureDetailResponse {
     private int procedureId;
     private String procedureName;
     private int procedurePrice;
+    private String procedureThumbnail;
 }

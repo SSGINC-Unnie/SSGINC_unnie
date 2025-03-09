@@ -15,13 +15,13 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @Slf4j
@@ -49,6 +49,9 @@ public class MyPageShopServiceImpl implements MyPageShopService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public Integer createShop(ShopInsertRequest request) {
+
+        String cleanedDate = request.getShopCreatedAt().replace("-", "");
+        request.setShopCreatedAt(cleanedDate);
 
         BusinessVerificationRequest bizRequest = convertFromShopRequest(
                 request.getShopRepresentationName(),
@@ -93,28 +96,33 @@ public class MyPageShopServiceImpl implements MyPageShopService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public Integer createDesigner(DesignerRequest request) {
-
-        shopValidator.validateDesigner(request);
-
-        boolean shopExists = (myPageShopMapper.existsByShopId(request.getDesignerShopId()) > 0);
-        if(!shopExists) {
-            throw new UnnieShopException(ErrorCode.SHOP_ALREADY_EXISTS);
+    public void createDesigners(List<DesignerRequest> requests, List<MultipartFile> files) {
+        if(requests.size() != files.size()) {
+            throw new UnnieShopException(ErrorCode.SHOP_NOT_FOUND);
         }
+        for (int i = 0; i < requests.size(); i++) {
+            DesignerRequest request = requests.get(i);
+            MultipartFile file = files.get(i);
+            String fileUrl = saveFile(file);
+            request.setDesignerThumbnail(fileUrl);
 
-        boolean isDuplicateDesigner = (myPageShopMapper.existsByDesignerName(request.getDesignerName()) > 0);
-        if(isDuplicateDesigner) {
-            throw new UnnieShopException(ErrorCode.DESIGNER_ALREADY_EXISTS);
+            shopValidator.validateDesigner(request);
+
+            if(myPageShopMapper.existsByShopId(request.getDesignerShopId()) == 0) {
+                throw new UnnieShopException(ErrorCode.SHOP_NOT_FOUND);
+            }
+            if(myPageShopMapper.existsByDesignerName(request.getDesignerName()) > 0) {
+                throw new UnnieShopException(ErrorCode.DESIGNER_ALREADY_EXISTS);
+            }
+
+            int res = myPageShopMapper.insertDesigner(request);
+            if (res == 0) {
+                throw new UnnieShopException(ErrorCode.DESIGNER_INSERT_FAILED);
+            }
         }
-
-        int res = myPageShopMapper.insertDesigner(request);
-        if(res == 0)
-        {
-            throw new UnnieShopException(ErrorCode.DESIGNER_INSERT_FAILED);
-        }
-
-        return request.getDesignerId();
     }
+
+
 
     /**
      *
@@ -125,28 +133,64 @@ public class MyPageShopServiceImpl implements MyPageShopService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public Integer createProcedure(ProcedureRequest request) {
+    public void createProcedures(List<ProcedureRequest> requests, List<MultipartFile> files) {
 
 
-        shopValidator.validateProcedure(request);
-        boolean isDuplicateProcedure = (myPageShopMapper.existsByProcedureName(request.getProcedureName()) > 0);
+        for (int i = 0; i < requests.size(); i++) {
+            ProcedureRequest request = requests.get(i);
+            MultipartFile file = files.get(i);
 
-        log.info(String.valueOf(isDuplicateProcedure));
-        if(isDuplicateProcedure) {
-            throw new UnnieShopException(ErrorCode.PROCEDURE_ALREADY_EXISTS);
+            // 파일 저장 (임시: 로컬 저장소)
+            String fileUrl = saveFile(file);
+            request.setProcedureThumbnail(fileUrl);
+
+            // 시술 유효성 검사
+            shopValidator.validateProcedure(request);
+
+            // 중복 시술명 체크
+            boolean isDuplicateProcedure = (myPageShopMapper.existsByProcedureName(request.getProcedureName(), request.getProcedureShopId()) > 0);
+            if (isDuplicateProcedure) {
+                throw new UnnieShopException(ErrorCode.PROCEDURE_ALREADY_EXISTS);
+            }
+
+            // shop 존재 여부 체크
+            boolean shopExists = (myPageShopMapper.existsByShopId(request.getProcedureShopId()) > 0);
+            if (!shopExists) {
+                throw new UnnieShopException(ErrorCode.SHOP_NOT_FOUND);
+            }
+
+            // 시술 등록
+            int res = myPageShopMapper.insertProcedure(request);
+            if (res == 0) {
+                throw new UnnieShopException(ErrorCode.PROCEDURE_INSERT_FAILED);
+            }
         }
-        boolean designerExists = (myPageShopMapper.existsByDesignerId(request.getProcedureDesignerId()) > 0);
-        if (!designerExists) {
-            throw new UnnieShopException(ErrorCode.DESIGNER_NOT_FOUND);
+    }
+
+
+    public String saveFile(MultipartFile file) {
+        // 외부에 생성할 폴더 경로 (운영 환경에 맞게 수정하세요)
+        String uploadDir = "C:/upload/shop/";
+        File folder = new File(uploadDir);
+        if (!folder.exists()) {
+            folder.mkdirs();  // 폴더가 없으면 생성
         }
 
-        int res = myPageShopMapper.insertProcedure(request);
-        if(res == 0)
-        {
-            throw new UnnieShopException(ErrorCode.PROCEDURE_INSERT_FAILED);
+        // 원본 파일명과 안전한 파일명 생성 (UUID를 이용하여 중복 및 한글, 특수문자 처리)
+        String originalFileName = file.getOriginalFilename();
+        String safeFileName = UUID.randomUUID().toString() + "_"
+                + originalFileName.replaceAll("[^a-zA-Z0-9._-]", "_");
+
+        // 최종 파일 객체 생성
+        File destination = new File(folder, safeFileName);
+        try {
+            file.transferTo(destination);
+        } catch (IOException e) {
+            throw new RuntimeException("파일 저장에 실패했습니다.", e);
         }
-        // 트랜젝션 어노테이션 추가(lollback ~)
-        return request.getProcedureId();
+
+        // DB에는 웹 접근 가능한 경로를 저장 (WebConfig에서 매핑한 경로와 동일하게)
+        return "/upload/" + safeFileName;
     }
 
     /**
@@ -236,29 +280,29 @@ public class MyPageShopServiceImpl implements MyPageShopService {
     @Override
     public Integer updateProcedure(ProcedureRequest request, long memberId) {
         log.info(String.valueOf(request.getProcedureId()));
-        log.info(String.valueOf(request.getProcedureDesignerId()));
 
         int ownerCount = myPageShopMapper.checkProcedureOwnership(
                 request.getProcedureId(),
-                request.getProcedureDesignerId(), // 추가된 designerId 전달
+                request.getProcedureShopId(), // 추가된 designerId 전달
                 memberId);
+
         if (ownerCount == 0) {
             throw new UnnieShopException(ErrorCode.FORBIDDEN);
         }
 
         shopValidator.validateProcedure(request);
 
-        if(request.getProcedureDesignerId()<=0) {
-            throw new UnnieShopException(ErrorCode.DESIGNER_NOT_FOUND);
+        if(request.getProcedureShopId()<=0) {
+            throw new UnnieShopException(ErrorCode.SHOP_NOT_FOUND);
         }
 
-        boolean isDuplicateProcedure = (myPageShopMapper.existsByProcedureName(request.getProcedureName()) > 0);
+        boolean isDuplicateProcedure = (myPageShopMapper.existsByProcedureName(request.getProcedureName(),request.getProcedureShopId()) > 0);
         if(isDuplicateProcedure) {
             throw new UnnieShopException(ErrorCode.PROCEDURE_ALREADY_EXISTS);
         }
-        boolean designerExists = (myPageShopMapper.existsByDesignerId(request.getProcedureDesignerId()) > 0);
-        if (!designerExists) {
-            throw new UnnieShopException(ErrorCode.DESIGNER_NOT_FOUND);
+        boolean shopExists = (myPageShopMapper.existsByShopId(request.getProcedureShopId()) > 0);
+        if(!shopExists) {
+            throw new UnnieShopException(ErrorCode.SHOP_ALREADY_EXISTS);
         }
 
         int res = myPageShopMapper.updateProcedure(request);
@@ -327,10 +371,12 @@ public class MyPageShopServiceImpl implements MyPageShopService {
             throw new UnnieShopException(ErrorCode.FORBIDDEN);
         }
 
-        int res = myPageShopMapper.deleteDesignerCascade(designerId);
+        int res = myPageShopMapper.deleteDesigner(designerId);
         if (res == 0) {
             throw new UnnieShopException(ErrorCode.DESIGNER_DELETE_FAILED);
         }
+
+
 
         return designerId;
     }
@@ -404,18 +450,19 @@ public class MyPageShopServiceImpl implements MyPageShopService {
     @Transactional(readOnly = true)
     @Override
     public MyShopDetailResponse getMyShopsDetail(int shopId) {
-        MyShopDetailResponse shopdetail = myPageShopMapper.findShopNameById(shopId);
-        if(shopdetail == null)
+        MyShopDetailResponse shopDetail = myPageShopMapper.findShopNameById(shopId);
+        if (shopDetail == null) {
             throw new UnnieShopException(ErrorCode.SHOP_NOT_FOUND);
-        List<MyDesignerDetailResponse> designers = myPageShopMapper.findDesignersByShopId(shopId);
-        if (designers != null) {
-            for (MyDesignerDetailResponse designer : designers) {
-                List<MyProcedureDetailResponse> procedures = myPageShopMapper.findProceduresByDesignerId(designer.getDesignerId());
-                designer.setProcedures(procedures);
-            }
         }
-        shopdetail.setDesigners(designers);
-        return shopdetail;
+        // 디자이너 조회 (업체-디자이너 관계는 그대로)
+        List<MyDesignerDetailResponse> designers = myPageShopMapper.findDesignersByShopId(shopId);
+        shopDetail.setDesigners(designers);
+
+        // 변경: 디자이너별 시술 조회 대신 업체 단위로 시술 조회
+        List<MyProcedureDetailResponse> procedures = myPageShopMapper.findProceduresByShopId(shopId);
+        shopDetail.setProcedures(procedures); // MyShopDetailResponse에 시술 목록 추가 (필요하다면 DTO 수정)
+
+        return shopDetail;
     }
 
 

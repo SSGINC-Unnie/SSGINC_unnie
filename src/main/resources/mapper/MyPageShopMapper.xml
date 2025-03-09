@@ -29,9 +29,9 @@
 
     <insert id="insertProcedure" parameterType="com.ssginc.unnie.mypage.dto.shop.ProcedureRequest" useGeneratedKeys="true" keyProperty="procedureId">
         INSERT INTO `procedure`
-            (procedure_designer_id,procedure_name,procedure_price)
+            (procedure_shop_id,procedure_name,procedure_price,procedure_thumbnail)
         VALUES
-            (#{procedureDesignerId},#{procedureName},#{procedurePrice})
+            (#{procedureShopId},#{procedureName},#{procedurePrice},#{procedureThumbnail})
     </insert>
 
     <update id="updateShop" parameterType="com.ssginc.unnie.mypage.dto.shop.ShopUpdateRequest">
@@ -61,7 +61,8 @@
         UPDATE `procedure`
         SET
             procedure_name = #{procedureName},
-            procedure_price = #{procedurePrice}
+            procedure_price = #{procedurePrice},
+            procedure_thumbnail = #{procedureThumbnail}
         WHERE procedure_id = #{procedureId}
     </update>
 
@@ -78,10 +79,6 @@
     <delete id="deleteShop" parameterType="int">
         DELETE FROM shop
         WHERE shop_id = #{shopId} and shop_status = 1
-    </delete>
-
-    <delete id="deleteDesignerCascade" statementType="CALLABLE" parameterType="int">
-        { CALL deleteDesignerCascade(#{designerId})}
     </delete>
 
     <select id="deleteShopCascade" statementType="CALLABLE" parameterType="int" resultType="int">
@@ -109,15 +106,12 @@
         WHERE designer_name = #{designerName}
     </select>
 
-    <select id="existsByProcedureName" parameterType="String" resultType="int">
+    <select id="existsByProcedureName" parameterType="map" resultType="int">
         SELECT COUNT(*)
         FROM `procedure`
-        WHERE procedure_name = #{procedureName}
+        WHERE procedure_name = #{procedureName} and procedure_shop_id = #{ShopId}
     </select>
 
-    <select id="existsByDesignerId" resultType="int">
-        SELECT COUNT(*) FROM designer WHERE designer_id = #{designerId}
-    </select>
 
     <select id="existsByShopId" resultType="java.lang.Integer">
         SELECT COUNT(*) FROM shop WHERE shop_id = #{shopId}
@@ -133,10 +127,8 @@
     <select id="checkProcedureOwnership" parameterType="map" resultType="int">
         SELECT COUNT(*) AS cnt
         FROM `procedure` p
-                 JOIN designer d ON p.procedure_designer_id = d.designer_id
-                 JOIN shop s ON d.designer_shop_id = s.shop_id
+                 JOIN shop s ON p.procedure_shop_id = s.shop_id
         WHERE p.procedure_id = #{procedureId}
-          AND d.designer_id = #{designerId}
           AND s.shop_member_id = #{memberId}
     </select>
 
@@ -162,13 +154,13 @@
 
     <select id="findProcedureById" parameterType="int" resultType="com.ssginc.unnie.mypage.dto.shop.ProcedureDeleteRequest">
         SELECT p.procedure_id,
-               p.procedure_designer_id,
+               p.procedure_shop_id,
                s.shop_member_id
         FROM `procedure` p
-                 JOIN designer d ON p.procedure_designer_id = d.designer_id
-                 JOIN shop s ON d.designer_shop_id = s.shop_id
+                 JOIN shop s ON p.procedure_shop_id = s.shop_id
         WHERE p.procedure_id = #{procedureId}
     </select>
+
 
     <select id="findDesignerById" parameterType="int" resultType="com.ssginc.unnie.mypage.dto.shop.DesignerDeleteRequest">
         SELECT d.designer_id,
@@ -208,14 +200,16 @@
         WHERE designer_shop_id = #{shopId}
     </select>
 
-    <select id="findProceduresByDesignerId" parameterType="int" resultType="com.ssginc.unnie.mypage.dto.shop.MyProcedureDetailResponse">
-        SELECT procedure_id, procedure_name, procedure_price
+    <select id="findProceduresByShopId" parameterType="int" resultType="com.ssginc.unnie.mypage.dto.shop.MyProcedureDetailResponse">
+        SELECT procedure_id, procedure_name, procedure_price, procedure_thumbnail
         FROM `procedure`
-        WHERE procedure_designer_id = #{designerId}
+        WHERE procedure_shop_id = #{shopId}
     </select>
 
     <select id="getTotalShopCountByMemberId" parameterType="long" resultType="int">
         SELECT COUNT(*)
         FROM shop
         WHERE shop_member_id = #{memberId} AND shop_status = 1
-    </select></mapper>
+    </select>
+
+</mapper>

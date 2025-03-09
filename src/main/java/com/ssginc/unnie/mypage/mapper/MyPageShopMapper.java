@@ -24,11 +24,10 @@ public interface MyPageShopMapper {
 
     int insertProcedure(ProcedureRequest request);
 
-    int existsByProcedureName(String procedureName);
+    int existsByProcedureName(@Param("procedureName") String procedureName,
+                              @Param("ShopId") int ShopId);
 
-    int existsByDesignerId(int designerid);
-
-    int existsByShopId(int shopid);
+    int existsByShopId(@Param("shopId") int shopId);
 
     int updateShop(ShopUpdateRequest request);
 
@@ -39,8 +38,6 @@ public interface MyPageShopMapper {
     int deleteShop(int shopId);
 
     int deleteShopCascade(int shopId);
-
-    int deleteDesignerCascade(@Param("designerId")int designerId);
 
     int deleteDesigner(int designerId);
 
@@ -67,7 +64,7 @@ public interface MyPageShopMapper {
 
     List<MyDesignerDetailResponse> findDesignersByShopId(@Param("shopId") int shopId);
 
-    List<MyProcedureDetailResponse> findProceduresByDesignerId(@Param("designerId") int designerId);
+    List<MyProcedureDetailResponse> findProceduresByShopId(@Param("shopId") int shopId);
 
     int getTotalShopCountByMemberId(long memberId);
 

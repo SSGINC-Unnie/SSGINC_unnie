@@ -28,4 +28,5 @@ public class MyShopDetailResponse {
     private String shopRepresentationName;
 
     private List<MyDesignerDetailResponse> designers;
+    private List<MyProcedureDetailResponse> procedures;
 }

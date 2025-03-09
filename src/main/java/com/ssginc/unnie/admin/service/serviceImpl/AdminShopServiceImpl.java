@@ -64,21 +64,21 @@ public class AdminShopServiceImpl implements AdminShopService {
      *
      * 승입 요청 업체 상세 조회
      */
-
     @Transactional(readOnly = true)
     @Override
     public MyShopDetailResponse getShopsDetail(int shopId) {
         MyShopDetailResponse shopdetail = adminShopMapper.findShopApproveDetail(shopId);
-        if(shopdetail == null)
+        if (shopdetail == null)
             throw new UnnieShopException(ErrorCode.SHOP_NOT_FOUND);
+
+        // 업체에 소속된 디자이너 조회 (업체-디자이너 관계 그대로)
         List<MyDesignerDetailResponse> designers = myPageShopMapper.findDesignersByShopId(shopId);
-        if (designers != null) {
-            for (MyDesignerDetailResponse designer : designers) {
-                List<MyProcedureDetailResponse> procedures = myPageShopMapper.findProceduresByDesignerId(designer.getDesignerId());
-                designer.setProcedures(procedures);
-            }
-        }
         shopdetail.setDesigners(designers);
+
+        // 변경: 디자이너별 시술 조회 대신, 업체 ID 기준으로 시술 전체 조회
+        List<MyProcedureDetailResponse> procedures = myPageShopMapper.findProceduresByShopId(shopId);
+        shopdetail.setProcedures(procedures); // MyShopDetailResponse DTO에 시술 목록 필드가 있어야 합니다.
+
         return shopdetail;
     }
 
@@ -176,16 +176,17 @@ public class AdminShopServiceImpl implements AdminShopService {
     @Override
     public MyShopDetailResponse findShopsDetail(int shopId) {
         MyShopDetailResponse shopdetail = adminShopMapper.findShopDetail(shopId);
-        if(shopdetail == null)
+        if (shopdetail == null)
             throw new UnnieShopException(ErrorCode.SHOP_NOT_FOUND);
+
+        // 업체에 소속된 디자이너 조회 (업체-디자이너 관계 그대로)
         List<MyDesignerDetailResponse> designers = myPageShopMapper.findDesignersByShopId(shopId);
-        if (designers != null) {
-            for (MyDesignerDetailResponse designer : designers) {
-                List<MyProcedureDetailResponse> procedures = myPageShopMapper.findProceduresByDesignerId(designer.getDesignerId());
-                designer.setProcedures(procedures);
-            }
-        }
         shopdetail.setDesigners(designers);
+
+        // 변경: 각 디자이너별 시술 조회 대신, 업체 ID 기준으로 전체 시술 목록 조회
+        List<MyProcedureDetailResponse> procedures = myPageShopMapper.findProceduresByShopId(shopId);
+        shopdetail.setProcedures(procedures); // MyShopDetailResponse DTO에 시술 목록 필드가 있어야 합니다.
+
         return shopdetail;
     }
 
