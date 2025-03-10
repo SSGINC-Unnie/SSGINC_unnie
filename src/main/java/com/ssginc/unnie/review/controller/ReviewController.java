@@ -230,7 +230,7 @@ public class ReviewController {
 
         // 로그인 여부 체크
         if (memberPrincipal == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            throw new RuntimeException("인증 정보가 없습니다.");
         }
 
         // 서비스 호출: 업체 리뷰 목록 조회

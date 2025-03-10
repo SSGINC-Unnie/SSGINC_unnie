@@ -140,10 +140,10 @@
         </if>
         GROUP BY r.review_id
         <choose>
-            <when test="sortType == 'newest'"> --최신순
+            <when test="sortType == 'newest'">
                 ORDER BY r.review_date DESC
             </when>
-            <when test="sortType == 'oldest'"> --오래된순
+            <when test="sortType == 'oldest'">
                 ORDER BY r.review_date ASC
             </when>
             <otherwise>
