@@ -55,7 +55,7 @@ public enum ErrorCode {
     SHOP_CATEGORY_NOT_FOUND(404, "SH031", "카테고리가 옳지 않습니다."),
 
     // 마이페이지(업체)
-    SHOP_NOT_FOUND(404, "SH001", "해당 업체 정보를 찾을 수 없습니다."),
+    SHOP_NOT_FOUND(404, "SH001", "해당 업체를 찾을 수 없습니다."),
     SHOP_ALREADY_EXISTS(409, "SH002", "이미 존재하는 업체입니다."),
     DUPLICATE_BUSINESS_NUMBER(409, "SH003", "이미 등록된 사업자등록번호입니다."),
     DUPLICATE_SHOP_TEL(409, "SH004", "이미 사용 중인 전화번호입니다."),
@@ -81,6 +81,7 @@ public enum ErrorCode {
     BOOKMARK_INSERT_FAILED(500,"SH037","찜 등록에 실패했습니다."),
     SHOP_REFUSE_FAILED(500,"SH038","승인 거절에 실패했습니다."),
     MEMBER_ROLE_UPDATE_FAILED(500,"SH039","회원 등급 변경에 실패했습니다"),
+
 
     // 관리자(업체)
     ALREADY_APPROVED(409, "SH019", "이미 승인(또는 거부) 처리된 업체입니다."),

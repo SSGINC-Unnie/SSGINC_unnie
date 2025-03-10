@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=640, initial-scale=1.0">
+    <title>샵 상세 페이지</title>
+    <link rel="stylesheet" href="/css/shop/shopdetail.css">
+</head>
+<body>
+<div class="shop-detail-container">
+    <!-- 상단 이미지 -->
+    <div class="shop-hero"></div>
+
+    <!-- 상단 기본 정보 (가게명, 평점, 리뷰수) -->
+    <div class="shop-header">
+        <h1 id="shopName">가게명</h1>
+        <div class="sub-info">
+            <span class="rating">평점 <span id="avgRate">0.0</span></span>
+            &nbsp;ㆍ 리뷰 <span id="reviewCount">0</span>
+        </div>
+    </div>
+
+    <!-- 탭 메뉴 -->
+    <div class="tab-menu">
+        <button class="tab-btn active" data-tab="home">홈</button>
+        <button class="tab-btn" data-tab="designer">디자이너</button>
+        <button class="tab-btn" data-tab="procedure">시술</button>
+        <button class="tab-btn" data-tab="info">정보</button>
+    </div>
+
+    <!-- 홈 탭 내용 -->
+    <div id="tabContentHome" class="tab-content active">
+        <div class="shop-basic-info">
+            <p>
+                <img src="/img/shop/map-pin.png" style="vertical-align: middle; margin-right: 4px; width: 18px; height: 18px">
+                <span id="shopLocation">주소 정보 없음</span>
+            </p>
+            <p>
+                <img src="/img/shop/phone.png" style="vertical-align: middle; margin-right: 4px; width: 18px; height: 18px">
+                <span id="shopTel">전화번호 없음</span>
+            </p>
+            <p>
+                <img src="/img/shop/clock.png" style="vertical-align: middle; margin-right: 4px; width: 18px; height: 18px">
+                <span id="shopBusinessTime">영업시간 정보 없음</span>
+            </p>
+            <p>
+                <img src="/img/shop/summary-Photoroom.jpg" style="vertical-align: middle; margin-right: 4px; width: 18px; height: 18px">
+                <span id="reviewSummary">리뷰 요약 없음</span>
+            </p>
+        </div>
+
+        <div class="review-section">
+            <h2>리뷰</h2>
+            <div class="review-box">
+                <div class="review-top">
+                    <img src="/img/shop/download.jpg" alt="리뷰 작성자 이미지" class="review-avatar" />
+                    <div>
+                        <div class="nickname" id="latestMemberNickname">닉네임 없음</div>
+                        <div class="date" id="latestReviewDate">리뷰 날짜 없음</div>
+                    </div>
+                </div>
+                <div class="content" id="latestReviewContent">리뷰 내용 없음</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 디자이너 탭 내용 -->
+    <div id="tabContentDesigner" class="tab-content">
+        <h2>디자이너</h2>
+        <!-- 디자이너 목록을 표시할 영역 -->
+        <div id="designerList"></div>
+    </div>
+
+    <!-- 시술 탭 내용 -->
+    <div id="tabContentProcedure" class="tab-content">
+        <h2>시술 정보</h2>
+        <!-- 시술 목록을 표시할 영역 -->
+        <div id="procedureList"></div>
+    </div>
+
+    <!-- 정보 탭 내용 -->
+    <div id="tabContentInfo" class="tab-content">
+        <h2>업체 상세 정보</h2>
+        <div class="shop-info-details">
+            <p><strong>업체명:</strong> <span id="infoShopName">정보 없음</span></p>
+            <p><strong>위치:</strong> <span id="infoShopLocation">정보 없음</span></p>
+            <p><strong>카테고리:</strong> <span id="infoShopCategory">정보 없음</span></p>
+            <p><strong>영업시간:</strong> <span id="infoShopBusinessTime">정보 없음</span></p>
+            <p><strong>전화번호:</strong> <span id="infoShopTel">정보 없음</span></p>
+            <p><strong>업체 소개:</strong> <span id="infoShopIntroduction">정보 없음</span></p>
+            <p><strong>휴무일:</strong> <span id="infoShopClosedDay">정보 없음</span></p>
+        </div>
+    </div>
+</div>
+
+<script src="/js/shop/shopdetail.js"></script>
+</body>
+</html>

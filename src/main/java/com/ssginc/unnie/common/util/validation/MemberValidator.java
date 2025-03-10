@@ -28,7 +28,7 @@ public class MemberValidator implements Validator<MemberRegisterRequest>{
         pwRegex = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&*])[A-Za-z\\d!@#$%^&*]{8,20}$";
         nameRegex = "^[가-힣]{2,10}$";
         nicknameRegex = "^[가-힣a-zA-Z0-9]{2,20}$";
-        phoneRegex = "^01[0-9]-\\d{3,4}-\\d{4}$";
+        phoneRegex = "^01[0-9]\\d{7,8}$";
 //        birthRegex = "^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])$";
     }
 

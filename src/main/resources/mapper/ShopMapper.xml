@@ -14,13 +14,18 @@
 
 
     <select id="selectShopByCategory" resultType="com.ssginc.unnie.shop.dto.ShopResponse">
-        SELECT s.shop_id, s.shop_name, s.shop_business_time, ROUND(AVG(re.review_rate), 2) AS avg_rate,
-               s.shop_location
+        SELECT
+            s.shop_id,
+            s.shop_name,
+            COUNT(re.review_id) AS review_count,
+            COALESCE(ROUND(AVG(re.review_rate), 2), 0) AS avg_rate,
+            s.shop_location
         FROM shop s
-                 JOIN receipt r ON r.receipt_shop_id = s.shop_id
-                 JOIN review re ON r.receipt_id = re.review_receipt_id
-        WHERE s.shop_category = #{category} AND s.shop_status = 1
-        GROUP BY s.shop_id, s.shop_name, s.shop_business_time, s.shop_location
+                 LEFT JOIN receipt r ON r.receipt_shop_id = s.shop_id
+                 LEFT JOIN review re ON r.receipt_id = re.review_receipt_id
+        WHERE s.shop_category = #{shopCategory}
+          AND s.shop_status = 1
+        GROUP BY s.shop_id, s.shop_name, s.shop_location;
     </select>
 
 
@@ -31,10 +36,9 @@
     </select>
 
     <select id="findProceduresByShopId" resultType="com.ssginc.unnie.shop.dto.ShopProcedureResponse">
-        SELECT p.procedure_id, p.procedure_name, p.procedure_price from `procedure` p
-                                                                            join designer d on d.designer_id = p.procedure_designer_id
-                                                                            join shop s on s.shop_id = d.designer_shop_id
-        where s.shop_id = #{shopId}
+        SELECT procedure_id, procedure_name, procedure_price, procedure_thumbnail
+        from `procedure`
+        where procedure_shop_id = #{shopId}
     </select>
 
     <select id="findShopById" resultType="com.ssginc.unnie.shop.dto.ShopInfoResponse">
@@ -43,16 +47,19 @@
             s.shop_name,
             s.shop_business_time,
             s.shop_member_id,
+            s.shop_tel,
+            COUNT(re.review_id) AS review_count,
             ROUND(AVG(re.review_rate), 2) AS avg_rate,
             s.shop_location,
             MAX(re.review_date) AS latest_review_date,
+            COALESCE(ROUND(AVG(re.review_rate), 2), 0) AS avg_rate,
             s.review_summary,
             SUBSTRING_INDEX(GROUP_CONCAT(re.review_content ORDER BY re.review_date DESC), ',', 1) AS latest_review_content,
             SUBSTRING_INDEX(GROUP_CONCAT(m.member_nickname ORDER BY re.review_date DESC), ',', 1) AS latest_member_nickname
         FROM shop s
-                 JOIN receipt r ON r.receipt_shop_id = s.shop_id
-                 JOIN review re ON r.receipt_id = re.review_receipt_id
-                 JOIN member m ON re.review_member_id = m.member_id
+                LEFT JOIN receipt r ON r.receipt_shop_id = s.shop_id
+                LEFT JOIN review re ON r.receipt_id = re.review_receipt_id
+                LEFT JOIN member m ON re.review_member_id = m.member_id
         WHERE s.shop_id = #{shopId} AND s.shop_status = 1
         GROUP BY s.shop_id, s.shop_name, s.shop_business_time, s.shop_member_id, s.shop_location,review_summary;
     </select>
@@ -66,26 +73,15 @@
             shop_business_time,
             shop_tel,
             shop_introduction,
-            shop_closed_day,
-            shop_business_number,
-            shop_representation_name
+            shop_closed_day
         from shop
         where shop_id = #{shopId} AND shop_status = 1
     </select>
     <select id="getAllActiveShops" resultType="com.ssginc.unnie.shop.dto.ShopAllResponse">
-        SELECT shop_name, shop_latitude, shop_longitude, shop_category
+        SELECT shop_name, shop_latitude, shop_longitude, shop_category,shop_id
         FROM shop
         WHERE shop_status = 1
     </select>
-
-    <!--    <select id="findBookmarkByShopIdAndMemberId" parameterType="map" resultType="com.ssginc.unnie.shop.dto.ShopBookmarkRequest">-->
-<!--        SELECT-->
-<!--            bookmark_member_id,-->
-<!--            bookmark_shop_id-->
-<!--        FROM bookmark-->
-<!--        WHERE bookmark_shop_id = #{bookmarkShopId}-->
-<!--          AND bookmark_member_id = #{bookmarkMemberId}-->
-<!--    </select>-->
 
 
 </mapper>

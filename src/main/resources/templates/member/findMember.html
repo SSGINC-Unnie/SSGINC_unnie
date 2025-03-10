@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>계정정보 찾기</title>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
+    <link rel="stylesheet" href="/css/member/findMember.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.slim.js"></script>
+    <!-- AXIOS -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <!-- 상단 제목 -->
+    <div class="title">계정정보 찾기</div>
+
+    <!-- 탭 영역 -->
+    <div class="tabs">
+        <!-- 처음에는 아이디 찾기 탭이 active -->
+        <div class="tab active">아이디(이메일) 찾기</div>
+        <div class="tab">비밀번호 찾기</div>
+    </div>
+
+    <!-- 아이디 찾기 폼 -->
+    <div class="tab-content active" id="tab-find-id">
+        <div class="input-wrapper">
+            <input type="text" id="name" class="input-box" placeholder="이름 입력">
+            <div class="input-row">
+                <input type="text" id="memberPhone" class="input-box" placeholder="전화번호 입력(- 제외)" required />
+                <button type="button" id="sendPhoneVerification" class="btn-small">인증번호 전송</button>
+            </div>
+            <div id="phoneError" class="error-msg"></div>
+        </div>
+        <!-- 전화번호 인증번호 입력 -->
+        <div class="form-group" id="phoneAuthGroup" style="display: none;">
+            <label for="phoneAuthCode" class="label-text"></label>
+            <div class="input-row">
+                <div class="input-with-timer">
+                    <input type="text" id="phoneAuthCode" class="input-box" placeholder="인증번호 입력" />
+                    <!-- 타이머 -->
+                    <span id="phone-auth-timer" class="timer-overlay"></span>
+                </div>
+                <!-- 인증하기 버튼 -->
+                <button type="button" id="verifyPhoneCode" class="btn-small">인증번호 확인</button>
+            </div>
+            <!-- 전화번호 인증 결과 메시지(성공/실패) -->
+            <div id="phoneAuthSection" class="error-msg"></div>
+        </div>
+        <button class="find-btn" id="btnFindId">아이디 찾기</button>
+    </div>
+
+    <!-- 비밀번호 찾기 폼 -->
+    <div class="tab-content" id="tab-find-pw">
+        <p class="pw-info">
+            <span class="check-icon">✓</span> 언니어때에 가입된 이름과 계정 이메일을 기입해주시길 바랍니다. <br>
+            <span class="check-icon">✓</span> 비밀번호 찾기 버튼을 누르면 이메일로 임시 비밀번호가 발급됩니다.
+        </p>
+        <div class="input-wrapper">
+            <input type="text" id="pwName" class="input-box" placeholder="이름 입력">
+            <input type="text" id="pwEmail" class="input-box" placeholder="이메일 입력">
+            <!-- 비밀번호 찾기 에러 표시용 -->
+            <div id="findPwError" class="error-msg"></div>
+        </div>
+
+        <button class="find-btn" id="btnFindPw">비밀번호 찾기</button>
+    </div>
+
+    <!-- 아이디 찾기 결과 모달창 -->
+    <div class="modal" id="idModal">
+        <div class="modal-content">
+            <!-- 닫기(X) 버튼  -->
+            <button class="close-btn" id="closeModal">&times;</button>
+
+            <p id="idUserName"></p>
+            <p id="idResultText"></p>
+            <button class="modal-login-btn" id="btnGoLogin">로그인</button>
+        </div>
+    </div>
+
+</div>
+<!-- JS 연결 -->
+<script src="/js/member/findMember.js"></script>
+</body>
+</html>

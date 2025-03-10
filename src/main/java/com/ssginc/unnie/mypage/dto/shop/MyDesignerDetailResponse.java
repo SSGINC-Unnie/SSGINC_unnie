@@ -10,5 +10,4 @@ public class MyDesignerDetailResponse {
     private String designerName;
     private String designerIntroduction;
     private String designerThumbnail;
-    private List<MyProcedureDetailResponse> procedures;
 }

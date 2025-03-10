@@ -17,13 +17,13 @@ public class ShopInsertRequest {
     // 카테고리
     private ShopCategory shopCategory;
     // 영업시간
-    private Time shopBusinessTime;
+    private String shopBusinessTime;
     // 전화번호
     private String shopTel;
     // 업체 소개
     private String shopIntroduction;
     // 휴무일
-    private Character shopClosedDay;
+    private String shopClosedDay;
     // 대표자명
     private String shopRepresentationName;
     // 사업자등록번호

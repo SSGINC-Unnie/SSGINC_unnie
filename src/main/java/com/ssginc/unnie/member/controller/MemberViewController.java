@@ -50,6 +50,11 @@ public class MemberViewController {
         return "member/login";
     }
 
-
-
+    /**
+     * 아이디/비밀번호 찾기
+     */
+    @GetMapping("/findMember")
+    public String findMember() {
+        return "member/findMember";
+    }
 }

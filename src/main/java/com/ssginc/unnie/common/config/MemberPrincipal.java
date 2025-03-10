@@ -1,15 +1,12 @@
 package com.ssginc.unnie.common.config;
 
-import com.ssginc.unnie.member.dto.OAuth2Response;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import com.ssginc.unnie.member.vo.Member;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Map;
 
 /**
  * MemberPrincipal은 Member 엔티티를 감싸서 스프링 시큐리티에서 사용하는

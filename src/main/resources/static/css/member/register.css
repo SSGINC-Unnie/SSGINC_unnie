@@ -1,3 +1,8 @@
+* {
+    font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue",
+    "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+}
+
 /* 전체 페이지 설정 */
 html, body {
     margin: 0;
@@ -10,7 +15,7 @@ html, body {
 
 /* wrapper: 가운데 424px 박스 */
 .wrapper {
-    width: 640px; /* 전체 페이지 폭: 640px */
+    width: 640px; /* 전체 페이지 폭 */
     margin: 0 auto;
     background-color: #fff;
     min-height: 1181px; /* 전체 높이 */
@@ -20,9 +25,9 @@ html, body {
 /* 로고 영역 */
 .logo-container {
     width: 424px;
-    height: 35px; /* 실제 높이 */
+    height: 35px;
     margin: 0 auto;
-    margin-top: 40px; /* 임의 여백 */
+    margin-top: 40px;
     text-align: center;
 }
 
@@ -36,11 +41,16 @@ html, body {
 /* 회원가입 타이틀 */
 .title {
     width: 424px;
-    margin: 0 auto;
-    margin-top: 20px;
-    font-size: 20px; /* semibold 20 */
-    font-weight: 600; /* 세미볼드 */
+    margin: 40px auto 10px;
+    font-size: 20px;
+    font-weight: 600;
     text-align: left;
+}
+
+.title-divider {
+    width: 424px;
+    margin: 0 auto 30px; /* 선 아래 30px 여백 */
+    border-bottom: 2px solid #000; /* 굵은 검정 선 */
 }
 
 /* 폼 컨테이너 */
@@ -53,14 +63,14 @@ html, body {
 .form-group {
     width: 100%;
     min-height: 82px;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
     position: relative;
 }
 
-/* 라벨 텍스트 (아이디, 비밀번호, 등) */
+/* 라벨 텍스트 (아이디, 비밀번호) */
 .label-text {
     display: block;
-    font-size: 16px; /* semibold 16 */
+    font-size: 16px;
     font-weight: 600;
     margin-bottom: 8px;
 }
@@ -79,9 +89,10 @@ html, body {
 
 /* input-row: input + button 같이 있는 행 */
 .input-row {
+    width: 100%;
     display: flex;
     align-items: center;
-    gap: 8px; /* 간격 */
+    gap: 8px; /* 입력칸과 버튼 사이 간격 */
 }
 
 /* 에러/메시지 영역 */
@@ -91,11 +102,14 @@ html, body {
     color: red;
 }
 
-/* 버튼 (작은 버튼: 인증번호 전송, 인증하기 등) */
+/* 버튼 (인증번호 전송, 인증하기) */
 .btn-small {
     height: 48px;
+    width: 130px;       /* 모든 버튼 동일 너비 */
+    text-align: center; /* 텍스트 가운데 정렬 */
+    white-space: nowrap;/* 줄바꿈 방지 */
     padding: 0 16px;
-    font-size: 16px; /* semibold 16 */
+    font-size: 16px;
     font-weight: 600;
     /* 텍스트 & 배경 */
     color: #000;           /* 글자색: 검정 */
@@ -106,12 +120,26 @@ html, body {
     cursor: pointer;
 }
 
-/* 타이머 텍스트 (입력박스 오른쪽에 배치) */
-.timer-text {
-    font-size: 14px;
-    color: #FF3479; /* 분홍색 */
-    display: none;  /* JS로 show/hide */
-    align-self: center;
+/* 입력칸 + 타이머 컨테이너 */
+.input-with-timer {
+    flex: 1;
+    position: relative;
+}
+
+/* 입력칸에 오른쪽 여백을 줘서 타이머와 겹치지 않게 */
+.input-with-timer .input-box {
+    width: 100%;
+    height: 48px;
+    padding-right: 50px; /* 타이머 들어갈 공간 */
+}
+
+/* 타이머를 입력칸 오른쪽에 겹쳐 표시 */
+.timer-overlay {
+    position: absolute;
+    right: 10px;        /* 버튼과 겹치지 않게 */
+    top: 50%;
+    transform: translateY(-50%);
+    color: #FF3479;
 }
 
 /* 회원가입하기 버튼 (177×48) */
@@ -120,13 +148,14 @@ html, body {
     text-align: center;
     margin-top: 20px;
 }
+
 .btn-submit {
     width: 177px;
     height: 48px;
-    background-color: #FF3479; /* 예시 */
+    background-color: #FF3479;
     border: none;
     border-radius: 4px;
-    font-size: 16px; /* semibold 16 */
+    font-size: 16px;
     font-weight: 600;
     color: #ffffff;
     cursor: pointer;

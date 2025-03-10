@@ -117,19 +117,12 @@ public class ShopValidator implements Validator<ShopInsertRequest> {
             throw new UnnieShopException(ErrorCode.NULL_POINTER_ERROR);
         }
         // 필수 입력값 누락 여부 검사
-        validateRequiredFieldsForProcedure(object);
         validateWithRegex(object.getProcedureName(), nameReg, ErrorCode.INVALID_NAME_FORMAT);
         // 시술 가격이 양수인지 검사
         if (object.getProcedurePrice() <= 0) {
             throw new UnnieShopException(ErrorCode.INVALID_PROCEDURE_PRICE);
         }
         return true;
-    }
-
-    public void validateRequiredFieldsForProcedure(ProcedureRequest request) {
-        if (request.getProcedureDesignerId() <= 0 || isEmpty(request.getProcedureName())) {
-            throw new UnnieShopException(ErrorCode.SHOP_MISSING_REQUIRED_FIELD);
-        }
     }
 
 

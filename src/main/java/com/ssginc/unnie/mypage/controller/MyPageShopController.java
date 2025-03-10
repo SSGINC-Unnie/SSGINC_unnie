@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
 import java.util.Map;
 
@@ -37,7 +39,7 @@ public class MyPageShopController {
         return ResponseEntity.ok(
                 new ResponseDto<>(HttpStatus.CREATED.value(),
                         "업체 등록이 완료되었습니다",
-                        Map.of("ShopId",myPageShopService.createShop(request)))
+                        Map.of("shopId",myPageShopService.createShop(request)))
         );
     }
 
@@ -46,24 +48,39 @@ public class MyPageShopController {
      */
 
     @PostMapping("/designer/{shopId}")
-    public ResponseEntity<ResponseDto<Map<String, Integer>>> createDesigner(
+    public ResponseEntity<ResponseDto<?>> createDesigners(
             @PathVariable("shopId") int shopId,
-            @RequestBody DesignerRequest request) {
-        request.setDesignerShopId(shopId);
+            @RequestPart("data") List<DesignerRequest> requests,
+            @RequestPart("designerThumbnailFiles") List<MultipartFile> files) {
+
+        // 각 요청에 shopId 설정
+        requests.forEach(request -> request.setDesignerShopId(shopId));
+
+        // 서비스에서 전체 목록에 대해 트랜잭션 처리
+        myPageShopService.createDesigners(requests, files);
+
         return ResponseEntity.ok(new ResponseDto<>(HttpStatus.CREATED.value(),
-                "디자이너 등록이 완료되었습니다.", Map.of("DesignerId",myPageShopService.createDesigner(request))));
+                "디자이너 등록이 완료되었습니다.", null));
     }
 
     /**
      * ======================= 시술 등록 ==========================
      */
 
-    @PostMapping("/procedure/{designerId}")
-    public ResponseEntity<ResponseDto<Map<String, Integer>>> createProcedure(
-            @RequestBody ProcedureRequest request,
-            @PathVariable("designerId") int designerId) {
-        request.setProcedureDesignerId(designerId);
-        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.CREATED.value(), "시술 등록이 완료되었습니다.", Map.of("ProcedureId",myPageShopService.createProcedure(request))));
+    @PostMapping("/procedure/{shopId}")
+    public ResponseEntity<ResponseDto<?>> createProcedures(
+            @PathVariable("shopId") int shopId,
+            @RequestPart("data") List<ProcedureRequest> requests,
+            @RequestPart("procedureThumbnailFiles") List<MultipartFile> files) {
+
+        // 각 요청에 shopId 설정
+        requests.forEach(request -> request.setProcedureShopId(shopId));
+
+        // 서비스에서 전체 목록에 대해 트랜잭션 처리
+        myPageShopService.createProcedures(requests, files);
+
+        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.CREATED.value(),
+                "시술 등록이 완료되었습니다.", null));
     }
 
     /**
@@ -99,13 +116,13 @@ public class MyPageShopController {
      * ======================= 시술 수정 ==========================
      */
 
-    @PutMapping("/manager/procedure/{designerId}/{procedureId}")
+    @PutMapping("/manager/procedure/{shopId}/{procedureId}")
     public ResponseEntity<ResponseDto<Map<String, Integer>>> updateProcedure(
-            @PathVariable("designerId") int designerId,
+            @PathVariable("shopId") int shopId,
             @PathVariable("procedureId") int procedureId,
             @RequestBody ProcedureRequest request,
             @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
-        request.setProcedureDesignerId(designerId);
+        request.setProcedureShopId(shopId);
         request.setProcedureId(procedureId);
         long memberId = memberPrincipal.getMemberId();
         return ResponseEntity.ok(

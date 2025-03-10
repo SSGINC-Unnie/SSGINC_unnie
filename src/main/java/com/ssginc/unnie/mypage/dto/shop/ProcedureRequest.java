@@ -7,9 +7,10 @@ import lombok.Data;
 @Builder
 public class ProcedureRequest {
 
-    private int procedureDesignerId;
+    private int procedureShopId;
     private String procedureName;
     private int procedurePrice;
     private int procedureId;
+    private String procedureThumbnail;
 
 }

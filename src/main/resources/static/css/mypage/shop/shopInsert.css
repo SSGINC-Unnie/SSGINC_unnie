@@ -1,0 +1,261 @@
+
+/* 기본 리셋 및 폰트 설정 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+h1 {
+    margin-top: 60px;
+    text-align: center;
+}
+
+body {
+    font-family: 'Helvetica', 'Arial', sans-serif;
+    background-color: #f8f8f8;
+    color: #333;
+}
+
+.container {
+    width: 640px;
+    margin: 40px auto;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    padding: 30px 40px;
+}
+
+h1 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+}
+
+/* ================== 스텝 표시 영역 ================== */
+.step-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 40px; /* 단계와 본문 사이 간격 */
+    position: relative;
+    margin-top: 40px;
+}
+
+/* 각 단계 */
+.step {
+    display: flex;
+    flex-direction: column; /* 원(circle) 아래에 텍스트 */
+    align-items: center;
+    position: relative;
+    width: 120px;
+}
+
+.step:first-child::before {
+    display: none;
+}
+
+.step-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ccc;
+    color: #fff;
+    z-index: 2;
+}
+
+/* 핑크 원 */
+.step-circle.pink {
+    background-color: #ff3a7a;
+    color: #fff;
+}
+
+/* 회색 원 */
+.step-circle.gray {
+    background-color: #ccc;
+    color: #fff;
+}
+
+.step-label {
+    font-size: 0.85rem;
+    margin-top: 5px;
+}
+
+/* 핑크 라벨 */
+.step-label.pink {
+    color: #ff3a7a;
+}
+
+/* 회색 라벨 */
+.step-label.gray {
+    color: #ccc;
+}
+
+/* 연결선 스타일 */
+.step::before {
+    content: "";
+    position: absolute;
+    top: 20px;
+    left: -60px;
+    width: 120px;
+    height: 1px;
+    border-top: 2px dotted #ff3a7a;
+    z-index: 1;
+}
+
+/* ================== 폼 스타일 ================== */
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 6px;
+    font-size: 0.9rem;
+}
+
+input[type="text"],
+input[type="time"],
+input[type="date"],
+select,
+textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+textarea {
+    resize: vertical;
+}
+
+/* 업종(라디오 버튼) - 한 줄에 5개 */
+.category-group {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.category-group input[type="radio"] {
+    display: none;
+}
+
+.category-group label {
+    display: inline-block;
+    font-size: 0.8rem;
+    padding: 6px 4px;
+    border-radius: 20px;
+    cursor: pointer;
+    border: 1px solid #ff3a7a;
+    color: #ff3a7a;
+    transition: all 0.2s ease-in-out;
+    text-align: center;
+    flex: 1;
+    margin: 0 2px;
+}
+
+.category-group input[type="radio"]:checked + label {
+    background-color: #ff3a7a;
+    color: #fff;
+}
+
+/* 휴무일(라디오 버튼) */
+.dayoff-group {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.dayoff-group input {
+    margin-right: 5px;
+}
+
+.dayoff-group label {
+    display: inline-flex;
+    align-items: center;
+    font-weight: normal;
+    margin-bottom: 0;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+/* 영업시간 */
+.time-inputs {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.time-inputs span {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+/* 업체 사진 등록 영역 (Multipart 예시는 제외 or 별도 처리) */
+.photo-upload {
+    display: flex;
+    gap: 10px;
+}
+
+.photo-placeholder {
+    width: 80px;
+    height: 80px;
+    border: 1px dashed #ddd;
+    border-radius: 4px;
+    position: relative;
+    text-align: center;
+    cursor: pointer;
+}
+
+.photo-placeholder input {
+    display: none;
+}
+
+.photo-placeholder span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #aaa;
+    font-size: 2rem;
+}
+
+/* 버튼 영역 */
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+}
+
+button {
+    border: none;
+    padding: 12px 20px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.btn-cancel {
+    background-color: #fff;
+    color: #ff3a7a;
+    border: 1px solid #ff3a7a;
+}
+
+.btn-cancel:hover {
+    background-color: #ffe9f0;
+}
+
+.btn-next {
+    background-color: #ff3a7a;
+    color: #fff;
+}
+
+.btn-next:hover {
+    background-color: #e8326e;
+}
