@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -58,6 +59,7 @@ public class OAuthController {
     // 회원가입 폼 요청
     @PostMapping("/register")
     public String register(@ModelAttribute  Member newMember, Model model) {
+        log.info("Received memberPw: {}", newMember.getMemberPw());
         Member registerCheck = oAuthService.selectMemberByEmail(newMember.getMemberEmail());
         if (registerCheck == null) {
             model.addAttribute("OAuthDto", newMember);
@@ -70,14 +72,17 @@ public class OAuthController {
 
 
     // 회원가입 폼 제출 후 최종 회원가입 완료 처리
+    @ResponseBody
     @PostMapping("/register/complete")
-    public String registerComplete(@ModelAttribute Member newMember, Model model, HttpServletResponse response) {
-        Member existing  = oAuthService.selectMemberByEmail(newMember.getMemberEmail());
-        if (existing  == null) {
+    public  Map<String, Object> registerComplete(@RequestBody Member newMember,HttpServletResponse response) {
+        Map<String, Object> result = new HashMap<>();
+        Member existing = oAuthService.selectMemberByEmail(newMember.getMemberEmail());
+        if (existing == null) {
+            String rawPw = newMember.getMemberPw();
             // 신규 회원 등록
             Member member = Member.builder()
                     .memberEmail(newMember.getMemberEmail())
-                    .memberPw(encoder.encode(newMember.getMemberPw()))
+                    .memberPw(encoder.encode(rawPw))
                     .memberName(newMember.getMemberName())
                     .memberNickname(newMember.getMemberNickname())
                     .memberPhone(newMember.getMemberPhone())
@@ -91,12 +96,13 @@ public class OAuthController {
             Member insertedMember = oAuthService.selectMemberByEmail(member.getMemberEmail());
 
             //토큰 생성, 저장
-            authService.oauthToken(response, insertedMember.getMemberId(),"ROLE_USER",  insertedMember.getMemberNickname());
+            authService.oauthToken(response, insertedMember.getMemberId(), "ROLE_USER", insertedMember.getMemberNickname());
 
             // 최종 회원가입 완료 후 홈으로 리다이렉트 (이미 로그인된 상태)
-            return "redirect:/";
+            result.put("redirect", "/");
         } else {
-            return "redirect:/";
+            result.put("redirect", "/");
         }
+        return result;
     }
 }

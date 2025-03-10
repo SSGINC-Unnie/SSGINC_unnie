@@ -1,0 +1,218 @@
+* {
+    font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue",
+    "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+}
+
+/* 초기화 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: sans-serif;
+    background-color: #fff;
+}
+
+/* 전체 페이지 컨테이너 (640 x 914) */
+.container {
+    width: 640px;
+    height: 914px;
+    margin: 0 auto;
+    background-color: #fff;
+    position: relative;
+    padding-top: 150px; /* 상단 여백 */
+    text-align: center;
+}
+
+/* 상단 '계정정보 찾기' */
+.title {
+    font-size: 32px;
+    font-weight: bold;
+    text-align: center;
+    white-space: nowrap;
+    margin: 50px auto 0; /* 위쪽 50px, 좌우 auto로 중앙 정렬, 아래 0 */
+}
+
+/* 탭 영역 */
+.tabs {
+    width: 424px;
+    margin: 48px auto 0; /* 위쪽 20px 여백 */
+    display: flex;
+    border-bottom: 1px solid #ddd; /* 탭 아래 구분선 */
+    height: 42px;
+}
+
+/* 각 탭 (아이디 찾기 / 비밀번호 찾기) */
+.tab {
+    flex: 1;
+    font-size: 14px;
+    line-height: 45px;
+    text-align: center;
+    cursor: pointer;
+    color: #999999;
+}
+
+/* 활성화된 탭 스타일 */
+.tab.active {
+    border-bottom: 2px solid #000;
+    font-weight: bold;
+    color: #000;
+}
+
+/* 탭 컨텐츠(숨김/보임 제어용) */
+.tab-content {
+    display: none; /* 기본적으로 안보이게 처리 */
+    width: 424px;
+    margin: 30px auto 0;
+}
+
+.tab-content.active {
+    display: block; /* 활성화된 탭 컨텐츠만 보이도록 */
+}
+
+/*  아이디/비밀번호 찾기 버튼 */
+.find-btn {
+    display: block;
+    width: 424px;
+    height: 63px;
+    margin: 20px auto 0; /* 위로 20px 간격 */
+    background-color: #FF3479;
+    color: #fff;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+}
+
+/* 모달  */
+.modal {
+    display: none; /* 기본적으로 숨김 */
+    position: fixed;
+    z-index: 999; /* 다른 요소보다 위에 표시 */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.4); /* 반투명 배경 */
+}
+
+.modal-content {
+    position: absolute;
+    background: #fff;
+    width: 400px;
+    height: 200px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    padding: 50px;
+    border-radius: 6px;
+}
+
+/* 모달 내부 로그인 버튼 */
+.modal-login-btn {
+    margin-top: 30px;
+    padding: 10px 20px;
+    background-color: #FF3479;
+    color: #fff;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+
+/* input 박스 */
+.input-box {
+    width: 100%;
+    height: 48px;
+    padding: 0 12px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    outline: none;
+    box-sizing: border-box;
+    border-radius: 4px;
+}
+
+.input-wrapper > .input-box {
+    margin-bottom: 15px;
+}
+
+/* input-row: input + button 같이 있는 행 */
+.input-row {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px; /* 입력칸과 버튼 사이 간격 */
+}
+
+/* 에러/메시지 영역 */
+.error-msg {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    color: red;
+    text-align: left;
+}
+
+/* 버튼 (인증번호 전송, 인증하기) */
+.btn-small {
+    height: 48px;
+    width: 130px;       /* 버튼 동일 너비 */
+    text-align: center; /* 텍스트 가운데 정렬 */
+    white-space: nowrap;
+    padding: 0 16px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #000;           /* 글자색: 검정 */
+    background-color: #fff; /* 배경: 흰색 */
+    border: 1px solid #000;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* 입력칸 + 타이머 컨테이너 */
+.input-with-timer {
+    flex: 1;
+    position: relative;
+}
+
+/* 입력칸에 오른쪽 여백을 줘서 타이머와 겹치지 않게 */
+.input-with-timer .input-box {
+    width: 100%;
+    height: 49px;
+    padding-right: 50px; /* 타이머 들어갈 공간 */
+}
+
+/* 타이머를 입력칸 오른쪽에 겹쳐 표시 */
+.timer-overlay {
+    position: absolute;
+    right: 10px;        /* 버튼과 겹치지 않게 */
+    top: 50%;
+    transform: translateY(-50%);
+    color: #FF3479;
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 24px; /* X 표시 크기 */
+    cursor: pointer;
+}
+
+.check-icon {
+    color: #FF3479;
+    font-weight: bold;
+}
+
+.pw-info {
+    margin: 0 auto 25px;   /* 아래쪽에 20px 여백 */
+    font-size: 14px;
+    color: #787878;
+    text-align: left;
+    line-height: 1.8;
+}
+

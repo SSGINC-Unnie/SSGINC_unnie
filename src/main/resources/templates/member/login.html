@@ -2,7 +2,8 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8" />
-    <title>언니어때 로그인</title>
+    <title>로그인</title>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
     <!-- CSS 연결 -->
     <link rel="stylesheet" href="/css/member/login.css">
     <script src="https://code.jquery.com/jquery-3.7.1.slim.js"></script>
@@ -10,40 +11,54 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <!-- 네이버 로그인 -->
     <script type="text/javascript" src="https://static.nid.naver.com/js/naverLogin_implicit-1.0.3.js" charset="utf-8"></script>
-    <!-- Google Identity Services 클라이언트 라이브러리 로드 -->
+    <!-- Google Identity Services 클라이언트 라이브러리  -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <!-- Kakao JavaScript SDK 로드 -->
+    <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
 </head>
 <body>
-<!--  div, 숨김 처리 -->
-<div id="naver_id_login" style="display:none;"></div>
-<div class="login-page">
-    <!-- 가운데 로그인 박스(420 x 516) -->
-    <div class="login-container">
-        <!-- 로고(220 x 48) -->
-        <img src="logo.png" alt="언니어때 로고" class="logo" />
 
-        <!-- 아이디/비밀번호 입력영역 (420 x 108) -->
+<div class="login-page">
+    <!-- 로그인 박스 -->
+    <div class="login-container">
+        <!-- 로고 -->
+        <img src="/img/logo.png" alt="언니어때 로고" class="logo" />
+
+        <!-- 아이디/비밀번호 입력영역 -->
         <div class="input-container">
-            <input type="text" placeholder="아이디" class="login-input" />
-            <input type="password" placeholder="비밀번호" class="login-input" />
+            <!-- 이메일 입력 -->
+            <div class="input-wrapper">
+                <input type="text" placeholder="이메일" class="login-input" />
+            </div>
+            <!-- 비밀번호 입력 -->
+            <div class="input-wrapper">
+                <input type="password" placeholder="비밀번호" class="login-input" />
+                <div id="emailPwError" class="error-msg"></div>
+            </div>
         </div>
 
-        <!-- 로그인 버튼 (420 x 63) -->
+        <!-- 로그인 버튼 -->
         <button class="login-button">로그인</button>
 
-        <!-- 아이디 찾기 / 비밀번호 찾기 (178 x 24) -->
+        <!-- 아이디 찾기 / 비밀번호 찾기  -->
         <div class="find-info">
-            <a href="#" class="find-id">아이디 찾기</a>
-            <span class="divider">|</span>
-            <a href="#" class="find-pw">비밀번호 찾기</a>
+            <a href="/member/register" class="signup-link">회원가입</a>
+            <a href="/member/findMember" class="find-idPw">아이디/비밀번호 찾기</a>
         </div>
 
-        <!-- 다른 방법으로 로그인 + 소셜 로그인 (420 x 111) -->
+        <!-- 다른 방법으로 로그인 -->
         <div class="other-login">
             <p>다른 방법으로 로그인</p>
+            <div id="naver_id_login" style="display:none;"></div>
             <div class="social-buttons">
                 <div class="oauth-login">
-                    <div id="google_button_div"></div>
+                    <!-- 구글 로그인 버튼 컨테이너 -->
+                    <div id="google_button_container" style="position: relative; display: inline-block;">
+                        <!-- 구글 버튼 -->
+                        <div id="google_button_div"></div>
+                        <!-- 커스텀버튼-->
+                        <div id="customGoogle"></div>
+                    </div>
                 </div>
                 <div class="oauth-login">
                     <button id="naver-login" class="social-button">
@@ -52,7 +67,7 @@
                 </div>
                 <div class="oauth-login">
                     <button id="kakao-login" class="social-button">
-                        <img src="/img/member/kakao.png" alt="카카오 로그인">
+                        <img src="/img/member/kakao_login.png" alt="카카오 로그인">
                     </button>
                 </div>
             </div>
