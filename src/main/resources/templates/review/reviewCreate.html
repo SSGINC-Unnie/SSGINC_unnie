@@ -6,37 +6,7 @@
 <head>
     <meta charset="UTF-8"/>
     <title>Review Test</title>
-    <style>
-        .review-form-container {
-            max-width: 600px;
-            margin: auto;
-            background: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .review-title {
-            color: #FF3479;
-            font-weight: bold;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .btn-submit {
-            background-color: #FF3479;
-            color: white;
-            border: none;
-        }
-
-        .btn-submit:hover {
-            background-color: #e0326b;
-        }
-
-        .form-label {
-            font-weight: bold;
-        }
-    </style>
+    <link rel="stylesheet" href="/static/css/review/reviewCreate.css">
 </head>
 <body>
 <div class="container" layout:fragment="content">
@@ -44,41 +14,58 @@
         <div class="review-form-container">
             <h2 class="review-title">리뷰 작성</h2>
             <form id="reviewForm">
-                <div class="mb-3">
-                    <label for="reviewReceiptId" class="form-label">영수증 ID</label>
-                    <input type="number" id="reviewReceiptId" name="reviewReceiptId" class="form-control" required>
-                </div>
+                <!-- receiptId는 URL 쿼리에서 자동 설정되며, 화면에 표시하지 않음 -->
+                <input type="hidden" id="reviewReceiptId" name="reviewReceiptId">
 
-                <div class="mb-3">
-                    <label for="file" class="form-label">리뷰 이미지</label>
+                <!-- 파일 업로드 영역 -->
+                <div class="form-group">
+                    <label for="file" class="form-label">리뷰 이미지 업로드</label>
                     <input type="file" id="file" name="file" class="form-control" accept="image/*">
                 </div>
 
-                <div class="mb-3">
-                    <label for="reviewRate" class="form-label">평점</label>
-                    <select type="text" id="reviewRate" name="reviewRate" class="form-select" required>
-                        <option value="5">★★★★★ (5점)</option>
-                        <option value="4">★★★★☆ (4점)</option>
-                        <option value="3">★★★☆☆ (3점)</option>
-                        <option value="2">★★☆☆☆ (2점)</option>
-                        <option value="1">★☆☆☆☆ (1점)</option>
-                    </select>
+                <!-- 별점 평점 영역 -->
+                <div class="form-group">
+                    <label class="form-label">평점</label>
+                    <div class="star-rating" id="starRating">
+                        <span class="star" data-value="1">&#9733;</span>
+                        <span class="star" data-value="2">&#9733;</span>
+                        <span class="star" data-value="3">&#9733;</span>
+                        <span class="star" data-value="4">&#9733;</span>
+                        <span class="star" data-value="5">&#9733;</span>
+                    </div>
+                    <!-- 선택된 별점 값을 저장할 hidden input -->
+                    <input type="hidden" id="reviewRate" name="reviewRate" required>
                 </div>
 
-                <div class="mb-3">
+                <!-- 리뷰 내용 영역 -->
+                <div class="form-group">
                     <label for="reviewContent" class="form-label">리뷰 내용</label>
-                    <textarea type="text" id="reviewContent" name="reviewContent" class="form-control" value="리뷰 내용을 입력하세요.testtesttesttest"
-                              rows="4" required></textarea>
+                    <textarea id="reviewContent" name="reviewContent" class="form-control" placeholder="리뷰 내용을 작성해주세요." required></textarea>
                 </div>
 
-                <div class="mb-3">
-                    <label for="keywordId" class="form-label">키워드 ID (쉼표로 구분)</label>
-                    <input type="text" id="keywordId" name="keywordId" class="form-control" placeholder="예: 1,2,3">
+                <!-- 키워드 선택 영역 -->
+                <div class="form-group">
+                    <label class="form-label">키워드 선택</label>
+                    <div class="keyword-group">
+                        <input type="checkbox" id="keyword1" name="keyword" value="1">
+                        <label for="keyword1">친절함</label>
+
+                        <input type="checkbox" id="keyword2" name="keyword" value="2">
+                        <label for="keyword2">깔끔함</label>
+
+                        <input type="checkbox" id="keyword3" name="keyword" value="3">
+                        <label for="keyword3">만족도 높음</label>
+
+                        <input type="checkbox" id="keyword4" name="keyword" value="4">
+                        <label for="keyword4">가격이 합리적</label>
+
+                        <input type="checkbox" id="keyword5" name="keyword" value="5">
+                        <label for="keyword5">재방문 의사</label>
+                    </div>
                 </div>
 
-                <button type="button" id="submitReview" class="btn btn-submit w-100">리뷰 제출</button>
+                <button type="button" id="submitReview" class="btn-submit">리뷰 제출</button>
             </form>
-
         </div>
     </main>
 

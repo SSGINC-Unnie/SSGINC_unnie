@@ -2,10 +2,7 @@ package com.ssginc.unnie.review.service.serviceImpl;
 
 import com.ssginc.unnie.common.exception.UnnieReviewException;
 import com.ssginc.unnie.common.util.ErrorCode;
-import com.ssginc.unnie.review.dto.ReviewCreateRequest;
-import com.ssginc.unnie.review.dto.ReviewGetResponse;
-import com.ssginc.unnie.review.dto.ReviewRequestBase;
-import com.ssginc.unnie.review.dto.ReviewUpdateRequest;
+import com.ssginc.unnie.review.dto.*;
 import com.ssginc.unnie.review.mapper.ReviewMapper;
 import com.ssginc.unnie.review.service.ReceiptService;
 import com.ssginc.unnie.review.service.ReviewService;
@@ -15,7 +12,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -177,4 +176,113 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewId;
     }
 
+    /**
+     * 업체 리뷰 목록 조회(회원 전용)
+     *
+     * @param shopId   업체 ID
+     * @param keyword  필터링할 키워드 (없으면 null 또는 빈 문자열)
+     * @param sortType 정렬 방식 ('newest', 'oldest')
+     * @param offset   페이지네이션 시작 값
+     * @param limit    조회 건수
+     * @return
+     */
+    @Override
+    public List<ReviewGetResponse> getReviewListByShop(long shopId, String keyword, String sortType, int offset, int limit) {
+        // 입력값 검증
+        if (shopId <= 0) {
+            throw new IllegalArgumentException("유효하지 않은 업체 ID입니다.");
+        }
+        // keyword가 null이면 빈 문자열로 설정 (쿼리에서 null 체크와 동일하게 동작하도록)
+        if (keyword == null) {
+            keyword = "";
+        }
+        // 정렬 방식이 null이거나 예상한 값이 아닐 경우 기본값 설정
+        if (sortType == null || (!sortType.equals("newest") && !sortType.equals("oldest"))) {
+            sortType = "newest";
+        }
+        // 페이지네이션 파라미터가 음수일 경우 기본값으로 조정 (예: 0, 10)
+        if (offset < 0) {
+            offset = 0;
+        }
+        if (limit <= 0) {
+            limit = 10;
+        }
+
+        // 매퍼를 호출하여 리뷰 목록 조회
+        List<ReviewGetResponse> reviewList = reviewMapper.getReviewListByShop(shopId, keyword, sortType, offset, limit);
+
+        // 결과 후처리(필요한 경우)
+        // 예: 리뷰 목록이 null이면 빈 리스트 반환
+        if (reviewList == null) {
+            reviewList = new ArrayList<>();
+        }
+
+        return reviewList;
+    }
+
+    /**
+     * 업체 리뷰 목록 조회(비회원 전용)
+     *
+     * @param shopId   업체 ID
+     * @param keyword  필터링할 키워드 (없으면 null 또는 빈 문자열)
+     * @param sortType 정렬 방식 ('newest', 'oldest')
+     * @param offset   페이지네이션 시작 값
+     * @param limit    조회 건수
+     * @return
+     */
+    @Override
+    public List<ReviewGuestGetResponse> getReviewListByShopGuest(long shopId, String keyword, String sortType, int offset, int limit) {
+        // 입력값 검증 및 기본값 설정 (위와 동일)
+        if (shopId <= 0) {
+            throw new IllegalArgumentException("유효하지 않은 업체 ID입니다.");
+        }
+        if (keyword == null) {
+            keyword = "";
+        }
+        if (sortType == null || (!sortType.equals("newest") && !sortType.equals("oldest"))) {
+            sortType = "newest";
+        }
+        if (offset < 0) {
+            offset = 0;
+        }
+        if (limit <= 0) {
+            limit = 3;  // 비회원의 경우 최근 리뷰 3개만 보여줄 수 있도록 기본값 설정 가능
+        }
+
+        // 기존 로직 재활용: 로그인용 리뷰 조회 결과를 가져옴
+        List<ReviewGetResponse> reviews = reviewMapper.getReviewListByShop(shopId, keyword, sortType, offset, limit);
+
+        // 비회원 전용 DTO로 변환 (리뷰 내용은 블러 처리)
+        List<ReviewGuestGetResponse> guestReviews = reviews.stream().map(review -> {
+            // 블러 처리는 단순 예시로 전체 글자를 '*'로 대체하거나,
+            // 실제로는 CSS나 JS로 블러 효과를 줄 수 있으므로, 여기서는 예시로 문자열 변환 처리합니다.
+            String blurredContent = review.getReviewContent().replaceAll(".", "*");
+
+            return ReviewGuestGetResponse.builder()
+                    .reviewId(review.getReviewId())
+                    .reviewMemberId(review.getReviewMemberId())
+                    .reviewReceiptId(review.getReviewReceiptId())
+                    .reviewImage(review.getReviewImage())
+                    .reviewRate(review.getReviewRate())
+                    .reviewContent(blurredContent)
+                    .reviewDate(review.getReviewDate())
+                    .memberNickName(review.getMemberNickName())
+                    .shopName(review.getShopName())
+                    .build();
+        }).collect(Collectors.toList());
+
+        return guestReviews;
+    }
+
+    @Override
+    public int getReviewCountByShop(long shopId, String keyword) {
+        if (shopId <= 0) {
+            throw new IllegalArgumentException("유효하지 않은 업체 ID입니다.");
+        }
+        // keyword가 null이면 빈 문자열로 처리하여 if 조건이 false가 되도록 함
+        if (keyword == null) {
+            keyword = "";
+        }
+        return reviewMapper.getReviewCountByShop(shopId, keyword);
+    }
 }

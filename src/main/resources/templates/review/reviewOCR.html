@@ -6,56 +6,45 @@
 <head>
     <meta charset="UTF-8"/>
     <title>OCR & Receipt Test</title>
+    <link rel="stylesheet" href="/static/css/review/ocr.css">
 </head>
 <body>
 <div class="container" layout:fragment="content">
     <main class="main">
         <!-- 1) OCR 파일 업로드 폼 -->
-        <section>
-            <h2>1. OCR 파일 업로드</h2>
+        <div class="upload-card">
+            <h1>인증하실 영수증을 업로드 해주세요!</h1>
+            <p>파일 형식: JPG, PNG 등 이미지 파일만 업로드 가능</p>
             <form id="ocrForm" enctype="multipart/form-data">
-                <label for="file">영수증 파일 선택:</label>
-                <input type="file" id="file" name="file" accept="image/*" required/>
-                <button type="submit">OCR 분석</button>
+                <div class="form-group">
+                    <label for="ocrFile" class="form-label">영수증 이미지 선택</label>
+                    <input type="file" id="ocrFile" name="ocrFile" class="form-control" accept="image/*" required>
+                </div>
+                <button type="submit" id="uploadOcrFile" class="btn-submit">파일 업로드</button>
             </form>
-            <pre id="ocrResult"></pre>
-        </section>
-        <br>
-        <br>
-        <br>
-        <br>
-        <!-- 2) DB 저장 폼 -->
-        <section>
-            <h2>2. 영수증 DB 저장</h2>
-            <p>아래 텍스트 영역에 OCR 분석 결과(JSON)가 자동으로 들어가도록 설정해 두었습니다.</p>
-            <form id="saveReceiptForm">
-                <label for="receiptData">영수증 JSON 데이터:</label><br/>
-                <textarea id="receiptData" name="receiptData" rows="6" cols="50"></textarea><br/>
-                <button type="submit">영수증 저장</button>
-            </form>
-            <pre id="saveReceiptResult"></pre>
-        </section>
-        <br>
-        <br>
-        <br>
-        <br>
-        <!-- 3) 영수증 조회 폼 -->
-        <section>
-            <h2>3. 영수증 조회</h2>
-            <form id="getReceiptForm">
-                <label for="receiptId">조회할 영수증 ID:</label>
-                <input type="number" id="receiptId" name="receiptId" required/>
-                <button type="submit">조회</button>
-            </form>
-            <pre id="getReceiptResult"></pre>
-        </section>
+        </div>
+        <!-- 2) OCR 결과 확인 및 수정 영역 -->
+        <div class="checkOcr" id="checkOcrSection" style="display: none;">
+            <h2>이곳에 다녀오신 게 맞으신가요?</h2>
+            <div class="ocr-field">
+                <label for="shopName">업체 이름</label>
+                <input type="text" id="shopName" name="shopName" placeholder="업체 이름">
+            </div>
+            <div class="ocr-field">
+                <label for="totalAmount">결제 금액</label>
+                <input type="text" id="totalAmount" name="totalAmount" placeholder="결제 금액">
+            </div>
+            <div class="ocr-field">
+                <label for="paymentDate">결제 날짜</label>
+                <input type="text" id="paymentDate" name="paymentDate" placeholder="결제 날짜">
+            </div>
+            <button type="button" id="saveReceipt" class="save-btn">영수증 저장</button>
+        </div>
     </main>
 
-<div layout:fragment="scripts">
-    <script src="/js/review/ocr.js"></script>
-</div>
+    <div layout:fragment="scripts">
+        <script src="/js/review/ocr.js"></script>
+    </div>
 </div>
 </body>
-
-
 </html>

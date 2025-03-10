@@ -2,6 +2,7 @@ package com.ssginc.unnie.review.service;
 
 import com.ssginc.unnie.review.dto.ReviewCreateRequest;
 import com.ssginc.unnie.review.dto.ReviewGetResponse;
+import com.ssginc.unnie.review.dto.ReviewGuestGetResponse;
 import com.ssginc.unnie.review.dto.ReviewUpdateRequest;
 
 import java.util.List;
@@ -52,5 +53,33 @@ public interface ReviewService {
      */
     long softDeleteReview(long reviewId, int reviewStatus);
 
+    /**
+     * 업체 리뷰 목록 조회 (회원 전용)
+     * @param shopId  업체 ID
+     * @param keyword 필터링할 키워드 (없으면 null 또는 빈 문자열)
+     * @param sortType 정렬 방식 ('newest', 'oldest')
+     * @param offset  페이지네이션 시작 값
+     * @param limit   조회 건수
+     * @return 리뷰 목록
+     */
+    List<ReviewGetResponse> getReviewListByShop(long shopId, String keyword, String sortType, int offset, int limit);
 
+    /**
+     * 업체 리뷰 목록 조회 (비회원 전용)
+     * @param shopId  업체 ID
+     * @param keyword 필터링할 키워드 (없으면 null 또는 빈 문자열)
+     * @param sortType 정렬 방식 ('newest', 'oldest')
+     * @param offset  페이지네이션 시작 값
+     * @param limit   조회 건수
+     * @return 리뷰 목록
+     */
+    List<ReviewGuestGetResponse> getReviewListByShopGuest(long shopId, String keyword, String sortType, int offset, int limit);
+
+    /**
+     * 업체 리뷰 개수 조회
+     * @param shopId 업체 ID
+     * @param keyword 필터링할 키워드 (없으면 빈 문자열)
+     * @return 해당 업체의 전체 리뷰 개수
+     */
+    int getReviewCountByShop(long shopId, String keyword);
 }

@@ -1,0 +1,118 @@
+/* 기본 리셋 및 폰트 */
+.container {
+    max-width: 640px;
+    margin: 0 auto;
+}
+
+/* 리뷰 작성 카드 */
+.review-form-container {
+    background-color: #ffffff;
+    width: 640px;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 60px;
+    min-height: 600px;
+}
+.review-title {
+    margin: 0 0 20px;
+    font-size: 1.8rem;
+    text-align: center;
+    color: #4C4C4C;
+}
+/* 폼 관련 */
+.form-group {
+    margin-bottom: 20px;
+}
+.form-label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #333;
+}
+.form-control {
+    width: 100%;
+    padding: 12px;
+    box-sizing: border-box;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    transition: border-color 0.2s ease;
+}
+.form-control:focus {
+    border-color: #FF3479;
+    outline: none;
+}
+/* 파일 업로드 인풋 */
+.form-control[type="file"] {
+    padding: 20px 10px;
+    min-height: 70px;
+}
+/* 리뷰 내용 텍스트 에어리어 */
+textarea.form-control {
+    resize: vertical;
+    min-height: 150px;
+}
+/* 별점 평점 영역 */
+.star-rating {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    font-size: 1.5rem;
+    justify-content: center;
+}
+.star {
+    cursor: pointer;
+    color: #ccc;
+    transition: color 0.2s ease;
+}
+.star.selected {
+    color: #FF3479;
+}
+
+/* 키워드 선택 영역 */
+.keyword-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* 체크박스는 숨김 */
+.keyword-group input[type="checkbox"] {
+    display: none;
+}
+
+/* 레이블(칩) 기본 스타일 */
+.keyword-group label {
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    padding: 6px 12px;
+    cursor: pointer;
+    background-color: #fff;
+    color: #4C4C4C;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+/* 체크된 상태에서 레이블을 시그니처 컬러로 */
+.keyword-group input[type="checkbox"]:checked + label {
+    background-color: #FF3479;
+    color: #fff;
+    border-color: #FF3479;
+}
+
+/* 제출 버튼 */
+.btn-submit {
+    display: inline-block;
+    width: 100%;
+    padding: 14px 0;
+    text-align: center;
+    background-color: #FF3479;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+.btn-submit:hover {
+    background-color: #e0326b;
+}
