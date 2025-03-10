@@ -84,12 +84,16 @@ async function fetchShopDetail(shopId, dropdownId) {
             // 디자이너 목록 아래에 수정/삭제 버튼 배치
             designerHTML += `
                 <div class="designer-action-buttons">
-                    <button class="edit-button" onclick="editDesigner(${shop.shopId})">디자이너 수정</button>
-                    <button class="delete-button" onclick="deleteDesigner(${shop.shopId})">디자이너 삭제</button>
+                    <button class="edit-button" onclick="editDesigner(${shop.shopId})">디자이너 추가</button>
+                    <button class="delete-button" onclick="deleteDesigner(${shop.shopId})">디자이너 수정/삭제</button>
                 </div>
             `;
         } else {
-            designerHTML = '<p>디자이너 정보가 없습니다.</p>';
+            designerHTML += `
+                <div class="designer-action-buttons">
+                    <button class="edit-button" onclick="editDesigner(${shop.shopId})">디자이너 추가</button>
+                </div>
+            `;
         }
 
         // 2) 시술 목록 HTML 생성
@@ -109,12 +113,16 @@ async function fetchShopDetail(shopId, dropdownId) {
             // 시술 목록 아래에 수정/삭제 버튼 배치
             procedureHTML += `
                 <div class="procedure-action-buttons">
-                    <button class="edit-button" onclick="editProcedure(${shop.shopId})">시술 수정</button>
-                    <button class="delete-button" onclick="deleteProcedure(${shop.shopId})">시술 삭제</button>
+                    <button class="edit-button" onclick="editProcedure(${shop.shopId})">시술 추가</button>
+                    <button class="delete-button" onclick="deleteProcedure(${shop.shopId})">시술 수정/삭제</button>
                 </div>
             `;
         } else {
-            procedureHTML = '<p>시술 정보가 없습니다.</p>';
+            procedureHTML =
+                `<div class="procedure-action-buttons">
+                    <button class="edit-button" onclick="editProcedure(${shop.shopId})">시술 추가</button>
+                </div>`
+
         }
 
         // 3) 최종 HTML 조합
@@ -147,10 +155,13 @@ async function fetchShopDetail(shopId, dropdownId) {
 }
 
 // 추가적인 수정/삭제 함수 (임시)
-function editDesigner(shopId) {
-    console.log("디자이너 수정:", shopId);
-    // 실제 수정 로직 구현
-}
+window.editShop = function(shopId) {
+    window.location.href = `/mypage/shop/${shopId}`;
+};
+
+window.editDesigner = function(shopId) {
+    window.location.href = `/mypage/designer/${shopId}`;
+};
 
 function deleteShop(shopId) {
     console.log("deleteShop 호출, shopId:", shopId);
@@ -175,15 +186,13 @@ function deleteShop(shopId) {
             .catch(error => console.error("업체 삭제 중 오류 발생:", error));
     }
 }
-function editProcedure(shopId) {
-    console.log("시술 수정:", shopId);
-    // 실제 수정 로직 구현
-}
+window.editProcedure = function(shopId) {
+    window.location.href = `/mypage/procedure/${shopId}`;
+};
 
-function deleteProcedure(shopId) {
-    console.log("시술 삭제:", shopId);
-    // 실제 삭제 로직 구현
-}
+window.deleteProcedure = function(shopId) {
+    window.location.href = `/mypage/setProcedure/${shopId}`;
+};
 
 // 초기 데이터 로드
 fetchShops();

@@ -111,7 +111,7 @@ public class MyPageShopServiceImpl implements MyPageShopService {
             if(myPageShopMapper.existsByShopId(request.getDesignerShopId()) == 0) {
                 throw new UnnieShopException(ErrorCode.SHOP_NOT_FOUND);
             }
-            if(myPageShopMapper.existsByDesignerName(request.getDesignerName()) > 0) {
+            if(myPageShopMapper.existByDesignerName(request.getDesignerName()) > 0) {
                 throw new UnnieShopException(ErrorCode.DESIGNER_ALREADY_EXISTS);
             }
 
@@ -258,7 +258,7 @@ public class MyPageShopServiceImpl implements MyPageShopService {
             throw new UnnieShopException(ErrorCode.SHOP_ALREADY_EXISTS);
         }
 
-        boolean isDuplicateDesigner = (myPageShopMapper.existsByDesignerName(request.getDesignerName()) > 0);
+        boolean isDuplicateDesigner = (myPageShopMapper.existsByDesignerName(request.getDesignerName(),request.getDesignerId()) > 0);
         if(isDuplicateDesigner) {
             throw new UnnieShopException(ErrorCode.DESIGNER_ALREADY_EXISTS);
         }
@@ -273,6 +273,42 @@ public class MyPageShopServiceImpl implements MyPageShopService {
     }
 
     /**
+     *   ======================= 디자이너 조회 =======================
+     */
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<MyDesignerDetailResponse> getDesignersByShopId(int shopId) {
+        // shopId의 존재 여부 확인 (필요한 경우)
+        boolean shopExists = (myPageShopMapper.existsByShopId(shopId) > 0);
+        if (!shopExists) {
+            throw new UnnieShopException(ErrorCode.SHOP_NOT_FOUND);
+        }
+        // mapper를 통해 디자이너 목록 조회
+        List<MyDesignerDetailResponse> designers = myPageShopMapper.findDesignersByShopId(shopId);
+        return designers;
+    }
+
+    /**
+     *   ======================= 시술 조회 =======================
+     */
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<MyProcedureDetailResponse> getProceduresByShopId(int shopId) {
+        // shopId의 존재 여부 확인 (필요한 경우)
+        boolean shopExists = (myPageShopMapper.existsByShopId(shopId) > 0);
+        if (!shopExists) {
+            throw new UnnieShopException(ErrorCode.SHOP_NOT_FOUND);
+        }
+        // mapper를 통해 디자이너 목록 조회
+        List<MyProcedureDetailResponse> procedures = myPageShopMapper.findProceduresByShopId(shopId);
+        return procedures;
+    }
+
+
+
+    /**
      * ======================= 시술 수정 =======================
      */
 
@@ -283,7 +319,7 @@ public class MyPageShopServiceImpl implements MyPageShopService {
 
         int ownerCount = myPageShopMapper.checkProcedureOwnership(
                 request.getProcedureId(),
-                request.getProcedureShopId(), // 추가된 designerId 전달
+                request.getProcedureShopId(),
                 memberId);
 
         if (ownerCount == 0) {
@@ -296,7 +332,7 @@ public class MyPageShopServiceImpl implements MyPageShopService {
             throw new UnnieShopException(ErrorCode.SHOP_NOT_FOUND);
         }
 
-        boolean isDuplicateProcedure = (myPageShopMapper.existsByProcedureName(request.getProcedureName(),request.getProcedureShopId()) > 0);
+        boolean isDuplicateProcedure = (myPageShopMapper.existByProcedureName(request.getProcedureName(),request.getProcedureShopId()) > 0);
         if(isDuplicateProcedure) {
             throw new UnnieShopException(ErrorCode.PROCEDURE_ALREADY_EXISTS);
         }

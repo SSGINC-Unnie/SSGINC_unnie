@@ -259,3 +259,7 @@ button {
 .btn-next:hover {
     background-color: #e8326e;
 }
+
+.btn-complete {
+    background-color: #007bff;
+}

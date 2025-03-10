@@ -116,13 +116,11 @@ public class MyPageShopController {
      * ======================= 시술 수정 ==========================
      */
 
-    @PutMapping("/manager/procedure/{shopId}/{procedureId}")
+    @PutMapping("/manager/procedure/{procedureId}")
     public ResponseEntity<ResponseDto<Map<String, Integer>>> updateProcedure(
-            @PathVariable("shopId") int shopId,
             @PathVariable("procedureId") int procedureId,
             @RequestBody ProcedureRequest request,
             @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
-        request.setProcedureShopId(shopId);
         request.setProcedureId(procedureId);
         long memberId = memberPrincipal.getMemberId();
         return ResponseEntity.ok(
@@ -151,7 +149,6 @@ public class MyPageShopController {
             @PathVariable("designerId") int designerId,
             @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
         long memberId = memberPrincipal.getMemberId();
-        myPageShopService.deleteDesigner(designerId, memberId);
         return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "디자이너 삭제가 완료되었습니다.", Map.of("DesignerId", myPageShopService.deleteDesigner(designerId, memberId))));
     }
 
@@ -197,6 +194,27 @@ public class MyPageShopController {
 
         return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "샵 정보 조회에 성공했습니다.", Map.of("shop",myPageShopService.getMyShopsDetail(shopId))));
     }
+
+    /**
+     * 디자이너 조회
+     */
+
+    @GetMapping("/manager/designer/{shopId}")
+    public ResponseEntity<ResponseDto<Map<String, Object>>> getDesigners (
+            @PathVariable int shopId) {
+        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "디자이너 조회에 성공했습니다.", Map.of("shop",myPageShopService.getDesignersByShopId(shopId))));
+    }
+
+    /**
+     * 시술 조회
+     */
+
+    @GetMapping("/manager/procedure/{shopId}")
+    public ResponseEntity<ResponseDto<Map<String, Object>>> getProcedures (
+            @PathVariable int shopId) {
+        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "시술 조회에 성공했습니다.", Map.of("shop",myPageShopService.getProceduresByShopId(shopId))));
+    }
+
 
 
 

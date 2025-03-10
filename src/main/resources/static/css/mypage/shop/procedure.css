@@ -88,19 +88,7 @@ h1 {
     color: #ccc;
 }
 
-/* 연결선 스타일 */
-.step::before {
-    content: "";
-    position: absolute;
-    top: 20px;
-    left: -60px;
-    width: 120px;
-    height: 1px;
-    border-top: 2px dotted #ff3479;
-    z-index: 1;
-}
-
-/* 상단 헤더: "디자이너 등록" (왼), "디자이너 추가 >" (오른쪽) */
+/* 상단 헤더 */
 .header-row {
     display: flex;
     justify-content: space-between;
@@ -132,14 +120,13 @@ h1 {
     margin-bottom: 30px;
 }
 
-/* 각 디자이너 아이템을 감싸는 컨테이너 */
+/* 디자이너 항목 */
 .designer-item {
-    display: flex; /* 이미지와 텍스트영역 가로 배치 */
-    align-items: flex-start; /* 텍스트가 위쪽 정렬되도록 */
+    display: flex; /* 이미지와 텍스트 영역 가로 배치 */
+    align-items: flex-start;
     margin-bottom: 20px;
 }
 
-/* 프로필 이미지 */
 .designer-img {
     width: 60px;
     height: 60px;
@@ -148,72 +135,65 @@ h1 {
     margin-right: 20px;
 }
 
-/* 텍스트 전체를 감싸는 컨테이너 */
 .designer-content {
-    flex: 1; /* 남은 공간 꽉 채우기 */
+    flex: 1;
     display: flex;
-    flex-direction: column; /* 수직 배치 */
+    flex-direction: column;
 }
 
-/* 디자이너명 + 수정/삭제 한 줄 정렬 */
 .designer-header {
     display: flex;
-    justify-content: space-between; /* 왼쪽: 디자이너명 / 오른쪽: 수정/삭제 */
+    justify-content: space-between;
     align-items: center;
     margin-bottom: 5px;
 }
 
-/* 디자이너명 */
 .designer-name {
     font-weight: bold;
     font-size: 0.95rem;
     color: #111;
     text-decoration: underline;
-    margin-bottom: 0; /* 아래쪽 여백 제거 */
+    margin-bottom: 0;
 }
 
-/* 디자이너 소개 */
 .designer-intro {
     font-size: 0.85rem;
     color: #666;
     line-height: 1.4;
 }
 
-/* 수정/삭제 */
 .designer-actions a {
     color: #666;
     text-decoration: none;
     margin-bottom: 5px;
 }
 
-/* "수정 | 삭제" 구분선 */
 .designer-actions a:not(:last-child)::after {
     content: "|";
-    margin-left: 5px; /* 구분선 간격 */
+    margin-left: 5px;
     color: #ccc;
 }
 
-/* 구분선 */
 .divider {
     border: none;
     border-bottom: 1px solid #eee;
     margin: 0;
 }
 
-/* 필수 항목 * 빨간색 */
+/* 필수 항목 표시 */
 .required {
     color: red;
 }
 
 label {
     display: block;
-    margin-bottom: 5px; /* 라벨과 입력 필드 사이의 간격 */
+    margin-bottom: 5px;
 }
 
 /* 하단 버튼 */
 .button-group {
     display: flex;
-    justify-content: center; /* 가운데 정렬 */
+    justify-content: center;
     gap: 20px;
 }
 
@@ -223,6 +203,8 @@ label {
     border-radius: 4px;
     font-size: 0.9rem;
     cursor: pointer;
+    background: #ff3479;
+    color: white;
 }
 
 .btn-prev {
@@ -250,14 +232,13 @@ label {
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(0, 0, 0, 0.5); /* 반투명 배경 */
-    display: none; /* 기본 숨김 */
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
     justify-content: center;
     align-items: center;
     z-index: 9999;
 }
 
-/* 모달 내용 */
 .modal {
     width: 400px;
     background-color: #fff;
@@ -267,7 +248,6 @@ label {
     position: relative;
 }
 
-/* 모달 헤더 */
 .modal-header {
     display: flex;
     justify-content: space-between;
@@ -277,7 +257,6 @@ label {
     font-weight: bold;
 }
 
-/* 닫기 버튼 */
 .modal-header button {
     background: none;
     border: none;
@@ -285,19 +264,18 @@ label {
     cursor: pointer;
 }
 
-/* 입력 영역 */
 input[type="text"],
 textarea {
     width: 100%;
     padding: 8px;
-    margin-bottom: 15px; /* 입력 필드 간의 간격 */
+    margin-bottom: 15px;
     border-radius: 4px;
     border: 1px solid #ddd;
 }
 
 textarea {
     resize: vertical;
-    min-height: 150px; /* 디자이너 소개를 길게 표시 */
+    min-height: 150px;
 }
 
 /* 업로드 사진 영역 */
@@ -348,7 +326,7 @@ textarea {
 .btn-cancel:hover {
     background-color: #ff3479;
     color: white;
-    transform: translateY(-3px); /* 클릭 효과 */
+    transform: translateY(-3px);
 }
 
 .btn-save {
@@ -366,9 +344,66 @@ textarea {
 .btn-save:hover {
     background-color: #ff3479;
     border-color: #ff3479;
-    transform: translateY(-3px); /* 클릭 효과 */
+    transform: translateY(-3px);
 }
 
-.btn-complete {
-    background-color: #007bff;
+/* --------------------------- */
+/* 시술 목록 관련 스타일 (Procedure) */
+/* --------------------------- */
+.procedure-list {
+    margin-bottom: 30px;
+}
+
+.procedure-item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.procedure-img {
+    width: 60px;
+    height: 60px;
+    border-radius: 4px;
+    object-fit: cover;
+    margin-right: 20px;
+}
+
+.procedure-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.procedure-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.procedure-name {
+    font-weight: bold;
+    font-size: 0.95rem;
+    color: #111;
+    text-decoration: underline;
+    margin-bottom: 0;
+}
+
+.procedure-actions a {
+    color: #666;
+    text-decoration: none;
+    margin-bottom: 5px;
+}
+
+.procedure-actions a:not(:last-child)::after {
+    content: "|";
+    margin-left: 5px;
+    color: #ccc;
+}
+
+/* 시술 가격을 표시하는 클래스 (기존 procedure-intro 대신 사용) */
+.procedure-price {
+    font-size: 0.85rem;
+    color: #666;
+    line-height: 1.4;
 }

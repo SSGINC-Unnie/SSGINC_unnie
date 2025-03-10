@@ -36,4 +36,14 @@ public class myPageShopViewController {
         return "mypage/shop/getMyShop";
     }
 
+    @GetMapping("/setDesigner/{shopId}")
+    public String UpdateDesigner() {
+        return "mypage/shop/designer";
+    }
+
+    @GetMapping("/setProcedure/{shopId}")
+    public String UpdateProcedure() {
+        return "mypage/shop/procedure";
+    }
+
 }

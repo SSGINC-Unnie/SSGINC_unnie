@@ -105,7 +105,7 @@ document.querySelector('.btn-save').addEventListener('click', async function (ev
 });
 
 // "다음" 버튼 클릭 시: pendingProcedures 배열의 데이터를 서버에 전송하여 DB에 저장 (Bulk Insert)
-document.querySelector('.btn-next').addEventListener('click', async function(event) {
+document.querySelector('.btn-next','completeBtn').addEventListener('click', async function(event) {
     event.preventDefault();
     if (pendingProcedures.length === 0) {
         alert("저장할 시술 정보가 없습니다.");
@@ -142,7 +142,7 @@ document.querySelector('.btn-next').addEventListener('click', async function(eve
         // 성공 후, pendingProcedures 배열 및 UI 초기화
         pendingProcedures = [];
         document.querySelector('.procedure-list').innerHTML = '';
-        window.location.href = `/mypage/procedure/${shopId}`;
+        window.location.href = `/index.html`;
 
     } catch (error) {
         console.error(error);

@@ -100,7 +100,14 @@
             shop_id != #{shopId}
     </select>
 
-    <select id="existsByDesignerName" parameterType="String" resultType="int">
+    <select id="existsByDesignerName" parameterType="map" resultType="int">
+        SELECT COUNT(*)
+        FROM designer
+        WHERE designer_name = #{designerName} and
+              designer_id != #{designerId}
+    </select>
+
+    <select id="existByDesignerName" parameterType="String" resultType="int">
         SELECT COUNT(*)
         FROM designer
         WHERE designer_name = #{designerName}
@@ -110,6 +117,12 @@
         SELECT COUNT(*)
         FROM `procedure`
         WHERE procedure_name = #{procedureName} and procedure_shop_id = #{ShopId}
+    </select>
+
+    <select id="existByProcedureName" parameterType="map" resultType="int">
+        SELECT COUNT(*)
+        FROM `procedure`
+        WHERE procedure_name = #{procedureName} and procedure_shop_id != #{shopId}
     </select>
 
 
