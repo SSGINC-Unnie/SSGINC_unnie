@@ -1,5 +1,6 @@
 package com.ssginc.unnie.admin.service.serviceImpl;
 
+import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.ssginc.unnie.admin.dto.shop.AdminShopResponse;
 import com.ssginc.unnie.admin.dto.shop.AdminShopUpdateRequest;
@@ -145,25 +146,18 @@ public class AdminShopServiceImpl implements AdminShopService {
     @Transactional(readOnly = true)
     @Override
     public PageInfo<ShopResponse> findShops(int page, int pageSize) {
+        PageHelper.startPage(page, pageSize);
         // 페이지네이션을 위한 OFFSET 계산
-        int offset = (page - 1) * pageSize;
 
         // 페이지네이션을 고려하여 업체 목록 조회
-        List<ShopResponse> res = adminShopMapper.findShops(offset, pageSize);
+        List<ShopResponse> res = adminShopMapper.findShops();
 
         // 전체 업체 개수 조회 (전체 페이지네이션을 위한 사용)
-        int totalCount = adminShopMapper.getTotalShopCount();
 
-        if (res == null || res.isEmpty()) {
-            throw new UnnieShopException(ErrorCode.SHOP_LIST_NOT_FOUND);
-        }
 
-        // PageInfo 객체 생성
-        PageInfo<ShopResponse> pageInfo = new PageInfo<>(res);
-        pageInfo.setTotal(totalCount); // 전체 데이터 개수 설정
-        pageInfo.setPageSize(pageSize); // 페이지 크기 설정
 
-        return pageInfo;
+
+        return new PageInfo<>(res);
     }
 
 

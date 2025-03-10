@@ -1,0 +1,117 @@
+/* 내 업체 조회 전용 스타일 */
+.content-container {
+    width: 640px;
+    margin: 50px auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+}
+h1 {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ffffff;
+}
+
+table th:nth-child(2),
+table td:nth-child(2),
+table th:nth-child(3),
+table td:nth-child(3),
+table th:nth-child(5),
+table td:nth-child(5) {
+    white-space: nowrap;
+}
+
+th {
+    background-color: #fafafa;
+}
+.details-button {
+    background-color: #ff3479;
+    color: #fff;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.details-button:hover {
+    background-color: #ff3479;
+}
+.dropdown-content {
+    display: block;
+    max-height: 0;
+    padding: 0 10px;
+    background-color: #fafafa;
+    margin-top: -6px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    overflow: hidden;
+    transition: max-height 0.5s ease-in-out;
+}
+.section-title {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #ff3479;
+}
+
+
+p {
+    margin: 8px 0;
+    line-height: 1.4;
+}
+.info-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.info-item img {
+    margin-right: 10px;
+}
+.info-item p {
+    margin: 0;
+}
+img.thumbnail {
+    width: 100px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+/* 수정, 삭제 버튼 스타일 */
+.action-buttons {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+}
+.edit-button, .delete-button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 4px 8px;
+    cursor: pointer;
+}
+.delete-button {
+    background-color: #dc3545;
+}
+
+.designer-action-buttons,
+.procedure-action-buttons,
+.shop-action-buttons {
+    margin: 10px 0;
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end; /* 오른쪽 정렬 */
+}
+
+

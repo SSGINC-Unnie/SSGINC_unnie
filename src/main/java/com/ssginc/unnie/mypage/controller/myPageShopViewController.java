@@ -33,7 +33,7 @@ public class myPageShopViewController {
 
     @GetMapping("/myshop")
     public String GetSHops() {
-        return "mypage/shop/getshop";
+        return "mypage/shop/getMyShop";
     }
 
 }
