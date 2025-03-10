@@ -11,7 +11,7 @@
 
 
     <select id="findAllShops" resultType="com.ssginc.unnie.admin.dto.shop.AdminShopResponse">
-        select shop_id,shop_name, shop_representation_name
+        SELECT shop_id, shop_name, shop_representation_name, shop_category, shop_location
         from shop
         where shop_status = 0;
     </select>
@@ -51,12 +51,11 @@
         WHERE shop_id = #{shopId}
     </select>
 
-    <select id="findShops" parameterType="map" resultType="com.ssginc.unnie.mypage.dto.shop.ShopResponse">
-        SELECT shop_id, shop_name
-        FROM shop
-        WHERE shop_status = 1
-            LIMIT #{offset}, #{pageSize}
-    </select>
+        <select id="findShops" resultType="com.ssginc.unnie.mypage.dto.shop.ShopResponse">
+            SELECT shop_id, shop_name, shop_representation_name, shop_category, shop_location
+            FROM shop
+            WHERE shop_status = 1
+        </select>
 
     <select id="getTotalShopCount" resultType="int">
         SELECT COUNT(*)

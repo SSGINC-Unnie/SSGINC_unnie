@@ -2,14 +2,21 @@ package com.ssginc.unnie.mypage.service;
 
 import com.github.pagehelper.PageInfo;
 import com.ssginc.unnie.mypage.dto.shop.*;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URISyntaxException;
 import java.util.List;
 
 public interface MyPageShopService {
     Integer createShop(ShopInsertRequest request);
-    Integer createDesigner(DesignerRequest request);
-    Integer createProcedure(ProcedureRequest request);
+
+    @Transactional(rollbackFor = Exception.class)
+    void createDesigners(List<DesignerRequest> requests, List<MultipartFile> files);
+
+    @Transactional(rollbackFor = Exception.class)
+    void createProcedures(List<ProcedureRequest> requests, List<MultipartFile> files);
+
     Integer updateShop(ShopUpdateRequest request, long memberId);
     Integer updateDesigner(DesignerRequest request, long memberId);
     Integer updateProcedure(ProcedureRequest request, long memberId);

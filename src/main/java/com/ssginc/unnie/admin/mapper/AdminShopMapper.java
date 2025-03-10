@@ -31,7 +31,7 @@ public interface AdminShopMapper {
 
     MyShopDetailResponse findShopDetail(@Param("shopId") int shopId);
 
-    List<ShopResponse> findShops(@Param("offset") int offset, @Param("pageSize") int pageSize);
+    List<ShopResponse> findShops();
 
     int getTotalShopCount();
 

@@ -15,7 +15,7 @@ public class MyShopDetailResponse {
     // 카테고리
     private ShopCategory shopCategory;
     // 영업시간
-    private Time shopBusinessTime;
+    private String shopBusinessTime;
     // 전화번호
     private String shopTel;
     // 업체 소개
@@ -28,4 +28,5 @@ public class MyShopDetailResponse {
     private String shopRepresentationName;
 
     private List<MyDesignerDetailResponse> designers;
+    private List<MyProcedureDetailResponse> procedures;
 }

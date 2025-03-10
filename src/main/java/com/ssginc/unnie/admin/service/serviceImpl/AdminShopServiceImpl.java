@@ -1,5 +1,6 @@
 package com.ssginc.unnie.admin.service.serviceImpl;
 
+import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.ssginc.unnie.admin.dto.shop.AdminShopResponse;
 import com.ssginc.unnie.admin.dto.shop.AdminShopUpdateRequest;
@@ -64,21 +65,21 @@ public class AdminShopServiceImpl implements AdminShopService {
      *
      * 승입 요청 업체 상세 조회
      */
-
     @Transactional(readOnly = true)
     @Override
     public MyShopDetailResponse getShopsDetail(int shopId) {
         MyShopDetailResponse shopdetail = adminShopMapper.findShopApproveDetail(shopId);
-        if(shopdetail == null)
+        if (shopdetail == null)
             throw new UnnieShopException(ErrorCode.SHOP_NOT_FOUND);
+
+        // 업체에 소속된 디자이너 조회 (업체-디자이너 관계 그대로)
         List<MyDesignerDetailResponse> designers = myPageShopMapper.findDesignersByShopId(shopId);
-        if (designers != null) {
-            for (MyDesignerDetailResponse designer : designers) {
-                List<MyProcedureDetailResponse> procedures = myPageShopMapper.findProceduresByDesignerId(designer.getDesignerId());
-                designer.setProcedures(procedures);
-            }
-        }
         shopdetail.setDesigners(designers);
+
+        // 변경: 디자이너별 시술 조회 대신, 업체 ID 기준으로 시술 전체 조회
+        List<MyProcedureDetailResponse> procedures = myPageShopMapper.findProceduresByShopId(shopId);
+        shopdetail.setProcedures(procedures); // MyShopDetailResponse DTO에 시술 목록 필드가 있어야 합니다.
+
         return shopdetail;
     }
 
@@ -145,25 +146,18 @@ public class AdminShopServiceImpl implements AdminShopService {
     @Transactional(readOnly = true)
     @Override
     public PageInfo<ShopResponse> findShops(int page, int pageSize) {
+        PageHelper.startPage(page, pageSize);
         // 페이지네이션을 위한 OFFSET 계산
-        int offset = (page - 1) * pageSize;
 
         // 페이지네이션을 고려하여 업체 목록 조회
-        List<ShopResponse> res = adminShopMapper.findShops(offset, pageSize);
+        List<ShopResponse> res = adminShopMapper.findShops();
 
         // 전체 업체 개수 조회 (전체 페이지네이션을 위한 사용)
-        int totalCount = adminShopMapper.getTotalShopCount();
 
-        if (res == null || res.isEmpty()) {
-            throw new UnnieShopException(ErrorCode.SHOP_LIST_NOT_FOUND);
-        }
 
-        // PageInfo 객체 생성
-        PageInfo<ShopResponse> pageInfo = new PageInfo<>(res);
-        pageInfo.setTotal(totalCount); // 전체 데이터 개수 설정
-        pageInfo.setPageSize(pageSize); // 페이지 크기 설정
 
-        return pageInfo;
+
+        return new PageInfo<>(res);
     }
 
 
@@ -176,16 +170,17 @@ public class AdminShopServiceImpl implements AdminShopService {
     @Override
     public MyShopDetailResponse findShopsDetail(int shopId) {
         MyShopDetailResponse shopdetail = adminShopMapper.findShopDetail(shopId);
-        if(shopdetail == null)
+        if (shopdetail == null)
             throw new UnnieShopException(ErrorCode.SHOP_NOT_FOUND);
+
+        // 업체에 소속된 디자이너 조회 (업체-디자이너 관계 그대로)
         List<MyDesignerDetailResponse> designers = myPageShopMapper.findDesignersByShopId(shopId);
-        if (designers != null) {
-            for (MyDesignerDetailResponse designer : designers) {
-                List<MyProcedureDetailResponse> procedures = myPageShopMapper.findProceduresByDesignerId(designer.getDesignerId());
-                designer.setProcedures(procedures);
-            }
-        }
         shopdetail.setDesigners(designers);
+
+        // 변경: 각 디자이너별 시술 조회 대신, 업체 ID 기준으로 전체 시술 목록 조회
+        List<MyProcedureDetailResponse> procedures = myPageShopMapper.findProceduresByShopId(shopId);
+        shopdetail.setProcedures(procedures); // MyShopDetailResponse DTO에 시술 목록 필드가 있어야 합니다.
+
         return shopdetail;
     }
 
