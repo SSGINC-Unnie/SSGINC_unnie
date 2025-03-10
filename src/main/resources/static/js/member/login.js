@@ -1,4 +1,4 @@
-// 메시지 표시: type이 "success"이면 초록색, 아니면 빨간색으로 표시
+// 메시지 표시: success이면 초록색, 아니면 빨간색으로 표시
 function showMsg(element, type, message) {
     element.html(`<p>${message}</p>`).css('color', type === "success" ? 'green' : 'red');
 }
@@ -11,8 +11,7 @@ window.onload = function() {
     const passwordInput = document.querySelector('.login-input[type="password"]');
     const loginButton = document.querySelector('.login-button');
 
-    const $emailError = $("#emailError");       // 이메일 입력 칸 아래 메시지 영역
-    const $emailPwError = $("#emailPwError");     // 로그인 버튼 하단 전체 메시지 영역
+    const $emailPwError = $("#emailPwError");     // 로그인 버튼 하단 메시지 영역
 
     function checkEmailFormat(){
         const email = emailInput.value.trim();
@@ -20,24 +19,23 @@ window.onload = function() {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
         if (!emailRegex.test(email)) {
-            showMsg($emailError, "error", "이메일 형식이 올바르지 않습니다.");
+            showMsg($emailPwError, "error", "이메일 형식이 올바르지 않습니다.");
             return false;
         } else {
-            $emailError.html(''); // 에러 없으면 지우기
+            $emailPwError.html('');
             return true;
         }
     }
 
-    // 이메일 input에서 이메일 형식 검사
-    emailInput.addEventListener('blur', function() {
-        checkEmailFormat();
-    });
-
     loginButton.addEventListener('click', function() {
 
         // 기존 에러 메시지 초기화
-        $emailError.html('');
         $emailPwError.html('');
+
+        //이메일 유효성 검사
+        if (!checkEmailFormat()) {
+            return;
+        }
 
         // JSON 형식으로 데이터 생성
         const payload = {
@@ -45,18 +43,16 @@ window.onload = function() {
             memberPw: passwordInput.value.trim()
         };
 
-        // axios를 사용하여 POST 요청 보내기
+        // POST 요청 보내기
         axios.post('/api/member/login', payload)
             .then(response => {
                 // 로그인 성공 시 처리
                 console.log("로그인 성공:", response.data);
-                alert("로그인 성공!");
                 window.location.href = '/'; // 로그인 성공 후 홈으로 이동
             })
             .catch(error => {
                 // 로그인 실패 시 처리
-                console.error("로그인 실패:", error);
-                showMsg($emailPwError, "error", "이메일 또는 비밀번호를 다시 확인하세요..");
+                showMsg($emailPwError, "error", "이메일 또는 비밀번호를 다시 확인하세요.");
             });
     });
 
@@ -83,7 +79,6 @@ window.onload = function() {
     // 구글 로그인
     // ---------------------------
     function handleGoogleCredentialResponse(response) {
-        // response.credential JWT ID 토큰
         const responsePayload = parseJwt(response.credential);
         console.log("Email: " + responsePayload.email); //이메일
         console.log("Full Name: " + responsePayload.name);
@@ -134,9 +129,9 @@ window.onload = function() {
     // 공식 구글 로그인 버튼을 'google_button_div'에 렌더링
     google.accounts.id.renderButton(
         document.getElementById("google_button_div"),
-        { theme: "outline", size: "large", type: "icon", shape: "circle" }  // 버튼
+        { theme: "outline", size: "large", type: "icon", shape: "circle"}  // 버튼
     );
-    // 필요 시 One Tap 다이얼로그 표시
+    // One Tap 다이얼로그 표시
     google.accounts.id.prompt();
 
 

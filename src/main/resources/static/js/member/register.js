@@ -9,13 +9,13 @@ let isValid = {
 };
 
 // ------------------------------------
-// 정규식 (입력값 유효성 검증)
+// 정규식 (유효성 검증)
 // ------------------------------------
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const pwRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,20}$/;
 const nameRegex = /^[가-힣]{2,10}$/;
 const nicknameRegex = /^[가-힣a-zA-Z0-9]{2,20}$/;
-const phoneRegex = /^01[0-9]-\d{3,4}-\d{4}$/;
+const phoneRegex = /^01[0-9]\d{7,8}$/;
 const birthRegex = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
 
 // ------------------------------------
@@ -38,7 +38,7 @@ function handleError(error, element) {
     }
 }
 
-// 메시지 표시: type이 "success"이면 초록색, 아니면 빨간색으로 표시
+// 메시지 표시: success이면 초록색, 아니면 빨간색으로 표시
 function showMsg(element, type, message) {
     element.html(`<p>${message}</p>`).css('color', type === "success" ? 'green' : 'red');
 }
@@ -47,7 +47,7 @@ function showMsg(element, type, message) {
 // ------------------------------------
 // 인증 타이머 클래스 (AuthTimer)
 // ------------------------------------
-// 인증번호 전송 후 남은 유효시간(여기서는 180초 = 3분)을 표시,
+// 인증번호 전송 후 남은 유효시간(3분)을 표시,
 // 시간이 초과되면 지정된 콜백 호출
 class AuthTimer {
     constructor(duration, $timerElement, onExpire) {
@@ -115,11 +115,10 @@ async function validateEmailDuplication() {
     }
 
     try {
-        // 서버에 GET 요청: /member/checkMemberEmail?email=입력값
+        // 서버에 GET 요청
         const response = await axios.get("/member/checkEmail", {
             params: { email: emailValue }
         });
-        // 서버가 true를 반환하면 사용 가능한 이메일입니다.
         if (response.data) {
             showMsg($emailError, "success", "");
             return true;
@@ -154,7 +153,7 @@ class EmailAuthentication {
         this.$verifyButton = $("#verifyEmailCode");
 
         // 추가: 인증번호 입력 그룹
-        this.$authGroup = $("#emailAuthGroup"); // HTML에 id="emailAuthGroup"
+        this.$authGroup = $("#emailAuthGroup");
 
         this.initializeEvents();
     }
@@ -213,9 +212,8 @@ class EmailAuthentication {
 
         } catch (error) {
             handleError(error, this.$emailError);
-            isValid.email = false;
             this.isSending = false;
-            // 전역 플래그 isValid.email 업데이트
+            // isValid.email 업데이트
             isValid.email = false;
         } finally {
         }
@@ -366,7 +364,7 @@ async function validateNicknameDuplication() {
         });
         if (response.data) {
             // true면 사용 가능
-            showMsg($nicknameError, "success", "✔ 사용 가능한 닉네임입니다.");
+            showMsg($nicknameError, "success", "사용 가능한 닉네임입니다.");
             isValid.nickname = true;
         } else {
             showMsg($nicknameError, "error", "이미 사용 중인 닉네임입니다.");
@@ -400,7 +398,7 @@ class PhoneAuthentication {
         this.$verifyButton = $("#verifyPhoneCode");
         this.$phoneAuthSection = $("#phoneAuthSection");
 
-        // 추가: 전화번호 인증번호 입력 영역 (통째로 show/hide)
+        // 전화번호 인증번호 입력 영역 (통째로 show/hide)
         this.$phoneAuthGroup = $("#phoneAuthGroup");
 
         this.initializeEvents();
@@ -436,7 +434,7 @@ class PhoneAuthentication {
                 { memberPhone: phone });
             handleResponse(response, this.$phoneError);
 
-            // 전송 성공 시: 인증번호 영역 보이기
+            // 전송 성공 시 인증번호 영역 보이기
             this.$phoneAuthGroup.show();
             // 인증번호 입력칸 보이기 & 초기화
             this.$authInput.prop("readonly", false).val("").focus();
@@ -511,7 +509,7 @@ $(document).ready(() => {
         // URL 설정 (소셜로그인 여부 확인)
         REGISTER_URL = isSocial ? "/api/oauth/register/complete" : "/api/member/register";
 
-        // 최종 폼 검증 (비밀번호, 이름 등)
+        // 최종 폼 검증 (비밀번호, 이름)
         if (!isSocial) {
             checkPasswordValid();
             confirmPw();

@@ -31,7 +31,7 @@
         const email = naver_id_login.getProfileData('email')
         const isRegistered = await emailCheck(email);
         if (isRegistered) {
-            alert("이미 가입된 계정입니다. 로그인 처리됩니다.")
+            //alert("이미 가입된 계정입니다. 로그인 처리됩니다.")
             location.href = "/";
         } else {
             const name = naver_id_login.getProfileData('name');

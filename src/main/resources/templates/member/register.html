@@ -5,6 +5,7 @@
 <head>
     <meta charset="UTF-8" />
     <title>회원가입</title>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
     <link rel="stylesheet" href="/css/member/register.css">
     <script src="https://code.jquery.com/jquery-3.7.1.slim.js"></script>
     <!-- AXIOS -->
@@ -18,7 +19,7 @@
     </div>
     <!-- 타이틀 -->
     <h1 class="title">회원가입</h1>
-
+    <div class="title-divider"></div>
     <form class="join-form" id="registrationForm">
 
         <!-- 아이디(이메일) 소셜로그인 회원은 이메일 가져와서 readonly로, 일반 회원가입은 입력 -->
@@ -102,7 +103,7 @@
         <div class="form-group">
             <label for="memberPhone" class="label-text">전화번호</label>
             <div class="input-row">
-                <input type="tel" id="memberPhone" class="input-box" placeholder="전화번호 입력(010-1234-5678)" required />
+                <input type="tel" id="memberPhone" class="input-box" placeholder="전화번호 입력(- 제외)" required />
                 <button type="button" id="sendPhoneVerification" class="btn-small">인증번호 전송</button>
             </div>
             <div id="phoneError" class="error-msg"></div>
