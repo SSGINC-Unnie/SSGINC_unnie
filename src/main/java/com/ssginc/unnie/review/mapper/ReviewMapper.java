@@ -60,5 +60,24 @@ public interface ReviewMapper {
      */
     int softDeleteReview(@Param("reviewId") long reviewId, @Param("reviewStatus") int reviewStatus);
 
+    /**
+     * 업체의 리뷰 목록 조회
+     * 정렬: 최신순, 오래된순, 키워드별 조회
+     * 페이지네이션: 무한스크롤
+     * @param shopId 업체 ID
+     * @param keyword 필터링할 키워드
+     * @param sortType 정렬 방식 ('newest', 'oldest')
+     * @param offset 페이지네이션 시작 값
+     * @param limit 조회 건수
+     * @return 리뷰 목록
+     */
+    List<ReviewGetResponse> getReviewListByShop(
+            @Param("shopId") long shopId,
+            @Param("keyword") String keyword,
+            @Param("sortType") String sortType,
+            @Param("offset") int offset,
+            @Param("limit") int limit);
 
+    int getReviewCountByShop(@Param("shopId") long shopId,
+                             @Param("keyword") String keyword);
 }

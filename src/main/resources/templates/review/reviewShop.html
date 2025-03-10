@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8"/>
+    <title>업체 리뷰 목록</title>
+    <link rel="stylesheet" href="/static/css/review/reviewShop.css">
+</head>
+<body>
+<div class="container" layout:fragment="content">
+
+    <!-- 상단: 리뷰 개수, 정렬 드롭다운, 키워드 목록 -->
+    <div class="review-header">
+        <!-- 리뷰 개수 (예: "리뷰 19") -->
+        <div class="review-count">
+            <!-- 서버에서 totalReviewCount를 모델에 담아 넘어온다고 가정 -->
+            <span th:text="'리뷰 ' + ${totalReviewCount}">리뷰 0</span>
+        </div>
+        <!-- 정렬 드롭다운 -->
+        <div class="review-sort">
+            <select id="sortSelect">
+                <option value="newest" selected>최신순</option>
+                <option value="oldest">오래된순</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- 키워드 버튼들 -->
+    <div class="keyword-filters">
+        <!-- DB 키워드 목록이 keywords라는 모델로 넘어왔다고 가정 -->
+        <button th:each="kw : ${keywords}"
+                th:text="${kw.keyword}"
+                th:attr="data-keyword-id=${kw.keywordId}"
+                onclick="onKeywordClick(this)">
+            키워드
+        </button>
+    </div>
+
+    <!-- 리뷰 목록 -->
+    <div class="review-list" th:if="${reviews != null}">
+        <!-- 리뷰를 반복해서 표시 -->
+        <div class="review-item" th:each="review : ${reviews}">
+            <div class="review-item-header">
+                <!-- 작성자 -->
+                <span class="review-author" th:text="${review.memberNickName}">작성자</span>
+                <!-- 작성일 (예: yyyy-MM-dd) -->
+                <span class="review-date"
+                      th:text="${#temporals.format(review.reviewDate, 'yyyy-MM-dd')}">
+                      2025-03-10
+                </span>
+            </div>
+            <!-- 리뷰 이미지 -->
+            <div class="review-image-section">
+                <img th:src="${review.reviewImage}" alt="리뷰 이미지">
+            </div>
+            <!-- 리뷰 내용 -->
+            <div class="review-content" th:text="${review.reviewContent}">
+                리뷰 내용 (회원이면 원본, 비회원이면 블러 처리된 상태)
+            </div>
+            <!-- 리뷰에 달린 키워드 (예: '친절함, 깔끔함')
+                 서버에서 GROUP_CONCAT 등으로 합쳐서 내려주거나
+                 별도 리스트라면 each로 반복 표시 가능 -->
+            <div class="review-keywords">
+                <span th:text="${review.reviewKeywords}">키워드 표시</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div layout:fragment="scripts">
+    <script src="/js/review/reviewShop.js"></script>
+</div>
+
+</body>
+</html>

@@ -4,6 +4,7 @@ import com.ssginc.unnie.common.config.MemberPrincipal;
 import com.ssginc.unnie.review.dto.ReviewCreateRequest;
 import com.ssginc.unnie.review.dto.ReviewGetResponse;
 import com.ssginc.unnie.common.util.ResponseDto;
+import com.ssginc.unnie.review.dto.ReviewGuestGetResponse;
 import com.ssginc.unnie.review.dto.ReviewUpdateRequest;
 import com.ssginc.unnie.review.service.ReviewService;
 import lombok.RequiredArgsConstructor;
@@ -207,4 +208,80 @@ public class ReviewController {
         }
         return null;
     }
+
+    /**
+     * 업체 리뷰 목록 조회 (회원 전용)
+     * @param shopId  업체 ID (경로 변수)
+     * @param keyword 필터링할 키워드 (없으면 빈 문자열)
+     * @param sortType 정렬 방식 ('newest', 'oldest'; 기본값 'newest')
+     * @param offset  페이지네이션 시작 값 (기본값 0)
+     * @param limit   조회 건수 (기본값 10)
+     * @param memberPrincipal 로그인한 회원 정보 (Spring Security)
+     * @return 업체 리뷰 목록을 포함한 응답 DTO
+     */
+    @GetMapping("/shop/{shopId}")
+    public ResponseEntity<ResponseDto<Map<String, Object>>> getReviewListByShop(
+            @PathVariable("shopId") long shopId,
+            @RequestParam(required = false, defaultValue = "") String keyword,
+            @RequestParam(required = false, defaultValue = "newest") String sortType,
+            @RequestParam(required = false, defaultValue = "0") int offset,
+            @RequestParam(required = false, defaultValue = "10") int limit,
+            @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
+
+        // 로그인 여부 체크
+        if (memberPrincipal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        // 서비스 호출: 업체 리뷰 목록 조회
+        List<ReviewGetResponse> reviewList = reviewService.getReviewListByShop(shopId, keyword, sortType, offset, limit);
+
+        return ResponseEntity.ok(
+                new ResponseDto<>(HttpStatus.OK.value(), "업체 리뷰 목록 조회 성공", Map.of("reviews", reviewList))
+        );
+    }
+
+    /**
+     * 업체 리뷰 목록 조회 (비회원 전용)
+     * 비회원은 최근 리뷰 3개만 조회하며, 리뷰 내용은 블러 처리된 상태로 전달됩니다.
+     * @param shopId  업체 ID (경로 변수)
+     * @param keyword 필터링할 키워드 (없으면 빈 문자열)
+     * @param sortType 정렬 방식 ('newest', 'oldest'; 기본값 'newest')
+     * @param offset  페이지네이션 시작 값 (기본값 0)
+     * @param limit   조회 건수 (기본값 3)
+     * @return 비회원용 업체 리뷰 목록을 포함한 응답 DTO
+     */
+    @GetMapping("/guest/shop/{shopId}")
+    public ResponseEntity<ResponseDto<Map<String, Object>>> getReviewListByShopGuest(
+            @PathVariable("shopId") long shopId,
+            @RequestParam(required = false, defaultValue = "") String keyword,
+            @RequestParam(required = false, defaultValue = "newest") String sortType,
+            @RequestParam(required = false, defaultValue = "0") int offset,
+            @RequestParam(required = false, defaultValue = "3") int limit) {
+
+        // 인증 정보 없이 접근 가능하므로 별도의 로그인 체크가 필요 없음
+        List<ReviewGuestGetResponse> reviewList = reviewService.getReviewListByShopGuest(shopId, keyword, sortType, offset, limit);
+
+        return ResponseEntity.ok(
+                new ResponseDto<>(HttpStatus.OK.value(), "비회원용 업체 리뷰 목록 조회 성공", Map.of("reviews", reviewList))
+        );
+    }
+
+    /**
+     * 업체 리뷰 개수 조회 REST API
+     * @param shopId 업체 ID (경로 변수)
+     * @param keyword 필터링할 키워드 (없으면 빈 문자열)
+     * @return 업체 리뷰 개수를 포함한 응답 DTO
+     */
+    @GetMapping("/shop/{shopId}/count")
+    public ResponseEntity<ResponseDto<Map<String, Object>>> getReviewCount(
+            @PathVariable("shopId") long shopId,
+            @RequestParam(required = false, defaultValue = "") String keyword) {
+
+        int totalReviewCount = reviewService.getReviewCountByShop(shopId, keyword);
+        return ResponseEntity.ok(
+                new ResponseDto<>(HttpStatus.OK.value(), "업체 리뷰 개수 조회 성공", Map.of("totalReviewCount", totalReviewCount))
+        );
+    }
+
 }
