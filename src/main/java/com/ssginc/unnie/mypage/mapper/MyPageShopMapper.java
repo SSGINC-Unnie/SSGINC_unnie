@@ -20,12 +20,18 @@ public interface MyPageShopMapper {
 
     int insertDesigner(DesignerRequest request);
 
-    int existsByDesignerName(String designerName);
+    int existsByDesignerName(String designerName, int designerId);
+
+    int existByDesignerName(String designerName);
+
 
     int insertProcedure(ProcedureRequest request);
 
     int existsByProcedureName(@Param("procedureName") String procedureName,
-                              @Param("ShopId") int ShopId);
+                              @Param("shopId") int shopId);
+
+    int existByProcedureName(@Param("procedureName") String procedureName,
+                             @Param("shopId") int shopId);
 
     int existsByShopId(@Param("shopId") int shopId);
 
@@ -47,7 +53,7 @@ public interface MyPageShopMapper {
 
     int checkShopOwnership(@Param("shopId") int shopId, @Param("memberId") long memberId);
 
-    int checkProcedureOwnership(@Param("procedureId") int procedureId, @Param("designerId") int designerId,
+    int checkProcedureOwnership(@Param("procedureId") int procedureId, @Param("shopId") int shopId,
                                 @Param("memberId") long memberId);
 
     int checkDesignerOwnership(@Param("designerId") int designerId, @Param("memberId") long memberId);
@@ -67,6 +73,12 @@ public interface MyPageShopMapper {
     List<MyProcedureDetailResponse> findProceduresByShopId(@Param("shopId") int shopId);
 
     int getTotalShopCountByMemberId(long memberId);
+
+
+    ShopDetailResponse getShopDetail(int shopId);
+
+    List<String> getShopImages(int shopId);
+
 
 
 

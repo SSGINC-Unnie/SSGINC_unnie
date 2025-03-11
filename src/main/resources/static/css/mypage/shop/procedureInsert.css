@@ -298,3 +298,7 @@ textarea {
     border-color: #ff3479;
     transform: translateY(-3px);
 }
+
+.btn-complete {
+    background-color: #007bff;
+}

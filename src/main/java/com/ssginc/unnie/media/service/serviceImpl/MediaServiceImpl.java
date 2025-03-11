@@ -3,10 +3,7 @@ package com.ssginc.unnie.media.service.serviceImpl;
 import com.ssginc.unnie.common.exception.UnnieMediaException;
 import com.ssginc.unnie.common.util.ErrorCode;
 import com.ssginc.unnie.common.util.generator.FileNameGenerator;
-
 import com.ssginc.unnie.common.util.validation.Validator;
-
-
 import com.ssginc.unnie.media.dto.MediaRequest;
 import com.ssginc.unnie.media.mapper.MediaMapper;
 import com.ssginc.unnie.media.service.MediaService;
@@ -27,11 +24,10 @@ import java.io.IOException;
 public class MediaServiceImpl implements MediaService {
 
     private final MediaMapper mediaMapper;
-
     private final Validator<MultipartFile> fileValidator; // 유효성 검증 인터페이스
-
     private final FileNameGenerator fileNameGenerator;
 
+    // 예: "C:/workSpace/SSGINC_unnie/src/main/resources/static/upload/"
     @Value("${upload.path}")
     private String uploadPath;
 
@@ -39,6 +35,7 @@ public class MediaServiceImpl implements MediaService {
     @Transactional(rollbackFor = Exception.class)
     public String uploadFile(MultipartFile file, String targetType, long targetId) {
 
+        // 1) Enum 검증
         MediaTargetType type;
         try {
             type = MediaTargetType.valueOf(targetType.toUpperCase());
@@ -46,43 +43,47 @@ public class MediaServiceImpl implements MediaService {
             throw new UnnieMediaException(ErrorCode.INVALID_FILE_TARGET_TYPE);
         }
 
+        // 2) 파일 유효성 검증
         fileValidator.validate(file);
 
+        // 3) 파일명 생성
         String fileOriginalName = file.getOriginalFilename();
-
         String newFileName = fileNameGenerator.generateFileName(fileOriginalName);
 
+        // 4) 실제 물리 경로 (uploadPath + 새 파일명)
+        //    예: "C:/workSpace/SSGINC_unnie/src/main/resources/static/upload/6dd0caf9-...png"
+        String physicalPath = uploadPath + newFileName;
 
-        String fileUrn = uploadPath + newFileName;
-
-
-        // 저장 경로 설정
-        File destination = new File(fileUrn);
-
-        log.info("fileName = {} / newFileName = {} / destination = {}", fileOriginalName, newFileName, destination.getAbsolutePath());
+        // 5) 파일 저장
+        File destination = new File(physicalPath);
+        log.info("fileName = {}, newFileName = {}, destination = {}",
+                fileOriginalName, newFileName, destination.getAbsolutePath());
 
         try {
-
-            if(!destination.exists()) {
-                destination.mkdirs();
+            if (!destination.exists()) {
+                destination.mkdirs(); // 상위 디렉토리가 없으면 생성
             }
-            // 파일 저장
             file.transferTo(destination);
 
         } catch (IOException e) {
             throw new UnnieMediaException(ErrorCode.FILE_INTERNAL_SERVER_ERROR, e);
         }
 
+        // 6) DB에는 "/upload/새파일명"만 기록 (브라우저에서 /upload/xxx.png로 접근 가능)
+        String fileUrn = "/upload/" + newFileName;
+
+        // 7) DB insert
         MediaRequest mediaRequest = MediaRequest.builder()
-                                                    .targetType(targetType)
-                                                    .targetId(targetId)
-                                                    .fileUrn(fileUrn)
-                                                    .fileOriginalName(fileOriginalName)
-                                                    .newFileName(newFileName)
-                                                .build();
+                .targetType(targetType)
+                .targetId(targetId)
+                .fileUrn(fileUrn)  // ★ DB에는 /upload/... 로 저장
+                .fileOriginalName(fileOriginalName)
+                .newFileName(newFileName)
+                .build();
 
         mediaMapper.insert(mediaRequest);
 
+        // 8) 최종적으로 /upload/... 경로 반환
         return fileUrn;
     }
 }

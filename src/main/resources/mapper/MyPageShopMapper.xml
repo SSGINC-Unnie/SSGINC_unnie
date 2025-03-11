@@ -100,7 +100,14 @@
             shop_id != #{shopId}
     </select>
 
-    <select id="existsByDesignerName" parameterType="String" resultType="int">
+    <select id="existsByDesignerName" parameterType="map" resultType="int">
+        SELECT COUNT(*)
+        FROM designer
+        WHERE designer_name = #{designerName} and
+              designer_id != #{designerId}
+    </select>
+
+    <select id="existByDesignerName" parameterType="String" resultType="int">
         SELECT COUNT(*)
         FROM designer
         WHERE designer_name = #{designerName}
@@ -109,7 +116,13 @@
     <select id="existsByProcedureName" parameterType="map" resultType="int">
         SELECT COUNT(*)
         FROM `procedure`
-        WHERE procedure_name = #{procedureName} and procedure_shop_id = #{ShopId}
+        WHERE procedure_name = #{procedureName} and procedure_shop_id = #{shopId}
+    </select>
+
+    <select id="existByProcedureName" parameterType="map" resultType="int">
+        SELECT COUNT(*)
+        FROM `procedure`
+        WHERE procedure_name = #{procedureName} and procedure_shop_id != #{shopId}
     </select>
 
 
@@ -211,5 +224,28 @@
         FROM shop
         WHERE shop_member_id = #{memberId} AND shop_status = 1
     </select>
+    <select id="getShopDetail" parameterType="int" resultType="com.ssginc.unnie.mypage.dto.shop.ShopDetailResponse">
+        SELECT
+            shop_id AS shopId,
+            shop_business_number AS shopBusinessNumber,
+            shop_representation_name AS shopRepresentationName,
+            shop_created_at AS shopCreatedAt,
+            shop_location AS shopLocation,
+            shop_name AS shopName,
+            shop_category AS shopCategory,
+            shop_business_time AS shopBusinessTime,
+            shop_tel AS shopTel,
+            shop_closed_day AS shopClosedDay,
+            shop_introduction AS shopIntroduction
+        FROM shop
+        WHERE shop_id = #{shopId}
+    </select>
 
+
+    <select id="getShopImages" parameterType="int" resultType="java.lang.String">
+        SELECT media_urn
+        FROM media
+        WHERE media_target_id = #{shopId}
+          AND media_target_type = 'SHOP'
+    </select>
 </mapper>

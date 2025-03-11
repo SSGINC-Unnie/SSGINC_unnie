@@ -103,30 +103,30 @@ public class MyPageShopController {
     @PutMapping("/manager/designer/{designerId}")
     public ResponseEntity<ResponseDto<Map<String, Integer>>> updateDesigner(
             @PathVariable("designerId") int designerId,
-            @RequestBody DesignerRequest request,
+            @RequestPart("data") DesignerRequest request,
+            @RequestPart(value = "designerThumbnailFile", required = false) MultipartFile file,
             @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
         long MemberId = memberPrincipal.getMemberId();
         request.setDesignerId(designerId);
 
         return ResponseEntity.ok(
-                new ResponseDto<>(HttpStatus.OK.value(), "디자이너 수정이 완료되었습니다.", Map.of("DesignerId", myPageShopService.updateDesigner(request, MemberId))));
+                new ResponseDto<>(HttpStatus.OK.value(), "디자이너 수정이 완료되었습니다.", Map.of("DesignerId", myPageShopService.updateDesigner(request,file ,MemberId))));
     }
 
     /**
      * ======================= 시술 수정 ==========================
      */
 
-    @PutMapping("/manager/procedure/{shopId}/{procedureId}")
+    @PutMapping("/manager/procedure/{procedureId}")
     public ResponseEntity<ResponseDto<Map<String, Integer>>> updateProcedure(
-            @PathVariable("shopId") int shopId,
             @PathVariable("procedureId") int procedureId,
-            @RequestBody ProcedureRequest request,
+            @RequestPart("data") ProcedureRequest request,
+            @RequestPart(value = "procedureThumbnailFile", required = false) MultipartFile file,
             @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
-        request.setProcedureShopId(shopId);
         request.setProcedureId(procedureId);
         long memberId = memberPrincipal.getMemberId();
         return ResponseEntity.ok(
-                new ResponseDto<>(HttpStatus.OK.value(), "시술 수정이 완료되었습니다.", Map.of("ProcedureId", myPageShopService.updateProcedure(request, memberId))));
+                new ResponseDto<>(HttpStatus.OK.value(), "시술 수정이 완료되었습니다.", Map.of("ProcedureId", myPageShopService.updateProcedure(request, file,memberId))));
     }
 
     /**
@@ -151,7 +151,6 @@ public class MyPageShopController {
             @PathVariable("designerId") int designerId,
             @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
         long memberId = memberPrincipal.getMemberId();
-        myPageShopService.deleteDesigner(designerId, memberId);
         return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "디자이너 삭제가 완료되었습니다.", Map.of("DesignerId", myPageShopService.deleteDesigner(designerId, memberId))));
     }
 
@@ -197,6 +196,40 @@ public class MyPageShopController {
 
         return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "샵 정보 조회에 성공했습니다.", Map.of("shop",myPageShopService.getMyShopsDetail(shopId))));
     }
+
+    /**
+     * 디자이너 조회
+     */
+
+    @GetMapping("/manager/designer/{shopId}")
+    public ResponseEntity<ResponseDto<Map<String, Object>>> getDesigners (
+            @PathVariable int shopId) {
+        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "디자이너 조회에 성공했습니다.", Map.of("shop",myPageShopService.getDesignersByShopId(shopId))));
+    }
+
+    /**
+     * 시술 조회
+     */
+
+    @GetMapping("/manager/procedure/{shopId}")
+    public ResponseEntity<ResponseDto<Map<String, Object>>> getProcedures (
+            @PathVariable int shopId) {
+        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "시술 조회에 성공했습니다.", Map.of("shop",myPageShopService.getProceduresByShopId(shopId))));
+    }
+
+    /**
+     *
+     * shop 모든 값 조회(img 포함)
+     *
+     */
+    @GetMapping("/shopdetail/{shopId}")
+    public ResponseEntity<ResponseDto<ShopDetailResponse>> getMyShopDetails(@PathVariable int shopId) {
+        ShopDetailResponse shopDetail = myPageShopService.getMyShopDetail(shopId);
+        return ResponseEntity.ok(
+                new ResponseDto<>(HttpStatus.OK.value(), "샵 정보 조회에 성공했습니다.", shopDetail)
+        );
+    }
+
 
 
 

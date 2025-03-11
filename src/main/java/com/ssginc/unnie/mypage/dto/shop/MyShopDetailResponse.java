@@ -8,7 +8,9 @@ import java.util.List;
 
 @Data
 public class MyShopDetailResponse {
-    // 업체명
+
+    private int shopId;
+
     private String shopName;
     // 업체 위치
     private String shopLocation;

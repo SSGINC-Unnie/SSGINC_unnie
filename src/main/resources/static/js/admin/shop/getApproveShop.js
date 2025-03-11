@@ -18,7 +18,6 @@ function toggleDropdown(id) {
 }
 
 // 업체 데이터를 백엔드에서 받아와 테이블에 채워넣는 함수
-// 업체 데이터를 백엔드에서 받아와 테이블에 채워넣는 함수
 async function fetchShops() {
     try {
         const response = await fetch(`/api/admin/shop/approve`);

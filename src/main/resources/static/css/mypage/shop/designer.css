@@ -88,17 +88,7 @@ h1 {
     color: #ccc;
 }
 
-/* 연결선 스타일 */
-.step::before {
-    content: "";
-    position: absolute;
-    top: 20px;
-    left: -60px;
-    width: 120px;
-    height: 1px;
-    border-top: 2px dotted #ff3479;
-    z-index: 1;
-}
+
 
 /* 상단 헤더: "디자이너 등록" (왼), "디자이너 추가 >" (오른쪽) */
 .header-row {
@@ -223,6 +213,8 @@ label {
     border-radius: 4px;
     font-size: 0.9rem;
     cursor: pointer;
+    background:#ff3479;
+    color: white;
 }
 
 .btn-prev {
@@ -367,8 +359,4 @@ textarea {
     background-color: #ff3479;
     border-color: #ff3479;
     transform: translateY(-3px); /* 클릭 효과 */
-}
-
-.btn-complete {
-    background-color: #007bff;
 }

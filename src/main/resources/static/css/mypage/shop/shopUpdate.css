@@ -269,10 +269,7 @@ button {
     height: 80px;
     border: 1px solid #ddd;
     border-radius: 4px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
+    overflow: hidden; /* 이미지 넘침 방지 */
     position: relative;
 }
 
@@ -291,9 +288,10 @@ button {
 }
 
 #designerPhotoContainer {
-    display: flex;
-    gap: 10px; /* 업로드 영역 간의 간격 */
-    flex-wrap: wrap; /* 공간이 부족하면 다음 줄로 이동 */
+    display: flex;            /* Flex 사용 */
+    align-items: center;      /* 수직 가운데 정렬 */
+    gap: 10px;                /* 이미지나 업로드 영역 사이 간격 */
+    flex-wrap: wrap;          /* 화면이 좁을 경우 다음 줄로 넘어가도록 */
 }
 
 

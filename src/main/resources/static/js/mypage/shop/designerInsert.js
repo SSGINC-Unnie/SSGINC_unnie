@@ -103,7 +103,6 @@ document.querySelector('.btn-save').addEventListener('click', async function (ev
     closeModal();
 });
 
-// "다음" 버튼 클릭 시: pendingDesigners 배열의 데이터를 서버에 전송하여 DB에 저장 (Bulk Insert)
 document.querySelector('.btn-next').addEventListener('click', async function(event) {
     event.preventDefault();
     if (pendingDesigners.length === 0) {
@@ -142,6 +141,51 @@ document.querySelector('.btn-next').addEventListener('click', async function(eve
         pendingDesigners = [];
         document.querySelector('.designer-list').innerHTML = '';
         window.location.href = `/mypage/procedure/${shopId}`;
+
+    } catch (error) {
+        console.error(error);
+        alert("디자이너 등록 중 오류 발생");
+    }
+});
+
+document.querySelector('.completeBtn').addEventListener('click', async function(event) {
+    event.preventDefault();
+    if (pendingDesigners.length === 0) {
+        alert("저장할 디자이너 정보가 없습니다.");
+        return;
+    }
+
+    try {
+        const formData = new FormData();
+        // pendingDesigners 배열에서 디자이너 요청 정보만 추출 (파일은 별도로 전송)
+        const requests = pendingDesigners.map(designer => ({
+            designerName: designer.designerName,
+            designerIntroduction: designer.designerIntroduction,
+            designerShopId: shopId
+        }));
+        formData.append("data", new Blob([JSON.stringify(requests)], { type: "application/json" }));
+
+        // 백엔드에서는 "designerThumbnailFiles"라는 이름의 파일 목록을 기대합니다.
+        pendingDesigners.forEach(designer => {
+            formData.append("designerThumbnailFiles", designer.file);
+        });
+
+        const response = await fetch(`/api/mypage/designer/${shopId}`, {
+            method: 'POST',
+            body: formData
+        });
+
+        if (!response.ok) {
+            alert("디자이너 등록에 실패했습니다.");
+            return;
+        }
+
+        await response.json();
+        alert("디자이너 등록이 완료되었습니다.");
+        // 성공 후, pendingDesigners 배열 및 UI 초기화
+        pendingDesigners = [];
+        document.querySelector('.designer-list').innerHTML = '';
+        window.location.href = `/index.html`;
 
     } catch (error) {
         console.error(error);
