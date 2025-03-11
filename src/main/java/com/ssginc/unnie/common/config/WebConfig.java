@@ -27,7 +27,7 @@ public class WebConfig implements WebMvcConfigurer {
 
         // 업로드된 파일 제공
         registry.addResourceHandler("/upload/**")
-                .addResourceLocations("file:C:/workSpace/SSGINC_Unnie/src/main/resources/static/upload/");
+                .addResourceLocations("file:src/main/resources/static/upload/");
     }
 
 
