@@ -156,7 +156,7 @@ async function fetchShopDetail(shopId, dropdownId) {
 
 // 추가적인 수정/삭제 함수 (임시)
 window.editShop = function(shopId) {
-    window.location.href = `/mypage/shop/${shopId}`;
+    window.location.href = `/mypage/setShop/${shopId}`;
 };
 
 window.editDesigner = function(shopId) {

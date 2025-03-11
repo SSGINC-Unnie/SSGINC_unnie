@@ -10,4 +10,7 @@ public interface MediaMapper {
 
     int insert(MediaRequest media);
 
+    int deleteByFileUrn(String fileUrn);
+
+
 }

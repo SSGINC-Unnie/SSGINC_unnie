@@ -20,4 +20,6 @@
                 #{newFileName}
             )
     </insert>
-</mapper>
+    <delete id="deleteByFileUrn">
+        DELETE FROM media WHERE media_urn = #{fileUrn}
+    </delete></mapper>

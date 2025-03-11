@@ -8,10 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
@@ -42,6 +39,12 @@ public class MediaController {
         return ResponseEntity.ok(
                 new ResponseDto<>(HttpStatus.CREATED.value(), "파일 업로드에 성공했습니다.", Map.of("fileUrn", urn))
         );
+    }
+
+    @DeleteMapping("upload")
+    public ResponseEntity<ResponseDto<Void>> deleteFile(@RequestParam("fileUrn") String fileUrn) {
+        mediaService.deleteFile(fileUrn);
+        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "파일 삭제에 성공했습니다.", null));
     }
 
 
