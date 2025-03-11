@@ -19,4 +19,5 @@ public class MyPageMemberResponse {
     private String memberNickname; // 닉네임
     private String memberPhone; // 전화번호
     private String memberProfile; // 프로필 이미지
+    private String memberProvider; //소셜로그인 naver, google, kakao
 }

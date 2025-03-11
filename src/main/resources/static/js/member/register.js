@@ -116,7 +116,8 @@ async function validateEmailDuplication() {
 
     try {
         // 서버에 GET 요청
-        const response = await axios.get("/member/checkEmail", {
+        // 이메일 중복 체크
+        const response = await axios.get("/api/member/emailCheck", {
             params: { email: emailValue }
         });
         if (response.data) {
@@ -152,7 +153,7 @@ class EmailAuthentication {
         this.$sendButton = $("#sendEmailVerification");
         this.$verifyButton = $("#verifyEmailCode");
 
-        // 추가: 인증번호 입력 그룹
+        // 인증번호 입력 그룹
         this.$authGroup = $("#emailAuthGroup");
 
         this.initializeEvents();
@@ -188,6 +189,13 @@ class EmailAuthentication {
         }
         if (!emailRegex.test(emailVal)) {
             showMsg(this.$emailError, "error", "잘못된 이메일 형식입니다.");
+            return;
+        }
+
+        // 이메일 중복 체크 함수 호출
+        const duplicationChecked = await validateEmailDuplication();
+        if (!duplicationChecked) {
+            // 중복이면 인증번호 입력 영역을 표시하지 않음
             return;
         }
 
@@ -340,7 +348,7 @@ function validateName() {
 
 // ================================= 닉네임 ======================================
 //----------------------------------------------------
-// 닉네임 중복 검사 (버튼 클릭 시)
+// 닉네임 중복 검사
 //----------------------------------------------------
 async function validateNicknameDuplication() {
     const nicknameValue = $("#memberNickname").val().trim();
@@ -359,7 +367,8 @@ async function validateNicknameDuplication() {
     }
 
     try {
-        const response = await axios.get("/member/checkNickname", {
+        // 닉네임 중복 체크
+        const response = await axios.get("/api/member/nicknameCheck", {
             params: { nickname: nicknameValue }
         });
         if (response.data) {
@@ -478,7 +487,7 @@ class PhoneAuthentication {
     }
 
     onTimerExpire() {
-        showMsg(this.$phoneError, "error", "인증 시간이 초과되었습니다.");
+        showMsg(this.$phoneAuthSection, "error", "인증 시간이 초과되었습니다.");
         this.authManager.hide();
     }
 }

@@ -10,6 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * 회원가입 컨트롤러
+ */
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -24,5 +27,26 @@ public class RegisterController {
         int result = registerService.insertMember(memberRequest);
         SimpleResponseDto responseDto = new SimpleResponseDto(HttpStatus.CREATED.value(),"회원가입에 성공했습니다.");
         return ResponseEntity.ok(responseDto);
+    }
+
+    /**
+     * 이메일 중복 체크
+     */
+    @GetMapping("/emailCheck")
+    public ResponseEntity<Boolean> checkMemberEmail(String email) {
+        // count가 0이면 사용 가능한 이메일
+        int count = registerService.checkMemberEmail(email);
+        boolean isUsable = (count == 0);
+        return ResponseEntity.ok(isUsable);
+    }
+
+    /**
+     * 닉네임 중복 체크
+     */
+    @GetMapping("/nicknameCheck")
+    public ResponseEntity<Boolean> checkMemberNickname(String nickname) {
+        int count = registerService.checkMemberNickname(nickname);
+        boolean isUsable = (count == 0);
+        return ResponseEntity.ok(isUsable);
     }
 }

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec2="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      layout:decorate="~{layout.html}">
+<head>
+    <meta charset="UTF-8" />
+    <title>회원정보 수정</title>
+    <link rel="stylesheet" href="/css/mypage/member/updateMemberInfo.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.slim.js"></script>
+    <!-- AXIOS -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <div class="container" layout:fragment="content">
+        <div class="wrapper">
+            <!-- 타이틀 -->
+            <h1 class="page-title">회원정보 수정</h1>
+
+            <!-- 프로필 사진 영역 -->
+            <div class="profile-section">
+                <label for="profileImage" class="profile-img-label">
+                    <img id="profilePreview" th:src="@{${member.memberProfile}}" alt="프로필 이미지" class="profile-img" />
+                </label>
+                <input type="file" id="profileImage" accept="image/*" style="display: none;" />
+                <!-- 회원ID -->
+                <input type="hidden" id="memberId" th:value="${member.memberId}" />
+            </div>
+
+            <!-- 기본 정보 (이메일, 이름) -->
+            <div class="info-section">
+                <!-- 이메일 (readonly) -->
+                <div class="form-group">
+                    <label class="info-label">이메일</label>
+                    <input type="text" class="input-box readonly-box"
+                           th:value="${member.memberEmail}"
+                           readonly />
+                </div>
+
+                <!-- 이름 (readonly) -->
+                <div class="form-group">
+                    <label class="info-label">이름</label>
+                    <input type="text" class="input-box readonly-box"
+                           th:value="${member.memberName}"
+                           readonly />
+                </div>
+            </div>
+
+            <hr class="divider"/>
+            <!-- 닉네임 -->
+            <div class="form-group">
+                <label class="info-label">닉네임</label>
+                <!-- 현재 닉네임 표시 -->
+                <div class="nickname-row">
+                    <span class="current-nickname" th:text="${member.memberNickname}"></span>
+                    <button type="button" class="btn-small" onclick="toggleNicknameEdit()">닉네임 변경</button>
+                </div>
+
+                <!-- 닉네임 수정 입력칸 (기본 hidden) -->
+                <div id="nicknameEditBox" class="nickname-edit-box" style="display: none;">
+                    <div class="input-row">
+                        <input type="text" id="memberNickname" class="input-box"
+                               placeholder="새 닉네임 입력" />
+                        <button type="button" id="updateNicknameBtn" class="btn-small btn-pink">저장</button>
+                    </div>
+                    <div id="nicknameError" class="error-msg"></div>
+                </div>
+            </div>
+
+            <hr class="divider"/>
+
+            <!-- 휴대전화번호 -->
+            <div class="form-group">
+                <label class="info-label">휴대전화번호</label>
+                <div class="phone-row">
+                    <span class="current-phone" th:text="${member.memberPhone}"></span>
+                    <button type="button" class="btn-small" onclick="openPhoneModal()">휴대전화번호 변경</button>
+                </div>
+            </div>
+
+                <!-- 비밀번호 변경 (소셜 로그인 아닌 경우만) -->
+                <!-- member.memberProvider가 null이면 비밀번호 수정 칸 표시 -->
+            <div th:if="${member.memberProvider == null}">
+                <div class="pw-section">
+                    <label class="info-label">비밀번호 변경</label>
+
+                    <div class="pw-form-group">
+                        <input type="password" id="currentPw" class="input-box" placeholder="현재 비밀번호"/>
+                        <div id="currentPwError" class="error-msg"></div>
+                    </div>
+                    <div class="pw-form-group">
+                        <input type="password" id="newPw" class="input-box" placeholder="새 비밀번호"/>
+                        <div id="newPwError" class="error-msg"></div>
+                    </div>
+                    <div class="pw-form-group">
+                        <input type="password" id="newPwConfirm" class="input-box" placeholder="새 비밀번호 확인"/>
+                        <div id="newPwConfirmError" class="error-msg"></div>
+                    </div>
+                    <div class="btn-submit-wrapper">
+                        <button type="button" class="btn-submit" id="updatePwBtn">비밀번호 변경</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 회원탈퇴 -->
+            <div class="withdraw-section">
+                <a href="/mypage/member/withdraw" class="btn-withdraw">회원탈퇴</a>
+            </div>
+        </div>
+    </div>
+
+
+        <!-- 휴대전화번호 변경 모달 -->
+        <div id="phoneModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <span class="modal-close" onclick="closePhoneModal()">×</span>
+                <h2 class="modal-title">전화번호 변경</h2>
+                <p class="modal-desc">새로운 번호 입력 후 본인인증을 진행해주세요.</p>
+
+                <div class="form-group">
+                    <label class="modal-label">전화번호</label>
+                    <div class="input-row">
+                        <input type="tel" id="memberPhone" class="input-box"
+                               placeholder="전화번호 입력(-제외)" />
+                        <button type="button" id="sendPhoneVerification" class="btn-small btn-pink">인증번호 전송</button>
+                    </div>
+                    <div id="phoneError" class="error-msg"></div>
+                </div>
+
+                <div class="form-group" id="phoneAuthGroup" style="display: none;">
+                    <label class="modal-label">인증번호</label>
+                    <div class="input-row">
+                        <div class="input-with-timer">
+                            <input type="text" id="phoneAuthCode" class="input-box" placeholder="인증번호 입력" />
+                            <span id="phone-auth-timer" class="timer-overlay"></span>
+                        </div>
+                        <button type="button" id="verifyPhoneCode" class="btn-small btn-pink">확인</button>
+                    </div>
+                    <div id="phoneAuthSection" class="error-msg"></div>
+                </div>
+            </div>
+        </div>
+        <div layout:fragment="scripts">
+            <script src="/js/mypage/member/updateMemberInfo.js"></script>
+        </div>
+</body>
+
+</html>

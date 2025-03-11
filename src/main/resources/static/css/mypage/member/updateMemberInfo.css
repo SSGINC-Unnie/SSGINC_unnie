@@ -1,0 +1,250 @@
+/****************************************
+ * 기본 스타일
+ ****************************************/
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    background-color: #ffffff;
+    font-family: sans-serif;
+}
+
+.container {
+    width: 100%;
+    margin: 0 auto;
+}
+
+/****************************************
+ * 공통 클래스
+ ****************************************/
+/* wrapper: 페이지 중앙 정렬용 */
+.wrapper {
+    width: 640px; /* 기존 424 -> 640으로 변경 */
+    margin: 0 auto;
+    background-color: #fff;
+    min-height: 800px; /* 필요 시 조정 */
+    padding: 20px 0;   /* 좌우 여백이 필요하면 추가로 조정 */
+    position: relative;
+}
+
+/* 구분선 */
+.divider {
+    border: none;
+    border-bottom: 1px solid #ddd;
+    margin: 20px 0;
+}
+
+/* 페이지 타이틀 */
+.page-title {
+    font-size: 20px;        /* 20pt 정도 */
+    font-weight: 600;       /* semibold */
+    color: #000000;
+    margin: 0 0 30px 20px;  /* 예시 마진 */
+}
+
+/* 라벨 텍스트 (닉네임, 전화번호 등) */
+.info-label, .modal-label {
+    display: block;
+    font-size: 16px;  /* 16pt */
+    font-weight: 600; /* semibold */
+    color: #000000;
+    margin-bottom: 8px;
+}
+
+/****************************************
+ * 프로필 섹션
+ ****************************************/
+.profile-section {
+    text-align: center;
+    margin-bottom: 30px;
+}
+.profile-img-label {
+    cursor: pointer;
+}
+.profile-img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border: 1px solid #ccc;
+    border-radius: 50%;
+}
+
+/****************************************
+ * 입력 폼 섹션
+ ****************************************/
+.form-group {
+    margin-bottom: 20px;
+    position: relative;
+}
+.input-box {
+    width: 100%;
+    height: 48px;
+    padding: 0 12px;
+    font-size: 14px;
+    color: #999999; /* 글자 색상 #999999 */
+    border: 1px solid #ccc;
+    outline: none;
+    box-sizing: border-box;
+    border-radius: 4px;
+}
+.input-box::placeholder {
+    color: #999999;
+}
+
+/* 읽기전용 input */
+.readonly-box {
+    background-color: #f7f7f7;
+}
+
+/* 에러 메시지 */
+.error-msg {
+    margin-top: 4px;
+    font-size: 14px;
+    color: red;
+}
+
+/****************************************
+ * 버튼 스타일
+ ****************************************/
+.btn-small {
+    height: 48px;
+    min-width: 100px;
+    text-align: center;
+    padding: 0 16px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 1px solid #000; /* 기본은 검정색 테두리 */
+    background-color: #fff;
+    color: #000;
+}
+
+/* 메인 컬러 버튼 (핑크) */
+.btn-pink {
+    background-color: #ff3479;
+    border: none;
+    color: #fff;
+}
+
+/* 비밀번호 변경, 닉네임 저장 등의 큰 버튼 */
+.btn-submit {
+    width: 180px;
+    height: 48px;
+    background-color: #ff3479; /* 버튼 색상 */
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #ffffff;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+
+/****************************************
+ * 영역 배치
+ ****************************************/
+.info-section {
+    margin-bottom: 20px;
+}
+.pw-section {
+    margin-bottom: 30px;
+}
+.nickname-row,
+.phone-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* 닉네임 수정 영역 */
+.nickname-edit-box .input-row {
+    margin-top: 8px;
+}
+
+/****************************************
+ * 타이머
+ ****************************************/
+.input-with-timer {
+    position: relative;
+    flex: 1;
+}
+.input-with-timer .input-box {
+    padding-right: 50px; /* 타이머 공간 확보 */
+}
+.timer-overlay {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #ff3479;
+}
+
+/****************************************
+ * 비밀번호 섹션
+ ****************************************/
+.pw-form-group {
+    margin-bottom: 10px;
+}
+
+/****************************************
+ * 회원탈퇴
+ ****************************************/
+.withdraw-section {
+    text-align: center;
+    margin-top: 30px;
+}
+.btn-withdraw {
+    font-size: 14px;
+    color: #999999;
+    text-decoration: none;
+}
+.btn-withdraw:hover {
+    text-decoration: underline;
+}
+
+/****************************************
+ * 모달 스타일
+ ****************************************/
+.modal {
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0, 0, 0, 0.4); /* 검정 투명 배경 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.modal-content {
+    background-color: #fff;
+    width: 400px; /* 모달 폭 조정 */
+    padding: 20px;
+    border-radius: 8px;
+    position: relative;
+}
+.modal-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #999;
+    cursor: pointer;
+}
+.modal-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 10px;
+}
+.modal-desc {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 20px;
+}

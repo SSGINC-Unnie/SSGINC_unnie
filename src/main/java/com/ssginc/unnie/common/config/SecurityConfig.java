@@ -31,32 +31,19 @@ public class SecurityConfig {
                           //루트는 모두 허용
                           //.requestMatchers("/", "/css/**", "/js/**", "/img/**", "/assets/**").permitAll() //첫페이지는 누구나 접근 가능, 정적 리소스 접근 허용, 싱글톤빈으로 static주소 접근 제어 가능.
                           //회원 관련 모두 허용
-                          //.requestMatchers("/api/member/**").permitAll()
+                          //.requestMatchers("/member/**").permitAll()
 //                        // 마이페이지 관련 - 로그인한 사용자만 접근
-//                        .requestMatchers("/api/mypage/**").authenticated()
+//                        .requestMatchers("/mypage/**").authenticated()
 //                        //관리자 전용 - ADMIN 권한 필요
-//                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+//                        .requestMatchers("/admin/**").hasRole("ADMIN")
 //                        // 마이페이지 (업체 관리) - 업체 담당자만 접근
-//                        .requestMatchers("/api/mypage/shop/management/**").hasAnyRole("MANAGER") //Mypage 업체관리 페이지는 업체담당자(MANAGER)만 접근 가능
+                        //.requestMatchers("/mypage/myshop/**").hasAnyRole("MANAGER") //Mypage 업체관리 페이지는 업체담당자(MANAGER)만 접근 가능
 //                        //.anyRequest().authenticated() //모두 인증필요
                         .anyRequest().permitAll() // 그 외 모든 요청은 기본적으로 허용
                 )
-                .formLogin(form -> form.disable())
-////                login -> login
-//                        .loginPage("/member/login")
-//                        .defaultSuccessUrl("/",true)
-//                        .permitAll())
-//                .formLogin(form -> form
-//                .loginPage("/loginTest.html") // 로그인 폼 페이지
-//                .permitAll())
-
-                        .logout(logout -> logout.disable()
-//                logout -> logout
-//                        .logoutUrl("/member/logout")
-//                        .logoutSuccessUrl("/")
-//                        .invalidateHttpSession(true)
-//                        .deleteCookies("JSESSIONID", "accessToken")
-//                        .permitAll()
+                .formLogin(form -> form.disable()
+                )
+                .logout(logout -> logout.disable()
                 )
 
                 // 세션 사용 안 함 (JWT 기반 인증은 Stateless)
