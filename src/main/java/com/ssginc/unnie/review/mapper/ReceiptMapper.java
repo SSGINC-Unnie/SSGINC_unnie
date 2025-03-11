@@ -11,6 +11,6 @@ public interface ReceiptMapper {
 
     ReceiptResponse findReceiptById(@Param("receiptId") Long receiptId);
 
-    Integer findShopIdByName(@Param("shopName") String shopName);
+    int findShopIdByName(@Param("shopName") String shopName);
 
 }

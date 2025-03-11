@@ -5,7 +5,7 @@
 
     <!-- 영수증 삽입 -->
     <insert id="insertReceipt" useGeneratedKeys="true" keyProperty="receiptId">
-        INSERT INTO RECEIPT (RECEIPT_SHOP_ID ,RECEIPT_DATE, RECEIPT_AMOUNT, RECEIPT_BUSINESS_NUMBER, RECEIPT_APPROVAL_NUMBER, RECEIPT_SHOP_NAME)
+        INSERT INTO RECEIPT (RECEIPT_SHOP_ID, RECEIPT_DATE, RECEIPT_AMOUNT, RECEIPT_BUSINESS_NUMBER, RECEIPT_APPROVAL_NUMBER, RECEIPT_SHOP_NAME)
         VALUES (#{receiptShopId}, #{receiptDate}, #{receiptAmount}, #{receiptBusinessNumber}, #{receiptApprovalNumber}, #{receiptShopName})
     </insert>
 
@@ -22,9 +22,9 @@
         WHERE receipt_id = #{receiptId}
     </select>
 
-    <!-- 업체 이름으로 샵ID 조회 (receipt insert + 리뷰 단일 조회용) -->
+    <!-- 업체 이름으로 샵ID 조회 (receipt insert) -->
     <select id="findShopIdByName" resultType="int">
-        SELECT shop_id FROM shop WHERE shop_name = #{shopName} LIMIT 1
+        SELECT shop_id FROM shop WHERE TRIM(shop_name) = #{shopName} LIMIT 1
     </select>
 
 </mapper>

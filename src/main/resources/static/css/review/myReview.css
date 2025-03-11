@@ -1,8 +1,13 @@
 /* 전체 컨테이너 */
 
-.main {
-    padding: 24px 0;
-    font-family: Pretendard; /* 예시 폰트 설정 */
+/*.main {*/
+/*    padding: 24px 0;*/
+/*}*/
+
+/* 전역 폰트 적용 */
+* {
+    font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue",
+    "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
 }
 
 /* 프로필 섹션 */

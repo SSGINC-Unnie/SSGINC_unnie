@@ -126,7 +126,7 @@
         r.review_date AS reviewDate,
         m.member_nickname AS memberNickName,
         s.shop_name AS shopName,
-        GROUP_CONCAT(DISTINCT k.keyword SEPARATOR ', ') AS reviewKeywords
+        GROUP_CONCAT(DISTINCT k.keyword SEPARATOR ', ') AS reviewKeyword
         FROM review r
         JOIN receipt rc ON r.review_receipt_id = rc.receipt_id
         JOIN shop s ON rc.receipt_shop_id = s.shop_id
@@ -135,8 +135,12 @@
         LEFT JOIN keywords k ON rk.keyword_id = k.keyword_id
         WHERE r.review_status = 0
         AND s.shop_id = #{shopId}
-        <if test="keyword != null and keyword != ''"> --키워드별 조회
-            AND k.keyword = #{keyword}
+        <!-- 키워드 필터 적용: 사용자가 선택한 키워드가 있을 경우, 해당 키워드들만 포함된 리뷰를 조회 -->
+        <if test="keyword != null and keyword != ''">
+            AND k.keyword IN
+            <foreach collection="keyword.split(',')" item="keyword" open="(" separator="," close=")">
+                #{keyword}
+            </foreach>
         </if>
         GROUP BY r.review_id
         <choose>
@@ -152,6 +156,7 @@
         </choose>
         LIMIT #{offset}, #{limit}
     </select>
+
 
     <!-- 업체 리뷰 개수 조회 -->
     <select id="getReviewCountByShop" resultType="int">

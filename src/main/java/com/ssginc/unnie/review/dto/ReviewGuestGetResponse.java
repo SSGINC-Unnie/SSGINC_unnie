@@ -18,21 +18,23 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class ReviewGuestGetResponse extends ReviewResponseBase {
 
-    private String memberNickName; //작성자 명
+    private String memberNickName; // 작성자 명
     private String shopName;
+    private String reviewKeyword; // 리뷰 키워드 (콤마 구분 문자열)
 
     public ReviewGuestGetResponse(long reviewId,
-                                  long reviewMemberId, //작성자 ID
-                                  long reviewReceiptId, //영수증 ID
-                                  String reviewImage, //리뷰 대표 이미지
-                                  int reviewRate, //리뷰 별점
-                                  String reviewContent, //리뷰 내용
-                                  LocalDateTime reviewDate, //리뷰 작성 일시
+                                  long reviewMemberId, // 작성자 ID
+                                  long reviewReceiptId, // 영수증 ID
+                                  String reviewImage, // 리뷰 대표 이미지
+                                  int reviewRate, // 리뷰 별점
+                                  String reviewContent, // 리뷰 내용
+                                  LocalDateTime reviewDate, // 리뷰 작성 일시
                                   String memberNickName,
-                                  String shopName)
-    {
+                                  String shopName,
+                                  String reviewKeyword) {
         super(reviewId, reviewMemberId, reviewReceiptId, reviewImage, reviewRate, reviewContent, reviewDate);
         this.memberNickName = memberNickName;
         this.shopName = shopName;
+        this.reviewKeyword = reviewKeyword;
     }
 }

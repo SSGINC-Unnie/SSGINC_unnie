@@ -5,19 +5,20 @@
 <head>
     <meta charset="UTF-8"/>
     <title>업체 리뷰 목록</title>
+    <!-- 공통 CSS -->
     <link rel="stylesheet" href="/static/css/review/reviewShop.css">
+    <!-- 폰트 (Pretendard) -->
+    <link rel="stylesheet" as="style" crossorigin
+          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
 </head>
 <body>
-<div class="container" layout:fragment="content">
+<div class="review-container" layout:fragment="content">
 
-    <!-- 상단: 리뷰 개수, 정렬 드롭다운 -->
+    <!-- 상단 영역 -->
     <div class="review-header">
-        <!-- 리뷰 개수 (예: "리뷰 19") -->
         <div class="review-count">
             <span th:text="'리뷰 ' + ${totalReviewCount}">리뷰 0</span>
         </div>
-
-        <!-- 정렬 드롭다운 -->
         <div class="review-sort">
             <select id="sortSelect">
                 <option value="newest" selected>최신순</option>
@@ -26,46 +27,68 @@
         </div>
     </div>
 
-    <!-- 키워드 버튼들 (DB에 키워드 목록이 있을 경우) -->
-    <div class="keyword-filters">
-        <button th:each="kw : ${keywords}"
-                th:text="${kw.keyword}"
-                th:attr="data-keyword-id=${kw.keywordId}"
-                onclick="onKeywordClick(this)">
-            키워드
-        </button>
+    <!-- 키워드 필터 영역 -->
+    <div class="keyword-group">
+        <input type="checkbox" id="keyword1" name="keyword" value="친절함">
+        <label for="keyword1">친절함</label>
+
+        <input type="checkbox" id="keyword2" name="keyword" value="깔끔함">
+        <label for="keyword2">깔끔함</label>
+
+        <input type="checkbox" id="keyword3" name="keyword" value="만족도 높음">
+        <label for="keyword3">만족도 높음</label>
+
+        <input type="checkbox" id="keyword4" name="keyword" value="가격이 합리적">
+        <label for="keyword4">가격이 합리적</label>
+
+        <input type="checkbox" id="keyword5" name="keyword" value="재방문 의사">
+        <label for="keyword5">재방문 의사</label>
     </div>
 
     <!-- 리뷰 목록 -->
     <div class="review-list">
-        <!-- 서버 사이드 렌더링 시: reviews가 모델에 있을 때 반복 렌더링
-             (JS로 동적 로딩 시에는 아래 코드가 없어도 됨) -->
         <div class="review-item" th:each="review : ${reviews}">
-            <div class="review-item-header">
-                <!-- 작성자 -->
-                <span class="review-author" th:text="${review.memberNickName}">작성자</span>
-                <!-- 작성일 (yyyy-MM-dd) -->
+
+            <!-- (1) 상단: 업체명(왼쪽), 날짜(오른쪽) -->
+            <div class="review-meta-top">
+                <span class="review-shopname" th:text="${review.shopName}">업체명</span>
                 <span class="review-date"
                       th:text="${#temporals.format(review.reviewDate, 'yyyy-MM-dd')}">
                     2025-03-10
                 </span>
-                <!-- 리뷰 별점 -->
-                <span class="review-rate" th:text="${review.reviewRate}">5</span>
             </div>
 
-            <!-- 업체명 (JSON에 shopName 존재) -->
-            <div class="review-shopname" th:text="${review.shopName}">
-                업체명
+            <!-- (2) 별점, 작성자 -->
+            <div class="review-author">
+                <span class="reviewer" th:text="${review.memberNickName}">작성자</span>
+            </div>
+            <div class="star-rating">
+                    <span th:each="i : ${#numbers.sequence(1,5)}"
+                          th:classappend="${i <= review.reviewRate} ? 'star full' : 'star'">
+                        ★
+                    </span>
             </div>
 
-            <!-- 리뷰 이미지 -->
+            <!-- (3) 리뷰 이미지 -->
             <div class="review-image-section">
-                <img th:src="${review.reviewImage}" alt="리뷰 이미지">
+                <img th:if="${review.reviewImage != null}"
+                     th:src="${review.reviewImage}"
+                     alt="리뷰 이미지"/>
+                <img th:if="${review.reviewImage == null}"
+                     src="/img/review/icon.png"
+                     alt="기본 이미지"/>
             </div>
 
-            <!-- 리뷰 내용 -->
+            <!-- (4) 리뷰 내용 -->
             <div class="review-content" th:text="${review.reviewContent}">
                 리뷰 내용
+            </div>
+
+            <!-- (5) 리뷰 키워드 -->
+            <div class="review-keyword-list" th:if="${review.reviewKeyword != null}">
+                <span class="keyword-pill"
+                      th:each="kw : ${#strings.arraySplit(review.reviewKeyword, ',')}"
+                      th:text="${#strings.trim(kw)}">키워드</span>
             </div>
         </div>
     </div>
