@@ -163,6 +163,10 @@ window.editDesigner = function(shopId) {
     window.location.href = `/mypage/designer/${shopId}`;
 };
 
+window.deleteDesigner = function(shopId) {
+    window.location.href = `/mypage/setDesigner/${shopId}`;
+}
+
 function deleteShop(shopId) {
     console.log("deleteShop 호출, shopId:", shopId);
     if (confirm("정말 업체를 삭제하시겠습니까?")) {

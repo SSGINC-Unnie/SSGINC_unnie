@@ -139,8 +139,6 @@ public class MyPageShopServiceImpl implements MyPageShopService {
         for (int i = 0; i < requests.size(); i++) {
             ProcedureRequest request = requests.get(i);
             MultipartFile file = files.get(i);
-
-            // 파일 저장 (임시: 로컬 저장소)
             String fileUrl = saveFile(file);
             request.setProcedureThumbnail(fileUrl);
 
@@ -169,14 +167,14 @@ public class MyPageShopServiceImpl implements MyPageShopService {
 
 
     public String saveFile(MultipartFile file) {
-        // 외부에 생성할 폴더 경로 (운영 환경에 맞게 수정하세요)
-        String uploadDir = "C:/upload/shop/";
+        // 새 업로드 경로
+        String uploadDir = "C:/workSpace/SSGINC_Unnie/src/main/resources/static/upload/";
         File folder = new File(uploadDir);
         if (!folder.exists()) {
             folder.mkdirs();  // 폴더가 없으면 생성
         }
 
-        // 원본 파일명과 안전한 파일명 생성 (UUID를 이용하여 중복 및 한글, 특수문자 처리)
+        // 원본 파일명과 안전한 파일명 생성
         String originalFileName = file.getOriginalFilename();
         String safeFileName = UUID.randomUUID().toString() + "_"
                 + originalFileName.replaceAll("[^a-zA-Z0-9._-]", "_");
@@ -188,10 +186,11 @@ public class MyPageShopServiceImpl implements MyPageShopService {
         } catch (IOException e) {
             throw new RuntimeException("파일 저장에 실패했습니다.", e);
         }
-
-        // DB에는 웹 접근 가능한 경로를 저장 (WebConfig에서 매핑한 경로와 동일하게)
+        System.out.println("Saving file to: " + destination.getAbsolutePath());
+        // DB에는 웹 접근 가능한 경로(/upload/파일명) 저장
         return "/upload/" + safeFileName;
     }
+
 
     /**
      * ======================= 업체 수정 =======================
@@ -236,36 +235,39 @@ public class MyPageShopServiceImpl implements MyPageShopService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public Integer updateDesigner(DesignerRequest request, long memberId) {
+    public Integer updateDesigner(DesignerRequest request, MultipartFile file, long memberId) {
 
         int ownerCount = myPageShopMapper.checkDesignerOwnership(request.getDesignerId(), memberId);
         if (ownerCount == 0) {
             throw new UnnieShopException(ErrorCode.FORBIDDEN);
         }
 
+        // 파일이 제공되면 저장하고 썸네일 URL 갱신
+        if (file != null && !file.isEmpty()) {
+            String fileUrl = saveFile(file);
+            request.setDesignerThumbnail(fileUrl);
+        }
+
         shopValidator.validateDesigner(request);
         log.info(String.valueOf(request.getDesignerShopId()));
 
         int shopId = myPageShopMapper.findShopIdByDesignerId(request.getDesignerId());
-
-        if(shopId<= 0) {
+        if (shopId <= 0) {
             throw new UnnieShopException(ErrorCode.SHOP_NOT_FOUND);
         }
         request.setDesignerShopId(shopId);
 
         boolean shopExists = (myPageShopMapper.existsByShopId(request.getDesignerShopId()) > 0);
-        if(!shopExists) {
+        if (!shopExists) {
             throw new UnnieShopException(ErrorCode.SHOP_ALREADY_EXISTS);
         }
-
-        boolean isDuplicateDesigner = (myPageShopMapper.existsByDesignerName(request.getDesignerName(),request.getDesignerId()) > 0);
-        if(isDuplicateDesigner) {
+        boolean isDuplicateDesigner = (myPageShopMapper.existsByDesignerName(request.getDesignerName(), request.getDesignerId()) > 0);
+        if (isDuplicateDesigner) {
             throw new UnnieShopException(ErrorCode.DESIGNER_ALREADY_EXISTS);
         }
 
-
         int res = myPageShopMapper.updateDesigner(request);
-        if(res == 0) {
+        if (res == 0) {
             throw new UnnieShopException(ErrorCode.DESIGNER_UPDATE_FAILED);
         }
 
@@ -311,10 +313,9 @@ public class MyPageShopServiceImpl implements MyPageShopService {
     /**
      * ======================= 시술 수정 =======================
      */
-
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public Integer updateProcedure(ProcedureRequest request, long memberId) {
+    public Integer updateProcedure(ProcedureRequest request, MultipartFile file, long memberId) {
         log.info(String.valueOf(request.getProcedureId()));
 
         int ownerCount = myPageShopMapper.checkProcedureOwnership(
@@ -326,29 +327,36 @@ public class MyPageShopServiceImpl implements MyPageShopService {
             throw new UnnieShopException(ErrorCode.FORBIDDEN);
         }
 
+        // 파일이 제공되면 저장하고 썸네일 URL 갱신
+        if (file != null && !file.isEmpty()) {
+            String fileUrl = saveFile(file);
+            request.setProcedureThumbnail(fileUrl);
+        }
+
         shopValidator.validateProcedure(request);
 
-        if(request.getProcedureShopId()<=0) {
+        if (request.getProcedureShopId() <= 0) {
             throw new UnnieShopException(ErrorCode.SHOP_NOT_FOUND);
         }
 
-        boolean isDuplicateProcedure = (myPageShopMapper.existByProcedureName(request.getProcedureName(),request.getProcedureShopId()) > 0);
-        if(isDuplicateProcedure) {
+        boolean isDuplicateProcedure = (myPageShopMapper.existByProcedureName(request.getProcedureName(), request.getProcedureShopId()) > 0);
+        if (isDuplicateProcedure) {
             throw new UnnieShopException(ErrorCode.PROCEDURE_ALREADY_EXISTS);
         }
         boolean shopExists = (myPageShopMapper.existsByShopId(request.getProcedureShopId()) > 0);
-        if(!shopExists) {
+        if (!shopExists) {
             throw new UnnieShopException(ErrorCode.SHOP_ALREADY_EXISTS);
         }
 
         int res = myPageShopMapper.updateProcedure(request);
-        if(res ==0) {
+        if (res == 0) {
             throw new UnnieShopException(ErrorCode.PROCEDURE_UPDATE_FAILED);
         }
 
         return request.getProcedureId();
-
     }
+
+
 
     /**
      * ======================= 업체 삭제 =======================
@@ -500,6 +508,15 @@ public class MyPageShopServiceImpl implements MyPageShopService {
         shopDetail.setProcedures(procedures); // MyShopDetailResponse에 시술 목록 추가 (필요하다면 DTO 수정)
 
         return shopDetail;
+    }
+
+    @Override
+    public ShopDetailResponse getMyShopDetail(int shopId) {
+        ShopDetailResponse shopDetail = myPageShopMapper.getShopDetail(shopId);
+        List<String> images = myPageShopMapper.getShopImages(shopId);
+        shopDetail.setShopImages(images);
+        return shopDetail;
+
     }
 
 

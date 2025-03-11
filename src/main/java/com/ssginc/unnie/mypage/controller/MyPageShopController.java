@@ -103,13 +103,14 @@ public class MyPageShopController {
     @PutMapping("/manager/designer/{designerId}")
     public ResponseEntity<ResponseDto<Map<String, Integer>>> updateDesigner(
             @PathVariable("designerId") int designerId,
-            @RequestBody DesignerRequest request,
+            @RequestPart("data") DesignerRequest request,
+            @RequestPart(value = "designerThumbnailFile", required = false) MultipartFile file,
             @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
         long MemberId = memberPrincipal.getMemberId();
         request.setDesignerId(designerId);
 
         return ResponseEntity.ok(
-                new ResponseDto<>(HttpStatus.OK.value(), "디자이너 수정이 완료되었습니다.", Map.of("DesignerId", myPageShopService.updateDesigner(request, MemberId))));
+                new ResponseDto<>(HttpStatus.OK.value(), "디자이너 수정이 완료되었습니다.", Map.of("DesignerId", myPageShopService.updateDesigner(request,file ,MemberId))));
     }
 
     /**
@@ -119,12 +120,13 @@ public class MyPageShopController {
     @PutMapping("/manager/procedure/{procedureId}")
     public ResponseEntity<ResponseDto<Map<String, Integer>>> updateProcedure(
             @PathVariable("procedureId") int procedureId,
-            @RequestBody ProcedureRequest request,
+            @RequestPart("data") ProcedureRequest request,
+            @RequestPart(value = "procedureThumbnailFile", required = false) MultipartFile file,
             @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
         request.setProcedureId(procedureId);
         long memberId = memberPrincipal.getMemberId();
         return ResponseEntity.ok(
-                new ResponseDto<>(HttpStatus.OK.value(), "시술 수정이 완료되었습니다.", Map.of("ProcedureId", myPageShopService.updateProcedure(request, memberId))));
+                new ResponseDto<>(HttpStatus.OK.value(), "시술 수정이 완료되었습니다.", Map.of("ProcedureId", myPageShopService.updateProcedure(request, file,memberId))));
     }
 
     /**
@@ -213,6 +215,19 @@ public class MyPageShopController {
     public ResponseEntity<ResponseDto<Map<String, Object>>> getProcedures (
             @PathVariable int shopId) {
         return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "시술 조회에 성공했습니다.", Map.of("shop",myPageShopService.getProceduresByShopId(shopId))));
+    }
+
+    /**
+     *
+     * shop 모든 값 조회(img 포함)
+     *
+     */
+    @GetMapping("/shopdetail/{shopId}")
+    public ResponseEntity<ResponseDto<ShopDetailResponse>> getMyShopDetails(@PathVariable int shopId) {
+        ShopDetailResponse shopDetail = myPageShopService.getMyShopDetail(shopId);
+        return ResponseEntity.ok(
+                new ResponseDto<>(HttpStatus.OK.value(), "샵 정보 조회에 성공했습니다.", shopDetail)
+        );
     }
 
 

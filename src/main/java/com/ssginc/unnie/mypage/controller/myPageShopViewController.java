@@ -46,4 +46,8 @@ public class myPageShopViewController {
         return "mypage/shop/procedure";
     }
 
+    @GetMapping("/setShop/{shopId}")
+    public String UpdateShop() {
+        return "mypage/shop/shopUpdate";
+    }
 }

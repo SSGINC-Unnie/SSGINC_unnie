@@ -18,7 +18,6 @@ public interface MyPageShopService {
     void createProcedures(List<ProcedureRequest> requests, List<MultipartFile> files);
 
     Integer updateShop(ShopUpdateRequest request, long memberId);
-    Integer updateDesigner(DesignerRequest request, long memberId);
 
     @Transactional(readOnly = true)
     List<MyDesignerDetailResponse> getDesignersByShopId(int shopId);
@@ -26,7 +25,12 @@ public interface MyPageShopService {
     @Transactional(readOnly = true)
     List<MyProcedureDetailResponse> getProceduresByShopId(int shopId);
 
-    Integer updateProcedure(ProcedureRequest request, long memberId);
+    @Transactional(rollbackFor = Exception.class)
+    Integer updateDesigner(DesignerRequest request, MultipartFile file, long memberId);
+
+    @Transactional(rollbackFor = Exception.class)
+    Integer updateProcedure(ProcedureRequest request, MultipartFile file, long memberId);
+
     Integer deleteShop(int shopId, long currentMemberId);
     Integer deleteDesigner(int designerId, long currentMemberId);
     Integer deleteProcedure(int procedureId, long currentMemberId);
@@ -38,5 +42,8 @@ public interface MyPageShopService {
     PageInfo<ShopResponse> getMyShops(long memberId, int page, int pageSize);
 
     MyShopDetailResponse getMyShopsDetail(int shopId);
+
+    ShopDetailResponse getMyShopDetail(int shopId);
+
 
 }

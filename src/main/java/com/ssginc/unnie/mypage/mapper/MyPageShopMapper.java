@@ -75,5 +75,11 @@ public interface MyPageShopMapper {
     int getTotalShopCountByMemberId(long memberId);
 
 
+    ShopDetailResponse getShopDetail(int shopId);
+
+    List<String> getShopImages(int shopId);
+
+
+
 
 }

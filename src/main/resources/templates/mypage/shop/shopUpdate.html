@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>업체 등록</title>
+  <title>업체 수정</title>
   <!-- (필수) 카카오 주소 API 스크립트: 실제 배포 시, JavaScript 키 & 도메인 등록 필요 -->
   <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
   <link rel="stylesheet" href="/css/mypage/shop/shopInsert.css">
@@ -10,7 +10,7 @@
 <body>
 
 <div class="container">
-  <h1>업체 등록</h1>
+  <h1>업체 수정</h1>
 
   <!-- 상단 단계 표시 -->
   <div class="step-indicator">
@@ -20,7 +20,7 @@
     </div>
     <div class="step">
       <div class="step-circle pink">2</div>
-      <div class="step-label pink">업체 등록</div>
+      <div class="step-label pink">업체 수정</div>
     </div>
     <div class="step">
       <div class="step-circle gray">3</div>
@@ -32,7 +32,7 @@
     </div>
   </div>
 
-  <!-- 실제 폼 (HTML5 기본 submit -> JS fetch 로직 사용 예정) -->
+  <!-- 실제 폼 -->
   <form id="shopForm">
     <!-- 1) 사업자 확인 -->
     <div class="form-group">
@@ -117,31 +117,31 @@
       <textarea id="shopIntroduction" name="shopIntroduction" rows="3" placeholder="100자 이내로 입력해주세요" required></textarea>
     </div>
 
+    <!-- 업체 사진 등록 -->
     <label><strong>업체 사진 등록</strong> <span class="required">*</span></label>
     <div id="designerPhotoContainer">
       <div class="upload-area">
         <label class="upload-icon">
           <img src="/img/shop/camera.png" alt="Upload" style="width: 20px; height: 20px; object-fit: contain;">
         </label>
-        <!-- 취소 버튼 추가 (초기엔 숨김) -->
         <button type="button" class="cancel-btn" style="display: none;">X</button>
         <input type="file" accept="image/*" style="display: none;">
       </div>
     </div>
 
-
+    <div id="shopImagesContainer" style="margin-top: 10px;">
 
     <!-- 버튼 영역 -->
-    <!-- 수정 후 버튼 영역: 왼쪽 취소, 가운데 완료, 오른쪽 다음 -->
     <div class="button-group">
       <button type="button" class="btn-cancel" onclick="history.back()">취소</button>
-      <button type="button" class="btn-complete" id="completeBtn">완료</button>
-      <button type="button" class="btn-next" id="submitBtn">다음</button>
+      <button type="button" class="btn-complete" id="completeBtn">수정 완료</button>
+      <!-- 신규 등록 버튼은 숨김 처리 -->
+      <button type="button" class="btn-next" id="submitBtn" style="display: none;">다음</button>
     </div>
 
   </form>
 </div>
 
-<script src="/js/mypage/shop/shopInsert.js"></script>
+<script src="/js/mypage/shop/shopUpdate.js"></script>
 </body>
 </html>
