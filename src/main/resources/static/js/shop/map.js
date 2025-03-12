@@ -56,10 +56,13 @@ function removeMarkers() {
 }
 
 // 마커 업데이트
-async function updateMarkers(shops) {
+function updateMarkers(shops) {
     removeMarkers();
     const visibleShops = filterShopsInView(shops);
+    console.log("Visible shops for markers:", visibleShops); // 필터링된 업체 목록 로그
+
     visibleShops.forEach(shop => {
+        console.log(`Creating marker for ${shop.shopName}: (${shop.shopLatitude}, ${shop.shopLongitude})`);
         const marker = new naver.maps.Marker({
             position: new naver.maps.LatLng(shop.shopLatitude, shop.shopLongitude),
             map: map,
@@ -72,12 +75,14 @@ async function updateMarkers(shops) {
         });
         markers.push(marker);
 
-        // 마커 클릭 시 상세 페이지로 이동
+        // 마커 클릭 시 로그 출력 및 상세 페이지로 이동
         naver.maps.Event.addListener(marker, 'click', function () {
+            console.log("Marker clicked for shop:", shop.shopName);
             window.location.href = `shopdetail?shopId=${shop.shopId}`;
         });
     });
 }
+
 
 // 지도 초기화 함수
 async function initMap(lat, lng, shops) {

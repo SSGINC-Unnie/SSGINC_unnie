@@ -185,7 +185,7 @@ document.querySelector('.btn-complete').addEventListener('click', async function
         // 성공 후, pendingDesigners 배열 및 UI 초기화
         pendingDesigners = [];
         document.querySelector('.designer-list').innerHTML = '';
-        window.location.href = `/index.html`;
+        window.location.href = '';
 
     } catch (error) {
         console.error(error);

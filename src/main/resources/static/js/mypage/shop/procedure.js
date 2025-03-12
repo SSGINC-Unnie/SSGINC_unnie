@@ -217,7 +217,7 @@ document.querySelector('.btn-proc-save-all').addEventListener('click', function(
     event.preventDefault();
     console.log("현재 pendingProcedures 목록", pendingProcedures);
     alert("시술 수정 작업이 완료되었습니다.");
-    window.location.href = '/mypage/myshop';
+    window.location.href = '';
 });
 
 // 수정/삭제 이벤트 위임 (pendingProcedures 배열과 UI 동기화)
