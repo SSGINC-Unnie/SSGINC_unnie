@@ -95,16 +95,7 @@ h1 {
 }
 
 /* 연결선 스타일 */
-.step::before {
-    content: "";
-    position: absolute;
-    top: 20px;
-    left: -60px;
-    width: 120px;
-    height: 1px;
-    border-top: 2px dotted #ff3a7a;
-    z-index: 1;
-}
+
 
 /* ================== 폼 스타일 ================== */
 .form-group {
@@ -129,6 +120,9 @@ textarea {
     border-radius: 4px;
     font-size: 0.9rem;
 }
+
+
+
 
 textarea {
     resize: vertical;
@@ -235,11 +229,21 @@ textarea {
 
 button {
     border: none;
-    padding: 12px 20px;
+    padding: 9px 11px;
     border-radius: 4px;
     font-size: 0.9rem;
     cursor: pointer;
+    white-space: nowrap;
+    color: white;
 }
+
+input:read-only {
+    background-color: #f0f0f0;
+    cursor: not-allowed;
+    color: #999;
+}
+
+
 
 .btn-cancel {
     background-color: #fff;
@@ -261,7 +265,8 @@ button {
 }
 
 .btn-complete {
-    background-color: #007bff;
+    background-color: #FF3479;
+    color: white;
 }
 
 .upload-icon {
@@ -269,7 +274,10 @@ button {
     height: 80px;
     border: 1px solid #ddd;
     border-radius: 4px;
-    overflow: hidden; /* 이미지 넘침 방지 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
     position: relative;
 }
 

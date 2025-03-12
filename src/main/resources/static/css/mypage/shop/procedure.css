@@ -407,3 +407,14 @@ textarea {
     color: #666;
     line-height: 1.4;
 }
+.btn-proc-save {
+    background-color: #ff3479;
+    color: white;
+    border: 2px solid #ff3479;
+    padding: 12px 30px;
+    border-radius: 30px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}

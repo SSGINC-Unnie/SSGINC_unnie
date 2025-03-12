@@ -127,7 +127,7 @@ public class AdminShopServiceImpl implements AdminShopService {
     @Override
     public Integer refuseShop(int shopId) {
 
-        int deletedRows = adminShopMapper.refuseShop(shopId);
+        int deletedRows = adminShopMapper.deleteShopCascade(shopId);
         if (deletedRows == 0) {
             log.error("업체 거절 처리 실패 - shopId: {}", shopId);
             throw new UnnieShopException(ErrorCode.SHOP_REFUSE_FAILED);

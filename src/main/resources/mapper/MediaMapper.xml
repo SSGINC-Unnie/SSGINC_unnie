@@ -20,4 +20,16 @@
                 #{newFileName}
             )
     </insert>
+    <delete id="deleteByFileUrn">
+        DELETE FROM media WHERE media_urn = #{fileUrn}
+    </delete>
+
+    <select id="selectFileUrnByTarget" resultType="String">
+        SELECT media_urn
+        FROM media
+        WHERE media_target_type = #{targetType}
+          AND media_target_id = #{targetId}
+    </select>
+
 </mapper>
+

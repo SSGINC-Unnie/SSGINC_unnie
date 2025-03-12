@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -86,4 +87,40 @@ public class MediaServiceImpl implements MediaService {
         // 8) 최종적으로 /upload/... 경로 반환
         return fileUrn;
     }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void deleteFile(String fileUrn) {
+        // fileUrn이 "/upload/..." 형식이므로, 접두어 제거하여 새 파일명 추출
+        String prefix = "/upload/";
+        if (!fileUrn.startsWith(prefix)) {
+            throw new UnnieMediaException(ErrorCode.INVALID_FILE_TARGET_TYPE); // 또는 적절한 에러 코드 사용
+        }
+        String newFileName = fileUrn.substring(prefix.length());
+        String physicalPath = uploadPath + newFileName;
+
+        // 물리 파일 삭제
+        File file = new File(physicalPath);
+        if (file.exists() && !file.delete()) {
+            log.warn("물리 파일 삭제 실패: " + physicalPath);
+        }
+
+        // DB에서 해당 파일 정보 삭제
+        int rows = mediaMapper.deleteByFileUrn(fileUrn);
+        if (rows == 0) {
+            throw new UnnieMediaException(ErrorCode.FILE_NOT_FOUND); // FILE_NOT_FOUND 코드가 존재해야 함
+        }
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<String> getFileUrns(String targetType, long targetId) {
+        List<String> fileUrnList = mediaMapper.selectFileUrnByTarget(targetType.toUpperCase(), targetId);
+        if (fileUrnList == null || fileUrnList.isEmpty()) {
+            throw new UnnieMediaException(ErrorCode.FILE_NOT_FOUND);
+        }
+        // 중복된 경우 첫 번째 결과를 사용합니다.
+        return fileUrnList;
+    }
+
 }

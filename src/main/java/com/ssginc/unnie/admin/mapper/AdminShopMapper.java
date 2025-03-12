@@ -22,8 +22,7 @@ public interface AdminShopMapper {
 
     String findShopAddressById(@Param("shopId") int shopId);
 
-    int refuseShop(@Param("shopId") int shopId);
-
+    int deleteShopCascade(int shopId);
 
     Integer findShopMemberId(int shopId);
 

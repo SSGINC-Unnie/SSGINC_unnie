@@ -190,6 +190,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     const uploadArea = target.closest('.upload-area');
                     const previewImg = uploadArea.querySelector('img');
                     previewImg.src = ev.target.result;
+                    previewImg.style.width = "80px";
+                    previewImg.style.height = "80px";
+                    previewImg.style.objectFit = "cover";
                     // X(취소) 버튼 표시
                     const cancelBtn = uploadArea.querySelector('.cancel-btn');
                     if (cancelBtn) {

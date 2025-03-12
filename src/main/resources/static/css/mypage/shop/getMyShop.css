@@ -115,3 +115,23 @@ img.thumbnail {
 }
 
 
+.media-images {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.media-image {
+    width: calc(50% - 10px); /* 한 줄에 2개씩, gap 고려 */
+    /* 필요하면 width: 50%; 로도 가능 */
+}
+
+.media-image img {
+    width: 100%;        /* 부모 너비에 맞춤 */
+    height: 200px;      /* 원하는 높이로 고정 */
+    object-fit: cover;  /* 이미지 비율 유지하며 잘라내기 */
+    display: block;
+    border-radius: 4px; /* 모서리 둥글게 (선택) */
+}
+

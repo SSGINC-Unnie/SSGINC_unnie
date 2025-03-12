@@ -148,7 +148,7 @@ document.querySelector('.btn-next').addEventListener('click', async function(eve
     }
 });
 
-document.querySelector('.completeBtn').addEventListener('click', async function(event) {
+document.querySelector('.btn-complete').addEventListener('click', async function(event) {
     event.preventDefault();
     if (pendingDesigners.length === 0) {
         alert("저장할 디자이너 정보가 없습니다.");
@@ -185,7 +185,7 @@ document.querySelector('.completeBtn').addEventListener('click', async function(
         // 성공 후, pendingDesigners 배열 및 UI 초기화
         pendingDesigners = [];
         document.querySelector('.designer-list').innerHTML = '';
-        window.location.href = `/index.html`;
+        window.location.href = '';
 
     } catch (error) {
         console.error(error);

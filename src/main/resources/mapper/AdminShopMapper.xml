@@ -2,11 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ssginc.unnie.admin.mapper.AdminShopMapper">
-    <delete id="refuseShop" parameterType="int">
-        DELETE FROM shop
-        WHERE shop_id = #{shopId}
-          AND shop_status = 0
-    </delete>
+    <select id="deleteShopCascade" statementType="CALLABLE" parameterType="int" resultType="int">
+        { CALL deleteShopCascade(#{shopId}) }
+    </select>
 
 
 

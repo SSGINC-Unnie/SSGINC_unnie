@@ -1,7 +1,6 @@
 let lastOpenedDropdown = null; // 마지막으로 열린 드롭다운 추적
 document.addEventListener('DOMContentLoaded', fetchShops);
 
-
 // 드롭다운 토글 함수
 function toggleDropdown(id) {
     const dropdown = document.getElementById(id);
@@ -58,7 +57,6 @@ async function fetchShops() {
     }
 }
 
-
 // 업체 상세 데이터를 백엔드에서 받아와 상세 정보를 표시하는 함수
 async function fetchShopDetail(shopId, dropdownId) {
     try {
@@ -67,6 +65,41 @@ async function fetchShopDetail(shopId, dropdownId) {
         const shop = data.data.shop;
         const shopDetailContainer = document.getElementById(dropdownId);
 
+        // 미디어 이미지 가져오기 (media_target_type은 "SHOP", media_target_id는 shop.shopId)
+        let mediaImageHTML = '';
+        try {
+            console.log("미디어 정보 요청: targetType=SHOP, targetId:", shop.shopId);
+            const mediaResponse = await fetch(`/api/media/file?targetType=SHOP&targetId=${shop.shopId}`);
+            const mediaData = await mediaResponse.json();
+            console.log("미디어 API 응답 데이터:", mediaData);
+            if (mediaData.data) {
+                if (Array.isArray(mediaData.data.fileUrns) && mediaData.data.fileUrns.length > 0) {
+                    mediaImageHTML = `<div class="media-images">` +
+                        mediaData.data.fileUrns.map(fileUrn => `
+                            <div class="media-image">
+                                <img src="${fileUrn}" alt="업체 이미지">
+                            </div>
+                        `).join('') +
+                        `</div>`;
+                } else if (mediaData.data.fileUrn) {
+                    mediaImageHTML = `
+                        <div class="media-images">
+                            <div class="media-image">
+                                <img src="${mediaData.data.fileUrn}" alt="업체 이미지">
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    console.log("미디어 데이터에 이미지 정보 없음");
+                }
+            } else {
+                console.log("미디어 데이터가 존재하지 않음");
+            }
+        } catch (error) {
+            console.error("미디어 정보를 불러오는 중 오류 발생:", error);
+        }
+
+        // 1) 디자이너 목록 HTML 생성
         let designerHTML = '';
         if (shop.designers && shop.designers.length > 0) {
             designerHTML = shop.designers.map(designer => `
@@ -82,6 +115,7 @@ async function fetchShopDetail(shopId, dropdownId) {
             designerHTML = '<p>디자이너 정보가 없습니다.</p>';
         }
 
+        // 2) 시술 목록 HTML 생성
         let procedureHTML = '';
         if (shop.procedures && shop.procedures.length > 0) {
             procedureHTML = shop.procedures.map(procedure => `
@@ -97,8 +131,10 @@ async function fetchShopDetail(shopId, dropdownId) {
             procedureHTML = '<p>시술 정보가 없습니다.</p>';
         }
 
+        // 3) 최종 HTML 조합 (미디어 이미지 포함)
         shopDetailContainer.innerHTML = `
             <div class="section-title">업체 정보</div>
+            ${mediaImageHTML}
             <p><strong>업체명:</strong> ${shop.shopName}</p>
             <p><strong>업체 위치:</strong> ${shop.shopLocation}</p>
             <p><strong>카테고리:</strong> ${shop.shopCategory}</p>
@@ -106,7 +142,7 @@ async function fetchShopDetail(shopId, dropdownId) {
             <p><strong>전화번호:</strong> ${shop.shopTel}</p>
             <p><strong>업체 소개:</strong> ${shop.shopIntroduction}</p>
             <p><strong>휴무일:</strong> ${shop.shopClosedDay}</p>
-            <p><strong>사업자 등록번호:</strong> ${shop.shopBusinessNumber}</p>
+            <p><strong>사업자 등록번호:</strong> ${shop.shopClosedDay}</p>
             <p><strong>대표자명:</strong> ${shop.shopRepresentationName}</p>
 
             <div class="section-title">디자이너 정보</div>
@@ -147,11 +183,8 @@ function approveShop(shopId) {
         })
         .then(data => {
             console.log("업체 승인 처리 완료:", data);
-
-            // 승인 완료 후 추가 동작 구현 (예: UI 업데이트, 알림 등)
             alert("업체 승인이 완료되었습니다.");
             location.reload();
-
         })
         .catch(error => {
             console.error("업체 승인 처리 중 오류 발생:", error);
@@ -159,8 +192,6 @@ function approveShop(shopId) {
         });
 }
 
-
-// 거절 버튼 클릭 시 처리할 함수 (추후 실제 로직 구현 필요)
 function rejectShop(shopId) {
     fetch(`/api/admin/shop/approve/${shopId}`, {
         method: "DELETE",
@@ -176,16 +207,11 @@ function rejectShop(shopId) {
         })
         .then(data => {
             console.log("업체 거절 처리 완료:", data);
-            // 거절 완료 후 추가 동작 구현 (예: UI 업데이트, 알림 등)
             alert("업체 거절 처리가 완료되었습니다.");
             location.reload();
-
         })
         .catch(error => {
             console.error("업체 거절 처리 중 오류 발생:", error);
             alert("업체 거절 처리에 실패하였습니다.");
         });
 }
-
-
-

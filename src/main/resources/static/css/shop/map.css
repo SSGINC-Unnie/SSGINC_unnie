@@ -223,3 +223,67 @@
     color: #999;
     font-size: 13px;
 }
+
+/* 캐러셀 전체 컨테이너 */
+.media-carousel {
+    position: relative;
+    width: 100%;           /* 원하는 너비 (부모 .shop-thumbs 등에서 제한 가능) */
+    overflow: hidden;      /* 슬라이드 넘치는 부분 숨김 */
+    margin-bottom: 10px;   /* 여백 */
+}
+
+/* 좌우 버튼 */
+.media-carousel .arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0,0,0,0.4);
+    color: #fff;
+    border: none;
+    font-size: 24px;
+    padding: 8px 12px;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.media-carousel .arrow.left {
+    left: 0;
+}
+
+.media-carousel .arrow.right {
+    right: 0;
+}
+
+.media-carousel .arrow:hover {
+    background-color: rgba(0,0,0,0.7);
+}
+
+/* 슬라이드 래퍼: 가로로 이미지를 나열 (flex) */
+.carousel-wrapper {
+    display: flex;
+    transition: transform 0.3s ease;  /* 슬라이드 애니메이션 */
+}
+
+/* 개별 이미지 박스: 한 화면에 3개(100% / 3) */
+.media-image {
+    flex: 0 0 calc(100% / 3);
+    box-sizing: border-box;
+    padding: 5px;
+    text-align: center;
+}
+
+/* 이미지 높이를 고정하고, 넘치는 부분은 잘라냄 */
+.media-image img {
+    width: 100%;
+    height: 150px;       /* 원하는 높이로 고정 (예: 150px) */
+    object-fit: cover;   /* 가로세로 비율 유지하며 잘라냄 */
+    display: block;
+    border-radius: 4px;
+}
+
+.shop-img {
+    width: 150px;      /* 원하는 폭 */
+    height: 150px;     /* 원하는 높이 */
+    object-fit: cover; /* 이미지 비율 유지하며 채우기 */
+    display: block;
+}

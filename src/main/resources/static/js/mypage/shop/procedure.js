@@ -7,7 +7,7 @@ function loadProcedures() {
     // URL에서 shopId 추출 (예: /manager/procedure/123)
     const urlParts = window.location.pathname.split('/');
     const shopId = parseInt(urlParts[urlParts.length - 1]);
-    console.log("shopId", shopId)
+    console.log("shopId", shopId);
 
     // 백엔드에서 /api/mypage/manager/procedure/{shopId} 호출
     // -> 백엔드가 { data: { shop: [ {procedureId, procedureName, procedurePrice, procedureThumbnail}, ... ] } } 형태로 반환한다고 가정
@@ -159,7 +159,8 @@ document.querySelector('.btn-proc-save').addEventListener('click', function(even
             procedurePrice: procedurePrice,
             file: file,
             previewImage: previewImage.src,
-            procedureId: existingProcedureId
+            procedureId: existingProcedureId,
+            procedureShopId: shopId
         };
 
         // UI 갱신
@@ -167,19 +168,31 @@ document.querySelector('.btn-proc-save').addEventListener('click', function(even
         editingProcedureItem.querySelector('.procedure-price').textContent = procedurePrice;
         editingProcedureItem.querySelector('.procedure-img').src = previewImage.src;
 
-        // 백엔드에 수정 요청 (PUT)
-        const requestPayload = {
+        // **중요**: payload 변수를 먼저 선언
+        const payload = {
             procedureName: procedureName,
             procedurePrice: procedurePrice,
             procedureShopId: shopId,
-            procedureThumbnail: previewImage.src,
             procedureId: existingProcedureId
         };
 
+        // 파일/기존 썸네일 처리
+        const file1 = document.getElementById('procedureFileInput').files[0] || file;
+
+        // FormData 생성
+        const formData = new FormData();
+        formData.append("data", new Blob([JSON.stringify(payload)], { type: "application/json" }));
+        if (file1) {
+            formData.append("procedureThumbnailFile", file1);
+        } else {
+            // 새 파일이 없으면 기존 미리보기 URL을 전송
+            formData.append("procedureThumbnail", previewImage.src);
+        }
+
+        // PUT 요청 전송
         fetch(`/api/mypage/manager/procedure/${existingProcedureId}`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(requestPayload)
+            body: formData
         })
             .then(response => response.json())
             .then(result => {
@@ -204,9 +217,8 @@ document.querySelector('.btn-proc-save-all').addEventListener('click', function(
     event.preventDefault();
     console.log("현재 pendingProcedures 목록", pendingProcedures);
     alert("시술 수정 작업이 완료되었습니다.");
-    window.location.href = '/mypage/myshop';
+    window.location.href = '';
 });
-
 
 // 수정/삭제 이벤트 위임 (pendingProcedures 배열과 UI 동기화)
 document.querySelector('.procedure-list').addEventListener('click', function(event) {
