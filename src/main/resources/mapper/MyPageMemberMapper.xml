@@ -5,12 +5,13 @@
 
     <select id="findById" parameterType="long" resultType="com.ssginc.unnie.mypage.dto.member.MyPageMemberResponse">
         SELECT
+            member_id,
             member_email,
             member_name,
             member_nickname,
             member_phone,
             member_profile,
-            member_pw
+            member_provider
         FROM member
         WHERE member_id = #{memberId}
     </select>
@@ -26,23 +27,31 @@
         SELECT * FROM member WHERE member_id = #{memberId}
     </select>
 
-    <update id="updateMember" parameterType="com.ssginc.unnie.member.vo.Member">
+    <update id="updateProfile">
         UPDATE member
-        <set>
-            <if test="memberNickname != null and memberNickname != ''">
-                member_nickname = #{memberNickname},
-            </if>
-            <if test="memberPhone != null and memberPhone != ''">
-                member_phone = #{memberPhone},
-            </if>
-            <if test="memberPw != null and memberPw != ''">
-                member_pw = #{memberPw},
-            </if>
-            <if test="memberProfile != null and memberProfile != ''">
-                member_profile = #{memberProfile},
-            </if>
+        SET member_profile = #{memberProfile},
             member_updated_at = current_timestamp
-        </set>
+        WHERE member_id = #{memberId}
+    </update>
+
+    <update id="updateNickname">
+        UPDATE member
+        SET member_nickname = #{memberNickname},
+            member_updated_at = current_timestamp
+        WHERE member_id = #{memberId}
+    </update>
+
+    <update id="updatePhone">
+        UPDATE member
+        SET member_phone = #{memberPhone},
+            member_updated_at = current_timestamp
+        WHERE member_id = #{memberId}
+    </update>
+
+    <update id="updatePassword">
+        UPDATE member
+        SET member_pw = #{memberPw},
+            member_updated_at = current_timestamp
         WHERE member_id = #{memberId}
     </update>
 

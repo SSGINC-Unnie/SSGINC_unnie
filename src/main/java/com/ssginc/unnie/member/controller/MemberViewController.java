@@ -8,7 +8,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
+/**
+ * 회원가입, 로그인, 아이디/비밀번호 찾기 view 컨트롤러
+ */
 @Slf4j
 @Controller
 @RequiredArgsConstructor
@@ -24,23 +26,6 @@ public class MemberViewController {
     public String registerForm() {
        return "member/register";
    }
-
-   @GetMapping("/checkEmail")
-   @ResponseBody
-   public ResponseEntity<Boolean> checkMemberEmail(String email) {
-       // count가 0이면 사용 가능한 이메일
-       int count = registerService.checkMemberEmail(email);
-       boolean isUsable = (count == 0);
-       return ResponseEntity.ok(isUsable);
-   }
-
-    @GetMapping("/checkNickname")
-    @ResponseBody
-    public ResponseEntity<Boolean> checkMemberNickname(String nickname) {
-        int count = registerService.checkMemberNickname(nickname);
-        boolean isUsable = (count == 0);
-        return ResponseEntity.ok(isUsable);
-    }
 
     /**
      * 로그인 폼
