@@ -7,6 +7,39 @@
     box-sizing: border-box;
 }
 
+.login-prompt {
+    text-align: center;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #fff;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    max-width: 640px;
+}
+
+.login-prompt p {
+    font-size: 18px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.login-button {
+    display: inline-block;
+    background-color: #ff3479;
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.login-button:hover {
+    background-color: #e02f70;
+}
+
 .review-container {
     max-width: 640px;
     margin: 0 auto;
@@ -175,6 +208,9 @@
     color: #333;
     margin-bottom: 10px; /* 간격 살짝 늘림 */
     flex-grow: 1; /* 남는 공간을 채워 균형을 맞춤 */
+    word-wrap: break-word;      /* 긴 단어 자동 줄바꿈 (구형 브라우저) */
+    overflow-wrap: break-word;  /* 긴 단어 자동 줄바꿈 (표준) */
+    white-space: pre-wrap;      /* 공백과 줄바꿈을 유지하면서 넘치면 개행 */
 }
 
 /* 리뷰 키워드 */

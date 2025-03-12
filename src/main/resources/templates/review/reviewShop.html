@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
       layout:decorate="~{layout}">
 <head>
     <meta charset="UTF-8"/>
@@ -12,83 +13,91 @@
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
 </head>
 <body>
+
+
 <div class="review-container" layout:fragment="content">
-
-    <!-- 상단 영역 -->
-    <div class="review-header">
-        <div class="review-count">
-            <span th:text="'리뷰 ' + ${totalReviewCount}">리뷰 0</span>
-        </div>
-        <div class="review-sort">
-            <select id="sortSelect">
-                <option value="newest" selected>최신순</option>
-                <option value="oldest">오래된순</option>
-            </select>
-        </div>
+    <div class="login-prompt" sec:authorize="!isAuthenticated()">
+        <p>리뷰를 더 많이 보기 위해서는 로그인이 필요합니다!</p>
+        <a href="/member/login" class="login-button">로그인 하러가기</a>
     </div>
 
-    <!-- 키워드 필터 영역 -->
-    <div class="keyword-group">
-        <input type="checkbox" id="keyword1" name="keyword" value="친절함">
-        <label for="keyword1">친절함</label>
+    <div class="body-wrapper" sec:authorize="isAuthenticated()">
+        <!-- 상단 영역 -->
+        <div class="review-header">
+            <div class="review-count">
+                <span th:text="'리뷰 ' + ${totalReviewCount}">리뷰 0</span>
+            </div>
+            <div class="review-sort">
+                <select id="sortSelect">
+                    <option value="newest" selected>최신순</option>
+                    <option value="oldest">오래된순</option>
+                </select>
+            </div>
+        </div>
 
-        <input type="checkbox" id="keyword2" name="keyword" value="깔끔함">
-        <label for="keyword2">깔끔함</label>
+        <!-- 키워드 필터 영역 -->
+        <div class="keyword-group">
+            <input type="checkbox" id="keyword1" name="keyword" value="친절함">
+            <label for="keyword1">친절함</label>
 
-        <input type="checkbox" id="keyword3" name="keyword" value="만족도 높음">
-        <label for="keyword3">만족도 높음</label>
+            <input type="checkbox" id="keyword2" name="keyword" value="깔끔함">
+            <label for="keyword2">깔끔함</label>
 
-        <input type="checkbox" id="keyword4" name="keyword" value="가격이 합리적">
-        <label for="keyword4">가격이 합리적</label>
+            <input type="checkbox" id="keyword3" name="keyword" value="만족도 높음">
+            <label for="keyword3">만족도 높음</label>
 
-        <input type="checkbox" id="keyword5" name="keyword" value="재방문 의사">
-        <label for="keyword5">재방문 의사</label>
-    </div>
+            <input type="checkbox" id="keyword4" name="keyword" value="가격이 합리적">
+            <label for="keyword4">가격이 합리적</label>
 
-    <!-- 리뷰 목록 -->
-    <div class="review-list">
-        <div class="review-item" th:each="review : ${reviews}">
+            <input type="checkbox" id="keyword5" name="keyword" value="재방문 의사">
+            <label for="keyword5">재방문 의사</label>
+        </div>
 
-            <!-- (1) 상단: 업체명(왼쪽), 날짜(오른쪽) -->
-            <div class="review-meta-top">
-                <span class="review-shopname" th:text="${review.shopName}">업체명</span>
-                <span class="review-date"
-                      th:text="${#temporals.format(review.reviewDate, 'yyyy-MM-dd')}">
+        <!-- 리뷰 목록 -->
+        <div class="review-list">
+            <div class="review-item" th:each="review : ${reviews}">
+
+                <!-- (1) 상단: 업체명(왼쪽), 날짜(오른쪽) -->
+                <div class="review-meta-top">
+                    <span class="review-shopname" th:text="${review.shopName}">업체명</span>
+                    <span class="review-date"
+                          th:text="${#temporals.format(review.reviewDate, 'yyyy-MM-dd')}">
                     2025-03-10
                 </span>
-            </div>
+                </div>
 
-            <!-- (2) 별점, 작성자 -->
-            <div class="review-author">
-                <span class="reviewer" th:text="${review.memberNickName}">작성자</span>
-            </div>
-            <div class="star-rating">
+                <!-- (2) 별점, 작성자 -->
+                <div class="review-author">
+                    <span class="reviewer" th:text="${review.memberNickName}">작성자</span>
+                </div>
+                <div class="star-rating">
                     <span th:each="i : ${#numbers.sequence(1,5)}"
                           th:classappend="${i <= review.reviewRate} ? 'star full' : 'star'">
                         ★
                     </span>
-            </div>
+                </div>
 
-            <!-- (3) 리뷰 이미지 -->
-            <div class="review-image-section">
-                <img th:if="${review.reviewImage != null}"
-                     th:src="${review.reviewImage}"
-                     alt="리뷰 이미지"/>
-                <img th:if="${review.reviewImage == null}"
-                     src="/img/review/icon.png"
-                     alt="기본 이미지"/>
-            </div>
+                <!-- (3) 리뷰 이미지 -->
+                <div class="review-image-section">
+                    <img th:if="${review.reviewImage != null}"
+                         th:src="${review.reviewImage}"
+                         alt="리뷰 이미지"/>
+                    <img th:if="${review.reviewImage == null}"
+                         src="/img/review/icon.png"
+                         alt="기본 이미지"/>
+                </div>
 
-            <!-- (4) 리뷰 내용 -->
-            <div class="review-content" th:text="${review.reviewContent}">
-                리뷰 내용
-            </div>
+                <!-- (4) 리뷰 내용 -->
+                <div class="review-content" th:text="${review.reviewContent}">
+                    리뷰 내용
+                </div>
 
-            <!-- (5) 리뷰 키워드 -->
-            <div class="review-keyword-list" th:if="${review.reviewKeyword != null}">
+                <!-- (5) 리뷰 키워드 -->
+                <div class="review-keyword-list" th:if="${review.reviewKeyword != null}">
                 <span class="keyword-pill"
                       th:each="kw : ${#strings.arraySplit(review.reviewKeyword, ',')}"
                       th:text="${#strings.trim(kw)}">키워드</span>
+                </div>
             </div>
         </div>
     </div>

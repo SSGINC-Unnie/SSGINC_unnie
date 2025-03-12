@@ -1,3 +1,9 @@
+// 전역 변수 설정
+let offset = 0;
+const limit = 10;
+let isLoading = false;
+let allLoaded = false;
+
 /**
  * URL의 쿼리 파라미터에서 shopId 추출
  */
@@ -53,9 +59,18 @@ function loadReviewCount(shopId) {
 
 /**
  * 리뷰 목록을 로드하여 화면에 렌더링
+ * @param {string} shopId
+ * @param {string} keyword
+ * @param {string} sortType
+ * @param {number} offsetParam
+ * @param {number} limitParam
+ * @param {boolean} isRefresh - true이면 컨테이너를 초기화 후 로드, false이면 append 모드로 추가
  */
-function loadReviews(shopId, keyword, sortType, offset, limit) {
-    const url = `/api/review/shop/${shopId}?keyword=${encodeURIComponent(keyword)}&sortType=${sortType}&offset=${offset}&limit=${limit}`;
+function loadReviews(shopId, keyword, sortType, offsetParam, limitParam, isRefresh = false) {
+    if (isLoading || allLoaded) return;
+    isLoading = true;
+
+    const url = `/api/review/shop/${shopId}?keyword=${encodeURIComponent(keyword)}&sortType=${sortType}&offset=${offsetParam}&limit=${limitParam}`;
     fetch(url)
         .then(response => response.json())
         .then(data => {
@@ -63,44 +78,55 @@ function loadReviews(shopId, keyword, sortType, offset, limit) {
             const reviewListContainer = document.querySelector('.review-list');
             if (!reviewListContainer) return;
 
-            // 기존 리뷰 초기화
-            reviewListContainer.innerHTML = "";
+            // 만약 새로 로드하는 경우 컨테이너 초기화
+            if (isRefresh) {
+                reviewListContainer.innerHTML = "";
+            }
 
-            // 각 리뷰에 대해 HTML 생성
-            reviews.forEach(review => {
-                const reviewItem = document.createElement('div');
-                reviewItem.className = "review-item";
+            // 리뷰가 없으면 모두 로드되었다고 표시
+            if (!reviews || reviews.length === 0) {
+                allLoaded = true;
+            } else {
+                reviews.forEach(review => {
+                    const reviewItem = document.createElement('div');
+                    reviewItem.className = "review-item";
 
-                const formattedDate = formatDate(review.reviewDate);
-                const starRatingHTML = getStarRatingHTML(review.reviewRate);
+                    const formattedDate = formatDate(review.reviewDate);
+                    const starRatingHTML = getStarRatingHTML(review.reviewRate);
 
-                // review.reviewKeyword가 "친절함, 깔끔함, 재방문 의사"와 같은 콤마 구분 문자열이라고 가정
-                const keywordHTML = review.reviewKeyword
-                    ? review.reviewKeyword.split(',').map(keyword => `<span class="keyword-pill">${keyword.trim()}</span>`).join(' ')
-                    : '';
+                    // review.reviewKeyword가 "친절함, 깔끔함, 재방문 의사"와 같은 콤마 구분 문자열이라고 가정
+                    const keywordHTML = review.reviewKeyword
+                        ? review.reviewKeyword.split(',').map(keyword => `<span class="keyword-pill">${keyword.trim()}</span>`).join(' ')
+                        : '';
 
-                reviewItem.innerHTML = `
-      <div class="review-meta-top">
-          <span class="review-shopname">${review.shopName}</span>
-          <span class="review-date">${formattedDate}</span>
-      </div>
-      <div class="review-author">
-          <span class="review-author">${review.memberNickName}</span>
-          </div>
-          <div class="star-rating">
-              ${starRatingHTML}
-          </div>
-      </div>
-      <div class="review-image-section">
-          <img src="${review.reviewImage ? review.reviewImage : '/img/review/icon.png'}" alt="리뷰 이미지">
-      </div>
-      <div class="review-content">${review.reviewContent}</div>
-      ${keywordHTML ? `<div class="review-keyword-list">${keywordHTML}</div>` : ''}
-    `;
-                reviewListContainer.appendChild(reviewItem);
-            });
+                    reviewItem.innerHTML = `
+                        <div class="review-meta-top">
+                            <span class="review-shopname">${review.shopName}</span>
+                            <span class="review-date">${formattedDate}</span>
+                        </div>
+                        <div class="review-author">
+                            <span class="reviewer">${review.memberNickName}</span>
+                        </div>
+                        <div class="star-rating">
+                            ${starRatingHTML}
+                        </div>
+                        <div class="review-image-section">
+                            <img src="${review.reviewImage ? review.reviewImage : '/img/review/icon.png'}" alt="리뷰 이미지">
+                        </div>
+                        <div class="review-content">${review.reviewContent}</div>
+                        ${ keywordHTML ? `<div class="review-keyword-list">${keywordHTML}</div>` : '' }
+                    `;
+                    reviewListContainer.appendChild(reviewItem);
+                });
+                // 다음 호출을 위해 offset 업데이트
+                offset += reviews.length;
+            }
+            isLoading = false;
         })
-        .catch(error => console.error('Error fetching reviews:', error));
+        .catch(error => {
+            console.error('Error fetching reviews:', error);
+            isLoading = false;
+        });
 }
 
 /**
@@ -126,28 +152,47 @@ document.querySelectorAll('input[name="keyword"]').forEach(checkbox => {
         const shopId = getShopIdFromURL();
         const selectedKeywords = getSelectedKeywords(); // 예: "친절함,깔끔함"
         const sortType = document.getElementById('sortSelect') ? document.getElementById('sortSelect').value : 'newest';
-        // loadReviews 함수를 호출할 때, 키워드 파라미터로 전달 (서버에서 이 값으로 필터링)
-        loadReviews(shopId, selectedKeywords, sortType, 0, 10);
+        // 필터나 정렬 변경 시 offset과 allLoaded 초기화 후 새로 로드
+        offset = 0;
+        allLoaded = false;
+        loadReviews(shopId, selectedKeywords, sortType, offset, limit, true);
     });
 });
 
-/**
- * 페이지 로드 시 초기 데이터 로드
- */
+// 정렬 드롭다운 이벤트 처리
+const sortSelect = document.getElementById('sortSelect');
+if (sortSelect) {
+    sortSelect.addEventListener('change', function () {
+        const shopId = getShopIdFromURL();
+        const selectedKeywords = getCurrentKeyword();
+        sortType = this.value;
+        offset = 0;
+        allLoaded = false;
+        loadReviews(shopId, selectedKeywords, sortType, offset, limit, true);
+    });
+}
+
+// 스크롤 이벤트: 페이지 하단 근처에 도달하면 추가 데이터 로드 (무한 스크롤)
+window.addEventListener('scroll', function() {
+    const threshold = 100; // 바닥에서 100px 이내로 오면
+    if (window.pageYOffset + window.innerHeight >= document.body.offsetHeight - threshold) {
+        const shopId = getShopIdFromURL();
+        const selectedKeywords = getCurrentKeyword();
+        const currentSortType = document.getElementById('sortSelect') ? document.getElementById('sortSelect').value : 'newest';
+        loadReviews(shopId, selectedKeywords, currentSortType, offset, limit);
+    }
+});
+
+// 페이지 로드 시 초기 데이터 로드
 document.addEventListener("DOMContentLoaded", function () {
     const shopId = getShopIdFromURL();
     if (!shopId) {
         console.error("shopId를 찾을 수 없습니다.");
         return;
     }
-
-    // 초기 데이터 로드
+    // 초기 데이터 로드 (새로고침 모드)
+    offset = 0;
+    allLoaded = false;
     loadReviewCount(shopId);
-    loadReviews(shopId, "", document.getElementById("sortSelect").value, 0, 10);
-
-    // 정렬 드롭다운 이벤트 처리
-    const sortSelect = document.getElementById('sortSelect');
-    sortSelect.addEventListener('change', function () {
-        loadReviews(shopId, getCurrentKeyword(), this.value, 0, 10);
-    });
+    loadReviews(shopId, "", document.getElementById("sortSelect").value, offset, limit, true);
 });

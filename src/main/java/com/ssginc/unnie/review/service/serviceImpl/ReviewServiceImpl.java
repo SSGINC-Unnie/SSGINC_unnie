@@ -274,6 +274,12 @@ public class ReviewServiceImpl implements ReviewService {
         return guestReviews;
     }
 
+    /**
+     * 업체에 대한 리뷰 개수 조회
+     * @param shopId 업체 ID
+     * @param keyword 필터링할 키워드 (없으면 빈 문자열)
+     * @return
+     */
     @Override
     public int getReviewCountByShop(long shopId, String keyword) {
         if (shopId <= 0) {
