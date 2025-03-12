@@ -8,7 +8,6 @@ html, body {
     height: 100%;
     box-sizing: border-box;
     background-color: #ffffff;
-    font-family: sans-serif;
 }
 
 .container {
@@ -19,32 +18,39 @@ html, body {
 /****************************************
  * 공통 클래스
  ****************************************/
-/* wrapper: 페이지 중앙 정렬용 */
-.wrapper {
-    width: 640px; /* 기존 424 -> 640으로 변경 */
+.inner-wrapper {
+    width: 424px;
     margin: 0 auto;
     background-color: #fff;
-    min-height: 800px; /* 필요 시 조정 */
-    padding: 20px 0;   /* 좌우 여백이 필요하면 추가로 조정 */
+    min-height: 800px;
+    padding: 20px 0;
     position: relative;
 }
 
 /* 구분선 */
 .divider {
-    border: none;
-    border-bottom: 1px solid #ddd;
-    margin: 20px 0;
+    width: 100%;
+    height: 1px;          /* 선 두께 */
+    background-color: #000; /* 선 색상 */
+    margin: 40px 0 20px;
 }
 
 /* 페이지 타이틀 */
 .page-title {
-    font-size: 20px;        /* 20pt 정도 */
+    font-size: 20px;        /* 20pt */
     font-weight: 600;       /* semibold */
     color: #000000;
-    margin: 0 0 30px 20px;  /* 예시 마진 */
+    margin-bottom: 10px; /* 텍스트 아래 간격 */
 }
 
-/* 라벨 텍스트 (닉네임, 전화번호 등) */
+.title-divider {
+    width: 100%;
+    height: 2px;          /* 선 두께 */
+    background-color: #000; /* 선 색상 */
+    margin-bottom: 20px;  /* 선 아래 간격 */
+}
+
+/* 라벨 텍스트 (닉네임, 전화번호, 비밀번호) */
 .info-label, .modal-label {
     display: block;
     font-size: 16px;  /* 16pt */
@@ -78,6 +84,13 @@ html, body {
     margin-bottom: 20px;
     position: relative;
 }
+
+.input-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
 .input-box {
     width: 100%;
     height: 48px;
@@ -117,28 +130,33 @@ html, body {
     font-weight: 600;
     border-radius: 4px;
     cursor: pointer;
-    border: 1px solid #000; /* 기본은 검정색 테두리 */
-    background-color: #fff;
-    color: #000;
-}
-
-/* 메인 컬러 버튼 (핑크) */
-.btn-pink {
-    background-color: #ff3479;
     border: none;
-    color: #fff;
+    background-color: #ff3479;
+    color: #ffffff;
 }
 
-/* 비밀번호 변경, 닉네임 저장 등의 큰 버튼 */
+/* 인증번호 버튼  */
+.btn-pink {
+    text-align: center; /* 텍스트 가운데 정렬 */
+    white-space: nowrap;
+    background-color: #fff;
+    color: #000;           /* 글자색: 검정 */
+    border: 1px solid #000;
+    border-radius: 4px;
+    font-size: 14px;
+    min-width: 120px;
+}
+
+/* 비밀번호 변경 버튼 */
 .btn-submit {
-    width: 180px;
+    width: 100%;
     height: 48px;
     background-color: #ff3479; /* 버튼 색상 */
-    border: none;
     border-radius: 4px;
     font-size: 16px;
     font-weight: 600;
     color: #ffffff;
+    border: none;
     cursor: pointer;
     margin-top: 10px;
 }
@@ -153,16 +171,11 @@ html, body {
 .pw-section {
     margin-bottom: 30px;
 }
-.nickname-row,
+
 .phone-row {
     display: flex;
     align-items: center;
     gap: 12px;
-}
-
-/* 닉네임 수정 영역 */
-.nickname-edit-box .input-row {
-    margin-top: 8px;
 }
 
 /****************************************
@@ -194,14 +207,17 @@ html, body {
  * 회원탈퇴
  ****************************************/
 .withdraw-section {
-    text-align: center;
-    margin-top: 30px;
+    text-align: right;
+    margin-top: 20px;
+    font-weight: bold;
 }
+
 .btn-withdraw {
     font-size: 14px;
     color: #999999;
     text-decoration: none;
 }
+
 .btn-withdraw:hover {
     text-decoration: underline;
 }
@@ -216,7 +232,7 @@ html, body {
     top: 0;
     width: 100%;
     height: 100%;
-    overflow: auto; /* Enable scroll if needed */
+    overflow: auto;
     background-color: rgba(0, 0, 0, 0.4); /* 검정 투명 배경 */
     display: flex;
     justify-content: center;
@@ -239,9 +255,9 @@ html, body {
     cursor: pointer;
 }
 .modal-title {
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 600;
-    margin: 0 0 10px;
+    margin: 30px 0 10px;
 }
 .modal-desc {
     font-size: 14px;

@@ -68,45 +68,6 @@ class AuthTimer {
 
 // ================================= 닉네임 ======================================
 // ------------------------------------
-// 닉네임 중복 체크
-// ------------------------------------
-async function validateNicknameDuplication(){
-    const $nickname = $("#memberNickname");
-    const $nicknameError = $("#nicknameError");
-    const nicknameValue = $nickname.val().trim();
-
-    if (!nicknameValue) {
-        showMsg($nicknameError, "error", "닉네임을 입력해주세요.");
-        return;
-    }
-
-    // 닉네임 정규식 체크
-    if (!nicknameRegex.test(nicknameValue)) {
-        showMsg($nicknameError, "error", "2~20글자로 입력해주세요.");
-        return;
-    }
-
-    try{
-        // 닉네임 중복 체크
-        const response = await axios.get("/api/member/nicknameCheck", {
-            params: { nickname: nicknameValue }
-        });
-        if (response.data) {
-            // true면 사용 가능
-            showMsg($nicknameError, "success", "사용 가능한 닉네임입니다.");
-            isValid.nickname = true;
-        } else {
-            showMsg($nicknameError, "error", "이미 사용 중인 닉네임입니다.");
-            isValid.nickname = false;
-        }
-    } catch (error) {
-        console.error(error);
-        showMsg($nicknameError, "error", "닉네임 중복 확인 중 오류가 발생했습니다.");
-        isValid.nickname = false;
-    }
-}
-
-// ------------------------------------
 // 닉네임 수정
 // ------------------------------------
 async function updateNickname() {
@@ -118,23 +79,39 @@ async function updateNickname() {
         showMsg($nicknameError, "error", "닉네임을 입력해주세요.");
         return;
     }
+    //유효성 검사
     if (!nicknameRegex.test(nicknameVal)) {
         showMsg($nicknameError, "error", "2~20글자로 입력해주세요.");
         return;
     }
 
+    //닉네임 중복 확인
+    try{
+        const response = await axios.get("/api/member/nicknameCheck", {
+            params: { nickname: nicknameVal }
+        });
+        if (!response.data) {
+            showMsg($nicknameError, "error", "이미 사용 중인 닉네임입니다.");
+            return;
+        }
+    } catch (error) {
+        console.error(error);
+        showMsg($nicknameError, "error", "닉네임 중복 확인 중 오류가 발생했습니다.");
+        return;
+    }
+
+    //중복 아니면 닉네임 수정 완료
     try {
-        // 닉네임 변경 요청
+        // 닉네임 수정 요청
         const response = await axios.put("/api/mypage/member/nickname", {
             memberNickname: nicknameVal
         });
         if (response.status === 200) {
            // showMsg($nicknameError, "success", "닉네임이 수정되었습니다.");
             alert("닉네임이 수정되었습니다.");
-            $(".current-nickname").text(nicknameVal);
-            $("#nicknameEditBox").hide();
-            // 입력 칸 비우기
-            $nickname.val("");
+            //$(".memberNickname").text(nicknameVal);
+            // 수정한 닉네임을 입력칸에 남김
+            $nickname.val(nicknameVal);
             // 에러 메시지 제거
             $nicknameError.html("");
         }
@@ -246,7 +223,7 @@ class PhoneAuthentication {
 
                 await this.updatePhone();
 
-                // 인증 완료 후 UI 처리
+                // 인증 완료 후
                 this.$phoneInput.prop("readonly", true);
                 this.$authInput.prop("readonly", true);
                 this.$sendButton.prop("disabled", true);
@@ -263,7 +240,7 @@ class PhoneAuthentication {
     // 전화번호 수정
     async updatePhone() {
 
-        // 인증된 전화번호를 PUT 요청으로 업데이트
+        // 인증된 전화번호를 업데이트
         const phone = this.$phoneInput.val().trim();
         if (!phone) {
             showMsg(this.$phoneError, "error", "전화번호를 입력해주세요.");
@@ -277,7 +254,7 @@ class PhoneAuthentication {
             if (response.status === 200) {
                 //showMsg(this.$phoneAuthSection, "success", "전화번호가 수정되었습니다.");
                 alert("전화번호가 수정되었습니다.");
-                $(".current-phone").text(phone);
+                $("#current-phone").val(phone);
                 // 모달 닫기
                 closePhoneModal();
             }
@@ -318,7 +295,7 @@ function checkConfirmPassword() {
     const $newPwConfirmError = $("#newPwConfirmError");
 
     if (!confirmVal) {
-        showMsg($newPwConfirmError, "error", "확인을 위해 비밀번호를 입력해주세요.");
+        showMsg($newPwConfirmError, "error", "비밀번호를 입력해주세요.");
         return;
     }
     if (newVal !== confirmVal) {
@@ -392,11 +369,16 @@ async function updatePassword() {
 
 
 $(document).ready(function() {
-    // 전화번호 인증 + 수정 로직
+    // 전화번호 인증 + 수정
     const phoneAuth = new PhoneAuthentication();
 
     // 닉네임 수정
     $("#updateNicknameBtn").on("click", updateNickname);
+
+    // 현재 비밀번호 입력 시, 기존 오류 메시지 제거
+    $("#currentPw").on("keyup", function() {
+        $("#currentPwError").html("");
+    });
 
     // 비밀번호 변경
     $("#updatePwBtn").on("click", updatePassword);
@@ -455,19 +437,9 @@ function updateProfileImage() {
     });
 }
 
-// 닉네임 편집 영역 토글
-function toggleNicknameEdit() {
-    const editBox = document.getElementById("nicknameEditBox");
-    if (editBox.style.display === "none") {
-        editBox.style.display = "block";
-    } else {
-        editBox.style.display = "none";
-    }
-}
-
 // 휴대전화번호 변경 모달 열기
 function openPhoneModal() {
-    document.getElementById("phoneModal").style.display = "block";
+    document.getElementById("phoneModal").style.display = "flex";
 }
 
 // 휴대전화번호 변경 모달 닫기
