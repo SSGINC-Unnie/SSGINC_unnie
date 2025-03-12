@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -109,6 +110,17 @@ public class MediaServiceImpl implements MediaService {
         if (rows == 0) {
             throw new UnnieMediaException(ErrorCode.FILE_NOT_FOUND); // FILE_NOT_FOUND 코드가 존재해야 함
         }
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<String> getFileUrns(String targetType, long targetId) {
+        List<String> fileUrnList = mediaMapper.selectFileUrnByTarget(targetType.toUpperCase(), targetId);
+        if (fileUrnList == null || fileUrnList.isEmpty()) {
+            throw new UnnieMediaException(ErrorCode.FILE_NOT_FOUND);
+        }
+        // 중복된 경우 첫 번째 결과를 사용합니다.
+        return fileUrnList;
     }
 
 }

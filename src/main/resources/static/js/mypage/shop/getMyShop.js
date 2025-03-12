@@ -18,15 +18,18 @@ function toggleDropdown(id) {
 // 업체 데이터를 백엔드에서 받아와 테이블에 채워넣는 함수
 async function fetchShops(page = 1, pageSize = 5) {
     try {
+        console.log(`fetchShops 호출됨, page: ${page}, pageSize: ${pageSize}`);
         const response = await fetch(`/api/mypage/manager/myshops?page=${page}&pageSize=${pageSize}`);
         const data = await response.json();
+        console.log("전체 shop 데이터:", data);
         let shopPage = data.data.shop;
         let shops = shopPage.list;
+        console.log("shops 리스트:", shops);
         let tableBody = document.getElementById("shopTableBody");
         tableBody.innerHTML = "";
 
         shops.forEach((shop, index) => {
-            console.log(shop);
+            console.log(`각 shop 데이터 (index ${index}):`, shop);
             let row = document.createElement("tr");
             row.innerHTML = `
                 <td>${shop.shopName}</td>
@@ -59,21 +62,54 @@ async function fetchShops(page = 1, pageSize = 5) {
 
 // 업체 상세 데이터를 백엔드에서 받아와 상세 정보를 표시하는 함수
 async function fetchShopDetail(shopId, dropdownId) {
-    console.log("shop 객체:", shopId); // shop 객체 확인
-
+    console.log("fetchShopDetail 호출됨, shopId:", shopId, "dropdownId:", dropdownId);
     try {
+        // 1) 업체 상세 정보 가져오기
         const response = await fetch(`/api/mypage/manager/shopdetail/${shopId}`);
         const data = await response.json();
+        console.log("업체 상세 정보 데이터:", data);
         const shop = data.data.shop;
+        console.log("shop 객체:", shop);
         const shopDetailContainer = document.getElementById(dropdownId);
 
-        // 1) 디자이너 목록 HTML 생성
+        // 2) media 정보 가져오기 (media_target_type은 "SHOP", media_target_id는 shopId)
+        let mediaImageHTML = '';
+        try {
+            const mediaResponse = await fetch(`/api/media/file?targetType=SHOP&targetId=${shop.shopId}`);
+            const mediaData = await mediaResponse.json();
+            console.log("media 정보 데이터:", mediaData);
+
+            if (mediaData.data && mediaData.data.fileUrns) {
+                const fileUrns = mediaData.data.fileUrns;
+
+                // 1) 컨테이너 시작 태그
+                mediaImageHTML += `<div class="media-images">`;
+
+                // 2) 각 이미지마다 .media-image 블록 생성
+                fileUrns.forEach((urn) => {
+                    mediaImageHTML += `
+            <div class="media-image">
+                <img src="${urn}" alt="업체 이미지">
+            </div>
+        `;
+                });
+
+                // 3) 컨테이너 종료 태그
+                mediaImageHTML += `</div>`;
+            } else {
+                console.log("media 데이터에 fileUrns 없음");
+            }
+
+        } catch (error) {
+            console.error("미디어 정보를 불러오는 중 오류 발생:", error);
+        }
+
+        // 3) 디자이너 목록 HTML 생성
         let designerHTML = '';
         if (shop.designers && shop.designers.length > 0) {
-            // 모든 디자이너 정보를 표시
             designerHTML = shop.designers.map(designer => `
                 <div class="info-item">
-                    <img class="thumbnail" src="${designer.designerThumbnail}">
+                    <img class="thumbnail" src="${designer.designerThumbnail}" alt="디자이너 이미지">
                     <div>
                         <p><strong>디자이너명:</strong> ${designer.designerName}</p>
                         <p><strong>디자이너 소개:</strong> ${designer.designerIntroduction}</p>
@@ -81,7 +117,6 @@ async function fetchShopDetail(shopId, dropdownId) {
                 </div>
             `).join('');
 
-            // 디자이너 목록 아래에 수정/삭제 버튼 배치
             designerHTML += `
                 <div class="designer-action-buttons">
                     <button class="edit-button" onclick="editDesigner(${shop.shopId})">디자이너 추가</button>
@@ -96,13 +131,12 @@ async function fetchShopDetail(shopId, dropdownId) {
             `;
         }
 
-        // 2) 시술 목록 HTML 생성
+        // 4) 시술 목록 HTML 생성
         let procedureHTML = '';
         if (shop.procedures && shop.procedures.length > 0) {
-            // 모든 시술 정보를 표시
             procedureHTML = shop.procedures.map(procedure => `
                 <div class="info-item">
-                    <img class="thumbnail" src="${procedure.procedureThumbnail}">
+                    <img class="thumbnail" src="${procedure.procedureThumbnail}" alt="시술 이미지">
                     <div>
                         <p><strong>시술명:</strong> ${procedure.procedureName}</p>
                         <p><strong>가격:</strong> ${procedure.procedurePrice}</p>
@@ -110,7 +144,6 @@ async function fetchShopDetail(shopId, dropdownId) {
                 </div>
             `).join('');
 
-            // 시술 목록 아래에 수정/삭제 버튼 배치
             procedureHTML += `
                 <div class="procedure-action-buttons">
                     <button class="edit-button" onclick="editProcedure(${shop.shopId})">시술 추가</button>
@@ -118,16 +151,17 @@ async function fetchShopDetail(shopId, dropdownId) {
                 </div>
             `;
         } else {
-            procedureHTML =
-                `<div class="procedure-action-buttons">
+            procedureHTML = `
+                <div class="procedure-action-buttons">
                     <button class="edit-button" onclick="editProcedure(${shop.shopId})">시술 추가</button>
-                </div>`
-
+                </div>
+            `;
         }
 
-        // 3) 최종 HTML 조합
+        // 5) 최종 HTML 조합 (미디어 정보 포함)
         shopDetailContainer.innerHTML = `
             <div class="section-title">업체 정보</div>
+            ${mediaImageHTML}
             <p><strong>업체명:</strong> ${shop.shopName}</p>
             <p><strong>업체 위치:</strong> ${shop.shopLocation}</p>
             <p><strong>카테고리:</strong> ${shop.shopCategory}</p>
@@ -137,7 +171,7 @@ async function fetchShopDetail(shopId, dropdownId) {
             <p><strong>휴무일:</strong> ${shop.shopClosedDay}</p>
             <p><strong>사업자 등록번호:</strong> ${shop.shopBusinessNumber}</p>
             <p><strong>대표자명:</strong> ${shop.shopRepresentationName}</p>
-                        <div class="shop-action-buttons">
+            <div class="shop-action-buttons">
                 <button class="edit-button" onclick="editShop(${shopId})">업체 수정</button>
                 <button class="delete-button" onclick="deleteShop(${shopId})">업체 삭제</button>
             </div>
@@ -156,19 +190,22 @@ async function fetchShopDetail(shopId, dropdownId) {
 
 // 추가적인 수정/삭제 함수 (임시)
 window.editShop = function(shopId) {
+    console.log("editShop 호출됨, shopId:", shopId);
     window.location.href = `/mypage/setShop/${shopId}`;
 };
 
 window.editDesigner = function(shopId) {
+    console.log("editDesigner 호출됨, shopId:", shopId);
     window.location.href = `/mypage/designer/${shopId}`;
 };
 
 window.deleteDesigner = function(shopId) {
+    console.log("deleteDesigner 호출됨, shopId:", shopId);
     window.location.href = `/mypage/setDesigner/${shopId}`;
-}
+};
 
 function deleteShop(shopId) {
-    console.log("deleteShop 호출, shopId:", shopId);
+    console.log("deleteShop 호출됨, shopId:", shopId);
     if (confirm("정말 업체를 삭제하시겠습니까?")) {
         fetch(`/api/mypage/manager/shop/${shopId}`, {
             method: 'DELETE',
@@ -190,11 +227,14 @@ function deleteShop(shopId) {
             .catch(error => console.error("업체 삭제 중 오류 발생:", error));
     }
 }
+
 window.editProcedure = function(shopId) {
+    console.log("editProcedure 호출됨, shopId:", shopId);
     window.location.href = `/mypage/procedure/${shopId}`;
 };
 
 window.deleteProcedure = function(shopId) {
+    console.log("deleteProcedure 호출됨, shopId:", shopId);
     window.location.href = `/mypage/setProcedure/${shopId}`;
 };
 

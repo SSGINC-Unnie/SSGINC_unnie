@@ -31,9 +31,7 @@ public class ShopServiceImpl implements ShopService {
             throw new UnnieShopException(ErrorCode.SHOP_CATEGORY_NOT_FOUND);
         }
         List<ShopResponse> res = shopMapper.selectShopByCategory(category);
-        if(res.isEmpty()) {
-            throw new UnnieShopException(ErrorCode.SHOP_LIST_NOT_FOUND);
-        }
+
         return res;
     }
 

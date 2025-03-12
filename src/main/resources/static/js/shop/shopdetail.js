@@ -4,6 +4,120 @@ function getShopIdFromURL() {
     return params.get('shopId');
 }
 
+/**
+ * shopId로 해당 업체의 이미지들을 불러와서
+ * shop-hero(상단 이미지 영역)에 캐러셀 형태로 삽입하는 예시
+ */
+async function loadShopImages(shopId) {
+    try {
+        // 1) 이미지 데이터 가져오기
+        const res = await fetch(`/api/media/file?targetType=SHOP&targetId=${shopId}`);
+        const data = await res.json();
+
+        // 2) fileUrns 확인 (여러 장) 또는 fileUrn (단일)
+        let fileList = [];
+        if (data && data.data) {
+            if (Array.isArray(data.data.fileUrns)) {
+                fileList = data.data.fileUrns;
+            } else if (data.data.fileUrn) {
+                fileList = [data.data.fileUrn];
+            }
+        }
+
+        // 3) 캐러셀 HTML 생성
+        //    fileList.length > 1 이면 슬라이드, 1이면 단일 이미지
+        const heroEl = document.querySelector('.shop-hero');
+        if (!heroEl) return; // 엘리먼트가 없으면 중단
+
+        if (fileList.length === 0) {
+            // 이미지가 없는 경우 → 기본 이미지를 세팅
+            heroEl.innerHTML = `
+                <img src="/img/shop/download.jpg" alt="기본 이미지" style="width:100%; height:100%; object-fit:cover;">
+            `;
+            return;
+        }
+
+        // 여러 장일 경우 캐러셀, 한 장일 경우 단일이미지
+        if (fileList.length === 1) {
+            heroEl.innerHTML = `
+                <img src="${fileList[0]}" alt="샵 이미지" 
+                     onerror="this.onerror=null; this.src='/img/shop/download.jpg';"
+                     style="width:100%; height:100%; object-fit:cover;">
+            `;
+        } else {
+            // 캐러셀 생성 (좌우 버튼 + 래퍼)
+            heroEl.innerHTML = getCarouselHTMLForDetail(fileList);
+        }
+
+    } catch (error) {
+        console.error("이미지 로딩 실패:", error);
+    }
+}
+
+/**
+ * [캐러셀 HTML 생성] - map.html에서 사용한 것과 유사하게 작성하되,
+ * 여기서는 shopId 대신에 배열 자체만 받아서 만듭니다.
+ * 필요하다면 shopId로 구분해도 됩니다.
+ */
+function getCarouselHTMLForDetail(fileUrns) {
+    // 캐러셀 컨테이너에 넣을 슬라이드들
+    const slides = fileUrns.map(url => `
+        <div class="carousel-slide">
+            <img 
+                src="${url}" 
+                alt="샵 이미지" 
+                onerror="this.onerror=null;this.src='/img/shop/download.jpg';"
+            >
+        </div>
+    `).join('');
+
+    return `
+        <div class="carousel-container">
+            <div class="carousel-wrapper">
+                ${slides}
+            </div>
+            <button class="carousel-btn left" onclick="prevSlideDetail()">&#10094;</button>
+            <button class="carousel-btn right" onclick="nextSlideDetail()">&#10095;</button>
+        </div>
+    `;
+}
+
+// 현재 슬라이드 인덱스
+let currentSlideIndex = 0;
+
+/** 이전 슬라이드 버튼 */
+function prevSlideDetail() {
+    const wrapper = document.querySelector('.carousel-wrapper');
+    if (!wrapper) return;
+    const slideCount = wrapper.querySelectorAll('.carousel-slide').length;
+    if (slideCount <= 1) return;
+
+    currentSlideIndex = (currentSlideIndex > 0) ? currentSlideIndex - 1 : slideCount - 1;
+    updateSlidePositionDetail();
+}
+
+/** 다음 슬라이드 버튼 */
+function nextSlideDetail() {
+    const wrapper = document.querySelector('.carousel-wrapper');
+    if (!wrapper) return;
+    const slideCount = wrapper.querySelectorAll('.carousel-slide').length;
+    if (slideCount <= 1) return;
+
+    currentSlideIndex = (currentSlideIndex < slideCount - 1) ? currentSlideIndex + 1 : 0;
+    updateSlidePositionDetail();
+}
+
+/** 캐러셀 이동 처리 */
+function updateSlidePositionDetail() {
+    const wrapper = document.querySelector('.carousel-wrapper');
+    if (!wrapper) return;
+
+    // 슬라이드 하나의 폭을 100%로 보고, currentSlideIndex * 100%만큼 왼쪽으로 이동
+    const shiftPercentage = 100 * currentSlideIndex;
+    wrapper.style.transform = `translateX(-${shiftPercentage}%)`;
+}
+
+
 // 1) 홈 탭 상세 정보 로딩
 async function loadShopDetails(shopId) {
     try {
@@ -146,6 +260,8 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error("shopId 파라미터가 존재하지 않습니다.");
         return;
     }
+    loadShopImages(shopId);
+
     // 기본적으로 홈 탭 정보 먼저 로드
     loadShopDetails(shopId);
     // 탭 버튼 클릭 이벤트 처리
@@ -171,3 +287,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+
+// JS 부분 (showMoreReviews 함수 추가)
+function showMoreReviews() {
+    const shopId = getShopIdFromURL();  // 이미 선언된 함수 활용
+    if (!shopId) {
+        console.error("shopId가 없습니다.");
+        return;
+    }
+    // /review/shop?shopId=... 형태로 이동
+    window.location.href = `/review/shop?shopId=${shopId}`;
+}
