@@ -1,0 +1,356 @@
+/* 전역 폰트 적용 */
+* {
+    font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue",
+    "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* 메인 컨테이너 */
+.review-container {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 24px 16px;
+}
+
+/* 로그인 안내 섹션 */
+
+/* 로그인 프롬프트 */
+.login-prompt {
+    text-align: center;
+    margin: 50px auto;
+    background-color: #fff;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+
+    /* 아래 부분만 수정(추가)하여 폭 늘리기 */
+    max-width: 640px; /* 원하는 최대 폭으로 조정 */
+    width: 100%;       /* 화면 대비 비율 */
+    padding: 30px;    /* 좌우 및 상하 여백 조금 늘리기 */
+}
+
+.login-prompt p {
+    font-size: 18px;
+    margin-bottom: 20px;
+    color: #333;
+}
+.login-button {
+    display: inline-block;
+    background-color: #ff3479;
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+.login-button:hover {
+    background-color: #e02f70;
+}
+
+/* 로그인 후 본문 래퍼 */
+.body-wrapper {
+    margin-top: 20px;
+}
+
+/* 상단 헤더 영역 */
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+.review-title h2 {
+    display: flex;
+    font-size: 22px;
+    font-weight: 700;
+    color: #191919;
+    margin: 0;
+}
+.review-sort {
+    display: flex;
+    justify-content: right;
+    align-items: center;
+    gap: 12px;
+}
+#sortSelect {
+    padding: 6px 10px;
+    border-radius: 20px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    outline: none;
+    background-color: #fff;
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+#sortSelect:hover {
+    border-color: #ff3479;
+    box-shadow: 0 0 5px rgba(255, 52, 121, 0.3);
+}
+
+.review-count {
+    display: flex;
+    justify-content: left;
+    font-size: 15px;
+    margin-top: 15px;
+    color: #666;
+}
+
+/* 리뷰 목록 래퍼 */
+.review-list {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* 리뷰 카드 */
+.review-item {
+    width: 100%;
+    background-color: #fff;
+    border: 1px solid #eee;
+    padding: 30px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 500px;
+    border-bottom: #E6E6E6;
+}
+
+/* 상단 영역: 업체명, 날짜 */
+.review-meta-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+.review-shopname {
+    font-size: 24px;
+    font-weight: 700;
+    color: #191919;
+    margin: 0;
+}
+.review-date {
+    font-size: 13px;
+    color: #B3B3B3;
+}
+
+/* 작성자 */
+.review-author {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.reviewer {
+    font-size: 20px;
+    color: #333;
+}
+
+/* 별점 */
+.star-rating {
+    display: flex;
+    margin: 0 0 16px 0; /* 간격 조금 줄임 */
+    font-size: 18px;    /* 별 크기 키움 */
+}
+.star {
+    font-size: 18px;
+    color: #ccc;
+    margin-right: 3px;
+}
+.star.full {
+    color: #ff3479;
+    font-weight: bold;
+}
+
+/* 리뷰 이미지 */
+.review-image-section {
+    text-align: center;
+    margin-bottom: 26px;
+}
+.review-image-section img {
+    max-width: 100%;
+    border-radius: 4px;
+}
+
+/* 리뷰 내용 */
+.review-content {
+    font-size: 20px;
+    line-height: 1.5;
+    color: #333;
+    margin-top: 10px;
+    flex-grow: 1;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+/* 리뷰 키워드 */
+.review-keyword-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.keyword-pill {
+    background-color: #FF3479;
+    border-radius: 16px;
+    padding: 4px 8px;
+    font-size: 13px;
+    color: #fff;
+}
+
+/* 하단 영역: 키워드와 수정/삭제 버튼 */
+.review-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+}
+
+/* 수정/삭제 버튼 영역 */
+.review-actions {
+    position: relative;
+}
+.action-button {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 4px;
+}
+.action-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 100%;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 6px; /* 모서리 조금 둥글게 */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    z-index: 100;
+    min-width: 120px;
+}
+.action-menu button {
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    padding: 10px 16px;
+    cursor: pointer;
+    font-size: 14px;
+}
+.action-menu button:hover {
+    background-color: #f5f5f5;
+}
+.review-actions.show .action-menu {
+    display: block;
+}
+
+/* 인라인 편집 영역 */
+.inline-edit {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 16px;
+    margin-top: 12px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    min-height: 300px;
+}
+.inline-edit textarea,
+.inline-edit input[type="text"] {
+    width: 100%;
+    min-height: 200px;
+    margin-bottom: 10px;
+    padding: 8px;
+    font-size: 18px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+.inline-edit .edit-buttons {
+    text-align: right;
+}
+.inline-edit .edit-buttons button {
+    padding: 8px 16px;
+    margin-left: 8px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.inline-edit .save-edit-btn {
+    margin-top: 24px;
+    background-color: #ff3479;
+    color: #fff;
+}
+.inline-edit .cancel-edit-btn {
+    margin-top: 24px;
+    background-color: #ccc;
+    color: #333;
+}
+
+/* 편집용 별점 (인라인) */
+.star-rating.edit-rating {
+    display: flex;
+    gap: 6px;
+    font-size: 18px;
+    justify-content: center;
+    margin-bottom: 20px;
+    cursor: pointer;
+}
+
+/* 모달 창 스타일 */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5);
+}
+.modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+}
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+.close:hover {
+    color: #000;
+}
+
+/* 키워드 선택 영역 */
+.keyword-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.keyword-group input[type="checkbox"] {
+    display: none;
+}
+.keyword-group label {
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    padding: 6px 12px;
+    cursor: pointer;
+    background-color: #fff;
+    color: #4C4C4C;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+.keyword-group input[type="checkbox"]:checked + label {
+    background-color: #FF3479;
+    color: #fff;
+    border-color: #FF3479;
+}

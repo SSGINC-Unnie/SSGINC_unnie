@@ -5,6 +5,8 @@ import com.ssginc.unnie.review.dto.ReviewGetResponse;
 import com.ssginc.unnie.review.dto.ReviewUpdateRequest;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.Arrays;
 import java.util.List;
 
 @Mapper
@@ -64,11 +66,12 @@ public interface ReviewMapper {
      * 업체의 리뷰 목록 조회
      * 정렬: 최신순, 오래된순, 키워드별 조회
      * 페이지네이션: 무한스크롤
-     * @param shopId 업체 ID
-     * @param keyword 필터링할 키워드
+     *
+     * @param shopId   업체 ID
+     * @param keyword  필터링할 키워드
      * @param sortType 정렬 방식 ('newest', 'oldest')
-     * @param offset 페이지네이션 시작 값
-     * @param limit 조회 건수
+     * @param offset   페이지네이션 시작 값
+     * @param limit    조회 건수
      * @return 리뷰 목록
      */
     List<ReviewGetResponse> getReviewListByShop(
@@ -80,4 +83,20 @@ public interface ReviewMapper {
 
     int getReviewCountByShop(@Param("shopId") long shopId,
                              @Param("keyword") String keyword);
+
+
+    List<String> getAllReviewsByShopId(@Param("shopId") long shopId);
+
+    /**
+     * shop 테이블의 review_summary 컬럼 업데이트
+     */
+    void updateShopReviewSummary(@Param("shopId") long shopId,
+                                 @Param("summary") String reviewSummary);
+
+    /**
+     * 전체 shopId를 반환
+     * @return
+     */
+    List<Long> getAllShopId();
 }
+

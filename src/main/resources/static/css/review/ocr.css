@@ -1,3 +1,9 @@
+/* 전역 폰트 적용 */
+* {
+    font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue",
+    "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+}
+
 /* 업로드 카드 스타일 */
 .upload-card {
     background-color: #ffffff;

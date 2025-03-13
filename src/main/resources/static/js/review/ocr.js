@@ -18,7 +18,7 @@ document.getElementById("ocrForm").addEventListener("submit", async (e) => {
         // /api/ocr/upload 엔드포인트로 POST 요청
         const response = await fetch("/api/ocr/upload", {
             method: "POST",
-            // credentials: "include", // JWT 쿠키가 필요하면 주석 해제
+            credentials: "include",
             body: formData
         });
 
@@ -73,8 +73,8 @@ document.getElementById("saveReceipt").addEventListener("click", async () => {
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify(finalReceiptData)
-            // credentials: "include", // JWT 쿠키가 필요하면 주석 해제
+            body: JSON.stringify(finalReceiptData),
+            credentials: "include", // JWT 쿠키가 필요하면 주석 해제
         });
 
         if (!response.ok) {

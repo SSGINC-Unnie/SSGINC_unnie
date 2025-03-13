@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      xmlns:sec2="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
       layout:decorate="~{layout}">
 <head>
     <meta charset="UTF-8"/>
-    <title>OCR & Receipt Test</title>
+    <title>영수증 인증</title>
     <link rel="stylesheet" href="/static/css/review/ocr.css">
 </head>
 <body>
 <div class="container" layout:fragment="content">
-    <main class="main">
+    <main class="main" sec:authorize="isAuthenticated()">
         <!-- 1) OCR 파일 업로드 폼 -->
         <div class="upload-card">
             <h1>인증하실 영수증을 업로드 해주세요!</h1>

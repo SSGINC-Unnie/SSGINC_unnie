@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      xmlns:sec2="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
       layout:decorate="~{layout}">
 <head>
     <meta charset="UTF-8"/>
@@ -11,7 +11,12 @@
 <body>
 <div class="container" layout:fragment="content">
     <main class="main">
-        <div class="review-form-container">
+        <!-- 로그인하지 않은 경우 -->
+        <div class="login-prompt" sec:authorize="!isAuthenticated()">
+            <p>리뷰를 작성하려면 로그인이 필요합니다!</p>
+            <a href="/member/login" class="login-button">로그인 하러가기</a>
+        </div>
+        <div class="review-form-container" sec:authorize="isAuthenticated()">
             <h2 class="review-title">리뷰 작성</h2>
             <form id="reviewForm">
                 <!-- receiptId는 URL 쿼리에서 자동 설정되며, 화면에 표시하지 않음 -->
@@ -25,7 +30,6 @@
 
                 <!-- 별점 평점 영역 -->
                 <div class="form-group">
-                    <label class="form-label">평점</label>
                     <div class="star-rating" id="starRating">
                         <span class="star" data-value="1">&#9733;</span>
                         <span class="star" data-value="2">&#9733;</span>

@@ -4,15 +4,18 @@ import com.ssginc.unnie.common.exception.UnnieReviewException;
 import com.ssginc.unnie.common.util.ErrorCode;
 import com.ssginc.unnie.review.dto.*;
 import com.ssginc.unnie.review.mapper.ReviewMapper;
+import com.ssginc.unnie.review.service.OpenAIService;
 import com.ssginc.unnie.review.service.ReceiptService;
 import com.ssginc.unnie.review.service.ReviewService;
 import com.ssginc.unnie.common.util.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,6 +27,7 @@ public class ReviewServiceImpl implements ReviewService {
     private final ReviewMapper reviewMapper;
     private final ReceiptService receiptService;  // 영수증 인증 검증 서비스
     private final Validator<ReviewRequestBase> reviewValidator;  // ReviewValidator (ReviewRequestBase 타입)
+    private final OpenAIService openAIService;
 
     /**
      * 리뷰 저장: review 테이블과 review_keyword 테이블에 데이터를 등록합니다.
@@ -274,6 +278,13 @@ public class ReviewServiceImpl implements ReviewService {
         return guestReviews;
     }
 
+    /**
+     * 업체에 대한 리뷰 개수 조회
+     *
+     * @param shopId  업체 ID
+     * @param keyword 필터링할 키워드 (없으면 빈 문자열)
+     * @return
+     */
     @Override
     public int getReviewCountByShop(long shopId, String keyword) {
         if (shopId <= 0) {
@@ -285,4 +296,63 @@ public class ReviewServiceImpl implements ReviewService {
         }
         return reviewMapper.getReviewCountByShop(shopId, keyword);
     }
+
+    /**
+     * 리뷰 요약 AI
+     * @param shopId 대상 샵 ID
+     * @return
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public String summarizeAndSave(long shopId) {
+        // 1) 해당 shop의 모든 리뷰 내용 조회
+        List<String> reviews = reviewMapper.getAllReviewsByShopId(shopId);
+        if (reviews == null || reviews.isEmpty()) {
+            // 리뷰가 없으면 기본 문구
+            reviewMapper.updateShopReviewSummary(shopId, "아직 작성된 리뷰가 없습니다.");
+            return "아직 작성된 리뷰가 없습니다.";
+        }
+
+        // 2) 리뷰를 하나의 문자열로 합침
+        StringBuilder sb = new StringBuilder();
+        for (String rv : reviews) {
+            sb.append(rv).append(". ");
+        }
+        String allReviews = sb.toString();
+
+        // 3) OpenAIService 를 이용해 요약
+        String reviewSummary = openAIService.summarizeReview(allReviews);
+
+        // 4) shop 테이블의 review_summary 컬럼 업데이트
+        reviewMapper.updateShopReviewSummary(shopId, reviewSummary);
+
+        return reviewSummary;
+    }
+
+    /**
+     * 스케줄러: 6시간마다 전체 샵의 리뷰 요약을 업데이트합니다.
+     * cron: 매일 0시, 6시, 12시, 18시에 실행
+     */
+    @Scheduled(cron = "0 0 */6 * * *")
+    public void updateAllShopSummaries() {
+        List<Long> shopIds = getAllShopId();
+        for (Long shopId : shopIds) {
+            try {
+                String summary = summarizeAndSave(shopId);
+                System.out.println("Shop " + shopId + " 리뷰 요약 업데이트 성공: " + summary);
+            } catch (Exception e) {
+                System.err.println("Shop " + shopId + " 리뷰 요약 업데이트 실패: " + e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * 임시로 전체 샵 ID 목록을 반환하는 메서드.
+     * 실제 구현 시 ShopMapper 등을 통해 전체 shop ID를 조회해야 합니다.
+     */
+    private List<Long> getAllShopId() {
+       return reviewMapper.getAllShopId();
+    }
+
 }
+

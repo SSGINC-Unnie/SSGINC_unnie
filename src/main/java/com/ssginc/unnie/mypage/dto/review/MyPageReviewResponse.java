@@ -25,6 +25,7 @@ public class MyPageReviewResponse extends ReviewResponseBase {
 
     private String memberNickName; //작성자 명
     private String shopName; //업체명
+    private String reviewKeyword; // 리뷰 키워드 (콤마 구분 문자열)
 
     public MyPageReviewResponse(long reviewId,
                                 long reviewMemberId, //작성자 ID
@@ -34,11 +35,13 @@ public class MyPageReviewResponse extends ReviewResponseBase {
                                 String reviewContent, //리뷰 내용
                                 LocalDateTime reviewDate, //리뷰 작성 일시
                                 String memberNickName, //작성자 명
-                                String shopName) //업체명
+                                String shopName, //업체명
+                                String reviewKeyword) // 리뷰 키워드
     {
         super(reviewId, reviewMemberId, reviewReceiptId, reviewImage, reviewRate, reviewContent, reviewDate);
 
         this.memberNickName = memberNickName;
         this.shopName = shopName;
+        this.reviewKeyword = reviewKeyword;
     }
 }

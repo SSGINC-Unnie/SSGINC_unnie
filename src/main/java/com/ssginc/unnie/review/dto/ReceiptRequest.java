@@ -10,7 +10,7 @@ import java.util.List;
 @AllArgsConstructor
 public class ReceiptRequest {
     private long receiptId; //영수증 번호
-    private Integer receiptShopId; //shop Id
+    private long receiptShopId; //shopId
     private LocalDateTime receiptDate; //영수증 내 결제 일시
     private int receiptAmount; //결제 금액
     private String receiptBusinessNumber; //사업자 번호
