@@ -116,9 +116,7 @@ public class MediaServiceImpl implements MediaService {
     @Override
     public List<String> getFileUrns(String targetType, long targetId) {
         List<String> fileUrnList = mediaMapper.selectFileUrnByTarget(targetType.toUpperCase(), targetId);
-        if (fileUrnList == null || fileUrnList.isEmpty()) {
-            throw new UnnieMediaException(ErrorCode.FILE_NOT_FOUND);
-        }
+
         // 중복된 경우 첫 번째 결과를 사용합니다.
         return fileUrnList;
     }

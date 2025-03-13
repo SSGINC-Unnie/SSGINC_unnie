@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=640, initial-scale=1.0">
     <title>내주변</title>
 
-    <!-- Pretendard 폰트 CDN 링크 -->
-    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
     <!-- 외부 CSS 파일 -->
     <link rel="stylesheet" href="/css/shop/map.css">
 
@@ -18,63 +18,68 @@
     <script src="http://dmaps.daum.net/map_js_init/postcode.v2.js"></script>
 </head>
 <body>
-<!-- 지도 영역 -->
-<div id="map-container">
-    <div id="map"></div>
-    <button id="reSearchBtn">
-        <img src="/img/shop/Refresh.png" alt="새로고침" style="vertical-align: middle; margin-right: 4px;">
-        이 지역 재검색
-    </button>
-    <button id="listViewBtn">
-        <img src="/img/shop/list.png" alt="목록" style="vertical-align: middle; margin-right: 4px;">
-        목록보기
-    </button>
-</div>
+<div class="container" layout:fragment="content">
+    <!-- 지도 영역 -->
+    <div id="map-container">
+        <div id="map"></div>
+        <button id="reSearchBtn">
+            <img src="/img/shop/Refresh.png" alt="새로고침" style="vertical-align: middle; margin-right: 4px;">
+            이 지역 재검색
+        </button>
+        <button id="listViewBtn">
+            <img src="/img/shop/list.png" alt="목록" style="vertical-align: middle; margin-right: 4px;">
+            목록보기
+        </button>
+    </div>
 
-<!-- 바텀시트 -->
-<div id="bottomSheet">
-    <div class="drag-handle" id="dragHandle"></div>
-    <div class="bottomSheetContent">
-        <div class="bottomSheetHeader">
-            <div class="header-top">
-                <div id="myLocationText">내 위치 불러오는 중...</div>
-                <button id="closeBottomSheetBtn">X</button>
+    <!-- 바텀시트 -->
+    <div id="bottomSheet">
+        <div class="drag-handle" id="dragHandle"></div>
+        <div class="bottomSheetContent">
+            <div class="bottomSheetHeader">
+                <div class="header-top">
+                    <div id="myLocationText">내 위치 불러오는 중...</div>
+                    <button id="closeBottomSheetBtn">X</button>
+                </div>
+                <div class="category-and-sort">
+                    <div class="category-tabs">
+                        <button class="category-btn" data-category="헤어샵">헤어샵</button>
+                        <button class="category-btn active" data-category="네일샵">네일샵</button>
+                        <button class="category-btn" data-category="바버샵">바버샵</button>
+                        <button class="category-btn" data-category="왁싱샵">왁싱샵</button>
+                        <button class="category-btn" data-category="에스테틱">에스테틱</button>
+                    </div>
+                    <div class="sorting-dropdown">
+                        <select id="sortSelect">
+                            <option value="default">기본</option>
+                            <option value="asc">이름순 ↓</option>
+                            <option value="desc">이름순 ↑</option>
+                        </select>
+                    </div>
+                </div>
             </div>
-            <div class="category-and-sort">
-            <div class="category-tabs">
-                <button class="category-btn" data-category="헤어샵">헤어샵</button>
-                <button class="category-btn active" data-category="네일샵">네일샵</button>
-                <button class="category-btn" data-category="바버샵">바버샵</button>
-                <button class="category-btn" data-category="왁싱샵">왁싱샵</button>
-                <button class="category-btn" data-category="에스테틱">에스테틱</button>
-            </div>
-                <div class="sorting-dropdown">
-                <select id="sortSelect">
-                    <option value="default">기본</option>
-                    <option value="asc">이름순 ↓</option>
-                    <option value="desc">이름순 ↑</option>
-                </select>
+            <div class="shop-list" id="shopList">
+                <!-- JS로 동적 생성 -->
             </div>
         </div>
     </div>
-        <div class="shop-list" id="shopList">
-            <!-- JS로 동적 생성 -->
-        </div>
-    </div>
-</div>
 
-<!-- 주소 입력 fallback (위치 권한 거부 시 표시) -->
-<div id="addressFallback" style="display: none; position: fixed; top: 20%; left: 50%; transform: translate(-50%, 0); background: #fff; padding: 30px 40px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); z-index: 1000; text-align: center;">
-    <p style="font-size: 16px; color: #333; margin-bottom: 20px;">
-        위치 정보를 불러올 수 없습니다.<br>
-        주소 검색을 통해 직접 입력해 주세요.
-    </p>
-    <button id="openPostcodeBtn" style="background: #FF3479; color: #fff; border: none; padding: 12px 24px; font-size: 16px; border-radius: 4px; cursor: pointer; transition: background 0.3s;">
-        주소 검색
-    </button>
-</div>
+    <!-- 주소 입력 fallback (위치 권한 거부 시 표시) -->
+    <div id="addressFallback" style="display: none; position: fixed; top: 20%; left: 50%; transform: translate(-50%, 0); background: #fff; padding: 30px 40px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); z-index: 1000; text-align: center;">
+        <p style="font-size: 16px; color: #333; margin-bottom: 20px;">
+            위치 정보를 불러올 수 없습니다.<br>
+            주소 검색을 통해 직접 입력해 주세요.
+        </p>
+        <button id="openPostcodeBtn" style="background: #FF3479; color: #fff; border: none; padding: 12px 24px; font-size: 16px; border-radius: 4px; cursor: pointer; transition: background 0.3s;">
+            주소 검색
+        </button>
+    </div>
 
 <!-- 외부 JS 파일 -->
-<script src="/js/shop/map.js"></script>
+<div layout:fragment="scripts">
+    <script src="/js/shop/map.js"></script>
+</div>
+</div>
+
 </body>
 </html>
