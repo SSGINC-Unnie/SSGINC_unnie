@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
 <head>
     <meta charset="UTF-8">
     <title>시술 수정</title>
@@ -7,7 +9,8 @@
 </head>
 <body>
 
-<div class="container">
+<div class="container" layout:fragment="content">
+    <div class="shop-container">
     <!-- 상단 메인 타이틀 -->
     <h1>시술 수정/삭제</h1>
 
@@ -73,6 +76,7 @@
             </form>
         </div>
     </div>
+</div>
 </div>
 <script src="/js/mypage/shop/procedure.js"></script>
 </body>

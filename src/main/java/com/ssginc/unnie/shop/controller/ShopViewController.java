@@ -10,13 +10,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/map")
 public class ShopViewController {
 
-    @GetMapping("map")
-    public String getShopMapPage() {
+    @GetMapping("/map")
+    public String getShopMapPage(Model model) {
+        model.addAttribute("activePage", "map");
         return "shop/map";
     }
 
     @GetMapping("/shopdetail")
-    public String getShopdetailPage() {
+    public String getShopdetailPage(Model model) {
+        model.addAttribute("activePage", "map");
         return "shop/shopdetail";}
 
 }

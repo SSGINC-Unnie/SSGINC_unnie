@@ -15,39 +15,46 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class myPageShopViewController {
 
     @GetMapping("/shop")
-    public String CreateShop() {
+    public String CreateShop(Model model) {
+        model.addAttribute("activePage", "mypage");
         return "mypage/shop/shopInsert";
     }
 
     @GetMapping("/designer/{shopId}")
     public String CreateDesigner(@PathVariable("shopId") int shopId, Model model) {
         model.addAttribute("shopId", shopId);
+        model.addAttribute("activePage", "mypage");
         return "mypage/shop/designerInsert";
     }
 
     @GetMapping("/procedure/{shopId}")
     public String CreateProcedure(@PathVariable("shopId") int shopId, Model model) {
         model.addAttribute("shopId", shopId);
+        model.addAttribute("activePage", "mypage");
         return "mypage/shop/procedureInsert";
     }
 
     @GetMapping("/myshop")
-    public String GetSHops() {
+    public String GetSHops(Model model) {
+        model.addAttribute("activePage", "mypage");
         return "mypage/shop/getMyShop";
     }
 
     @GetMapping("/setDesigner/{shopId}")
-    public String UpdateDesigner() {
+    public String UpdateDesigner(Model model) {
+        model.addAttribute("activePage", "mypage");
         return "mypage/shop/designer";
     }
 
     @GetMapping("/setProcedure/{shopId}")
-    public String UpdateProcedure() {
+    public String UpdateProcedure(Model model) {
+        model.addAttribute("activePage", "mypage");
         return "mypage/shop/procedure";
     }
 
     @GetMapping("/setShop/{shopId}")
-    public String UpdateShop() {
+    public String UpdateShop(Model model) {
+        model.addAttribute("activePage", "mypage");
         return "mypage/shop/shopUpdate";
     }
 }

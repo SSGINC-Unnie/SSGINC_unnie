@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
 <head>
     <meta charset="UTF-8">
     <title>업체 등록 - 디자이너 등록</title>
@@ -7,8 +9,9 @@
 </head>
 <body>
 
-<div class="container">
-    <!-- 상단 메인 타이틀 -->
+<div class="container" layout:fragment="content">
+
+    <div class="shop-container">    <!-- 상단 메인 타이틀 -->
     <h1>업체 등록</h1>
 
     <!-- 단계 표시 (1~3단계 핑크, 4단계 회색) -->
@@ -82,8 +85,10 @@
             </form>
         </div>
     </div>
-
 </div>
+</div>
+<div layout:fragment="scripts">
 <script src="/js/mypage/shop/designerInsert.js"></script>
+</div>
 </body>
 </html>
