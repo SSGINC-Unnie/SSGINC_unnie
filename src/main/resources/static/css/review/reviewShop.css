@@ -7,6 +7,38 @@
     box-sizing: border-box;
 }
 
+/* 부모 컨테이너(선택사항) */
+.review-create {
+    text-align: right;
+    margin: 20px 0;     /* 버튼 상하 여백 */
+}
+
+/* 리뷰 작성하기 버튼 */
+.review-create-button {
+    display: inline-flex;        /* 아이콘 + 텍스트 수평 배치 */
+    align-items: center;         /* 세로 가운데 정렬 */
+    gap: 8px;                    /* 아이콘과 텍스트 간격 */
+    text-decoration: none;       /* 링크 밑줄 제거 */
+    color: #fff;                 /* 텍스트 색상 */
+    background-color: #ff3479;   /* 메인 컬러 */
+    font-weight: bold;
+    font-size: 14px;
+    padding: 8px 14px;
+    border-radius: 30px;         /* pill 형태 */
+    transition: background-color 0.3s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* 아이콘 스타일 (선택사항) */
+.review-create-button .icon {
+    font-size: 18px; /* 아이콘 크기 */
+}
+
+/* 호버 효과 */
+.review-create-button:hover {
+    background-color: #e02f70;   /* 호버 시 약간 어두운 색 */
+}
+
 .login-prompt {
     text-align: center;
     margin: 50px auto;

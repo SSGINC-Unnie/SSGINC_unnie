@@ -1,11 +1,8 @@
 package com.ssginc.unnie.review.controller;
 
 import com.ssginc.unnie.common.config.MemberPrincipal;
-import com.ssginc.unnie.review.dto.ReviewCreateRequest;
-import com.ssginc.unnie.review.dto.ReviewGetResponse;
+import com.ssginc.unnie.review.dto.*;
 import com.ssginc.unnie.common.util.ResponseDto;
-import com.ssginc.unnie.review.dto.ReviewGuestGetResponse;
-import com.ssginc.unnie.review.dto.ReviewUpdateRequest;
 import com.ssginc.unnie.review.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -56,6 +53,8 @@ public class ReviewController {
 
         // JWT에서 사용자 ID 설정
         reviewCreateRequest.setReviewMemberId(memberPrincipal.getMemberId());
+
+        // String으로 받은 문자열을 List로 변환
         reviewCreateRequest.setKeywordId(parseKeywordIds(keywordId));
 
         MultipartFile file = reviewCreateRequest.getFile(); // ✅ 'file' 그대로 유지
@@ -151,7 +150,9 @@ public class ReviewController {
 
         // 수정 요청 시 토큰의 회원 ID를 DTO에 설정하여 소유자 확인에 사용합니다.
         reviewUpdateRequest.setReviewMemberId(memberPrincipal.getMemberId());
+
         reviewUpdateRequest.setKeywordId(parseKeywordIds(keywordId));
+
         reviewUpdateRequest.setReviewId(reviewId);
         long updatedReviewId = reviewService.updateReview(reviewUpdateRequest);
         return ResponseEntity.ok(
@@ -284,4 +285,22 @@ public class ReviewController {
         );
     }
 
+    /**
+     * 리뷰 요약 AI
+     * @param reviewSummaryRequest
+     * @return 요약된 내용
+     */
+    @PostMapping("/summary")
+    public ResponseEntity<ResponseDto<Map<String, Object>>> generateSummary(@RequestBody ReviewSummaryRequest reviewSummaryRequest) {
+        String summary = reviewService.summarizeAndSave(reviewSummaryRequest.getShopId());
+
+        ReviewSummaryResponse reviewSummaryResponse = new ReviewSummaryResponse();
+
+        reviewSummaryResponse.setShopId(reviewSummaryRequest.getShopId());
+        reviewSummaryResponse.setReviewSummary(summary);
+
+        return ResponseEntity.ok(
+                new ResponseDto<>(HttpStatus.OK.value(), "리뷰 요약 성공", Map.of("reviewSummary", reviewSummaryResponse.getReviewSummary()))
+        );
+    }
 }

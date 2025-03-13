@@ -82,4 +82,11 @@ public interface ReviewService {
      * @return 해당 업체의 전체 리뷰 개수
      */
     int getReviewCountByShop(long shopId, String keyword);
+
+    /**
+     * 특정 shopId의 리뷰를 모두 조회하여 OpenAI 요약 후 DB에 저장
+     * @param shopId 대상 샵 ID
+     * @return 요약 결과 문자열
+     */
+    String summarizeAndSave(long shopId);
 }

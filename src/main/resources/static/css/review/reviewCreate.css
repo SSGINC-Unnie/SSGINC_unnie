@@ -4,17 +4,45 @@
     "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
 }
 
-/* 기본 리셋 */
-.container {
-    max-width: 640px;
-    margin: 0 auto;
+/* 로그인 프롬프트 */
+.login-prompt {
+    text-align: center;
+    margin: 50px auto;
+    background-color: #fff;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+
+    /* 아래 부분만 수정(추가)하여 폭 늘리기 */
+    max-width: 800px; /* 원하는 최대 폭으로 조정 */
+    width: 100%;       /* 화면 대비 비율 */
+    padding: 30px;    /* 좌우 및 상하 여백 조금 늘리기 */
+}
+
+.login-prompt p {
+    font-size: 18px;
+    margin-bottom: 20px;
+    color: #333;
+}
+.login-button {
+    display: inline-block;
+    background-color: #ff3479;
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+.login-button:hover {
+    background-color: #e02f70;
 }
 
 /* 리뷰 작성 카드 */
 .review-form-container {
     background-color: #ffffff;
-    width: 640px;
-    max-width: 100%;
+    width: 100%;
     margin: 0 auto;
     padding: 60px;
     min-height: 600px;

@@ -56,19 +56,23 @@
     </select>
 
     <!-- 5) 리뷰 수정 -->
-    <update id="updateReview" parameterType="com.ssginc.unnie.review.dto.ReviewUpdateRequest" keyProperty="reviewId"
-            keyColumn="review_id">
+    <update id="updateReview" parameterType="com.ssginc.unnie.review.dto.ReviewUpdateRequest" keyProperty="reviewId">
         UPDATE review
         <set>
-            review_rate = #{reviewRate},
-            review_content = #{reviewContent},
-            review_date = CURRENT_TIMESTAMP
+            <if test="reviewRate != null">
+                review_rate = #{reviewRate},
+            </if>
+            <if test="reviewContent != null and reviewContent != ''">
+                review_content = #{reviewContent},
+            </if>
+            review_date = CURRENT_TIMESTAMP,
             <if test="reviewImage != null and reviewImage != ''">
-                , review_image = #{reviewImage}
+                review_image = #{reviewImage}
             </if>
         </set>
         WHERE review_id = #{reviewId}
     </update>
+
 
     <!-- 6) 리뷰 수정 시 기존의 키워드 관계 삭제 -->
     <delete id="deleteReviewKeywords" parameterType="long">
@@ -172,6 +176,29 @@
         <if test="keyword != null and keyword != ''">
             AND k.keyword = #{keyword}
         </if>
+    </select>
+
+
+    <!-- 12) 특정 shopId의 모든 리뷰 내용 조회 -->
+    <select id="getAllReviewsByShopId" resultType="string">
+        SELECT r.review_content
+        FROM review r
+                 JOIN receipt rc ON r.review_receipt_id = rc.receipt_id
+                 JOIN shop s ON rc.receipt_shop_id = s.shop_id
+        WHERE s.shop_id = #{shopId}
+          AND r.review_status = 0
+    </select>
+
+    <!-- 13) shop 테이블의 review_summary 컬럼 업데이트 -->
+    <update id="updateShopReviewSummary">
+        UPDATE shop
+        SET review_summary = #{reviewSummary}
+        WHERE shop_id = #{shopId}
+    </update>
+
+    <!-- 전체 shopId 조회 -->
+    <select id="getAllShopId" resultType="long">
+        SELECT shop_id FROM shop
     </select>
 
 </mapper>

@@ -26,38 +26,40 @@
         <div class="review-header">
             <div class="review-title">
                 <h2>나의 리뷰</h2>
+                <div class="review-count">
+                    <span th:text="'리뷰 ' + ${reviewCount}">리뷰 0</span>
+                </div>
             </div>
-            <div class="review-count">
-                <span th:text="'리뷰 ' + ${reviewCount}">리뷰 0</span>
-            </div>
-            <div class="review-sort">
-                <select id="sortSelect">
-                    <option value="newest" selected>최신순</option>
-                    <option value="oldest">오래된순</option>
-                </select>
+            <div class="review-header-sort">
+                <div class="review-sort">
+                    <select id="sortSelect">
+                        <option value="newest" selected>최신순</option>
+                        <option value="oldest">오래된순</option>
+                    </select>
+                </div>
             </div>
         </div>
 
-        <!-- 리뷰 목록 -->
-        <div class="review-list">
-            <div class="review-item" th:each="review : ${reviews}">
-                <!-- ... (Thymeleaf 렌더링 시 표시) ... -->
+            <!-- 리뷰 목록 -->
+            <div class="review-list">
+                <div class="review-item" th:each="review : ${reviews}">
+                    <!-- ... (Thymeleaf 렌더링 시 표시) ... -->
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- 삭제 모달 (페이지 하단 공통 영역) -->
-    <div id="reviewModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <div id="modal-body"></div>
+        <!-- 삭제 모달 (페이지 하단 공통 영역) -->
+        <div id="reviewModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <div id="modal-body"></div>
+            </div>
+        </div>
+
+        <!-- JS 로직 -->
+        <div layout:fragment="scripts">
+            <script src="/js/mypage/review/myReview.js"></script>
         </div>
     </div>
-
-    <!-- JS 로직 -->
-    <div layout:fragment="scripts">
-        <script src="/js/mypage/review/myReview.js"></script>
-    </div>
-</div>
 </body>
 </html>

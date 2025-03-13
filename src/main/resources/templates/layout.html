@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      xmlns:sec2="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=640, user-scalable=no">
@@ -21,27 +21,42 @@
                 <div class="logo">
                     <img src="/static/img/logo.png" alt="언니어때 로고">
                 </div>
-                <div class="profile">
+                <div class="profile" sec:authorize="isAuthenticated()">
                     <img src="/static/img/profile.png" alt="프로필 이미지">
+                    <a href="/member/logout">
+                        <button class="auth-btn logout-btn">로그아웃</button>
+                    </a>
+                </div>
+                <div class="login" sec:authorize="!isAuthenticated()">
+                    <a href="/member/login">
+                        <button class="auth-btn login-btn">로그인</button>
+                    </a>
                 </div>
             </div>
 
             <!-- 하단 네비게이션 -->
             <nav class="header-bottom">
                 <ul class="nav">
-                    <li class="active"><a href="#">홈</a></li>
-                    <li><a href="#">내주변</a></li>
-                    <li><a href="#">커뮤니티</a></li>
-                    <li><a href="#">마이</a></li>
+                    <li th:classappend="${activePage == 'home'} ? ' active' : ''">
+                        <a href="#">홈</a>
+                    </li>
+                    <li th:classappend="${activePage == 'map'} ? ' active' : ''">
+                        <a href="/map/map">내주변</a>
+                    </li>
+                    <li th:classappend="${activePage == 'community'} ? ' active' : ''">
+                        <a href="/community">커뮤니티</a>
+                    </li>
+                    <li th:classappend="${activePage == 'mypage'} ? ' active' : ''">
+                        <a href="/mypage">마이</a>
+                    </li>
                 </ul>
             </nav>
         </div>
     </header>
 
-
     <!-- Main -->
     <div class="container" layout:fragment="content">
-        <!-- 여기에 코드 구현 -->
+        <!-- 각 페이지별 콘텐츠가 들어갑니다 -->
     </div>
 
     <!-- Footer -->
@@ -90,6 +105,7 @@
     </footer>
 
 </div>
+
 
 </body>
 </html>

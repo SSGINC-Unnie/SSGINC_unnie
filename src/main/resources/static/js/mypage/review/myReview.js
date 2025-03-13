@@ -127,9 +127,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 </div>
                 <!-- 리뷰 이미지 -->
                 <div class="review-image-section">
-                    ${review.reviewImage
-                ? `<img src="${review.reviewImage}" alt="리뷰 이미지">`
-                : `<img src="/img/review/icon.png" alt="기본 이미지">`}
+                    ${review.reviewImage ? `<img src="${review.reviewImage}" alt="리뷰 이미지">` : `<img src="/img/review/icon.png" alt="기본 이미지">`}
                 </div>
                 <!-- 리뷰 내용 (보기 모드) -->
                 <div class="review-content view-content">${review.reviewContent}</div>
@@ -259,7 +257,6 @@ document.addEventListener("DOMContentLoaded", function() {
             const reviewId = e.target.getAttribute("data-review-id");
             const editArea = document.getElementById(`editArea-${reviewId}`);
             if (editArea) {
-                // 토글: 숨겨진 영역 보여주기/숨기기
                 editArea.style.display = (editArea.style.display === "none" ? "block" : "none");
             }
         }
@@ -279,12 +276,13 @@ document.addEventListener("DOMContentLoaded", function() {
                 return Array.from(checkboxes).map(cb => cb.value).join(",");
             })();
             const newRating = document.querySelector(`#editStarRating-${reviewId}`).getAttribute("data-rating");
-            fetch(`/api/review/${reviewId}`, {
+
+            // 수정 API 호출 시, 키워드 값은 쿼리 파라미터로 전송
+            fetch(`/api/review/${reviewId}?keywordId=${encodeURIComponent(newKeywords)}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     reviewContent: newContent,
-                    keywordId: newKeywords,
                     reviewRate: newRating
                 })
             })

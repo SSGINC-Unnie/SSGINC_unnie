@@ -7,17 +7,30 @@
     box-sizing: border-box;
 }
 
+/* 메인 컨테이너 */
+.review-container {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 24px 16px;
+}
+
 /* 로그인 안내 섹션 */
+
+/* 로그인 프롬프트 */
 .login-prompt {
     text-align: center;
     margin: 50px auto;
-    padding: 20px;
     background-color: #fff;
     border: 1px solid #eee;
     border-radius: 8px;
     box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-    max-width: 640px;
+
+    /* 아래 부분만 수정(추가)하여 폭 늘리기 */
+    max-width: 640px; /* 원하는 최대 폭으로 조정 */
+    width: 100%;       /* 화면 대비 비율 */
+    padding: 30px;    /* 좌우 및 상하 여백 조금 늘리기 */
 }
+
 .login-prompt p {
     font-size: 18px;
     margin-bottom: 20px;
@@ -38,13 +51,6 @@
     background-color: #e02f70;
 }
 
-/* 메인 컨테이너 */
-.review-container {
-    max-width: 640px;
-    margin: 0 auto;
-    padding: 24px 16px;
-}
-
 /* 로그인 후 본문 래퍼 */
 .body-wrapper {
     margin-top: 20px;
@@ -53,22 +59,16 @@
 /* 상단 헤더 영역 */
 .review-header {
     display: flex;
+    justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
 }
 .review-title h2 {
     display: flex;
-    justify-content: left;
     font-size: 22px;
     font-weight: 700;
     color: #191919;
     margin: 0;
-}
-.review-count {
-    display: flex;
-    justify-content: left;
-    font-size: 15px;
-    color: #666;
 }
 .review-sort {
     display: flex;
@@ -91,6 +91,14 @@
     box-shadow: 0 0 5px rgba(255, 52, 121, 0.3);
 }
 
+.review-count {
+    display: flex;
+    justify-content: left;
+    font-size: 15px;
+    margin-top: 15px;
+    color: #666;
+}
+
 /* 리뷰 목록 래퍼 */
 .review-list {
     width: 100%;
@@ -104,13 +112,13 @@
     width: 100%;
     background-color: #fff;
     border: 1px solid #eee;
-    padding: 24px; /* 약간 줄임 */
+    padding: 30px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-     min-height: 400px;
-    border-radius: 8px; /* 모서리 라운드 */
+    min-height: 500px;
+    border-bottom: #E6E6E6;
 }
 
 /* 상단 영역: 업체명, 날짜 */
@@ -121,7 +129,7 @@
     margin-bottom: 12px;
 }
 .review-shopname {
-    font-size: 20px;
+    font-size: 24px;
     font-weight: 700;
     color: #191919;
     margin: 0;
@@ -138,7 +146,7 @@
     margin-bottom: 10px;
 }
 .reviewer {
-    font-size: 16px;
+    font-size: 20px;
     color: #333;
 }
 
@@ -161,7 +169,7 @@
 /* 리뷰 이미지 */
 .review-image-section {
     text-align: center;
-    margin-bottom: 16px;
+    margin-bottom: 26px;
 }
 .review-image-section img {
     max-width: 100%;
@@ -170,7 +178,7 @@
 
 /* 리뷰 내용 */
 .review-content {
-    font-size: 16px;
+    font-size: 20px;
     line-height: 1.5;
     color: #333;
     margin-top: 10px;
@@ -254,9 +262,10 @@
 .inline-edit textarea,
 .inline-edit input[type="text"] {
     width: 100%;
+    min-height: 200px;
     margin-bottom: 10px;
     padding: 8px;
-    font-size: 14px;
+    font-size: 18px;
     border: 1px solid #ccc;
     border-radius: 4px;
 }
