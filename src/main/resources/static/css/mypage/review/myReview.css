@@ -320,15 +320,56 @@
     width: 90%;
     max-width: 500px;
 }
+#modal-body p{
+    padding-top: 18px;
+    padding-bottom: 12px;
+}
 .close {
     color: #aaa;
     float: right;
     font-size: 28px;
     font-weight: bold;
     cursor: pointer;
+    padding-bottom: 20px;
 }
 .close:hover {
     color: #000;
+}
+
+/* 공통 버튼 스타일 */
+button {
+    font-size: 14px;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px; /* 버튼을 둥글게 */
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+/* 삭제 확인 버튼 */
+#confirmDeleteBtn {
+    background-color: #FF4D6D;
+    color: white;
+    box-shadow: 0 4px 6px rgba(255, 77, 109, 0.3);
+    padding-right: 12px;
+}
+
+#confirmDeleteBtn:hover {
+    background-color: #E63956; /* 더 진한 핑크 */
+    transform: scale(1.05); /* 살짝 커지는 효과 */
+}
+
+/* 삭제 취소 버튼 */
+#cancelDeleteBtn {
+    background-color: #F0F0F0;
+    color: #333;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#cancelDeleteBtn:hover {
+    background-color: #E0E0E0;
+    transform: scale(1.05);
 }
 
 /* 키워드 선택 영역 */
