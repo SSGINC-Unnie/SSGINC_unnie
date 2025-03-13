@@ -25,7 +25,7 @@ public interface MyPageMemberService {
     int updatePassword(MyPagePwUpdateRequest pwUpdateRequest);
 
     //회원 탈퇴
-    int withdrawMember(Long memberId);
+    int withdrawMember(MyPageWithdrawRequest withdrawRequest);
 
     //프로필 사진 파일 경로 설정
     String saveFile(MultipartFile file);

@@ -4,10 +4,7 @@ import com.ssginc.unnie.common.config.MemberPrincipal;
 import com.ssginc.unnie.common.exception.UnnieMemberException;
 import com.ssginc.unnie.common.util.ErrorCode;
 import com.ssginc.unnie.common.util.ResponseDto;
-import com.ssginc.unnie.mypage.dto.member.MyPageNicknameUpdateRequest;
-import com.ssginc.unnie.mypage.dto.member.MyPagePhoneUpdateRequest;
-import com.ssginc.unnie.mypage.dto.member.MyPageProfileImgUpdateRequest;
-import com.ssginc.unnie.mypage.dto.member.MyPagePwUpdateRequest;
+import com.ssginc.unnie.mypage.dto.member.*;
 import com.ssginc.unnie.mypage.service.MyPageMemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -90,10 +87,12 @@ public class MyPageMemberController {
      */
     @PatchMapping("/member/withdraw")
     public ResponseEntity<ResponseDto<Map<String, String>>> withdrawMember(
-            @AuthenticationPrincipal MemberPrincipal memberPrincipal){
+            @AuthenticationPrincipal MemberPrincipal memberPrincipal,
+            @RequestBody MyPageWithdrawRequest withdrawRequest){
 
-        Long memberId = memberPrincipal.getMemberId();
-        int result = myPageMemberService.withdrawMember(memberId);
+        // 현재 로그인한 회원의 ID 설정
+        withdrawRequest.setMemberId(memberPrincipal.getMemberId());
+        int result = myPageMemberService.withdrawMember(withdrawRequest);
         return ResponseEntity.ok(new ResponseDto<>(
                 HttpStatus.OK.value(),"회원탈퇴가 완료되었습니다.", Map.of("result", String.valueOf(result)))
         );
