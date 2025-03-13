@@ -121,14 +121,20 @@ public class MyPageMemberServiceImpl implements MyPageMemberService {
      * 회원탈퇴
      */
     @Override
-    public int withdrawMember(Long memberId) {
+    public int withdrawMember(MyPageWithdrawRequest withdrawRequest) {
         //회원 존재 여부 확인
-        Member member = myPageMemberMapper.findMemberById(memberId);
+        Member member = myPageMemberMapper.findMemberById(withdrawRequest.getMemberId());
         if (member == null) {
             throw new UnnieMemberException(ErrorCode.MEMBER_NOT_FOUND);
         }
+
+        //현재 비밀번호 확인
+        if (!passwordEncoder.matches(withdrawRequest.getCurrentPw(), member.getMemberPw())) {
+            throw new UnnieMemberException(ErrorCode.INVALID_PASSWORD);
+        }
+
         //회원 상태 탈퇴(2)로 업데이트
-        int res = myPageMemberMapper.withdrawMember(memberId);
+        int res = myPageMemberMapper.withdrawMember(withdrawRequest.getMemberId());
         if (res == 0){
             throw new UnnieMemberException(ErrorCode.MEMBER_DELETION_FAILED);
         }

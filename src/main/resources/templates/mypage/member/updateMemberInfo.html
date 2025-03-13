@@ -109,12 +109,12 @@
 
             <!-- 회원탈퇴 -->
             <div class="withdraw-section">
-                <a href="/mypage/member/withdraw" class="btn-withdraw">회원탈퇴</a>
+                <!-- 바텀시트 열기 -->
+                <button type="button" class="btn-withdraw" onclick="openWithdrawSheet()">회원탈퇴</button>
             </div>
         </div>
 
-
-        <!-- 휴대전화번호 변경 모달 -->
+        <!-- ================== 휴대전화번호 변경 모달 ================== -->
         <div id="phoneModal" class="modal" style="display: none;">
             <div class="modal-content">
                 <span class="modal-close" onclick="closePhoneModal()">×</span>
@@ -144,10 +144,79 @@
                 </div>
             </div>
         </div>
+
+        <!-- ================== 회원탈퇴 바텀시트 ================== -->
+    <div class="bottom-sheet-overlay" id="withdrawSheetOverlay" style="display: none;">
+        <div class="bottom-sheet-container">
+            <!-- 바텀시트 헤더 -->
+            <div class="bottom-sheet-header">
+                <h2>회원탈퇴</h2>
+                <button class="bottom-sheet-close" onclick="closeWithdrawSheet()">×</button>
+            </div>
+            <!-- 바텀시트 바디 -->
+            <div class="bottom-sheet-body">
+                <!-- 탈퇴 시 유의사항 안내 -->
+                <h2 class="withdraw-title">탈퇴 시 유의사항 안내</h2>
+                <hr class="withdraw-divider" />
+
+                <div class="withdraw-notice-box">
+                    <p class="withdraw-notice">
+                        <span class="check-icon">✓</span>탈퇴 시 작성한 게시글, 댓글, 리뷰 등은 삭제되지 않습니다.<br/>
+                        <span class="check-icon">✓</span>탈퇴 시 추후 재가입 시에도 계정 복구가 불가능합니다.<br/>
+                        <span class="check-icon">✓</span>탈퇴 시 고객님의 계정 정보 역시 모두 소멸됩니다.
+                    </p>
+                </div>
+
+                <!-- 비밀번호 입력 -->
+                <div class="form-group">
+                    <div class="inline-row">
+                        <label class="info-label">비밀번호</label>
+                        <input type="password" id="withdrawCurrentPw" class="input-box" placeholder="비밀번호 입력" />
+                    </div>
+                    <div id="withdrawCurrentPwError" class="error-msg"></div>
+                </div>
+                <!-- 체크박스 -->
+                <div class="form-group">
+                    <input type="checkbox" id="withdrawCheck" />
+                    <label for="withdrawCheck">유의사항을 모두 확인하였으며, 탈퇴에 동의합니다.</label>
+                </div>
+                <!-- 탈퇴 버튼 -->
+                <button type="button" id="withdrawConfirmBtn" class="btn-small" disabled>탈퇴</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 탈퇴 최종확인 모달 -->
+    <div id="confirmWithdrawModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>정말로 탈퇴하시겠습니까?</h3>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="finalWithdrawYesBtn" class="btn-small">탈퇴</button>
+                <button type="button" id="finalWithdrawNoBtn" class="btn-small btn-cancel">취소</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 탈퇴 완료 모달 -->
+        <div id="withdrawSuccessModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>회원탈퇴가 완료되었습니다.</h3>
+                </div>
+                <div class="modal-body">
+                    <p>그동안 이용해주셔서 감사합니다.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="withdrawSuccessOkBtn" class="btn-small">확인</button>
+                </div>
+            </div>
+        </div>
+
         <div layout:fragment="scripts">
             <script src="/js/mypage/member/updateMemberInfo.js"></script>
         </div>
     </div>
 </body>
-
 </html>

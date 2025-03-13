@@ -388,8 +388,7 @@ $(document).ready(function() {
     $("#newPwConfirm").on("keyup", checkConfirmPassword);
 })
 
-
-// 프로필 이미지 파일 선택 및 업데이트
+// ================================= 프로필 이미지 파일 선택 및 업데이트 ======================================
 function updateProfileImage() {
     const fileInput = document.getElementById("profileImage");
     const previewImg = document.getElementById("profilePreview");
@@ -447,10 +446,131 @@ function closePhoneModal() {
     document.getElementById("phoneModal").style.display = "none";
 }
 
-
 //이벤트 등록
 document.addEventListener("DOMContentLoaded", function () {
     updateProfileImage();
 });
+
+
+// ================================= 회원탈퇴 바텀시트 + 모달  ======================================
+// 바텀시트 열기
+window.openWithdrawSheet = function() {
+    document.getElementById("withdrawSheetOverlay").style.display = "block";
+};
+
+// 바텀시트 닫기
+function closeWithdrawSheet() {
+    document.getElementById("withdrawSheetOverlay").style.display = "none";
+    // 입력값 초기화, 에러메시지 제거
+    document.getElementById("withdrawCurrentPw").value = "";
+    document.getElementById("withdrawCurrentPwError").innerText = "";
+    document.getElementById("withdrawCheck").checked = false;
+    document.getElementById("withdrawConfirmBtn").disabled = true;
+}
+
+// 체크박스(동의) 시 탈퇴버튼 활성화
+const withdrawCheck = document.getElementById("withdrawCheck");
+const withdrawConfirmBtn = document.getElementById("withdrawConfirmBtn");
+if (withdrawCheck && withdrawConfirmBtn) {
+    withdrawCheck.addEventListener("change", function () {
+        withdrawConfirmBtn.disabled = !this.checked;
+    });
+}
+
+// 바텀시트 내 탈퇴 버튼 클릭 후 최종확인 모달
+if (withdrawConfirmBtn) {
+    withdrawConfirmBtn.addEventListener("click", function () {
+        const pwVal = document.getElementById("withdrawCurrentPw").value.trim();
+        const pwError = document.getElementById("withdrawCurrentPwError");
+
+        // 비밀번호 입력 검증
+        if (!pwVal) {
+            pwError.innerText = "비밀번호를 입력해주세요.";
+            return;
+        } else {
+            pwError.innerText = "";
+        }
+
+        // 바텀시트 닫고 최종확인 모달 열기
+        openConfirmWithdrawModal();
+    });
+}
+
+// 최종확인 모달 열기/닫기
+function openConfirmWithdrawModal() {
+    document.getElementById("confirmWithdrawModal").style.display = "flex";
+}
+function closeConfirmWithdrawModal() {
+    document.getElementById("confirmWithdrawModal").style.display = "none";
+}
+
+// 탈퇴 진행
+// PATCH 요청
+const finalYesBtn = document.getElementById("finalWithdrawYesBtn");
+if (finalYesBtn) {
+    finalYesBtn.addEventListener("click", async function () {
+        const pwVal = document.getElementById("withdrawCurrentPw").value.trim();
+        try {
+            // 탈퇴 API 호출
+            const response = await axios.patch("/api/mypage/member/withdraw", {
+                currentPw: pwVal
+            });
+            if (response.status === 200) {
+                console.log("탈퇴 응답:", response);
+                // 탈퇴 성공 시
+                closeConfirmWithdrawModal();
+                openWithdrawSuccessModal();
+            }
+        } catch (error) {
+            console.error(error);
+            if (error.response && error.response.data && error.response.data.message) {
+                // INVALID_PASSWORD 에러 메시지
+                alert(error.response.data.message);
+            } else {
+                alert("탈퇴 처리 중 오류가 발생했습니다.");
+            }
+        }
+    });
+}
+
+// 정말 탈퇴 취소 버튼
+const finalNoBtn = document.getElementById("finalWithdrawNoBtn");
+if (finalNoBtn) {
+    finalNoBtn.addEventListener("click", function () {
+        closeConfirmWithdrawModal();
+    });
+}
+
+// 탈퇴 완료 모달 열기/닫기
+function openWithdrawSuccessModal() {
+    document.getElementById("withdrawSuccessModal").style.display = "flex";
+}
+function closeWithdrawSuccessModal() {
+    document.getElementById("withdrawSuccessModal").style.display = "none";
+    //  memberId 추출
+    const memberId = document.getElementById("memberId").value;
+
+    // 로그아웃 요청 (토큰 삭제)
+    axios.post("/api/member/logout", {
+        memberId: memberId
+    })
+        .then(response => {
+            // 로그아웃 성공 시 메인 페이지로 이동
+            window.location.href = "/";
+        })
+        .catch(error => {
+            console.error("로그아웃 중 오류 발생:", error);
+            alert("로그아웃 처리 중 오류가 발생했습니다.");
+            window.location.href = "/";
+        });
+}
+
+// 탈퇴 완료 모달의 확인 버튼
+const successOkBtn = document.getElementById("withdrawSuccessOkBtn");
+if (successOkBtn) {
+    successOkBtn.addEventListener("click", function () {
+        closeWithdrawSuccessModal();
+    });
+}
 
 

@@ -1,0 +1,110 @@
+/* ----------------------------------
+   메인 배너
+---------------------------------- */
+.main-banner {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+}
+.main-banner img {
+    width: 592px;
+    height: 280px;
+    display: block;
+    margin: 15px auto 0;
+}
+
+
+/* ----------------------------------
+   메인 아이콘 메뉴
+---------------------------------- */
+.icon-menu {
+    margin: 20px 0;
+    text-align: center;
+}
+.icon-menu ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    gap: 75px;
+}
+.icon-menu li {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 0.9rem;
+}
+.icon-menu li img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-bottom: 5px;
+}
+
+/* ----------------------------------
+   주변 핫한 뷰티샵, 잇템 섹션, 꿀팁 등
+---------------------------------- */
+.hot-beauty, .hot-items, .tips-section {
+    padding: 20px;
+}
+.hot-beauty h2, .hot-items h2, .tips-section h2 {
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+}
+
+/* 이미지 배치 */
+.hot-beauty div,
+.hot-items div {
+    display: flex;
+    gap: 10px;
+}
+.hot-beauty div img,
+.hot-items div img {
+    width: 200%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 6px;
+    justify-content: space-between;
+}
+
+/* 꿀팁(글+이미지) */
+.tips-wrapper {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 항상 2열로 배치 */
+    gap: 10px;
+}
+.tips-wrapper article {
+    border-radius: 6px;
+    text-align: left; /* 왼쪽 정렬 */
+}
+.tips-wrapper article img {
+    width: 100%;
+    height: auto;
+    margin-bottom: 8px;
+    border-radius: 4px;
+}
+
+/* 글쓴이(아이디) */
+.tips-wrapper article .username {
+    color: #B3B3B3;    /* 글자색 */
+    font-size: 0.85rem;
+    margin-bottom: 4px; /* 아래 여백 */
+}
+
+/* 주변 핫한 뷰티샵 섹션: 그리드 레이아웃*/
+.hot-beauty {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* 2열 배치 */
+    gap: 10px; /* 여백 조정 */
+}
+
+/* 제목은 전체 가로를 차지하도록 설정 */
+.hot-beauty h2 {
+    grid-column: 1 / -1;
+    margin-bottom: 10px;
+}
+
+/* 이미지 스타일: 고정 크기 */
+.hot-beauty img {
+    display: block;
+}
