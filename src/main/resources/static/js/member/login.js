@@ -56,6 +56,21 @@ window.onload = function() {
             });
     });
 
+    //=================================== 소셜 로그인 ====================================
+
+    // 이메일 중복 체크 API 호출 함수
+    function emailCheck(email) {
+        return axios.get(`/api/oauth/emailCheck/${encodeURIComponent(email)}`)
+            .then(response => {
+                console.log("이메일 중복 체크 결과:", response.data);
+                return response.data; // true/false 반환
+            })
+            .catch(error => {
+                console.error("이메일 확인 중 오류 발생:", error);
+                return false; // false 반환
+            });
+    }
+
     // ---------------------------
     //  네이버 로그인
     // ---------------------------
@@ -78,7 +93,7 @@ window.onload = function() {
     // ---------------------------
     // 구글 로그인
     // ---------------------------
-    function handleGoogleCredentialResponse(response) {
+    async function handleGoogleCredentialResponse(response) {
         const responsePayload = parseJwt(response.credential);
         console.log("Email: " + responsePayload.email); //이메일
         console.log("Full Name: " + responsePayload.name);
@@ -87,27 +102,31 @@ window.onload = function() {
         var email = responsePayload.email;
         var name = responsePayload.name;
         var nickname = "";
-        var gender = "";
         var mobile = "";
         // 임의의 8자리 비밀번호 생성
         var password = generateRandomPassword8();
 
-        // 동적으로 form을 생성하여 POST 방식으로 소셜 프로필 정보를 전달
-        var form = document.createElement("form");
-        form.method = "POST";
-        form.action = "/api/oauth/register";
-        form.innerHTML =
-            "<input type='hidden' name='memberEmail' value='" + email + "'/>" +
-            "<input type='hidden' name='memberPw' value='" + password + "'/>" +
-            "<input type='hidden' name='memberName' value='" + name + "'/>" +
-            "<input type='hidden' name='memberNickname' value='" + nickname + "'/>" +
-            "<input type='hidden' name='memberGender' value='" + gender + "'/>" +
-            "<input type='hidden' name='memberPhone' value='" + mobile + "'/>" +
-            "<input type='hidden' name='memberProvider' value='google'/>";
+        const isRegistered = await emailCheck(email); // 이메일 중복 체크
+        if (isRegistered) {
+            // 이미 회원이면 로그인 처리 후 홈으로 이동
+            location.href = "/";
+        } else {
+            // 신규 회원이라면 회원가입 처리
+            // 동적으로 form을 생성하여 POST 방식으로 소셜 프로필 정보를 전달
+            var form = document.createElement("form");
+            form.method = "POST";
+            form.action = "/api/oauth/register";
+            form.innerHTML =
+                "<input type='hidden' name='memberEmail' value='" + email + "'/>" +
+                "<input type='hidden' name='memberPw' value='" + password + "'/>" +
+                "<input type='hidden' name='memberName' value='" + name + "'/>" +
+                "<input type='hidden' name='memberNickname' value='" + nickname + "'/>" +
+                "<input type='hidden' name='memberPhone' value='" + mobile + "'/>" +
+                "<input type='hidden' name='memberProvider' value='google'/>";
 
-        document.body.appendChild(form);
-
-        form.submit();
+            document.body.appendChild(form);
+            form.submit();
+        }
     }
 
     // JWT 토큰 디코딩 함수
@@ -150,37 +169,38 @@ window.onload = function() {
                 // 사용자 정보 요청
                 Kakao.API.request({
                     url: '/v2/user/me',
-                    success: function(res) {
+                    success: async function(res) {
                         console.log("사용자 정보:", res);
-                        // kakao_account가 존재하는지 확인
-                        var account = res.kakao_account;
-                        if (!account) {
-                            console.error("kakao_account 정보가 없습니다.");
-                            return;
-                        }
+
                         // 이메일, 이름
-                        var email = account.email;
-                        var name = account.profile && account.profile.nickname ? account.profile.nickname : "";
+                        var email = res.kakao_account.email;
+                        var name = res.kakao_account.profile && res.kakao_account.profile.nickname ? res.kakao_account.profile.nickname : "";
                         var nickname = "";
-                        var gender = "";
                         var mobile = "";
                         // 8자리 임의 비밀번호 생성
                         var password = generateRandomPassword8();
-                        // 동적으로 form을 생성하여 POST 방식으로 소셜 프로필 정보를 전달
-                        var form = document.createElement("form");
-                        form.method = "POST";
-                        form.action = "/api/oauth/register";
-                        form.innerHTML =
-                            "<input type='hidden' name='memberEmail' value='" + email + "'/>" +
-                            "<input type='hidden' name='memberPw' value='" + password + "'/>" +
-                            "<input type='hidden' name='memberName' value='" + name + "'/>" +
-                            "<input type='hidden' name='memberNickname' value='" + nickname + "'/>" +
-                            "<input type='hidden' name='memberGender' value='" + gender + "'/>" +
-                            "<input type='hidden' name='memberPhone' value='" + mobile + "'/>" +
-                            "<input type='hidden' name='memberProvider' value='kakao'/>";
 
-                        document.body.appendChild(form);
-                        form.submit();
+                        const isRegistered = await emailCheck(email); // 이메일 중복 체크
+                        if (isRegistered) {
+                            // 이미 회원이면 로그인 처리 후 홈으로 이동
+                            location.href = "/";
+                        } else {
+                            // 신규 회원이라면 회원가입 처리
+                            // 동적으로 form을 생성하여 POST 방식으로 소셜 프로필 정보를 전달
+                            var form = document.createElement("form");
+                            form.method = "POST";
+                            form.action = "/api/oauth/register";
+                            form.innerHTML =
+                                "<input type='hidden' name='memberEmail' value='" + email + "'/>" +
+                                "<input type='hidden' name='memberPw' value='" + password + "'/>" +
+                                "<input type='hidden' name='memberName' value='" + name + "'/>" +
+                                "<input type='hidden' name='memberNickname' value='" + nickname + "'/>" +
+                                "<input type='hidden' name='memberPhone' value='" + mobile + "'/>" +
+                                "<input type='hidden' name='memberProvider' value='kakao'/>";
+
+                            document.body.appendChild(form);
+                            form.submit();
+                        }
                     },
                     fail: function(error) {
                         console.error("사용자 정보 요청 실패:", error);
