@@ -64,10 +64,10 @@ public class AuthServiceImpl implements AuthService {
             String nickname = memberPrincipal.getMemberNickname();
             log.info("memberId: {}, role: {}, nickname: {}", memberId, role, nickname);
 
-            // Access Token 생성
+            // AccessToken과 RefreshToken 생성
+            // Access Token
             String accessToken = jwtUtil.generateToken(memberId, role, nickname);
-
-            // Refresh Token 생성
+            // Refresh Token
             String refreshToken = jwtUtil.generateRefreshToken(memberId);
 
             // Access Token 쿠키 저장
@@ -79,8 +79,8 @@ public class AuthServiceImpl implements AuthService {
             log.info("발급된 accessToken: {}", accessToken);
             log.info("발급된 refreshToken: {}", refreshToken);
 
+            // AccessToken과 RefreshToken을 Map으로 반환
             return Map.of(
-                    "memberId", String.valueOf(memberId),
                     "accessToken", accessToken,
                     "refreshToken", refreshToken
             );
@@ -93,28 +93,24 @@ public class AuthServiceImpl implements AuthService {
      * Access token 재발급 메서드
      */
     @Override
-    public Map<String, String> refreshAccessToken(Long memberId, HttpServletResponse response) {
+    public Map<String, String> refreshAccessToken(String refreshToken, HttpServletResponse response) {
 
-        // Redis에서 해당 회원의 refresh token 조회
-        RedisToken storedToken = redisTokenService.getRefreshToken(String.valueOf(memberId));
-        if (storedToken == null) {
-            throw new UnnieJwtException(ErrorCode.REFRESH_TOKEN_NOT_FOUND);
-        }
-
-        String storedRefreshToken = storedToken.getRefreshToken();
-
-        // refresh token의 JWT 유효성 검사
-        if (!jwtUtil.validateToken(storedRefreshToken)) {
+        // RefreshToken 검증
+        if (!jwtUtil.validateToken(refreshToken)) {
             throw new UnnieJwtException(ErrorCode.INVALID_REFRESH_TOKEN);
         }
 
-        //DB 재조회: 현재 회원번호로 Member 엔티티를 가져와, role, nickname 등 최신 정보 확인
-        Member member = memberMapper.selectMemberById(memberId);
-        if (member == null) {
-            throw new UnnieJwtException(ErrorCode.MEMBER_NOT_FOUND);
+        // Redis에서 RefreshToken 조회
+        Long memberId = jwtUtil.getMemberIdFromToken(refreshToken);
+        RedisToken storedToken = redisTokenService.getRefreshToken(String.valueOf(memberId));
+
+        if (storedToken == null || !storedToken.getRefreshToken().equals(refreshToken)) {
+            throw new UnnieJwtException(ErrorCode.INVALID_REFRESH_TOKEN);
         }
 
-        //새 Access Token 생성
+        // DB에서 최신 회원 정보 조회 (변경된 role이나 nickname 반영)
+        // 새로운 AccessToken 발급
+        Member member = memberMapper.selectMemberById(memberId);
         String newAccessToken = jwtUtil.generateToken(memberId, member.getMemberRole(), member.getMemberNickname());
 
         // 쿠키에 새 Access Token 저장
@@ -123,18 +119,6 @@ public class AuthServiceImpl implements AuthService {
         log.info("새로운 AccessToken 발급: {}", newAccessToken);
 
         return Map.of("accessToken", newAccessToken);
-    }
-
-    /**
-     * 로그아웃: access token 쿠키 제거 및 Redis에 저장된 refresh token 삭제
-     */
-    @Override
-    public void logout(Long memberId, HttpServletResponse response) {
-        // 쿠키에서 access token 제거 (유효시간 0으로 설정하여 제거)
-        setCookie(response, "accessToken", "", 0);
-        // Redis에서 refresh token 삭제
-        redisTokenService.deleteRefreshToken(String.valueOf(memberId));
-        log.info("회원 {} 로그아웃 처리 완료", memberId);
     }
 
     /**
@@ -161,7 +145,10 @@ public class AuthServiceImpl implements AuthService {
         //access token 쿠키에 저장
         setCookie(response, "accessToken", accessToken, 3600); // 1시간
 
-        // refresh token은 Redis에 저장
+        //Refresh Token 쿠키에 저장
+        setCookie(response, "refreshToken", refreshToken, 60 * 60 * 6); //6시간
+
+        // refresh token Redis에 저장
         redisTokenService.saveRefreshToken(String.valueOf(memberId), refreshToken);
 
         return Map.of("accessToken", accessToken, "refreshToken", refreshToken);

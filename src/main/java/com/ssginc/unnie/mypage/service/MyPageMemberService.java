@@ -1,7 +1,11 @@
 package com.ssginc.unnie.mypage.service;
 
+import com.ssginc.unnie.common.util.ResponseDto;
 import com.ssginc.unnie.mypage.dto.member.*;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Map;
 
 
 /**
@@ -16,7 +20,7 @@ public interface MyPageMemberService {
     int updateProfile(MyPageProfileImgUpdateRequest profileImgUpdateRequest, MultipartFile file);
 
     // 닉네임 수정
-    int updateNickname(MyPageNicknameUpdateRequest nicknameUpdateRequest);
+    ResponseDto<Map<String, String>> updateNickname(MyPageNicknameUpdateRequest nicknameUpdateRequest, HttpServletResponse response);
 
     // 전화번호 수정
     int updatePhone(MyPagePhoneUpdateRequest phoneUpdateRequest);

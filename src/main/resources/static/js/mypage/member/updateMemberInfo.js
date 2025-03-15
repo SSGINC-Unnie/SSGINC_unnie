@@ -105,9 +105,9 @@ async function updateNickname() {
         // 닉네임 수정 요청
         const response = await axios.put("/api/mypage/member/nickname", {
             memberNickname: nicknameVal
-        });
+        },  { withCredentials: true });  // 쿠키 자동 처리
         if (response.status === 200) {
-           // showMsg($nicknameError, "success", "닉네임이 수정되었습니다.");
+            // showMsg($nicknameError, "success", "닉네임이 수정되었습니다.");
             alert("닉네임이 수정되었습니다.");
             //$(".memberNickname").text(nicknameVal);
             // 수정한 닉네임을 입력칸에 남김

@@ -9,6 +9,7 @@ import com.ssginc.unnie.common.util.ResponseDto;
 import com.ssginc.unnie.member.dto.MemberLoginRequest;
 import com.ssginc.unnie.member.service.AuthService;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 /**
- * 로그인, Access Token 재발급, 로그아웃 API 처리하는 컨트롤러
+ * 로그인, Access Token 재발급 처리하는 컨트롤러
  */
 @Slf4j
 @RestController
@@ -36,9 +37,21 @@ public class AuthController {
      */
     @PostMapping("/login")
     public ResponseEntity<ResponseDto<Map<String,String>>> login(@RequestBody MemberLoginRequest memberLoginRequest, HttpServletResponse response ) {
-
+        // 로그인 실행
         Map<String, String> tokens = authService.login(memberLoginRequest, response);
-        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "로그인에 성공했습니다.", tokens));
+
+        // Refresh Token을 HttpOnly 쿠키에 저장
+        Cookie refreshTokenCookie = new Cookie("refreshToken", tokens.get("refreshToken"));
+        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setSecure(false);
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setMaxAge(60 * 60 * 6); // 6시간 설정
+
+        response.addCookie(refreshTokenCookie);
+
+        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "로그인에 성공했습니다.", Map.of(
+                "accessToken", tokens.get("accessToken")))); //JWT AccessToken 값 반환
+        // "accessToken" : 응답 JSON에서 사용하는 키 값
     }
 
     /**
@@ -46,30 +59,27 @@ public class AuthController {
      */
     @PostMapping("/refresh")
     public ResponseEntity<ResponseDto<Map<String, String>>> refreshAccessToken(
-            @RequestBody Map<String, String> requestBody,
+            HttpServletRequest request,
             HttpServletResponse response) {
-        String memberIdStr = requestBody.get("memberId");
-        if (memberIdStr == null) {
-            throw new UnnieJwtException(ErrorCode.MEMBER_NOT_FOUND);
-        }
-        Long memberId = Long.valueOf(memberIdStr);
-        Map<String, String> tokens = authService.refreshAccessToken(memberId, response);
-        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "AccessToken 재발급 성공", tokens));
-    }
 
-    /**
-     * 로그아웃 API (JWT 및 Redis refresh token 삭제)
-     */
-    @PostMapping("/logout")
-    public ResponseEntity<ResponseDto<Map<String, String>>> logout(
-            @RequestBody Map<String, String> requestBody,
-            HttpServletResponse response) {
-        String memberIdStr = requestBody.get("memberId");
-        if (memberIdStr == null) {
-            throw new UnnieJwtException(ErrorCode.MEMBER_NOT_FOUND);
+        // RefreshToken을 쿠키에서 가져옴
+        Cookie[] cookies = request.getCookies();
+        String refreshToken = null;
+
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("refreshToken".equals(cookie.getName())) {
+                    refreshToken = cookie.getValue();
+                }
+            }
         }
-        Long memberId = Long.valueOf(memberIdStr);
-        authService.logout(memberId, response);
-        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "로그아웃 성공", Map.of("message", "로그아웃 성공!")));
+
+        if (refreshToken == null) {
+            throw new UnnieJwtException(ErrorCode.REFRESH_TOKEN_NOT_FOUND);
+        }
+        // 새로운 AccessToken 발급
+        Map<String, String> tokens = authService.refreshAccessToken(refreshToken, response);
+
+        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "AccessToken 재발급 성공", tokens));
     }
 }

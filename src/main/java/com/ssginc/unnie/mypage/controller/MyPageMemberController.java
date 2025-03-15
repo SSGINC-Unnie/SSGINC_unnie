@@ -6,6 +6,7 @@ import com.ssginc.unnie.common.util.ErrorCode;
 import com.ssginc.unnie.common.util.ResponseDto;
 import com.ssginc.unnie.mypage.dto.member.*;
 import com.ssginc.unnie.mypage.service.MyPageMemberService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -45,13 +46,14 @@ public class MyPageMemberController {
      */
     @PutMapping("/member/nickname")
     public ResponseEntity<ResponseDto<Map<String, String>>> updateNickname(
-            @AuthenticationPrincipal MemberPrincipal memberPrincipal, @RequestBody MyPageNicknameUpdateRequest nicknameUpdateRequest) {
+            @AuthenticationPrincipal MemberPrincipal memberPrincipal,
+            @RequestBody MyPageNicknameUpdateRequest nicknameUpdateRequest,
+            HttpServletResponse response) {
 
         nicknameUpdateRequest.setMemberId(memberPrincipal.getMemberId());
-        int result = myPageMemberService.updateNickname(nicknameUpdateRequest);
-        return ResponseEntity.ok(new ResponseDto<>(
-               HttpStatus.OK.value(),"닉네임 수정이 완료되었습니다.", Map.of("result", String.valueOf(result))
-        ));
+        ResponseDto<Map<String, String>> responseDto = myPageMemberService.updateNickname(nicknameUpdateRequest, response);
+
+        return ResponseEntity.ok(responseDto);
     }
 
     /**
