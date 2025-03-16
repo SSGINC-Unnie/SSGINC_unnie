@@ -106,61 +106,6 @@ document.getElementById('submitBtn').addEventListener('click', async function() 
     }
 });
 
-// completeBtn 이벤트 (업체 등록 후 index.html로 이동)
-document.getElementById('completeBtn').addEventListener('click', async function() {
-    const form = document.getElementById('shopForm');
-    if (!form.checkValidity()) {
-        alert('필수 항목을 입력해 주세요.');
-        return;
-    }
-    // 폼 값 수집
-    const shopBusinessNumber = document.getElementById('shopBusinessNumber').value.trim();
-    const shopRepresentationName = document.getElementById('shopRepresentationName').value.trim();
-    const shopCreatedAt = document.getElementById('shopCreatedAt').value;
-    const shopLocation = document.getElementById('shopLocation').value.trim();
-    const shopName = document.getElementById('shopName').value.trim();
-    const shopCategory = document.querySelector('input[name="shopCategory"]:checked').value;
-    const startTime = document.querySelector('input[name="shopBusinessStartTime"]').value;
-    const endTime = document.querySelector('input[name="shopBusinessEndTime"]').value;
-    const shopTel = document.getElementById('shopTel').value.trim();
-    const shopClosedDay = document.querySelector('input[name="shopClosedDay"]:checked').value;
-    const shopIntroduction = document.getElementById('shopIntroduction').value.trim();
-
-    const shopBusinessTime = `${startTime}-${endTime}`;
-    const fullLocation = shopLocation;
-
-    const requestBody = {
-        shopName: shopName,
-        shopLocation: fullLocation,
-        shopCategory: shopCategory,
-        shopBusinessTime: shopBusinessTime,
-        shopTel: shopTel,
-        shopIntroduction: shopIntroduction,
-        shopClosedDay: shopClosedDay,
-        shopRepresentationName: shopRepresentationName,
-        shopBusinessNumber: shopBusinessNumber,
-        shopCreatedAt: shopCreatedAt
-    };
-
-    try {
-        // 업체 등록 API 호출
-        const response = await fetch('/api/mypage/shop', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(requestBody)
-        });
-        if (!response.ok) {
-            const err = await response.json();
-            throw new Error(err.message || '업체 등록 실패');
-        }
-        const data = await response.json();
-        alert(data.message || ('업체 등록이 완료되었습니다. ' + data.data.shopId));
-        console.log('등록된 shopId', data.data.shopId);
-        window.location.href = '/index.html';
-    } catch (err) {
-        alert(err.message);
-    }
-});
 
 // DOMContentLoaded: 미디어 파일 업로드 미리보기, 취소(X) 버튼 및 새로운 업로드 영역 추가 처리
 document.addEventListener('DOMContentLoaded', function () {
