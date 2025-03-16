@@ -1,13 +1,82 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout.html}">
+      layout:decorate="~{layout}">
 <head>
-    <title>언니어때</title>
+    <meta charset="UTF-8"/>
+    <title>언니어때 - 메인페이지</title>
+    <link rel="stylesheet" href="/static/css/index.css">
 </head>
 <body>
+
 <div layout:fragment="content">
 
+    <!-- 메인 배너 -->
+    <section class="main-banner">
+        <img src="/img/common/Banner.png" alt="메인 배너 이미지">
+    </section>
+
+    <!-- 메인 아이콘 메뉴 -->
+    <section class="icon-menu">
+        <ul>
+            <li>
+                <img src="/img/common/Icon1.png" alt="헤어샵 아이콘">
+                헤어샵
+            </li>
+            <li>
+                <img src="/img/common/Icon2.png" alt="네일샵 아이콘">
+                네일샵
+            </li>
+            <li>
+                <img src="/img/common/Icon3.png"  alt="에스테틱 아이콘">
+                에스테틱
+            </li>
+            <li>
+                <img src="/img/common/Icon4.png"  alt="왁싱샵 아이콘">
+                왁싱샵
+            </li>
+            <li>
+                <img src="/img/common/Icon5.png"  alt="바버샵 아이콘">
+                바버샵
+            </li>
+        </ul>
+    </section>
+
+    <!-- 주변 핫한 뷰티샵 섹션 -->
+    <section class="hot-beauty">
+        <h2>주변 핫한 뷰티샵</h2>
+        <img src="/img/common/shop1.png">
+        <img src="/img/common/shop2.png">
+    </section>
+
+    <!-- 이번 주 꿀팁 섹션 -->
+    <section class="tips-section">
+        <h2>이번 주 꿀팁</h2>
+        <div class="tips-wrapper">
+            <article>
+                <img src="/img/common/tip1.png" alt="꿀팁 이미지1" />
+                <!-- 글쓴이(아이디) -->
+                <p class="username">wishs2</p>
+                <!-- 제목 -->
+                <p>요즘 눈썹 그리기 1분 요약</p>
+            </article>
+            <article>
+                <img src="/img/common/tip2.png" alt="꿀팁 이미지2" />
+                <p class="username">GaYoung28</p>
+                <p>봄맞이 새내기를 위한 화장품 구매 꿀팁</p>
+            </article>
+            <article>
+                <img src="/img/common/tip3.png" alt="꿀팁 이미지3" />
+                <p class="username">sangwooLee1231</p>
+                <p>꼭 구매해야 하는 베이스 립 베스트 10</p>
+            </article>
+            <article>
+                <img src="/img/common/tip4.png" alt="꿀팁 이미지4" />
+                <p class="username">DHKim96</p>
+                <p>봄에 하면 좋을 예쁜 네일아트 추천</p>
+            </article>
+        </div>
+    </section>
 </div>
 </body>
 </html>
