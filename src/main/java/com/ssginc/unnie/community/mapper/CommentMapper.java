@@ -1,9 +1,9 @@
 package com.ssginc.unnie.community.mapper;
 
+import com.ssginc.unnie.community.dto.board.BoardResponseForEvent;
 import com.ssginc.unnie.community.dto.comment.CommentRequest;
 import com.ssginc.unnie.community.dto.comment.CommentGetResponse;
 import com.ssginc.unnie.community.dto.comment.CommentGuestGetResponse;
-import com.ssginc.unnie.member.vo.Member;
 import com.ssginc.unnie.mypage.dto.community.MyPageCommentsResponse;
 import com.ssginc.unnie.notification.dto.NotificationResponse;
 import org.apache.ibatis.annotations.Mapper;
@@ -34,4 +34,8 @@ public interface CommentMapper {
     List<MyPageCommentsResponse> getMyComments(long memberId);
 
     NotificationResponse getBoardAuthorIdByCommentId(long commentId);
+
+    BoardResponseForEvent getBoardTitleAndBoardAuthorIdByBoardId(long commentBoardId);
+
+    int getMemberIdByCommentId(long commentParentId);
 }

@@ -4,15 +4,16 @@ import com.github.pagehelper.PageInfo;
 import com.ssginc.unnie.community.dto.comment.CommentRequest;
 import com.ssginc.unnie.community.dto.comment.CommentGetResponse;
 import com.ssginc.unnie.community.dto.comment.CommentGuestGetResponse;
+import com.ssginc.unnie.community.dto.member.CommunityMemberDto;
 import com.ssginc.unnie.notification.dto.NotificationResponse;
 
 /**
  * 댓글 기능 인터페이스
  */
 public interface CommentService {
-    long createComment(CommentRequest request, long memberId);
+    long createComment(CommentRequest request, CommunityMemberDto memberId);
 
-    long createReplyComment(CommentRequest request, long memberId);
+    long createReplyComment(CommentRequest request, CommunityMemberDto memberId);
 
     PageInfo<CommentGuestGetResponse> getAllCommentsGuest(long boardId, int page);
 

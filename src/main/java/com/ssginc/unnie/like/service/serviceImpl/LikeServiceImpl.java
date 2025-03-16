@@ -3,6 +3,8 @@ package com.ssginc.unnie.like.service.serviceImpl;
 import com.ssginc.unnie.common.exception.UnnieLikeException;
 import com.ssginc.unnie.common.util.ErrorCode;
 import com.ssginc.unnie.common.util.validation.Validator;
+import com.ssginc.unnie.like.dto.LikeCreatedEvent;
+import com.ssginc.unnie.like.dto.LikeMemberDto;
 import com.ssginc.unnie.like.dto.LikeRequest;
 import com.ssginc.unnie.like.mapper.LikeMapper;
 import com.ssginc.unnie.like.service.LikeService;
@@ -10,6 +12,7 @@ import com.ssginc.unnie.notification.dto.NotificationMessage;
 import com.ssginc.unnie.notification.dto.NotificationResponse;
 import com.ssginc.unnie.notification.vo.NotificationType;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +25,7 @@ public class LikeServiceImpl implements LikeService {
 
     private final LikeMapper likeMapper;
     private final Validator<LikeRequest> likeValidator; // 좋아요 유효성 검증 클래스
+    private final ApplicationEventPublisher publisher;
 
     /**
      * 게시글 상세 화면 좋아요 여부 조회
@@ -40,7 +44,10 @@ public class LikeServiceImpl implements LikeService {
      * 좋아요 추가 메서드
      */
     @Override
-    public long createLike(LikeRequest like) {
+    @Transactional(rollbackFor = Exception.class)
+    public long createLike(LikeRequest like, LikeMemberDto loginUser) {
+
+        like.setLikeMemberId(loginUser.getMemberId());
 
         likeValidator.validate(like);
 
@@ -49,6 +56,24 @@ public class LikeServiceImpl implements LikeService {
         if (res != 1) {
             throw new UnnieLikeException(ErrorCode.LIKE_CREATE_FAILED);
         }
+
+        NotificationResponse notificationRes = getLikeTargetMemberInfoByTargetInfo(like);
+
+        LikeCreatedEvent event;
+
+        event = LikeCreatedEvent.builder()
+                .receiverId(notificationRes.getReceiverId())
+                .memberNickname(notificationRes.getReceiverNickname())
+                .targetId(like.getLikeTargetId())
+                .targetTitle(notificationRes.getTargetTitle())
+                .type(like.getLikeTargetType())
+                .build();
+
+        if (like.getLikeTargetType().equals("COMMENT")) {
+            event.setTargetId(getBoardIdByCommentTargetId(like.getLikeTargetId()));
+        }
+
+        publisher.publishEvent(event);
 
         return like.getLikeId();
     }
@@ -71,6 +96,9 @@ public class LikeServiceImpl implements LikeService {
         if (res != 1) {
             throw new UnnieLikeException(ErrorCode.LIKE_DELETE_FAILED);
         }
+
+
+
 
         return like.getLikeId();
     }
