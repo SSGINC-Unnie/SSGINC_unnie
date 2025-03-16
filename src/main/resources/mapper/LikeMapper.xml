@@ -70,7 +70,8 @@
         SELECT c.comment_board_id
         FROM `like` l
             JOIN comment c ON (l.like_target_id = c.comment_id)
-        WHERE c.comment_isactive = 1
+        WHERE like_id = #{likeId}
+            AND c.comment_isactive = 1
     </select>
 
     <!-- 좋아요 추가  -->

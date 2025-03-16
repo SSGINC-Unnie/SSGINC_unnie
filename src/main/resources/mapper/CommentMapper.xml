@@ -158,6 +158,28 @@
         WHERE c.comment_id = #{commentId}
     </select>
 
+    <select id="getBoardTitleAndBoardAuthorIdByBoardId"
+            resultType="com.ssginc.unnie.community.dto.board.BoardResponseForEvent">
+        SELECT
+            b.board_author,
+            b.board_title
+        FROM
+            board b
+        WHERE
+            b.board_id = #{commentBoardId}
+          AND board_isactive = 1
+    </select>
+
+    <select id="getMemberIdByCommentId" resultType="java.lang.Integer">
+        SELECT
+            comment_member_id
+        FROM
+            comment
+        WHERE
+            comment_id = #{commentParentId}
+        AND comment_isactive = 1
+    </select>
+
     <!-- 댓글 삭제(soft delete)  -->
     <update id="deleteComment" useGeneratedKeys="true" keyProperty="commentId" keyColumn="comment_id">
         UPDATE comment

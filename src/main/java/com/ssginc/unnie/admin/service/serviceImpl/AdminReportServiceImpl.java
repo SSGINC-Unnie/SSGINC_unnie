@@ -2,10 +2,7 @@ package com.ssginc.unnie.admin.service.serviceImpl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.ssginc.unnie.admin.dto.report.AdminReportDeleteRequest;
-import com.ssginc.unnie.admin.dto.report.AdminReportDetailResponse;
-import com.ssginc.unnie.admin.dto.report.AdminReportRequest;
-import com.ssginc.unnie.admin.dto.report.AdminReportsResponse;
+import com.ssginc.unnie.admin.dto.report.*;
 import com.ssginc.unnie.admin.mapper.AdminReportMapper;
 import com.ssginc.unnie.admin.service.AdminReportService;
 import com.ssginc.unnie.common.exception.UnnieReportException;
@@ -18,6 +15,7 @@ import com.ssginc.unnie.report.mapper.ReportMapper;
 import com.ssginc.unnie.report.vo.ReportReason;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +33,8 @@ public class AdminReportServiceImpl implements AdminReportService {
     private final AdminReportMapper reportMapper;
 
     private final Validator<AdminReportRequest> validator;
+
+    private final ApplicationEventPublisher eventPublisher;
 
     /**
      * 신고 목록 조회
@@ -150,6 +150,16 @@ public class AdminReportServiceImpl implements AdminReportService {
         if (res == 0) {
             throw new UnnieReportException(ErrorCode.REPORTED_CONTENT_DELETE_FAILED);
         }
+
+        NotificationResponse notificationResponse = getReportTargetMemberInfoByTargetInfo(report);
+
+        eventPublisher.publishEvent(
+                ReportCreatedEvent.builder()
+                        .receiverId(notificationResponse.getReceiverId())
+                        .title(notificationResponse.getTargetTitle())
+                        .build()
+        );
+
     }
 
     /**
@@ -177,7 +187,7 @@ public class AdminReportServiceImpl implements AdminReportService {
                 .build();
 
 
-        String content = String.format("\'[%s]\'글이 신고 접수 및 운영팀 검토 결과 삭제되었습니다. 올바른 이용을 부탁드립니다.", response.getReceiverNickname(), response.getTargetTitle());
+        String content = String.format("\'[%s]\'글이 신고 접수 및 운영팀 검토 결과 삭제되었습니다. 올바른 이용을 부탁드립니다.", response.getTargetTitle());
         String urn = "";
 
         msg.setNotificationContents(content);
