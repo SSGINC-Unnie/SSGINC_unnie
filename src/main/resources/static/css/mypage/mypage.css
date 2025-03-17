@@ -1,0 +1,131 @@
+/* 상단 사각형 영역 */
+.rect {
+    width: 100%;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 30px;
+}
+/* 프로필 정보 영역 */
+.profile-info {
+    display: flex;
+    align-items: center;
+}
+/* 원형 프로필 이미지 */
+.profile-info img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 23px;
+    border: 3px solid #ccc;
+}
+
+/* 회원정보 수정 아이콘 */
+.edit-profile img {
+    width: 24px;
+    height: 24px;
+    border: none;
+    margin-left: 16px;
+}
+
+/* 프로필 텍스트 스타일 */
+.profile-text {
+    color: #fff;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+}
+.profile-text .name {
+    font-size: 23px;
+    margin: 0;
+    line-height: 1.3;
+    font-weight: bold;
+    color: black;
+}
+.profile-text .email {
+    font-size: 22px;
+    margin: 5px 0 0 0;
+    line-height: 1.2;
+    color: #808080;
+}
+
+/* 회원정보 수정 아이콘 */
+.edit-profile img {
+    width: 24px;
+    height: 24px;
+}
+
+.management-nav {
+    width: 640px;
+    margin: 0 auto;
+    background: #fff;
+    border-top: 1px solid #ddd;
+    padding: 0;
+}
+
+.menu-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.menu-item {
+    border-bottom: 1px solid #d9d9d9;
+    padding: 17px 30px;
+    font-size: 17px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.menu-item a {
+    text-decoration: none;
+    color: #333;
+    flex-grow: 1;
+}
+
+.arrow {
+    font-size: 18px;
+    color: #888;
+}
+
+/* 드롭다운 메뉴 스타일 */
+.menu-item.dropdown {
+    cursor: pointer;
+}
+
+.dropdown-title {
+    flex-grow: 1;
+}
+
+.dropdown-title::after {
+    content: '▼';
+    font-size: 16px;
+    margin-left: auto;
+    transition: transform 0.3s;
+}
+
+.menu-item.dropdown.active .dropdown-title::after{
+    transform: rotate(-180deg);
+}
+
+/* 드롭다운 메뉴 */
+.dropdown-content {
+    display: none;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    background: #f9f9f9;
+}
+.menu-item.dropdown.active .dropdown-content{
+    display: block;
+    padding: 10px 20px;
+}
+.dropdown-content li {
+    padding: 10px 0;
+}
+.dropdown-content li a {
+    text-decoration: none;
+    color: #555;
+    font-size: 18px;
+}

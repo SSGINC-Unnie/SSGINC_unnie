@@ -42,6 +42,17 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public Map<String, String> login(MemberLoginRequest memberLoginRequest, HttpServletResponse response) {
         try {
+            // DB에서 사용자 정보 조회
+            Member member = memberMapper.selectMemberByEmail(memberLoginRequest.getMemberEmail());
+            if (member == null) {
+                throw new UnnieLoginException(ErrorCode.MEMBER_NOT_FOUND);
+            }
+
+            // 탈퇴한 회원인지 확인 (memberState == 2)
+            if (member.getMemberState() == 2) {
+                throw new UnnieLoginException(ErrorCode.MEMBER_WITHDRAWN);
+            }
+
             // 사용자 인증 (이메일, 비밀번호)
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(memberLoginRequest.getMemberEmail(), memberLoginRequest.getMemberPw())
@@ -84,6 +95,8 @@ public class AuthServiceImpl implements AuthService {
                     "accessToken", accessToken,
                     "refreshToken", refreshToken
             );
+        } catch (UnnieLoginException e) {
+            throw e;
         } catch (Exception e) {
             throw new UnnieLoginException(ErrorCode.LOGIN_FAILED, e);
         }
