@@ -43,16 +43,16 @@ public class ReceiptServiceImpl implements ReceiptService {
         // 업체명 입력시 공백 제거 후 DB 저장
         String shopName = receiptRequest.getReceiptShopName().trim().replaceAll("\\s+", "");
         receiptRequest.setReceiptShopName(shopName);
-        log.info("DB에 저장된 업체명: ", shopName);
+        log.info("DB에 저장된 업체명: {}", shopName);
 
         // shop_name을 기반으로 shop_id 조회
         int shopId = receiptMapper.findShopIdByName(shopName);
+        log.info("findShopIdByName: {}", shopId);
 
         // 조회된 shop_id를 receipt 객체에 설정
         if (shopId > 0) {
             receiptRequest.setReceiptShopId(shopId);
         }
-        log.info("영수증에 저장된 shopId: {}", receiptRequest.getReceiptId());
 
         // 2. 영수증 저장
         receiptMapper.insertReceipt(receiptRequest);
@@ -122,5 +122,11 @@ public class ReceiptServiceImpl implements ReceiptService {
                     return approvalNumber != null && !approvalNumber.equals("데이터 없음");
                 })
                 .orElse(false);
+    }
+
+    @Override
+    public long getShopIdByReceiptId(long receiptId) {
+        log.info("리뷰 EVENT shop: {}", receiptId);
+        return receiptMapper.getShopIdByReceiptId(receiptId);
     }
 }

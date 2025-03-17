@@ -27,4 +27,12 @@
         SELECT shop_id FROM shop WHERE TRIM(shop_name) = #{shopName} LIMIT 1
     </select>
 
+    <!-- receiptId로 영수증의 shopId 조회 -->
+    <select id="getShopIdByReceiptId" resultType="long" parameterType="long">
+        SELECT receipt_shop_id
+        FROM receipt
+        WHERE receipt_id = #{receiptId}
+    </select>
+
+
 </mapper>

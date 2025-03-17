@@ -30,4 +30,11 @@ public interface ReceiptService {
      * @return 인증된 영수증이면 true, 아니면 false
      */
     boolean isReceiptVerified(long receiptId);
+
+    /**
+     * 주어진 영수증 ID로 해당 영수증의 샵 ID를 조회합니다.
+     * @param receiptId 조회할 영수증 ID
+     * @return 영수증에 연결된 샵 ID
+     */
+    long getShopIdByReceiptId(long receiptId);
 }

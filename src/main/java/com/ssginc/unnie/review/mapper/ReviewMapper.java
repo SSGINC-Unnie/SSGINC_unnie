@@ -91,7 +91,7 @@ public interface ReviewMapper {
      * shop 테이블의 review_summary 컬럼 업데이트
      */
     void updateShopReviewSummary(@Param("shopId") long shopId,
-                                 @Param("summary") String reviewSummary);
+                                 @Param("reviewSummary") String reviewSummary);
 
     /**
      * 전체 shopId를 반환

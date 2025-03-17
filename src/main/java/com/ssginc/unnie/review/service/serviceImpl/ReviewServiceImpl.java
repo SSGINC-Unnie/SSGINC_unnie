@@ -2,6 +2,7 @@ package com.ssginc.unnie.review.service.serviceImpl;
 
 import com.ssginc.unnie.common.exception.UnnieReviewException;
 import com.ssginc.unnie.common.util.ErrorCode;
+import com.ssginc.unnie.review.debounce.ReviewCreatedEvent;
 import com.ssginc.unnie.review.dto.*;
 import com.ssginc.unnie.review.mapper.ReviewMapper;
 import com.ssginc.unnie.review.service.OpenAIService;
@@ -10,6 +11,7 @@ import com.ssginc.unnie.review.service.ReviewService;
 import com.ssginc.unnie.common.util.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +30,9 @@ public class ReviewServiceImpl implements ReviewService {
     private final ReceiptService receiptService;  // 영수증 인증 검증 서비스
     private final Validator<ReviewRequestBase> reviewValidator;  // ReviewValidator (ReviewRequestBase 타입)
     private final OpenAIService openAIService;
+
+    // ApplicationEventPublisher를 생성자 주입 방식으로 주입받습니다.
+    private final ApplicationEventPublisher eventPublisher;
 
     /**
      * 리뷰 저장: review 테이블과 review_keyword 테이블에 데이터를 등록합니다.
@@ -48,7 +53,7 @@ public class ReviewServiceImpl implements ReviewService {
             throw new UnnieReviewException(ErrorCode.INVALID_RECEIPT);
         }
 
-        // 2. 리뷰 요청 유효성 검증 (ReviewValidator 활용)
+        // 2. 리뷰 요청 유효성 검증
         if (!reviewValidator.validate(reviewCreateRequest)) {
             throw new UnnieReviewException(ErrorCode.INVALID_REVIEW_CONTENT);
         }
@@ -64,6 +69,13 @@ public class ReviewServiceImpl implements ReviewService {
         if (keywordInsertCount == 0) {
             throw new UnnieReviewException(ErrorCode.KEYWORDS_NOT_FOUND);
         }
+
+        // 영수증 ID로부터 shopId 조회
+        long shopId = receiptService.getShopIdByReceiptId(reviewCreateRequest.getReviewReceiptId());
+
+        // 리뷰 등록 성공 후, 이벤트 발행하여 해당 샵의 리뷰 업데이트를 트리거합니다.
+        eventPublisher.publishEvent(new ReviewCreatedEvent(this, shopId));
+
         return reviewCreateRequest.getReviewId();
     }
 
@@ -309,8 +321,8 @@ public class ReviewServiceImpl implements ReviewService {
         List<String> reviews = reviewMapper.getAllReviewsByShopId(shopId);
         if (reviews == null || reviews.isEmpty()) {
             // 리뷰가 없으면 기본 문구
-            reviewMapper.updateShopReviewSummary(shopId, "아직 작성된 리뷰가 없습니다.");
-            return "아직 작성된 리뷰가 없습니다.";
+            reviewMapper.updateShopReviewSummary(shopId, "당신의 첫 리뷰가 이야기를 시작합니다!");
+            return "당신의 첫 리뷰가 이야기를 시작합니다!";
         }
 
         // 2) 리뷰를 하나의 문자열로 합침
@@ -329,22 +341,24 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewSummary;
     }
 
-    /**
-     * 스케줄러: 6시간마다 전체 샵의 리뷰 요약을 업데이트합니다.
-     * cron: 매일 0시, 6시, 12시, 18시에 실행
-     */
-    @Scheduled(cron = "0 0 */6 * * *")
-    public void updateAllShopSummaries() {
-        List<Long> shopIds = getAllShopId();
-        for (Long shopId : shopIds) {
-            try {
-                String summary = summarizeAndSave(shopId);
-                System.out.println("Shop " + shopId + " 리뷰 요약 업데이트 성공: " + summary);
-            } catch (Exception e) {
-                System.err.println("Shop " + shopId + " 리뷰 요약 업데이트 실패: " + e.getMessage());
-            }
-        }
-    }
+    // 디바운싱 한 스케줄러 사용을 위해 주석 처리
+//    /**
+//     * 스케줄러: 6시간마다 전체 샵의 리뷰 요약을 업데이트합니다.
+//     * cron: 매일 0시, 6시, 12시, 18시에 실행
+//     */
+//    @Scheduled(cron = "0 0 */6 * * *")
+//    public void updateAllShopSummaries() {
+//        List<Long> shopIds = getAllShopId();
+//        for (Long shopId : shopIds) {
+//            try {
+//                String summary = summarizeAndSave(shopId);
+//                System.out.println("Shop " + shopId + " 리뷰 요약 업데이트 성공: " + summary);
+//            } catch (Exception e) {
+//                System.err.println("Shop " + shopId + " 리뷰 요약 업데이트 실패: " + e.getMessage());
+//            }
+//        }
+//    }
+
 
     /**
      * 임시로 전체 샵 ID 목록을 반환하는 메서드.

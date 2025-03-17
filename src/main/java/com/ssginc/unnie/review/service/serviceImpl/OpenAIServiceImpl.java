@@ -35,15 +35,16 @@ public class OpenAIServiceImpl implements OpenAIService {
 
         ChatMessage userMessage = new ChatMessage();
         userMessage.setRole("user");
-        userMessage.setContent("다음 리뷰를 100글자 이내로 요약해줘: " + review);
+        userMessage.setContent("다음 리뷰들을 100글자 이내로, 핵심 내용만 포함해서 요약해줘. 반드시 100글자 이내로 작성해줘야돼 : " + review);
         messages.add(userMessage);
 
         // 요청 DTO 구성
         ChatCompletionRequest requestDTO = new ChatCompletionRequest();
-        requestDTO.setModel("gpt-3.5-turbo");
+        requestDTO.setModel("gpt-4o-mini");
         requestDTO.setMessages(messages);
         requestDTO.setTemperature(0.7);
 
+        // rag
         // 헤더 설정
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -51,6 +52,7 @@ public class OpenAIServiceImpl implements OpenAIService {
         HttpEntity<ChatCompletionRequest> requestEntity = new HttpEntity<>(requestDTO, headers);
 
         // API 호출 (exchange 메소드 활용)
+        // open feign
         ResponseEntity<ChatCompletionResponse> responseEntity = restTemplate.exchange(
                 url,
                 HttpMethod.POST,
@@ -62,6 +64,6 @@ public class OpenAIServiceImpl implements OpenAIService {
         if(responseDTO != null && responseDTO.getChoices() != null && !responseDTO.getChoices().isEmpty()) {
             return responseDTO.getChoices().get(0).getMessage().getContent();
         }
-        return "요약을 생성하지 못했습니다.";
+        return "당신의 첫 리뷰가 이야기를 시작합니다!";
     }
 }
