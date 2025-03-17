@@ -1,16 +1,19 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec2="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      layout:decorate="~{layout.html}">
 <head>
     <meta charset="UTF-8">
     <title>계정정보 찾기</title>
-    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
     <link rel="stylesheet" href="/css/member/findMember.css">
     <script src="https://code.jquery.com/jquery-3.7.1.slim.js"></script>
     <!-- AXIOS -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 <body>
-<div class="container">
+<div class="container" layout:fragment="content">
     <!-- 상단 제목 -->
     <div class="title">계정정보 찾기</div>
 
@@ -70,15 +73,24 @@
         <div class="modal-content">
             <!-- 닫기(X) 버튼  -->
             <button class="close-btn" id="closeModal">&times;</button>
-
             <p id="idUserName"></p>
             <p id="idResultText"></p>
             <button class="modal-login-btn" id="btnGoLogin">로그인</button>
         </div>
     </div>
 
+    <!-- 비밀번호 찾기 결과 모달창 -->
+    <div class="modal" id="pwModal">
+        <div class="modal-content">
+            <!-- 닫기(X) 버튼  -->
+            <button class="close-btn" id="closePwModal">&times;</button>
+            <p id="pwResultText"></p>
+            <button class="modal-login-btn" id="btnGoLoginPw">로그인</button>
+        </div>
+    </div>
+
+    <!-- JS 연결 -->
+    <script src="/js/member/findMember.js"></script>
 </div>
-<!-- JS 연결 -->
-<script src="/js/member/findMember.js"></script>
 </body>
 </html>

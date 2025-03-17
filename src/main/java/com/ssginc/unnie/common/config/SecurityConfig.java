@@ -33,11 +33,11 @@ public class SecurityConfig {
                           //회원 관련 모두 허용
                           //.requestMatchers("/member/**").permitAll()
 //                        // 마이페이지 관련 - 로그인한 사용자만 접근
-//                        .requestMatchers("/mypage/**").authenticated()
+                        .requestMatchers("/mypage/**").authenticated()
 //                        //관리자 전용 - ADMIN 권한 필요
 //                        .requestMatchers("/admin/**").hasRole("ADMIN")
 //                        // 마이페이지 (업체 관리) - 업체 담당자만 접근
-                        //.requestMatchers("/mypage/myshop/**").hasAnyRole("MANAGER") //Mypage 업체관리 페이지는 업체담당자(MANAGER)만 접근 가능
+                         .requestMatchers("/mypage/myshop/**").hasAnyRole("MANAGER") //Mypage 업체관리 페이지는 업체담당자(MANAGER)만 접근 가능
 //                        //.anyRequest().authenticated() //모두 인증필요
                         .anyRequest().permitAll() // 그 외 모든 요청은 기본적으로 허용
                 )

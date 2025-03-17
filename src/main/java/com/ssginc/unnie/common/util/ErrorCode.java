@@ -34,6 +34,7 @@ public enum ErrorCode {
     PHONE_INPUT_EMPTY(400, "ME023", "전화번호 입력값이 누락되었습니다."),
     PASSWORD_UPDATE_FAILED(500, "ME024", "비밀번호 변경에 실패했습니다." ),
     PASSWORD_MISMATCH(400, "ME025", "비밀번호와 비밀번호 확인이 일치하지 않습니다."),
+    MEMBER_WITHDRAWN(401, "ME026", "이미 탈퇴 처리된 계정입니다."),
 
     //JWT 관련 에러
     INVALID_ACCESS_TOKEN(401, "JWT001", "유효하지 않은 Access Token입니다."),

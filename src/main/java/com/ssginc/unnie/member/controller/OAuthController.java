@@ -96,7 +96,7 @@ public class OAuthController {
             Member insertedMember = oAuthService.selectMemberByEmail(member.getMemberEmail());
 
             //토큰 생성, 저장
-            authService.oauthToken(response, insertedMember.getMemberId(), "ROLE_USER", insertedMember.getMemberNickname());
+            authService.oauthToken(response, insertedMember.getMemberId(), insertedMember.getMemberRole(), insertedMember.getMemberNickname());
 
             // 최종 회원가입 완료 후 홈으로 리다이렉트 (이미 로그인된 상태)
             result.put("redirect", "/");

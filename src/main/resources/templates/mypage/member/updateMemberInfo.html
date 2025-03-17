@@ -22,6 +22,10 @@
             <div class="profile-section">
                 <label for="profileImage" class="profile-img-label">
                     <img id="profilePreview" th:src="@{${member.memberProfile}}" alt="프로필 이미지" class="profile-img" />
+                    <!-- 카메라 아이콘 추가 -->
+                    <div class="camera-icon">
+                        <img src="/img/shop/camera.png" alt="카메라 아이콘">
+                    </div>
                 </label>
                 <input type="file" id="profileImage" accept="image/*" style="display: none;" />
                 <!-- 회원ID -->
@@ -145,16 +149,11 @@
             </div>
         </div>
 
-        <!-- ================== 회원탈퇴 바텀시트 ================== -->
-    <div class="bottom-sheet-overlay" id="withdrawSheetOverlay" style="display: none;">
-        <div class="bottom-sheet-container">
-            <!-- 바텀시트 헤더 -->
-            <div class="bottom-sheet-header">
-                <h2>회원탈퇴</h2>
-                <button class="bottom-sheet-close" onclick="closeWithdrawSheet()">×</button>
-            </div>
-            <!-- 바텀시트 바디 -->
-            <div class="bottom-sheet-body">
+        <!-- ================== 회원탈퇴 모달 ================== -->
+        <div id="withdrawModal" class="modal" style="display: none;">
+            <!-- 모달 컨텐트 -->
+            <div class="modal-content">
+                <span class="modal-close" onclick="closeWithdrawModal()">×</span>
                 <!-- 탈퇴 시 유의사항 안내 -->
                 <h2 class="withdraw-title">탈퇴 시 유의사항 안내</h2>
                 <hr class="withdraw-divider" />
@@ -182,22 +181,22 @@
                 </div>
                 <!-- 탈퇴 버튼 -->
                 <button type="button" id="withdrawConfirmBtn" class="btn-small" disabled>탈퇴</button>
+                <button type="button" class="btn-small btn-cancel" onclick="closeWithdrawModal()">취소</button>
             </div>
         </div>
-    </div>
 
-    <!-- 탈퇴 최종확인 모달 -->
-    <div id="confirmWithdrawModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>정말로 탈퇴하시겠습니까?</h3>
-            </div>
-            <div class="modal-footer">
-                <button type="button" id="finalWithdrawYesBtn" class="btn-small">탈퇴</button>
-                <button type="button" id="finalWithdrawNoBtn" class="btn-small btn-cancel">취소</button>
+        <!-- 탈퇴 최종확인 모달 -->
+        <div id="confirmWithdrawModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>정말로 탈퇴하시겠습니까?</h3>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="finalWithdrawYesBtn" class="btn-small">탈퇴</button>
+                    <button type="button" id="finalWithdrawNoBtn" class="btn-small btn-cancel">취소</button>
+                </div>
             </div>
         </div>
-    </div>
 
     <!-- 탈퇴 완료 모달 -->
         <div id="withdrawSuccessModal" class="modal" style="display: none;">

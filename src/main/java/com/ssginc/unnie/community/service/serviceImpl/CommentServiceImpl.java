@@ -2,21 +2,17 @@ package com.ssginc.unnie.community.service.serviceImpl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.ssginc.unnie.community.dto.comment.CommentRequest;
-import com.ssginc.unnie.community.dto.comment.CommentGetResponse;
-import com.ssginc.unnie.community.dto.comment.CommentGuestGetResponse;
+import com.ssginc.unnie.community.dto.board.BoardResponseForEvent;
+import com.ssginc.unnie.community.dto.comment.*;
+import com.ssginc.unnie.community.dto.member.CommunityMemberDto;
 import com.ssginc.unnie.community.mapper.CommentMapper;
 import com.ssginc.unnie.community.service.CommentService;
 import com.ssginc.unnie.common.exception.UnnieBoardException;
 import com.ssginc.unnie.common.exception.UnnieCommentException;
 import com.ssginc.unnie.common.util.ErrorCode;
-import com.ssginc.unnie.member.vo.Member;
-import com.ssginc.unnie.notification.dto.NotificationMessage;
 import com.ssginc.unnie.notification.dto.NotificationResponse;
-import com.ssginc.unnie.notification.service.ProducerService;
-import com.ssginc.unnie.notification.vo.NotificationType;
 import lombok.RequiredArgsConstructor;
-import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,22 +28,35 @@ public class CommentServiceImpl implements CommentService {
 
     private final CommentMapper commentMapper;
 
+    private final ApplicationEventPublisher eventPublisher;
+
     /**
      * 댓글 작성 메서드
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public long createComment(CommentRequest request, long memberId) {
+    public long createComment(CommentRequest request, CommunityMemberDto member) {
 
         checkRequestDto(request);
 
-        request.setCommentMemberId(memberId);
+        request.setCommentMemberId(member.getMemberId());
 
         int res = commentMapper.createComment(request);
 
         if (res == 0) {
             throw new UnnieCommentException(ErrorCode.COMMENT_CREATE_FAILED);
         }
+
+        BoardResponseForEvent board = commentMapper.getBoardTitleAndBoardAuthorIdByBoardId(request.getCommentBoardId());
+
+        eventPublisher.publishEvent(
+                CommentCreatedEvent
+                        .builder()
+                        .commentBoardId(request.getCommentBoardId())
+                        .boardAuthorId(board.getBoardAuthor())
+                        .commentMemberNickname(member.getMemberNickname())
+                        .boardTitle(board.getBoardTitle())
+                .build());
 
         return request.getCommentId();
     }
@@ -57,7 +66,7 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public long createReplyComment(CommentRequest request, long memberId) {
+    public long createReplyComment(CommentRequest request, CommunityMemberDto member) {
 
         checkRequestDto(request);
 
@@ -66,13 +75,24 @@ public class CommentServiceImpl implements CommentService {
             throw new UnnieCommentException(ErrorCode.COMMENT_PARENT_NOT_FOUND);
         }
 
-        request.setCommentMemberId(memberId);
+        request.setCommentMemberId(member.getMemberId());
 
         int res = commentMapper.createReplyComment(request);
 
         if (res == 0) {
             throw new UnnieCommentException(ErrorCode.COMMENT_CREATE_FAILED);
         }
+
+        int parentCommentAuthorId = commentMapper.getMemberIdByCommentId(request.getCommentParentId());
+
+        eventPublisher.publishEvent(
+                ReplyCreatedEvent.builder()
+                        .receiverId(parentCommentAuthorId)
+                        .commentMemberNickname(member.getMemberNickname())
+                        .commentBoardId(request.getCommentBoardId())
+                        .commentContent(request.getCommentContents())
+                        .build()
+        );
 
         return request.getCommentId();
     }

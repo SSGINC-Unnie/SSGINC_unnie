@@ -142,7 +142,6 @@ async function fetchShopDetail(shopId, dropdownId) {
             <p><strong>전화번호:</strong> ${shop.shopTel}</p>
             <p><strong>업체 소개:</strong> ${shop.shopIntroduction}</p>
             <p><strong>휴무일:</strong> ${shop.shopClosedDay}</p>
-            <p><strong>사업자 등록번호:</strong> ${shop.shopClosedDay}</p>
             <p><strong>대표자명:</strong> ${shop.shopRepresentationName}</p>
 
             <div class="section-title">디자이너 정보</div>

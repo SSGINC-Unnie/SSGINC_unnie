@@ -1,5 +1,6 @@
 package com.ssginc.unnie.like.service;
 
+import com.ssginc.unnie.like.dto.LikeMemberDto;
 import com.ssginc.unnie.like.dto.LikeRequest;
 import com.ssginc.unnie.notification.dto.NotificationMessage;
 import com.ssginc.unnie.notification.dto.NotificationResponse;
@@ -10,7 +11,7 @@ import com.ssginc.unnie.notification.dto.NotificationResponse;
 public interface LikeService {
     boolean getLikeStatus(LikeRequest like);
 
-    long createLike(LikeRequest like);
+    long createLike(LikeRequest like, LikeMemberDto loginUser);
 
     long deleteLike(LikeRequest like);
 

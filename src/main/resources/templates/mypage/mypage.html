@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec2="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>마이페이지</title>
+    <link rel="stylesheet" href="/css/mypage/mypage.css">
+</head>
+<body>
+<div class="container" layout:fragment="content">
+    <div class="inner-wrapper">
+        <!-- 상단 사각형 영역 프로필 정보 -->
+        <div class="rect">
+            <div class="profile-info">
+                <img th:src="${member.memberProfile}" alt="프로필 이미지">
+                <div class="profile-text">
+                    <p class="name" th:text="'환영합니다! ' + ${member.memberNickname} + '님'"></p>
+                    <p class="email" th:text="${member.memberEmail}"></p>
+                </div>
+                <!-- 회원정보 수정 버튼 (화살표 아이콘) -->
+                <a href="/mypage/member/edit" class="edit-profile">
+                    <img src="/img/member/arrow.png" alt="회원정보 수정">
+                </a>
+            </div>
+        </div>
+
+        <!-- 관리 메뉴 -->
+        <div class="management-nav">
+            <ul class="dropdown-menu">
+                <li class="menu-item">
+                    <a href="/review/my">나의 리뷰 <span class="arrow">&gt;</span></a>
+                </li>
+                <li class="menu-item">
+                    <a href="/mypage/community/posts">나의 게시글 <span class="arrow">&gt;</span></a>
+                </li>
+                <li class="menu-item">
+                    <a href="/mypage/community/comments">나의 댓글 <span class="arrow">&gt;</span></a>
+                </li>
+                <!-- 업체 등록 드롭다운 -->
+                <!--<li class="menu-item dropdown">
+                    <a href="#" class="dropdown-title">업체 등록</a>
+                    <ul class="dropdown-content">
+                        <li><a href="/mypage/shop">업체 등록</a></li>
+                         ROLE_MANAGER 권한이 있는 경우만 표시 -->
+                <!-- <li sec2:authorize="hasRole('ROLE_MANAGER')">
+                     <a href="/mypage/myshop">내 업체 조회 • 수정</a>
+                 </li>-->
+                <li class="menu-item">
+                    <a href="/mypage/shop">업체 등록 <span class="arrow">&gt;</span></a>
+                </li>
+             </ul>
+        </div>
+    </div>
+    <script src="/js/mypage/mypage.js"></script>
+</div>
+</body>
+</html>

@@ -21,4 +21,10 @@ public class ShopViewController {
         model.addAttribute("activePage", "map");
         return "shop/shopdetail";}
 
+    @GetMapping("/mypage")
+    public String mypage(Model model) {
+        model.addAttribute("activePage", "mypage");
+        return "mypage/mypage";
+    }
+
 }

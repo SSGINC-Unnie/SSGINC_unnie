@@ -105,9 +105,9 @@ async function updateNickname() {
         // 닉네임 수정 요청
         const response = await axios.put("/api/mypage/member/nickname", {
             memberNickname: nicknameVal
-        });
+        },  { withCredentials: true });  // 쿠키 자동 처리
         if (response.status === 200) {
-           // showMsg($nicknameError, "success", "닉네임이 수정되었습니다.");
+            // showMsg($nicknameError, "success", "닉네임이 수정되었습니다.");
             alert("닉네임이 수정되었습니다.");
             //$(".memberNickname").text(nicknameVal);
             // 수정한 닉네임을 입력칸에 남김
@@ -453,15 +453,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 // ================================= 회원탈퇴 바텀시트 + 모달  ======================================
-// 바텀시트 열기
+// 모달 열기
 window.openWithdrawSheet = function() {
-    document.getElementById("withdrawSheetOverlay").style.display = "block";
+    document.getElementById("withdrawModal").style.display = "flex";
 };
 
-// 바텀시트 닫기
-function closeWithdrawSheet() {
-    document.getElementById("withdrawSheetOverlay").style.display = "none";
-    // 입력값 초기화, 에러메시지 제거
+// 모달 닫기
+function closeWithdrawModal() {
+    document.getElementById("withdrawModal").style.display = "none";
+    // 입력값 초기화 및 에러 메시지 제거
     document.getElementById("withdrawCurrentPw").value = "";
     document.getElementById("withdrawCurrentPwError").innerText = "";
     document.getElementById("withdrawCheck").checked = false;
@@ -551,7 +551,7 @@ function closeWithdrawSuccessModal() {
     const memberId = document.getElementById("memberId").value;
 
     // 로그아웃 요청 (토큰 삭제)
-    axios.post("/api/member/logout", {
+    axios.post("/member/logout", {
         memberId: memberId
     })
         .then(response => {

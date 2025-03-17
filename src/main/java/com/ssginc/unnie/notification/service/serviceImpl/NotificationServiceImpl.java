@@ -32,11 +32,11 @@ public class NotificationServiceImpl implements NotificationService {
 
     private final NotificationMapper notificationMapper;
 
-    @KafkaListener(topics = "notification", groupId = "group_1",
-            containerFactory = "kafkaListenerContainerFactory")
-    public void kafkaSend(NotificationMessage notification){
-        send(notification);
-    }
+//    @KafkaListener(topics = "notification", groupId = "group_1",
+//            containerFactory = "kafkaListenerContainerFactory")
+//    public void kafkaSend(NotificationMessage notification){
+//        send(notification);
+//    }
 
 
     @Override

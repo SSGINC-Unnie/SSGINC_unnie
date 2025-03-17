@@ -297,7 +297,6 @@ document.addEventListener('DOMContentLoaded', () => {
     btnFindPw.addEventListener('click', () => {
         const nameValue = document.getElementById('pwName').value.trim();
         const emailValue = document.getElementById('pwEmail').value.trim();
-
         const $findPwError = $("#findPwError");
 
         if (!nameValue) {
@@ -325,15 +324,26 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(data => {
                 if (data.status === 200) {
                     // 임시 비밀번호 전송 성공
-                    alert(`${emailValue}로 임시 비밀번호가 전송되었습니다.\n로그인 후 비밀번호를 변경해주세요.`);
-                    window.location.href = '/member/login';
+                    // 모달창에 메시지 표시
+                    document.getElementById('pwResultText').innerHTML  =
+                        `<strong>${emailValue}</strong>로<br>임시 비밀번호가 전송되었습니다.<br>로그인 후 비밀번호를 변경해주세요.`;
+                    document.getElementById('pwModal').style.display = 'block';
                 } else {
-                    alert(data.message || '비밀번호 찾기에 실패했습니다.');
+                    showMsg($findPwError, "error", data.message || '비밀번호 찾기에 실패했습니다.');
                 }
             })
             .catch(err => {
                 console.error('비밀번호 찾기 에러:', err);
                 alert('서버 통신 중 오류가 발생했습니다.');
             });
+    });
+
+    // 모달창 닫기 및 로그인 페이지로 이동하는 이벤트
+    document.getElementById('closePwModal').addEventListener('click', () => {
+        document.getElementById('pwModal').style.display = 'none';
+    });
+    document.getElementById('btnGoLoginPw').addEventListener('click', () => {
+        document.getElementById('pwModal').style.display = 'none';
+        window.location.href = '/member/login';
     });
 });
