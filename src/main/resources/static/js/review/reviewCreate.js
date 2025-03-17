@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(data => {
                 if (data.status === 201) {
                     alert("리뷰 작성이 완료되었습니다!");
-                    window.location.href = "/review/my"
+                    window.location.href = "/mypage/review"
                 } else {
                     alert("리뷰 작성 실패: " + data.message);
                 }

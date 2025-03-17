@@ -218,27 +218,25 @@ body {
     background-color: rgba(0,0,0,0.6);
 }
 
-
-/* 탭 메뉴, 리뷰, 디자이너, 시술 등 외 기타 스타일은
-   HTML 내에 이미 작성된 내용과 동일하게 유지됩니다. */
+/* review-more-container 스타일 */
 .review-more-container {
-    margin-top: 16px; /* 버튼 위쪽 여백 */
+    margin-top: 40px; /* 버튼 위쪽 여백 */
     text-align: center;
 }
 
 .review-more-btn {
     display: inline-block;
-    width: 100%; /* 부모 컨테이너가 640px이면 버튼도 640px로 표시됨 */
-    max-width: 640px; /* 혹시 부모가 더 커져도 640px을 넘지 않도록 */
-    background-color: #f2f2f2;
-    border: 1px solid #ccc;
     padding: 12px 0;
-    font-size: 14px;
-    cursor: pointer;
-    color: #333;
-    border-radius: 4px;
+    width: 100%;
+    border: 1px solid #ccc;
+    background-color: #ff3479;
+    color: #fff;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 16px;
     transition: background-color 0.2s ease;
 }
+
 .review-more-btn:hover {
-    background-color: #e8e8e8;
+    background-color: #e02f70;
 }

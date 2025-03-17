@@ -61,6 +61,7 @@
                 LEFT JOIN review re ON r.receipt_id = re.review_receipt_id
                 LEFT JOIN member m ON re.review_member_id = m.member_id
         WHERE s.shop_id = #{shopId} AND s.shop_status = 1
+        AND re.review_status = 0
         GROUP BY s.shop_id, s.shop_name, s.shop_business_time, s.shop_member_id, s.shop_location,review_summary;
     </select>
 
