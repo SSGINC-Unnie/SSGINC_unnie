@@ -34,8 +34,8 @@ public class JwtUtil {
     /**
      * JwtConfig에 저장된 SECRET_KEY와 EXPIRATION_TIME을 이용하여 키와 만료시간을 갱신.
      */
-    private void refreshKey() {
-        this.key = Keys.hmacShaKeyFor(JwtConfig.SECRET_KEY.getBytes());
+    public void refreshKey() {
+        this.key = Keys.hmacShaKeyFor(JwtConfig.getSecretKey().getBytes());
         this.expiration = JwtConfig.EXPIRATION_TIME;
     }
 

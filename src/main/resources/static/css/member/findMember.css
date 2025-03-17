@@ -1,38 +1,10 @@
-* {
-    font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue",
-    "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
-}
-
-/* 초기화 */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: sans-serif;
-    background-color: #fff;
-}
-
-/* 전체 페이지 컨테이너 (640 x 914) */
-.container {
-    width: 640px;
-    height: 914px;
-    margin: 0 auto;
-    background-color: #fff;
-    position: relative;
-    padding-top: 150px; /* 상단 여백 */
-    text-align: center;
-}
-
 /* 상단 '계정정보 찾기' */
 .title {
-    font-size: 32px;
+    font-size: 25px;
     font-weight: bold;
     text-align: center;
     white-space: nowrap;
-    margin: 50px auto 0; /* 위쪽 50px, 좌우 auto로 중앙 정렬, 아래 0 */
+    margin: 70px auto 0;
 }
 
 /* 탭 영역 */
@@ -77,13 +49,14 @@ body {
     display: block;
     width: 424px;
     height: 63px;
-    margin: 20px auto 0; /* 위로 20px 간격 */
+    margin: 20px auto 100px;
     background-color: #FF3479;
     color: #fff;
     font-size: 18px;
     font-weight: bold;
     border: none;
     cursor: pointer;
+    border-radius: 4px;
 }
 
 /* 모달  */
@@ -113,13 +86,14 @@ body {
 
 /* 모달 내부 로그인 버튼 */
 .modal-login-btn {
-    margin-top: 30px;
+    margin-top: 22px;
     padding: 10px 20px;
     background-color: #FF3479;
     color: #fff;
     font-size: 16px;
     border: none;
     cursor: pointer;
+    border-radius: 4px;
 }
 
 /* input 박스 */
@@ -209,10 +183,14 @@ body {
 }
 
 .pw-info {
-    margin: 0 auto 25px;   /* 아래쪽에 20px 여백 */
-    font-size: 14px;
+    margin: 0 auto 25px;   /* 20px 여백 */
+    font-size: 13px;
     color: #787878;
     text-align: left;
     line-height: 1.8;
+}
+
+#pwModal .modal-content p {
+    font-size: 14px;
 }
 

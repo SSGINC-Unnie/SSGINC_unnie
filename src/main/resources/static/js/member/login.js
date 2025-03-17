@@ -51,8 +51,15 @@ window.onload = function() {
                 window.location.href = '/'; // 로그인 성공 후 홈으로 이동
             })
             .catch(error => {
-                // 로그인 실패 시 처리
-                showMsg($emailPwError, "error", "이메일 또는 비밀번호를 다시 확인하세요.");
+                if (error.response && error.response.data) {
+                    const errorCode = error.response.data.error_code;
+                    if (errorCode === "ME026") { // 탈퇴 회원 에러 코드
+                        alert("이미 탈퇴 처리된 계정입니다. 새로운 계정을 생성하세요.");
+                    } else {
+                        // 로그인 실패 시 처리
+                        showMsg($emailPwError, "error", "이메일 또는 비밀번호를 다시 확인하세요.");
+                    }
+                }
             });
     });
 

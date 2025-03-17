@@ -39,15 +39,15 @@ html, body {
 .page-title {
     font-size: 20px;        /* 20pt */
     font-weight: 600;       /* semibold */
-    color: #000000;
     margin-bottom: 10px; /* 텍스트 아래 간격 */
+    margin-top: 15px;
 }
 
 .title-divider {
     width: 100%;
     height: 2px;          /* 선 두께 */
     background-color: #000; /* 선 색상 */
-    margin-bottom: 20px;  /* 선 아래 간격 */
+    margin-bottom: 50px;  /* 선 아래 간격 */
 }
 
 /* 라벨 텍스트 (닉네임, 전화번호, 비밀번호) */
@@ -68,13 +68,34 @@ html, body {
 }
 .profile-img-label {
     cursor: pointer;
+    position: relative;
+    display: inline-block;
 }
 .profile-img {
     width: 80px;
     height: 80px;
     object-fit: cover;
-    border: 1px solid #ccc;
+    border: 2px solid #ccc;
     border-radius: 50%;
+    margin-bottom: 20px;
+}
+
+.camera-icon {
+    position: absolute;
+    right: -4px;
+    bottom: 27px;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0px 0px 3px rgba(0, 0, 0, 1);
+}
+
+.camera-icon img {
+    width: 18px;
+    height: 18px;
 }
 
 /****************************************
@@ -93,10 +114,10 @@ html, body {
 
 .input-box {
     width: 100%;
-    height: 48px;
+    height: 45px;
     padding: 0 12px;
     font-size: 14px;
-    color: #999999; /* 글자 색상 #999999 */
+    color: #999999;
     border: 1px solid #ccc;
     outline: none;
     box-sizing: border-box;
@@ -114,7 +135,7 @@ html, body {
 /* 에러 메시지 */
 .error-msg {
     margin-top: 4px;
-    font-size: 14px;
+    font-size: 13px;
     color: red;
 }
 
@@ -122,17 +143,17 @@ html, body {
  * 버튼 스타일
  ****************************************/
 .btn-small {
-    height: 48px;
-    min-width: 100px;
+    height: 45px;
     text-align: center;
     padding: 0 16px;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 600;
     border-radius: 4px;
     cursor: pointer;
     border: none;
     background-color: #ff3479;
     color: #ffffff;
+    white-space: nowrap;
 }
 
 /* 인증번호 버튼  */
@@ -150,7 +171,7 @@ html, body {
 /* 비밀번호 변경 버튼 */
 .btn-submit {
     width: 100%;
-    height: 48px;
+    height: 45px;
     background-color: #ff3479; /* 버튼 색상 */
     border-radius: 4px;
     font-size: 16px;
@@ -210,16 +231,6 @@ html, body {
     text-align: right;
     margin-top: 20px;
     font-weight: bold;
-}
-
-.btn-withdraw {
-    font-size: 14px;
-    color: #999999;
-    text-decoration: none;
-}
-
-.btn-withdraw:hover {
-    text-decoration: underline;
 }
 
 /****************************************
@@ -305,32 +316,6 @@ html, body {
     }
 }
 
-/* 바텀시트 헤더 */
-.bottom-sheet-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px;
-}
-.bottom-sheet-close {
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    color: #999;
-}
-.bottom-sheet-body {
-    flex: 1;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-.bottom-sheet-body .inline-row .info-label {
-    font-size: 14px;
-}
 
 .check-icon {
     color: #FF3479;
@@ -338,18 +323,12 @@ html, body {
     font-weight: bold;
 }
 
-.bottom-sheet-body.form-group {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 20px;
+#withdrawModal .modal-content {
+    width: 480px;
 }
 
-.bottom-sheet-body .form-group label.info-label {
-    display: inline-block;
-    margin-bottom: 0;      /* 아래 마진 제거 */
-    width: auto;
+#withdrawModal input#withdrawCurrentPw {
+    width: 83%
 }
 
 .inline-row {
@@ -374,20 +353,26 @@ html, body {
     max-width: 400px;
 }
 
+#confirmWithdrawModal .modal-content {
+    width: 350px;
+}
+
 #confirmWithdrawModal .btn-small {
-    height: 40px;
-    min-width: 80px;
-    font-size: 14px;
-    padding: 0 12px;
-    border-radius: 4px;
+    font-size: 13px;      /* 버튼 내부 글씨 크기 */
+    height: 35px;         /* 버튼 높이 조정 */
+}
+
+#withdrawSuccessModal #withdrawSuccessOkBtn {
+    font-size: 13px;      /* 버튼 내부 글씨 크기 */
+    height: 35px;         /* 버튼 높이 조정 */
 }
 
 /* 탈퇴 시 유의사항 안내 타이틀 */
 .withdraw-title {
-    font-size: 18px;
+    font-size: 19px;
     font-weight: 700;
     text-align: center;
-    margin: 0 0 12px;
+    margin: 5px 0 -4px;
     color: #333;
 }
 
@@ -422,15 +407,10 @@ input[type="checkbox"] {
 /* 회원탈퇴 버튼 */
 .btn-withdraw {
     font-size: 14px;
-    color: #999999;
-    text-decoration: none;
-    background: none;
+    text-decoration: underline;
     border: none;
     cursor: pointer;
-    padding: 0;
-}
-.btn-withdraw:hover {
-    text-decoration: underline;
+    color: #000;
 }
 
 .modal-content {
@@ -461,7 +441,6 @@ input[type="checkbox"] {
     margin-top: -18px;
 }
 
-
 .modal-footer {
     display: flex;
     justify-content: center;
@@ -473,3 +452,4 @@ input[type="checkbox"] {
     background-color: #ccc;
     color: #333;
 }
+
