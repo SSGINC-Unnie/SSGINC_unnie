@@ -28,7 +28,7 @@ public class ReviewViewController {
 
 
     //업체 리뷰 목록 조회
-    @GetMapping("shop")
+    @GetMapping("/shop")
     public String reviewShop(Model model) {
         model.addAttribute("activePage", "map");
         return "/review/reviewShop";
