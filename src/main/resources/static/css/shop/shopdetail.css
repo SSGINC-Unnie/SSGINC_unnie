@@ -2,7 +2,6 @@
 body {
     margin: 0;
     padding: 0;
-    font-family: sans-serif;
     background-color: #f9f9f9;
 }
 
@@ -19,7 +18,6 @@ body {
     width: 100%;
     height: 280px;
     background: #eee url("https://via.placeholder.com/640x400?text=Shop+Interior+Image") center/cover no-repeat;
-    margin-top : 40px;
 }
 
 /* 상단 기본 정보 */
@@ -173,7 +171,7 @@ body {
     position: relative;
     width: 100%;
     height: 100%;
-    overflow: hidden; /* 좌우 넘침 숨김 */
+    overflow: hidden;
 }
 
 /* 슬라이드를 묶는 래퍼 */
@@ -191,7 +189,7 @@ body {
 }
 .carousel-slide img {
     width: 100%;
-    height: 280px; /* hero 영역 높이에 맞춰서 */
+    height: 280px;
     object-fit: contain;
 }
 
@@ -220,7 +218,7 @@ body {
 
 /* review-more-container 스타일 */
 .review-more-container {
-    margin-top: 40px; /* 버튼 위쪽 여백 */
+    margin-top: 40px;
     text-align: center;
 }
 

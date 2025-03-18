@@ -1,14 +1,8 @@
-/* 전역 폰트 적용 */
-* {
-    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto,
-    'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', sans-serif;
-}
 
 /* 지도 컨테이너 스타일 */
 #map-container {
     width: 640px;
     height: 820px;
-    margin: 50px auto;
     position: relative;
     border: 1px solid #ccc;
 }
