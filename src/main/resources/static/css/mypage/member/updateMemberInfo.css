@@ -20,10 +20,10 @@ html, body {
  ****************************************/
 .inner-wrapper {
     width: 424px;
-    margin: 0 auto;
+    margin: 5px auto;
     background-color: #fff;
     min-height: 800px;
-    padding: 20px 0;
+    padding: 15px 0px;
     position: relative;
 }
 
@@ -64,7 +64,7 @@ html, body {
  ****************************************/
 .profile-section {
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: 10px;
 }
 .profile-img-label {
     cursor: pointer;
@@ -78,12 +78,13 @@ html, body {
     border: 2px solid #ccc;
     border-radius: 50%;
     margin-bottom: 20px;
+    cursor: pointer;
 }
 
 .camera-icon {
-    position: absolute;
-    right: -4px;
-    bottom: 27px;
+    position: relative;
+    left: 230px;
+    bottom: 51px;
     width: 25px;
     height: 25px;
     border-radius: 50%;
@@ -91,11 +92,49 @@ html, body {
     justify-content: center;
     align-items: center;
     box-shadow: 0px 0px 3px rgba(0, 0, 0, 1);
+    background-color: white;
 }
 
 .camera-icon img {
     width: 18px;
     height: 18px;
+}
+
+/****************************************
+ * 프로필 드롭다운 메뉴 스타일
+ ****************************************/
+.profile-menu {
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    top: 175px;
+    left: 295px;
+    transform: translate(-50%, 30px);
+    background: white;
+    border: 1px solid #ccc;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    width: 120px;
+    display: none;
+    z-index: 1000;
+}
+
+.profile-menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.profile-menu li {
+    padding: 7px;
+    cursor: pointer;
+    text-align: center;
+    font-size: 13px;
+    border: 1px solid #ccc;
+}
+
+.profile-menu li:hover {
+    background: #d9d9d9;
 }
 
 /****************************************

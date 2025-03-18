@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec2="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      layout:decorate="~{layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=640, user-scalable=no">
+    <title>회원 조회</title>
+    <link rel="stylesheet" href="/static/css/admin/member/getAllMember.css">
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="content-container">
+        <h1>회원 조회</h1>
+        <table>
+            <thead>
+            <tr>
+                <th>아이디</th>
+                <th>이름</th>
+                <th>회원 상태</th>
+                <th>회원 권한</th>
+                <th>상세보기</th>
+            </tr>
+            </thead>
+            <tbody id="memberTableBody">
+            </tbody>
+        </table>
+        <div class="pagination">
+            <button id="prevPage">이전</button>
+            <span id="currentPage">1</span> / <span id="totalPages">?</span>
+            <button id="nextPage">다음</button>
+        </div>
+        <script src="/js/admin/member/getAllMember.js"></script>
+    </div>
+</div>
+</body>
+</html>

@@ -20,13 +20,17 @@
             <div class="title-divider"></div>
             <!-- 프로필 사진 영역 -->
             <div class="profile-section">
-                <label for="profileImage" class="profile-img-label">
                     <img id="profilePreview" th:src="@{${member.memberProfile}}" alt="프로필 이미지" class="profile-img" />
                     <!-- 카메라 아이콘 추가 -->
                     <div class="camera-icon">
                         <img src="/img/shop/camera.png" alt="카메라 아이콘">
                     </div>
-                </label>
+                    <div id="profileMenu" class="profile-menu">
+                        <ul>
+                            <li id="changeProfile">프로필 변경</li>
+                            <li id="defaultProfile">기본 이미지 적용</li>
+                        </ul>
+                    </div>
                 <input type="file" id="profileImage" accept="image/*" style="display: none;" />
                 <!-- 회원ID -->
                 <input type="hidden" id="memberId" th:value="${member.memberId}" />
