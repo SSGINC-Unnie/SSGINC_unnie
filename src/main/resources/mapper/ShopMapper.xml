@@ -24,7 +24,7 @@
                  LEFT JOIN receipt r ON r.receipt_shop_id = s.shop_id
                  LEFT JOIN review re ON r.receipt_id = re.review_receipt_id
         WHERE s.shop_category = #{shopCategory}
-          AND s.shop_status = 1 AND re.review_status = 1
+          AND s.shop_status = 1
         GROUP BY s.shop_id, s.shop_name, s.shop_location;
     </select>
 

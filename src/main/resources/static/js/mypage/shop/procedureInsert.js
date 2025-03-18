@@ -142,7 +142,7 @@ document.querySelector('.btn-next','completeBtn').addEventListener('click', asyn
         // 성공 후, pendingProcedures 배열 및 UI 초기화
         pendingProcedures = [];
         document.querySelector('.procedure-list').innerHTML = '';
-        window.location.href = `/index.html`;
+        window.location.href = `/`;
 
     } catch (error) {
         console.error(error);

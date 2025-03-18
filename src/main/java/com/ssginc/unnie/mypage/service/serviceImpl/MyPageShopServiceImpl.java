@@ -39,13 +39,12 @@ public class MyPageShopServiceImpl implements MyPageShopService {
     @Value("${public-api.business.service-key}")
     private String serviceKey;
 
-    private final MyPageShopMapper myPageShopMapper;
-    private final ShopValidator shopValidator;
-
     @Value("${cloud.aws.s3.bucket}")
     private String bucketName;
     private final AmazonS3 amazonS3;
 
+    private final MyPageShopMapper myPageShopMapper;
+    private final ShopValidator shopValidator;
 
 
 

@@ -33,12 +33,42 @@ table td:nth-child(5) {
 }
 
 .pagination {
-    display: flex;              /* 가로 배치 */
-    align-items: center;        /* 수직 정렬 중앙 */
-    justify-content: center;    /* 가로 정렬 중앙 */
-    margin-top: 20px;           /* 위쪽 여백 */
-    font-family: sans-serif;    /* 예시 폰트 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
 }
+
+/* 탭 메뉴 영역 */
+.tab-menu {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #ddd;
+}
+
+/* 개별 탭 스타일 */
+.tab-menu .tab {
+    padding: 10px 20px;
+    margin: 0 10px;
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    border-bottom: 2px solid transparent;
+    transition: border-bottom 0.3s, color 0.3s;
+}
+
+/* 마우스 오버 시 효과 */
+.tab-menu .tab:hover {
+    color: #ff3479;
+}
+
+/* 활성화된 탭 */
+.tab-menu .tab.active {
+    border-bottom: 2px solid #ff3479;
+    color: #ff3479;
+}
+
 
 .pagination button {
     background-color: #ff3479;
