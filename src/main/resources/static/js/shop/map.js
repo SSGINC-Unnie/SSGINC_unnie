@@ -188,12 +188,21 @@ async function loadShopsByCategory(category) {
     try {
         const res = await fetch(`/api/shop/category/${category}`);
         const response = await res.json();
+
+        // 디버깅: 응답 데이터 확인
+        console.log('[Debug] Category:', category, 'Response:', response);
+
+        // shops 배열 확인
         currentShopList = response.data.shops;
+        console.log('[Debug] currentShopList:', currentShopList);
+
+        // 실제 목록 렌더링
         renderShopList(currentShopList);
     } catch (err) {
         console.error('카테고리별 상점 조회 실패:', err);
     }
 }
+
 // 미디어 API를 호출하여 해당 상점의 미디어 이미지 HTML을 반환하는 함수
 async function getMediaImagesHTML(shopId) {
     try {
@@ -219,17 +228,19 @@ async function getMediaImagesHTML(shopId) {
     }
 }
 
-// 매장 목록을 DOM에 렌더링하는 함수 (정렬 포함)
-// 상점 데이터가 없으면 빈 상태로 둡니다.
+
 async function renderShopList(shops) {
+    console.log('[Debug] renderShopList shops:', shops); // 추가
+
     const sortMode = document.getElementById('sortSelect').value;
     const shopListEl = document.getElementById('shopList');
 
-    // 데이터가 없으면 목록을 비워두고 함수 종료
+    // 데이터가 없으면 안내 문구
     if (!shops || shops.length === 0) {
-        shopListEl.innerHTML = '';
+        shopListEl.innerHTML = '<div>해당 카테고리 상점이 없습니다.</div>';
         return;
-    }
+}
+
 
     let sortedShops = shops.slice(); // 원본 배열 복사
     if (sortMode === 'asc') {
@@ -345,13 +356,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const categoryBtns = document.querySelectorAll('.category-btn');
     categoryBtns.forEach(btn => {
         btn.addEventListener('click', () => {
+            // 1) 모든 버튼에서 active 제거
             categoryBtns.forEach(b => b.classList.remove('active'));
+
+            // 2) 현재 클릭한 버튼만 active 추가
             btn.classList.add('active');
 
+            // 3) 해당 카테고리 불러오기
             const selectedCategory = btn.getAttribute('data-category');
             loadShopsByCategory(selectedCategory);
         });
     });
+
 
     // 기본 탭(네일샵) 데이터 로드
     const defaultCategory = document.querySelector('.category-btn.active')?.getAttribute('data-category');
