@@ -1,6 +1,6 @@
 let lastOpenedDropdown = null; // 마지막으로 열린 드롭다운
 let currentPage = 1;            // 현재 페이지
-const pageSize = 5;             // 한 페이지에 표시할 데이터 수
+const pageSize = 20;             // 한 페이지에 표시할 데이터 수
 let totalPages = 1;             // 총 페이지 수
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -68,8 +68,11 @@ async function fetchMembers(page = 1, pageSize = 5) {
             row.innerHTML = `
                 <td>${member.memberEmail}</td>
                 <td>${member.memberName}</td>
-                <td>${member.memberState}</td>
-                <td>${member.memberRole}</td>
+                <td>${member.memberState === 0 ? '활성' :
+                member.memberState === 2 ? '탈퇴' : member.memberState}</td>
+                 <td>${member.memberRole === 'ROLE_USER' ? '일반회원' :
+                member.memberRole === 'ROLE_ADMIN' ? '관리자' :
+                    member.memberRole === 'ROLE_MANAGER' ? '업체 담당자' : member.memberRole}
                 <td>
                     <button class="details-button" onclick="fetchMemberDetail(${member.memberId}, 'dropdown${index}')">
                         상세보기
@@ -105,6 +108,16 @@ async function fetchMemberDetail(memberId, dropdownId) {
         console.log("member 객체:", member);
         const memberDetailContainer = document.getElementById(dropdownId);
 
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const year = date.getFullYear();
+            let month = date.getMonth() + 1;
+            let day = date.getDate();
+            month = month < 10 ? '0' + month : month;
+            day = day < 10 ? '0' + day : day;
+            return `${year}년 ${month}월 ${day}일`;
+        }
+
         // 회원 상세 정보 HTML 구성
         memberDetailContainer.innerHTML = `
             <div class="section-title">회원 상세 정보</div>
@@ -112,9 +125,14 @@ async function fetchMemberDetail(memberId, dropdownId) {
             <p><strong>회원명:</strong> ${member.memberName}</p>
             <p><strong>닉네임:</strong> ${member.memberNickname}</p>
             <p><strong>전화번호:</strong> ${member.memberPhone}</p>
-            <p><strong>회원 상태:</strong> ${member.memberState}</p>
-            <p><strong>회원 권한:</strong> ${member.memberRole}</p>
-            <p><strong>가입일:</strong> ${member.memberCreatedAt}</p>
+            <p><strong>회원 상태:</strong> ${
+            member.memberState === 0 ? '활성' :
+                member.memberState === 2 ? '탈퇴' : member.memberState}</p>
+            <p><strong>회원 권한:</strong> ${
+            member.memberRole === 'ROLE_USER' ? '일반회원' :
+                member.memberRole === 'ROLE_ADMIN' ? '관리자' :
+                    member.memberRole === 'ROLE_MANAGER' ? '업체 담당자' : member.memberRole}</p>
+            <p><strong>가입일:</strong> ${formatDate(member.memberCreatedAt)}</p>
         `;
         console.log("회원 상세정보 HTML 조합 완료. dropdownId:", dropdownId);
         toggleDropdown(dropdownId);

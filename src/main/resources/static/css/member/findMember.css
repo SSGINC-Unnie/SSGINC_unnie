@@ -132,7 +132,6 @@
 /* 버튼 (인증번호 전송, 인증하기) */
 .btn-small {
     height: 48px;
-    width: 130px;       /* 버튼 동일 너비 */
     text-align: center; /* 텍스트 가운데 정렬 */
     white-space: nowrap;
     padding: 0 16px;

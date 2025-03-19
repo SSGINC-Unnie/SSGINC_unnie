@@ -427,6 +427,7 @@ document.addEventListener("DOMContentLoaded", function () {
         })
             .then(response => {
                 alert("기본 이미지로 변경되었습니다.");
+                location.reload();
             })
             .catch(error => {
                 console.error(error);
@@ -477,11 +478,12 @@ function updateProfileImage() {
             }
         })
             .then(response => {
-                alert("프로필 이미지가 업데이트되었습니다.");
+                alert("프로필 이미지가 변경되었습니다.");
+                location.reload();
             })
             .catch(error => {
                 console.error(error);
-                alert("프로필 이미지 업데이트 중 오류가 발생했습니다.");
+                alert("프로필 이미지 변경 중 오류가 발생했습니다.");
             });
     });
 }

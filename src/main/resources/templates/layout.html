@@ -22,7 +22,7 @@
                     <img src="/static/img/logo.png" alt="언니어때 로고">
                 </div>
                 <div class="profile" sec:authorize="isAuthenticated()">
-                    <img src="/static/img/profile.png" alt="프로필 이미지">
+                    <img th:src="@{${memberProfile}}">
                     <form th:action="@{/member/logout}" method="post">
                         <button type="submit" class="auth-btn logout-btn">로그아웃</button>
                     </form>

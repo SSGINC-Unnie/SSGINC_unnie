@@ -204,7 +204,6 @@ html, body {
     border: 1px solid #000;
     border-radius: 4px;
     font-size: 14px;
-    min-width: 120px;
 }
 
 /* 비밀번호 변경 버튼 */
@@ -316,46 +315,6 @@ html, body {
 }
 
 
-/****************************************
- * 바텀시트
- ****************************************/
-.bottom-sheet-overlay {
-    position: fixed;
-    z-index: 9998;
-    inset: 0;
-    display: flex;
-    flex-direction: column; /* 세로 방향 정렬 */
-    justify-content: flex-end; /* 바닥 정렬 */
-    align-items: center;       /* 수평 중앙 정렬 */
-    background-color: rgba(0, 0, 0, 0.4);
-}
-
-.bottom-sheet-container {
-    position: relative;
-    width: 100%;
-    max-width: 640px;
-    height: 100%;
-    margin: 0 auto;
-    background-color: #fff;
-    border-radius: 20px 20px 0 0;
-    box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.2);
-    display: flex;
-    flex-direction: column;
-    animation: slideUp 0.3s ease-out;
-}
-
-
-/* 슬라이드 애니메이션 */
-@keyframes slideUp {
-    from {
-        transform: translateY(100%);
-    }
-    to {
-        transform: translateY(0);
-    }
-}
-
-
 .check-icon {
     color: #FF3479;
     margin-right: 4px;
@@ -381,15 +340,17 @@ html, body {
     margin-bottom: 0;
     width: auto;
 }
-.bottom-sheet-body .form-group input[type="password"] {
-    flex: 1;
-    width: auto;
-    min-width: 0;
-}
 
-.bottom-sheet-body input#withdrawCurrentPw {
-    width: 80%;
-    max-width: 400px;
+.withdrawCancelBtn{
+    background-color: #ccc;
+    color: #333;
+    margin-top: -10px;
+    height: 45px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 4px;
+    cursor: pointer;
+    border: none;
 }
 
 #confirmWithdrawModal .modal-content {
@@ -411,17 +372,8 @@ html, body {
     font-size: 19px;
     font-weight: 700;
     text-align: center;
-    margin: 5px 0 -4px;
+    margin: 5px 0 20px;
     color: #333;
-}
-
-/* 탈퇴 시 유의사항 아래 구분선 */
-.withdraw-divider {
-    width: 100%;
-    height: 2px;
-    background-color: #d9d9d9;
-    border: none;
-    margin: 0 auto 25px auto;
 }
 
 /* 탈퇴 시 유의사항을 감싸는 박스 */
@@ -443,6 +395,10 @@ input[type="checkbox"] {
     accent-color: #ff3479;
 }
 
+.withdrawConfirm {
+    margin-bottom: 5px;
+}
+
 /* 회원탈퇴 버튼 */
 .btn-withdraw {
     font-size: 14px;
@@ -456,12 +412,12 @@ input[type="checkbox"] {
     background-color: #fff;
     width: 400px;
     border-radius: 12px;
-    padding: 20px;
+    padding: 21px;
     position: relative;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 20px;
 }
 
 .modal-header h3 {
