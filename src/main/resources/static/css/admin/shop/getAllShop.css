@@ -1,5 +1,7 @@
 /* 내 업체 조회 전용 스타일 */
 .content-container {
+    margin: 50px auto;
+    padding: 20px;
     width: 640px;
     background-color: #fff;
     border-radius: 8px;

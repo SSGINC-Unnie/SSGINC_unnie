@@ -103,8 +103,7 @@ document.querySelector('.btn-save').addEventListener('click', async function (ev
     closeModal();
 });
 
-document.querySelector('.btn-next').addEventListener('click', async function(event) {
-    event.preventDefault();
+async function registerDesigners(redirectUrl) {
     if (pendingDesigners.length === 0) {
         alert("저장할 디자이너 정보가 없습니다.");
         return;
@@ -112,7 +111,7 @@ document.querySelector('.btn-next').addEventListener('click', async function(eve
 
     try {
         const formData = new FormData();
-        // pendingDesigners 배열에서 디자이너 요청 정보만 추출 (파일은 별도로 전송)
+        // 디자이너 정보 JSON 배열
         const requests = pendingDesigners.map(designer => ({
             designerName: designer.designerName,
             designerIntroduction: designer.designerIntroduction,
@@ -120,7 +119,7 @@ document.querySelector('.btn-next').addEventListener('click', async function(eve
         }));
         formData.append("data", new Blob([JSON.stringify(requests)], { type: "application/json" }));
 
-        // 백엔드에서는 "designerThumbnailFiles"라는 이름의 파일 목록을 기대합니다.
+        // 파일 목록 추가
         pendingDesigners.forEach(designer => {
             formData.append("designerThumbnailFiles", designer.file);
         });
@@ -137,65 +136,34 @@ document.querySelector('.btn-next').addEventListener('click', async function(eve
 
         await response.json();
         alert("디자이너 등록이 완료되었습니다.");
-        // 성공 후, pendingDesigners 배열 및 UI 초기화
+
+        // 성공 후, pendingDesigners 및 UI 초기화
         pendingDesigners = [];
         document.querySelector('.designer-list').innerHTML = '';
-        window.location.href = `/mypage/procedure/${shopId}`;
+
+        // 호출 시 전달받은 redirectUrl로 이동
+        window.location.href = redirectUrl;
 
     } catch (error) {
         console.error(error);
         alert("디자이너 등록 중 오류 발생");
     }
-});
-
-document.querySelector('.btn-complete').addEventListener('click', async function(event) {
-    event.preventDefault();
-    if (pendingDesigners.length === 0) {
-        alert("저장할 디자이너 정보가 없습니다.");
-        return;
-    }
-
-    try {
-        const formData = new FormData();
-        // pendingDesigners 배열에서 디자이너 요청 정보만 추출 (파일은 별도로 전송)
-        const requests = pendingDesigners.map(designer => ({
-            designerName: designer.designerName,
-            designerIntroduction: designer.designerIntroduction,
-            designerShopId: shopId
-        }));
-        formData.append("data", new Blob([JSON.stringify(requests)], { type: "application/json" }));
-
-        // 백엔드에서는 "designerThumbnailFiles"라는 이름의 파일 목록을 기대합니다.
-        pendingDesigners.forEach(designer => {
-            formData.append("designerThumbnailFiles", designer.file);
-        });
-
-        const response = await fetch(`/api/mypage/designer/${shopId}`, {
-            method: 'POST',
-            body: formData
-        });
-
-        if (!response.ok) {
-            alert("디자이너 등록에 실패했습니다.");
-            return;
-        }
-
-        await response.json();
-        alert("디자이너 등록이 완료되었습니다.");
-        // 성공 후, pendingDesigners 배열 및 UI 초기화
-        pendingDesigners = [];
-        document.querySelector('.designer-list').innerHTML = '';
-        window.location.href = '';
-
-    } catch (error) {
-        console.error(error);
-        alert("디자이너 등록 중 오류 발생");
-    }
-});
+}
 
 document.querySelector('.btn-prev').addEventListener('click', function(event) {
     event.preventDefault();
-    window.location.href = '/mypage/shop';
+    window.location.href = '/mypage/procedure/${shopId}';
+});
+
+document.querySelector('.btn-complete').addEventListener('click', function(event) {
+    event.preventDefault();
+    registerDesigners('/mypage/myshop');
+});
+
+/** [2] .btn-next 클릭 시 → 메인 페이지(/)로 이동 (예시) */
+document.querySelector('.btn-next').addEventListener('click', function(event) {
+    event.preventDefault();
+    registerDesigners('/');
 });
 
 // 수정/삭제 이벤트 위임 (pendingDesigners 배열과 UI 동기화)
