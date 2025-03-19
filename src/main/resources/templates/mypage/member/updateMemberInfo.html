@@ -20,13 +20,17 @@
             <div class="title-divider"></div>
             <!-- 프로필 사진 영역 -->
             <div class="profile-section">
-                <label for="profileImage" class="profile-img-label">
                     <img id="profilePreview" th:src="@{${member.memberProfile}}" alt="프로필 이미지" class="profile-img" />
                     <!-- 카메라 아이콘 추가 -->
                     <div class="camera-icon">
                         <img src="/img/shop/camera.png" alt="카메라 아이콘">
                     </div>
-                </label>
+                    <div id="profileMenu" class="profile-menu">
+                        <ul>
+                            <li id="changeProfile">프로필 변경</li>
+                            <li id="defaultProfile">기본 이미지 적용</li>
+                        </ul>
+                    </div>
                 <input type="file" id="profileImage" accept="image/*" style="display: none;" />
                 <!-- 회원ID -->
                 <input type="hidden" id="memberId" th:value="${member.memberId}" />
@@ -156,7 +160,6 @@
                 <span class="modal-close" onclick="closeWithdrawModal()">×</span>
                 <!-- 탈퇴 시 유의사항 안내 -->
                 <h2 class="withdraw-title">탈퇴 시 유의사항 안내</h2>
-                <hr class="withdraw-divider" />
 
                 <div class="withdraw-notice-box">
                     <p class="withdraw-notice">
@@ -177,11 +180,11 @@
                 <!-- 체크박스 -->
                 <div class="form-group">
                     <input type="checkbox" id="withdrawCheck" />
-                    <label for="withdrawCheck">유의사항을 모두 확인하였으며, 탈퇴에 동의합니다.</label>
+                    <label for="withdrawCheck" class="withdrawConfirm">유의사항을 모두 확인하였으며, 탈퇴에 동의합니다.</label>
                 </div>
                 <!-- 탈퇴 버튼 -->
                 <button type="button" id="withdrawConfirmBtn" class="btn-small" disabled>탈퇴</button>
-                <button type="button" class="btn-small btn-cancel" onclick="closeWithdrawModal()">취소</button>
+                <button type="button" class="withdrawCancelBtn" onclick="closeWithdrawModal()">취소</button>
             </div>
         </div>
 

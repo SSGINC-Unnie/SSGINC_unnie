@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssginc.unnie.admin.mapper.AdminMemberMapper">
+
+    <select id="findAllMembers" resultType="com.ssginc.unnie.admin.dto.member.AdminMemberResponse">
+        SELECT member_id, member_email, member_name, member_state, member_role
+        FROM member
+    </select>
+
+    <select id="findMemberDetail" resultType="com.ssginc.unnie.admin.dto.member.AdminMemberDetailResponse">
+        SELECT member_id, member_email, member_name, member_nickname, member_phone, member_state, member_role, member_created_at
+        FROM member
+        WHERE member_id = #{memberId}
+    </select>
+</mapper>

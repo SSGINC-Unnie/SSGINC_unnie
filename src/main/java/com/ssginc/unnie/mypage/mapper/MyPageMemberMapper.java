@@ -17,6 +17,9 @@ public interface MyPageMemberMapper {
     //프로필 사진 수정
     int updateProfile(MyPageProfileImgUpdateRequest profileImgUpdateRequest);
 
+    //프로필 기본 이미지 적용
+    int updateDefaultProfile(MyPageProfileImgUpdateRequest profileImgUpdateRequest);
+
     // 닉네임 수정
     int updateNickname(MyPageNicknameUpdateRequest nicknameUpdateRequest);
 

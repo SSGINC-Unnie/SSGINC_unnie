@@ -16,8 +16,6 @@ public class MemberPrincipal implements UserDetails {
 
     private final Member member;
 
-
-    //일반 로그인
     public MemberPrincipal(Member member) {
         this.member = member;
     }
@@ -34,7 +32,7 @@ public class MemberPrincipal implements UserDetails {
 
     /**
      * 회원의 역할 정보를 스프링 시큐리티 권한(Authority)으로 변환
-     * 예: ROLE_ADMIN, ROLE_USER, ROLE_MANAGER 등
+     * ROLE_ADMIN, ROLE_USER, ROLE_MANAGER 등
      */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -19,6 +19,9 @@ public interface MyPageMemberService {
     //프로필 사진 수정
     int updateProfile(MyPageProfileImgUpdateRequest profileImgUpdateRequest, MultipartFile file);
 
+    //프로필 기본 이미지 적용
+    int updateDefaultProfile(MyPageProfileImgUpdateRequest profileImgUpdateRequest);
+
     // 닉네임 수정
     ResponseDto<Map<String, String>> updateNickname(MyPageNicknameUpdateRequest nicknameUpdateRequest, HttpServletResponse response);
 

@@ -508,6 +508,13 @@ $(document).ready(() => {
     $("#memberName").on("blur", validateName);
     // 닉네임 중복 확인 버튼
     $("#checkNickname").on("click", validateNicknameDuplication);
+    // 모달 버튼 동작
+    $("#goMainBtn").on("click", function() {
+        window.location.href = "/";
+    });
+    $("#goLoginBtn").on("click", function() {
+        window.location.href = "/member/login";
+    });
 
     // 회원가입 폼 submit
     $("#registrationForm").on("submit", function(e) {
@@ -564,8 +571,8 @@ $(document).ready(() => {
                         // 소셜 회원가입: 서버가 { "redirect": "/" }를 반환하므로 바로 홈으로 이동
                         window.location.href = data.redirect || "/";
                     } else {
-                        // 일반 회원가입: 로그인 페이지로 이동
-                        window.location.href = "/member/login";
+                        // 일반 회원가입:  모달 표시
+                        $("#registerCompleteModal").show();
                     }
                 })
                 .catch(error => {

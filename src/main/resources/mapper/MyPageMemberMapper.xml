@@ -34,6 +34,13 @@
         WHERE member_id = #{memberId}
     </update>
 
+    <update id="updateDefaultProfile">
+        UPDATE member
+        SET member_profile = "https://unnie-bucket2.s3.ap-northeast-2.amazonaws.com/profile.png",
+            member_updated_at = current_timestamp
+        WHERE member_id = #{memberId}
+    </update>
+
     <update id="updateNickname">
         UPDATE member
         SET member_nickname = #{memberNickname},

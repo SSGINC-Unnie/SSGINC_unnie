@@ -1,18 +1,14 @@
 package com.ssginc.unnie.mypage.controller;
 
 import com.ssginc.unnie.common.config.MemberPrincipal;
-import com.ssginc.unnie.common.util.ResponseDto;
-import com.ssginc.unnie.member.vo.Member;
 import com.ssginc.unnie.mypage.dto.member.MyPageMemberResponse;
 import com.ssginc.unnie.mypage.service.MyPageMemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 /**
  * 마이페이지 회원정보수정, 회원탈퇴 view 컨트롤러
@@ -40,6 +36,7 @@ public class MyPageMemberViewController {
         // 회원 정보를 조회한 후 model에 추가
         MyPageMemberResponse memberInfo = myPageMemberService.findById(memberPrincipal.getMemberId());
         model.addAttribute("member", memberInfo);
+        model.addAttribute("activePage", "mypage");
         return "mypage/member/updateMemberInfo";
     }
 }

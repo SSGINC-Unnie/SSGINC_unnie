@@ -388,6 +388,57 @@ $(document).ready(function() {
     $("#newPwConfirm").on("keyup", checkConfirmPassword);
 })
 
+// ================================= 프로필 기본 이미지 적용 ======================================
+document.addEventListener("DOMContentLoaded", function () {
+    const profileImg = document.getElementById("profilePreview");
+    const profileMenu = document.getElementById("profileMenu");
+    const fileInput = document.getElementById("profileImage");
+    // 프로필 메뉴 토글 함수
+    function toggleProfileMenu(event) {
+        event.stopPropagation();
+        profileMenu.style.display = profileMenu.style.display === "block" ? "none" : "block";
+    }
+
+    // 프로필 사진 클릭 시 드롭다운 표시
+    profileImg.addEventListener("click", toggleProfileMenu);
+
+    // 프로필 변경 클릭 시 파일 선택 창 열기
+    document.getElementById("changeProfile").addEventListener("click", function () {
+        fileInput.click();
+    });
+
+    // 바깥 클릭 시 드롭다운 닫기
+    document.addEventListener("click", function (event) {
+        if (!profileImg.contains(event.target) && !profileMenu.contains(event.target)) {
+            profileMenu.style.display = "none";
+        }
+    });
+
+    // 기본 이미지 적용
+    document.getElementById("defaultProfile").addEventListener("click", function () {
+        const defaultImgPath = "https://unnie-bucket2.s3.ap-northeast-2.amazonaws.com/profile.png";
+        const profileImg = document.getElementById("profilePreview");
+        profileImg.src = defaultImgPath;
+
+        const memberId = document.getElementById("memberId").value;
+        axios.put("/api/mypage/member/defaultProfile", {
+            memberId: memberId,
+            memberProfile: defaultImgPath
+        })
+            .then(response => {
+                alert("기본 이미지로 변경되었습니다.");
+                location.reload();
+            })
+            .catch(error => {
+                console.error(error);
+                alert("기본 이미지 적용 중 오류가 발생했습니다.");
+            });
+    });
+
+    // 기존 프로필 이미지 업데이트 유지
+    updateProfileImage();
+});
+
 // ================================= 프로필 이미지 파일 선택 및 업데이트 ======================================
 function updateProfileImage() {
     const fileInput = document.getElementById("profileImage");
@@ -427,11 +478,12 @@ function updateProfileImage() {
             }
         })
             .then(response => {
-                alert("프로필 이미지가 업데이트되었습니다.");
+                alert("프로필 이미지가 변경되었습니다.");
+                location.reload();
             })
             .catch(error => {
                 console.error(error);
-                alert("프로필 이미지 업데이트 중 오류가 발생했습니다.");
+                alert("프로필 이미지 변경 중 오류가 발생했습니다.");
             });
     });
 }
@@ -477,7 +529,7 @@ if (withdrawCheck && withdrawConfirmBtn) {
     });
 }
 
-// 바텀시트 내 탈퇴 버튼 클릭 후 최종확인 모달
+// 모달 내 탈퇴 버튼 클릭 후 최종확인 모달
 if (withdrawConfirmBtn) {
     withdrawConfirmBtn.addEventListener("click", function () {
         const pwVal = document.getElementById("withdrawCurrentPw").value.trim();

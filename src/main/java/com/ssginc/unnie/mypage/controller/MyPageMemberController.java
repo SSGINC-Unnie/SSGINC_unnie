@@ -4,6 +4,7 @@ import com.ssginc.unnie.common.config.MemberPrincipal;
 import com.ssginc.unnie.common.exception.UnnieMemberException;
 import com.ssginc.unnie.common.util.ErrorCode;
 import com.ssginc.unnie.common.util.ResponseDto;
+import com.ssginc.unnie.common.util.SimpleResponseDto;
 import com.ssginc.unnie.mypage.dto.member.*;
 import com.ssginc.unnie.mypage.service.MyPageMemberService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -33,12 +34,27 @@ public class MyPageMemberController {
      */
     @PutMapping("/member/profileImg")
     public ResponseEntity<ResponseDto<Map<String, String>>> updateProfile(
-            @AuthenticationPrincipal MemberPrincipal memberPrincipal, @RequestPart MyPageProfileImgUpdateRequest profileImgUpdateRequest,
+            @AuthenticationPrincipal MemberPrincipal memberPrincipal,
+            @RequestPart MyPageProfileImgUpdateRequest profileImgUpdateRequest,
             @RequestPart(value = "memberProfileFile", required = false)  MultipartFile file) {
         int result = myPageMemberService.updateProfile(profileImgUpdateRequest,file);
         return ResponseEntity.ok(new ResponseDto<>(
                 HttpStatus.OK.value(),"프로필 수정이 완료되었습니다.", Map.of("result", String.valueOf(result))
         ));
+    }
+
+    /**
+     * 프로필 기본 이미지 적용
+     */
+    @PutMapping("/member/defaultProfile")
+    public ResponseEntity<SimpleResponseDto> updateDefaultProfile(
+            @AuthenticationPrincipal MemberPrincipal memberPrincipal,
+            @RequestBody MyPageProfileImgUpdateRequest request) {
+        request.setMemberId(memberPrincipal.getMemberId());
+        int res = myPageMemberService.updateDefaultProfile(request);
+        return ResponseEntity.ok(
+                new SimpleResponseDto(HttpStatus.OK.value(), "기본 이미지 적용이 완료되었습니다.")
+        );
     }
 
     /**

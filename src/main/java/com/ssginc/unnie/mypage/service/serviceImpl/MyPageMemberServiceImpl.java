@@ -1,5 +1,9 @@
 package com.ssginc.unnie.mypage.service.serviceImpl;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.ssginc.unnie.common.exception.UnnieMediaException;
 import com.ssginc.unnie.common.exception.UnnieMemberException;
 import com.ssginc.unnie.common.util.ErrorCode;
@@ -14,6 +18,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -31,6 +36,16 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class MyPageMemberServiceImpl implements MyPageMemberService {
+
+    @Value("${public-api.business.base-url}")
+    private String baseUrl;
+
+    @Value("${public-api.business.service-key}")
+    private String serviceKey;
+
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucketName;
+    private final AmazonS3 amazonS3;
 
     private final MyPageMemberMapper myPageMemberMapper;
     private final PasswordEncoder passwordEncoder;
@@ -50,6 +65,18 @@ public class MyPageMemberServiceImpl implements MyPageMemberService {
         String fileUrl = saveFile(file);
         profileImgUpdateRequest.setMemberProfile(fileUrl);
         int res = myPageMemberMapper.updateProfile(profileImgUpdateRequest);
+        if (res == 0){
+            throw new UnnieMediaException(ErrorCode.FILE_NOT_FOUND);
+        }
+        return res;
+    }
+
+    /**
+     * 프로필 기본 이미지 적용
+     */
+    @Override
+    public int updateDefaultProfile(MyPageProfileImgUpdateRequest profileImgUpdateRequest) {
+        int res = myPageMemberMapper.updateDefaultProfile(profileImgUpdateRequest);
         if (res == 0){
             throw new UnnieMediaException(ErrorCode.FILE_NOT_FOUND);
         }
@@ -176,28 +203,25 @@ public class MyPageMemberServiceImpl implements MyPageMemberService {
      */
     @Override
     public String saveFile(MultipartFile file) {
-        // 새 업로드 경로
-        String uploadDir = "C:/workSpace/SSGINC_Unnie/src/main/resources/static/upload/";
-        File folder = new File(uploadDir);
-        if (!folder.exists()) {
-            folder.mkdirs();  // 폴더가 없으면 생성
-        }
-
         // 원본 파일명과 안전한 파일명 생성
         String originalFileName = file.getOriginalFilename();
         String safeFileName = UUID.randomUUID().toString() + "_"
                 + originalFileName.replaceAll("[^a-zA-Z0-9._-]", "_");
 
-        // 최종 파일 객체 생성
-        File destination = new File(folder, safeFileName);
         try {
-            file.transferTo(destination);
+            // 파일 메타데이터 설정
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentLength(file.getSize());
+            // S3에 파일 업로드 (버킷, 파일명, InputStream, 메타데이터, 퍼블릭 읽기 권한)
+            amazonS3.putObject(new PutObjectRequest(bucketName, safeFileName, file.getInputStream(), metadata)
+                    .withCannedAcl(CannedAccessControlList.PublicRead));
         } catch (IOException e) {
-            throw new UnnieMediaException(ErrorCode.FILE_UPLOAD_FAILED, e) {
-            };
+            throw new RuntimeException("파일 저장에 실패했습니다.", e);
         }
-        System.out.println("Saving file to: " + destination.getAbsolutePath());
-        // DB에는 웹 접근 가능한 경로(/upload/파일명) 저장
-        return "/upload/" + safeFileName;
+
+        // S3 URL 획득 및 반환
+        String s3Url = amazonS3.getUrl(bucketName, safeFileName).toString();
+        System.out.println("Saving file to: " + s3Url);
+        return s3Url;
     }
 }
