@@ -104,9 +104,7 @@ document.querySelector('.btn-save').addEventListener('click', async function (ev
     closeModal();
 });
 
-// "다음" 버튼 클릭 시: pendingProcedures 배열의 데이터를 서버에 전송하여 DB에 저장 (Bulk Insert)
-document.querySelector('.btn-next','completeBtn').addEventListener('click', async function(event) {
-    event.preventDefault();
+async function registerProcedures(redirectUrl) {
     if (pendingProcedures.length === 0) {
         alert("저장할 시술 정보가 없습니다.");
         return;
@@ -114,7 +112,7 @@ document.querySelector('.btn-next','completeBtn').addEventListener('click', asyn
 
     try {
         const formData = new FormData();
-        // pendingProcedures 배열에서 시술 요청 정보만 추출 (파일은 별도로 전송)
+        // 시술 정보 JSON 형태로 묶기
         const requests = pendingProcedures.map(proc => ({
             procedureName: proc.procedureName,
             procedurePrice: proc.procedurePrice,
@@ -122,7 +120,7 @@ document.querySelector('.btn-next','completeBtn').addEventListener('click', asyn
         }));
         formData.append("data", new Blob([JSON.stringify(requests)], { type: "application/json" }));
 
-        // 백엔드에서는 "procedureThumbnailFiles"라는 이름의 파일 목록을 기대합니다.
+        // 파일 목록 추가
         pendingProcedures.forEach(proc => {
             formData.append("procedureThumbnailFiles", proc.file);
         });
@@ -139,21 +137,35 @@ document.querySelector('.btn-next','completeBtn').addEventListener('click', asyn
 
         await response.json();
         alert("시술 등록이 완료되었습니다.");
-        // 성공 후, pendingProcedures 배열 및 UI 초기화
+
+        // 성공 후 초기화
         pendingProcedures = [];
         document.querySelector('.procedure-list').innerHTML = '';
-        window.location.href = `/`;
+
+        // 호출 시 전달받은 redirectUrl로 이동
+        window.location.href = redirectUrl;
 
     } catch (error) {
         console.error(error);
         alert("시술 등록 중 오류 발생");
     }
-});
+}
 
 // "이전" 버튼 클릭 시: 디자이너 등록 페이지로 이동
 document.querySelector('.btn-prev').addEventListener('click', function(event) {
     event.preventDefault();
     window.location.href = `/mypage/designer/${shopId}`;
+});
+
+// [1] .btn-next 버튼: 등록 후 메인 페이지(/)로 이동
+document.querySelector('.btn-next').addEventListener('click', function(event) {
+    event.preventDefault();
+    registerProcedures('/');
+});
+
+document.querySelector('.btn-complete').addEventListener('click', function(event) {
+    event.preventDefault();
+    registerProcedures('/mypage/myshop');
 });
 
 // 수정/삭제 이벤트 위임 (pendingProcedures 배열과 UI 동기화)
