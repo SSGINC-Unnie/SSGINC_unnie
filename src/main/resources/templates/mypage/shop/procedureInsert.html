@@ -10,79 +10,79 @@
 <body>
 <div class="container" layout:fragment="content">
     <div class="shop-container">
-    <h1>업체 등록</h1>
-    <div class="step-indicator">
-        <div class="step">
-            <div class="step-circle pink">1</div>
-            <div class="step-label pink">사업자 확인</div>
-        </div>
-        <div class="step">
-            <div class="step-circle pink">2</div>
-            <div class="step-label pink">업체 등록</div>
-        </div>
-        <div class="step">
-            <div class="step-circle pink">3</div>
-            <div class="step-label pink">디자이너 등록</div>
-        </div>
-        <div class="step">
-            <div class="step-circle pink">4</div>
-            <div class="step-label pink">시술 등록</div>
-        </div>
-    </div>
-
-    <!-- 헤더 영역 -->
-    <div class="header-row">
-        <h2>시술 등록</h2>
-        <!-- 디자이너 등록과 달리 시술은 "시술 추가"로 표시 -->
-        <a href="#" class="add-procedure-link" onclick="openModal()">시술 추가 &gt;</a>
-    </div>
-
-    <!-- 시술 목록 영역 -->
-    <div class="procedure-list"></div>
-
-    <!-- 하단 버튼 -->
-    <div class="button-group">
-        <button class="btn-prev">이전</button>
-        <button class="btn-next">등록</button>
-    </div>
-
-    <!-- 모달 (시술 추가) -->
-    <div class="modal-overlay" id="modalOverlay">
-        <div class="modal">
-            <div class="modal-header">
-                <h2>시술 추가</h2>
-                <button onclick="closeModal()">×</button>
+        <h1>업체 등록</h1>
+        <div class="step-indicator">
+            <div class="step">
+                <div class="step-circle pink">1</div>
+                <div class="step-label pink">사업자 확인</div>
             </div>
-            <form>
-                <!-- 시술명 -->
-                <label for="procedureName"><strong>시술명</strong> <span class="required">*</span></label>
-                <input type="text" id="procedureName" name="procedureName" required/>
+            <div class="step">
+                <div class="step-circle pink">2</div>
+                <div class="step-label pink">업체 등록</div>
+            </div>
+            <div class="step">
+                <div class="step-circle pink">3</div>
+                <div class="step-label pink">디자이너 등록</div>
+            </div>
+            <div class="step">
+                <div class="step-circle pink">4</div>
+                <div class="step-label pink">시술 등록</div>
+            </div>
+        </div>
 
-                <!-- 시술 가격 -->
-                <label for="procedurePrice"><strong>시술 가격</strong> <span class="required">*</span></label>
-                <input type="text" id="procedurePrice" name="procedurePrice" placeholder="숫자만 입력" required/>
+        <!-- 헤더 영역 -->
+        <div class="header-row">
+            <h2>시술 등록</h2>
+            <!-- 디자이너 등록과 달리 시술은 "시술 추가"로 표시 -->
+            <a href="#" class="add-procedure-link" onclick="openModal()">시술 추가 &gt;</a>
+        </div>
 
-                <!-- 시술 사진 등록 -->
-                <label><strong>시술 사진 등록</strong> <span class="required">*</span></label>
-                <div class="upload-area">
-                    <label for="fileInput" class="upload-icon">
-                        <img id="previewImage" src="/img/shop/camera.png" alt="Upload" style="width: 20px; height: 20px; object-fit: contain;"/>
-                    </label>
-                    <input type="file" id="fileInput" accept="image/*" style="display: none;">
+        <!-- 시술 목록 영역 -->
+        <div class="procedure-list"></div>
+
+        <!-- 하단 버튼 -->
+        <div class="button-group">
+            <button class="btn-prev">이전</button>
+            <button class="btn-next">등록</button>
+        </div>
+
+        <!-- 모달 (시술 추가) -->
+        <div class="modal-overlay" id="modalOverlay">
+            <div class="modal">
+                <div class="modal-header">
+                    <h2>시술 추가</h2>
+                    <button onclick="closeModal()">×</button>
                 </div>
+                <form>
+                    <!-- 시술명 -->
+                    <label for="procedureName"><strong>시술명</strong> <span class="required">*</span></label>
+                    <input type="text" id="procedureName" name="procedureName" required/>
 
-                <!-- 모달 하단 버튼 -->
-                <div class="modal-footer">
-                    <button type="button" class="btn-cancel" onclick="closeModal()">취소</button>
-                    <button type="submit" class="btn-save">추가</button>
-                </div>
-            </form>
+                    <!-- 시술 가격 -->
+                    <label for="procedurePrice"><strong>시술 가격</strong> <span class="required">*</span></label>
+                    <input type="text" id="procedurePrice" name="procedurePrice" placeholder="숫자만 입력" required/>
+
+                    <!-- 시술 사진 등록 -->
+                    <label><strong>시술 사진 등록</strong> <span class="required">*</span></label>
+                    <div class="upload-area">
+                        <label for="fileInput" class="upload-icon">
+                            <img id="previewImage" src="/img/shop/camera.png" alt="Upload" style="width: 20px; height: 20px; object-fit: contain;"/>
+                        </label>
+                        <input type="file" id="fileInput" accept="image/*" style="display: none;">
+                    </div>
+
+                    <!-- 모달 하단 버튼 -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn-cancel" onclick="closeModal()">취소</button>
+                        <button type="submit" class="btn-save">추가</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</div>
-<div layout:fragment="scripts">
-<script src="/js/mypage/shop/procedureInsert.js"></script>
-</div>
+    <div layout:fragment="scripts">
+        <script src="/js/mypage/shop/procedureInsert.js"></script>
+    </div>
 </div>
 
 </body>

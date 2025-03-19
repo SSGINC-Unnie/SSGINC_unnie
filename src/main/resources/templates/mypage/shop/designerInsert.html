@@ -12,82 +12,82 @@
 <div class="container" layout:fragment="content">
 
     <div class="shop-container">    <!-- 상단 메인 타이틀 -->
-    <h1>업체 등록</h1>
+        <h1>업체 등록</h1>
 
-    <!-- 단계 표시 (1~3단계 핑크, 4단계 회색) -->
-    <div class="step-indicator">
-        <div class="step">
-            <div class="step-circle pink">1</div>
-            <div class="step-label pink">사업자 확인</div>
-        </div>
-        <div class="step">
-            <div class="step-circle pink">2</div>
-            <div class="step-label pink">업체 등록</div>
-        </div>
-        <div class="step">
-            <div class="step-circle pink">3</div>
-            <div class="step-label pink">디자이너 등록</div>
-        </div>
-        <div class="step">
-            <div class="step-circle gray">4</div>
-            <div class="step-label gray">시술 등록</div>
-        </div>
-    </div>
-
-    <!-- 헤더(디자이너 등록, 디자이너 추가 링크) -->
-    <div class="header-row">
-        <h2>디자이너 등록</h2>
-        <a href="#" class="add-designer-link" onclick="openModal()">디자이너 추가 &gt;</a>
-    </div>
-
-    <!-- 디자이너 목록 -->
-    <div class="designer-list"></div>
-
-    <!-- 하단 버튼 -->
-    <div class="button-group">
-        <button class="btn-prev">이전</button>
-        <button class="btn-next">다음</button>
-    </div>
-
-    <!-- 모달 -->
-    <div class="modal-overlay" id="modalOverlay">
-        <div class="modal">
-            <div class="modal-header">
-                <h2>디자이너 추가</h2>
-                <button onclick="closeModal()">×</button>
+        <!-- 단계 표시 (1~3단계 핑크, 4단계 회색) -->
+        <div class="step-indicator">
+            <div class="step">
+                <div class="step-circle pink">1</div>
+                <div class="step-label pink">사업자 확인</div>
             </div>
-            <form>
-                <!-- 디자이너명 -->
-                <label for="designerName"><strong>디자이너명</strong> <span class="required">*</span></label>
-                <input type="text" id="designerName" name="designerName" required/>
+            <div class="step">
+                <div class="step-circle pink">2</div>
+                <div class="step-label pink">업체 등록</div>
+            </div>
+            <div class="step">
+                <div class="step-circle pink">3</div>
+                <div class="step-label pink">디자이너 등록</div>
+            </div>
+            <div class="step">
+                <div class="step-circle gray">4</div>
+                <div class="step-label gray">시술 등록</div>
+            </div>
+        </div>
 
-                <!-- 디자이너 소개 -->
-                <label for="designerIntro"><strong>디자이너 소개</strong> <span class="required">*</span></label>
-                <textarea id="designerIntro" name="designerIntro" rows="4" placeholder="100자 이상 작성해주세요"
-                          required></textarea>
+        <!-- 헤더(디자이너 등록, 디자이너 추가 링크) -->
+        <div class="header-row">
+            <h2>디자이너 등록</h2>
+            <a href="#" class="add-designer-link" onclick="openModal()">디자이너 추가 &gt;</a>
+        </div>
 
-                <!-- 업로드 사진 -->
-                <label><strong>디자이너 사진 등록</strong> <span class="required">*</span></label>
-                <div class="upload-area">
-                    <label for="fileInput" class="upload-icon">
-                        <img id="previewImage" src="/img/shop/camera.png" alt="Upload"
-                             style="width: 20px; height: 20px; object-fit: contain;"/>
-                    </label>
-                    <input type="file" id="fileInput" accept="image/*" style="display: none;">
+        <!-- 디자이너 목록 -->
+        <div class="designer-list"></div>
+
+        <!-- 하단 버튼 -->
+        <div class="button-group">
+            <button class="btn-prev">이전</button>
+            <button class="btn-next">다음</button>
+        </div>
+
+        <!-- 모달 -->
+        <div class="modal-overlay" id="modalOverlay">
+            <div class="modal">
+                <div class="modal-header">
+                    <h2>디자이너 추가</h2>
+                    <button onclick="closeModal()">×</button>
                 </div>
+                <form>
+                    <!-- 디자이너명 -->
+                    <label for="designerName"><strong>디자이너명</strong> <span class="required">*</span></label>
+                    <input type="text" id="designerName" name="designerName" required/>
 
-                <!-- 모달 하단 버튼들 -->
-                <div class="modal-footer">
-                    <button type="button" class="btn-cancel" onclick="closeModal()">취소</button>
-                    <button type="submit" class="btn-save">추가</button>
-                </div>
-            </form>
+                    <!-- 디자이너 소개 -->
+                    <label for="designerIntro"><strong>디자이너 소개</strong> <span class="required">*</span></label>
+                    <textarea id="designerIntro" name="designerIntro" rows="4" placeholder="100자 이상 작성해주세요"
+                              required></textarea>
+
+                    <!-- 업로드 사진 -->
+                    <label><strong>디자이너 사진 등록</strong> <span class="required">*</span></label>
+                    <div class="upload-area">
+                        <label for="fileInput" class="upload-icon">
+                            <img id="previewImage" src="/img/shop/camera.png" alt="Upload"
+                                 style="width: 20px; height: 20px; object-fit: contain;"/>
+                        </label>
+                        <input type="file" id="fileInput" accept="image/*" style="display: none;">
+                    </div>
+
+                    <!-- 모달 하단 버튼들 -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn-cancel" onclick="closeModal()">취소</button>
+                        <button type="submit" class="btn-save">추가</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</div>
-<div layout:fragment="scripts">
-<script src="/js/mypage/shop/designerInsert.js"></script>
-</div>
+    <div layout:fragment="scripts">
+        <script src="/js/mypage/shop/designerInsert.js"></script>
+    </div>
 </div>
 
 </body>
