@@ -81,7 +81,7 @@ window.onload = function() {
     // ---------------------------
     //  네이버 로그인
     // ---------------------------
-    var naverLogin = new naver_id_login("cVXzKiI7vI8yCxFy2axQ", "http://localhost:8111/callback.html");
+    var naverLogin = new naver_id_login("cVXzKiI7vI8yCxFy2axQ", "http://localhost:8111/member/callback");
     var state = naverLogin.getUniqState();
     naverLogin.setState(state);
     naverLogin.setDomain("http://localhost:8111");
