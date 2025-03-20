@@ -79,4 +79,10 @@ public class MemberViewController {
         // 로그아웃 성공 후 홈 페이지로 리다이렉션
         return "redirect:/";
     }
+
+    @GetMapping("/callback")
+    public String callback() {
+        // resources/templates/member/callback.html
+        return "member/callback";
+    }
 }

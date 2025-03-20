@@ -352,7 +352,7 @@ async function updatePassword() {
         });
         if (response.status === 200) {
             //showMsg(this.$currentPwError, "success", "비밀번호가 수정되었습니다.");
-            alert("비밀번호가 수정되었습니다.");
+            alert("비밀번호가 변경되었습니다.");
             $currentPw.val("");
             $newPw.val("");
             $newPwConfirm.val("");

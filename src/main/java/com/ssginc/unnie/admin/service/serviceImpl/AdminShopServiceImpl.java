@@ -109,7 +109,7 @@ public class AdminShopServiceImpl implements AdminShopService {
         Integer shopMemberId = adminShopMapper.findShopMemberId(request.getShopId());
         if (shopMemberId != null) {
             // 4. 회원의 역할을 'manager'로 변경
-            adminShopMapper.updateMemberRole(shopMemberId, "MANAGER");
+            adminShopMapper.updateMemberRole(shopMemberId, "ROLE_MANAGER");
 
         } else {
             log.error("업체 소유자 정보 조회 실패 - shopId: {}", request.getShopId());
