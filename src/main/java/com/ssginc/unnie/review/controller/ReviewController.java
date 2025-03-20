@@ -1,11 +1,16 @@
 package com.ssginc.unnie.review.controller;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.ssginc.unnie.common.config.MemberPrincipal;
 import com.ssginc.unnie.review.dto.*;
 import com.ssginc.unnie.common.util.ResponseDto;
 import com.ssginc.unnie.review.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +18,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -29,12 +35,11 @@ import java.util.stream.Collectors;
 public class ReviewController {
 
     private final ReviewService reviewService;
-    // ✅ 업로드 디렉토리 (프로젝트 내 static 폴더)
-//    private static final String UPLOAD_DIR = "C:/workSpace/SSGINC_Unnie/src/main/resources/static/upload";
 
-    // ✅ 업로드 디렉토리 (프로젝트 내 static 폴더)
-    private static final String UPLOAD_DIR = "/Users/wish/IdeaProjects/SSGINC_unnie/src/main/resources/static/upload";
-
+    //S3에 이미지 업로드 후 경로 저장
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucketName;
+    private final AmazonS3 amazonS3;
     /**
      * 리뷰 등록
      * JWT 토큰을 통해 인증된 회원의 memberId를 ReviewCreateRequest에 세팅합니다.
@@ -57,46 +62,45 @@ public class ReviewController {
         // String으로 받은 문자열을 List로 변환
         reviewCreateRequest.setKeywordId(parseKeywordIds(keywordId));
 
-        MultipartFile file = reviewCreateRequest.getFile(); // ✅ 'file' 그대로 유지
+        // 이미지 파일 업로드 처리 (S3에 업로드 후 URL 획득)
+        MultipartFile file = reviewCreateRequest.getFile();
         String filePath = null;
-
         if (file != null && !file.isEmpty()) {
             filePath = saveFile(file);
         }
-
-        // DTO에 파일 경로 저장 (MyBatis에서 사용할 필드)
-        reviewCreateRequest.setReviewImage(filePath); // ✅ DB에는 파일 경로만 저장
+        // DB에는 파일 경로만 저장
+        reviewCreateRequest.setReviewImage(filePath);
 
         long reviewId = reviewService.createReview(reviewCreateRequest);
 
         return ResponseEntity.ok(
                 new ResponseDto<>(HttpStatus.CREATED.value(), "리뷰 작성에 성공했습니다.", Map.of("reviewId", String.valueOf(reviewId)))
         );
-
     }
 
     public String saveFile(MultipartFile file) {
+        // 원본 파일명과 안전한 파일명 생성
+        String originalFileName = file.getOriginalFilename();
+        String safeFileName = UUID.randomUUID().toString() + "_"
+                + originalFileName.replaceAll("[^a-zA-Z0-9._-]", "_");
+
         try {
-            // 폴더가 없으면 생성
-            Path uploadPath = Paths.get(UPLOAD_DIR);
-            if (!Files.exists(uploadPath)) {
-                Files.createDirectories(uploadPath);
-            }
-
-            // 파일명 생성 (UUID + 원본 파일명)
-            String filename = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
-            Path filePath = uploadPath.resolve(filename);
-
-            // 파일 저장
-            file.transferTo(filePath.toFile());
-
-            // ✅ 클라이언트가 접근 가능한 URL 경로 반환
-            return "/upload/" + filename;
-
-        } catch (Exception e) {
-            throw new RuntimeException("파일 저장 실패", e);
+            // 파일 메타데이터 설정 (필요한 경우 ContentType 등 추가)
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentLength(file.getSize());
+            // S3에 파일 업로드 (버킷, 파일명, InputStream, 메타데이터, 퍼블릭 읽기 권한)
+            amazonS3.putObject(new PutObjectRequest(bucketName, safeFileName, file.getInputStream(), metadata)
+                    .withCannedAcl(CannedAccessControlList.PublicRead));
+        } catch (IOException e) {
+            throw new RuntimeException("파일 저장에 실패했습니다.", e);
         }
+
+        // S3 URL 획득 및 반환
+        String s3Url = amazonS3.getUrl(bucketName, safeFileName).toString();
+        System.out.println("Saving file to: " + s3Url);
+        return s3Url;
     }
+
 
     /**
      * 리뷰 상세 조회

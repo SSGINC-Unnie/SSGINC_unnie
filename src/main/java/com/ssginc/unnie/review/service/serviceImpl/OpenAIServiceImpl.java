@@ -42,7 +42,7 @@ public class OpenAIServiceImpl implements OpenAIService {
         ChatCompletionRequest requestDTO = new ChatCompletionRequest();
         requestDTO.setModel("gpt-4o-mini");
         requestDTO.setMessages(messages);
-        requestDTO.setTemperature(0.7);
+        requestDTO.setTemperature(0.5);
 
         // rag
         // 헤더 설정
