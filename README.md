@@ -29,7 +29,6 @@
 - **김동현**
   - 커뮤니티
 
-  
 - **민소원**
   - 리뷰  
 
@@ -42,9 +41,11 @@
 
 <br>
 
-## 2. 채택한 개발 기술과 브랜치 전략
+## 2. 아키텍쳐 브랜치 전략
 
-작성예정
+### 아키텍쳐
+<img width="9416" alt="최종 아키텍처" src="https://github.com/user-attachments/assets/2ba8c618-b078-4769-99a2-06c255a2b0c3" />
+
 
 ### 브랜치 전략
 
@@ -57,7 +58,7 @@
 <br>
 
 ### 주요 기능
-1. **업체조회 기능**
+1. **업체 조회 기능**
 
 2. **커뮤니티 기능**
 
@@ -100,15 +101,18 @@
 - **Collaborates:**
   [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github&logoColor=white)](https://github.com/)
 
-### 사용 라이브러리 및 API (수정중)
-- **라이브러리:**
-   - 로깅: Log4j, SLF4J
-   - 이메일 전송: SMTP (JavaMailSender)
+
+### 사용한 외부 API (수정중)
+
  
 - **API**
    - 다음카카오 주소 API
    - Google/Kakao/Naver 로그인 API
    - Coolsms 핸드폰 문자인증 API
+   - NCP OCR API
+   - chat gpt API
+   - NCP GeoCoding API
+   - 공공데이터 포털 사업자 진위여부확인 API
 
 
 ---
@@ -275,6 +279,8 @@
 
 ---
 
+## 5.UI 구성 및 기능
 
-## 4.UI 구성 및 기능
+## 6. 시연 영상
+
  
