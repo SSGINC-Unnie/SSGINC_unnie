@@ -41,7 +41,7 @@
 
 <br>
 
-## 2. 아키텍쳐 브랜치 전략
+## 2. 아키텍쳐와 브랜치 전략
 
 ### 아키텍쳐
 <img width="9416" alt="최종 아키텍처" src="https://github.com/user-attachments/assets/2ba8c618-b078-4769-99a2-06c255a2b0c3" />
@@ -102,7 +102,7 @@
   [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github&logoColor=white)](https://github.com/)
 
 
-### 사용한 외부 API (수정중)
+### 사용한 외부 API
 
  
 - **API**
@@ -281,6 +281,73 @@
 
 ## 5.UI 구성 및 기능
 
+### 기능
+
+**회원가입**
+
+![회원가입](https://github.com/user-attachments/assets/c72cffb2-fc35-4c4d-b582-2ca77d3d9407)
+
+**소셜로그인**
+
+![소셜로그인](https://github.com/user-attachments/assets/ac018eeb-fae8-4f2a-8b31-1947792938e9)
+
+**ID/PW 찾기**
+
+![0403](https://github.com/user-attachments/assets/e414be75-1c5c-4f7e-8950-85445bac47c0)
+
+**내주변 뷰티샵 조회**
+
+![내주변 뷰티샵 조회](https://github.com/user-attachments/assets/b49392b9-597e-40c2-be5e-5f30e25d4dbe)
+
+**리뷰 작성**
+
+![리뷰작성](https://github.com/user-attachments/assets/dce3c816-f7ae-4893-ab5f-024edf35bc47)
+
+### 마이페이지
+
+**업체 등록**
+
+![업체등록](https://github.com/user-attachments/assets/f24ec2d3-0b7b-4cf0-8a1c-bb1207376755)
+
+**디자이너 등록**
+
+![0403 (1)](https://github.com/user-attachments/assets/7b8989e7-47b6-4d0d-a8a1-1186d977915a)
+
+**시술 등록**
+
+![시술등록](https://github.com/user-attachments/assets/fd0221f0-c54b-437a-9ae2-f5df17a8b83b)
+
+**회원 정보 수정**
+
+![회원수정](https://github.com/user-attachments/assets/48e72e69-b9c1-4db1-9e7b-557f032a862b)
+
+**리뷰 수정/삭제**
+
+![리뷰 수정삭제](https://github.com/user-attachments/assets/ab791ce0-c815-49da-be98-307a9f4d76d3)
+
+**업체/디자이너/시술 수정/삭제**
+
+![업체수정](https://github.com/user-attachments/assets/a1c6142f-c9b8-47e9-8853-05c84b544cd7)
+
+
+
+### 관리자페이지
+
+**모든 회원 조회**
+
+![회원조회](https://github.com/user-attachments/assets/fb942fd4-34c1-4f84-97bf-593d1221fff8)
+
+
+**승인 요청 업체 조회/승인/거절**
+
+![승인요청업체조회](https://github.com/user-attachments/assets/ef569a60-ddca-4c61-8685-04d862b29b07)
+
+**모든 업체 조회**
+
+![모든업체조회](https://github.com/user-attachments/assets/51d27621-586b-44b3-b87c-7f2910eebf58)
+
 ## 6. 시연 영상
+https://youtu.be/EprBTZnKQQE
+
 
  
