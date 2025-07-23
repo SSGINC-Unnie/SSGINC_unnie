@@ -1,9 +1,5 @@
 package com.ssginc.unnie.media.service.serviceImpl;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.ssginc.unnie.common.exception.UnnieMediaException;
 import com.ssginc.unnie.common.util.ErrorCode;
 import com.ssginc.unnie.common.util.generator.FileNameGenerator;
@@ -19,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -30,15 +27,20 @@ public class MediaServiceImpl implements MediaService {
     private final MediaMapper mediaMapper;
     private final Validator<MultipartFile> fileValidator;
     private final FileNameGenerator fileNameGenerator;
-    private final AmazonS3 amazonS3; // S3 클라이언트 주입
 
-    @Value("${cloud.aws.s3.bucket}")
-    private String bucketName;
+    @Value("${upload.path}")
+    private String uploadPath;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public String uploadFile(MultipartFile file, String targetType, long targetId) {
-
+        // 1) Enum 검증
+        MediaTargetType type;
+        try {
+            type = MediaTargetType.valueOf(targetType.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new UnnieMediaException(ErrorCode.INVALID_FILE_TARGET_TYPE);
+        }
 
         // 2) 파일 유효성 검증
         fileValidator.validate(file);
@@ -47,21 +49,27 @@ public class MediaServiceImpl implements MediaService {
         String fileOriginalName = file.getOriginalFilename();
         String newFileName = fileNameGenerator.generateFileName(fileOriginalName);
 
-        // 4) S3 업로드
+        // 4) 실제 물리 경로 (uploadPath + 새 파일명)
+        String physicalPath = uploadPath + newFileName;
+
+        // 5) 파일 저장
+        File destination = new File(physicalPath);
+        log.info("fileName = {}, newFileName = {}, destination = {}",
+                fileOriginalName, newFileName, destination.getAbsolutePath());
+
         try {
-            ObjectMetadata metadata = new ObjectMetadata();
-            metadata.setContentLength(file.getSize());
-            // 필요시 metadata.setContentType(file.getContentType()); 추가 가능
-            amazonS3.putObject(new PutObjectRequest(bucketName, newFileName, file.getInputStream(), metadata)
-                    .withCannedAcl(CannedAccessControlList.PublicRead)); // 공개 접근 권한 설정
+            if (!destination.exists()) {
+                destination.mkdirs(); // 상위 디렉토리가 없으면 생성
+            }
+            file.transferTo(destination);
+
         } catch (IOException e) {
             throw new UnnieMediaException(ErrorCode.FILE_INTERNAL_SERVER_ERROR, e);
         }
 
-        // 5) S3 URL 획득
-        String fileUrn = amazonS3.getUrl(bucketName, newFileName).toString();
+        String fileUrn = "/upload/" + newFileName;
 
-        // 6) DB insert (S3 URL 저장)
+        // 6) DB insert (로컬 경로 저장)
         MediaRequest mediaRequest = MediaRequest.builder()
                 .targetType(targetType)
                 .targetId(targetId)
@@ -71,29 +79,36 @@ public class MediaServiceImpl implements MediaService {
                 .build();
         mediaMapper.insert(mediaRequest);
 
-        // 7) 최종적으로 S3 URL 반환
         return fileUrn;
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void deleteFile(String fileUrn) {
-        // S3 URL에서 파일 key 추출
-        String key = fileUrn.substring(fileUrn.lastIndexOf("/") + 1);
+        // fileUrn이 "/upload/..." 형식이므로, 접두어 제거하여 새 파일명 추출
+        String prefix = "/upload/";
+        if (!fileUrn.startsWith(prefix)) {
+            throw new UnnieMediaException(ErrorCode.INVALID_FILE_TARGET_TYPE);
+        }
+        String newFileName = fileUrn.substring(prefix.length());
+        String physicalPath = uploadPath + newFileName;
 
-        // 1) S3에서 파일 삭제
-        amazonS3.deleteObject(bucketName, key);
+        // 물리 파일 삭제
+        File file = new File(physicalPath);
+        if (file.exists() && !file.delete()) {
+            log.warn("물리 파일 삭제 실패: " + physicalPath);
+        }
 
-        // 2) DB에서 해당 파일 정보 삭제
         int rows = mediaMapper.deleteByFileUrn(fileUrn);
         if (rows == 0) {
-            throw new UnnieMediaException(ErrorCode.FILE_NOT_FOUND);
+            throw new UnnieMediaException(ErrorCode.FILE_NOT_FOUND); // FILE_NOT_FOUND 코드가 존재해야 함
         }
     }
 
     @Transactional(readOnly = true)
     @Override
     public List<String> getFileUrns(String targetType, long targetId) {
-        return mediaMapper.selectFileUrnByTarget(targetType.toUpperCase(), targetId);
+        List<String> fileUrnList = mediaMapper.selectFileUrnByTarget(targetType.toUpperCase(), targetId);
+        return fileUrnList;
     }
 }

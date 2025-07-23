@@ -175,28 +175,29 @@ public class MyPageShopServiceImpl implements MyPageShopService {
 
 
     public String saveFile(MultipartFile file) {
+        // 새 업로드 경로
+        String uploadDir = "C:/workSpace/SSGINC_Unnie/src/main/resources/static/upload/";
+        File folder = new File(uploadDir);
+        if (!folder.exists()) {
+            folder.mkdirs();  // 폴더가 없으면 생성
+        }
+
         // 원본 파일명과 안전한 파일명 생성
         String originalFileName = file.getOriginalFilename();
         String safeFileName = UUID.randomUUID().toString() + "_"
                 + originalFileName.replaceAll("[^a-zA-Z0-9._-]", "_");
 
+        // 최종 파일 객체 생성
+        File destination = new File(folder, safeFileName);
         try {
-            // 파일 메타데이터 설정 (필요한 경우 ContentType 등 추가)
-            ObjectMetadata metadata = new ObjectMetadata();
-            metadata.setContentLength(file.getSize());
-            // S3에 파일 업로드 (버킷, 파일명, InputStream, 메타데이터, 퍼블릭 읽기 권한)
-            amazonS3.putObject(new PutObjectRequest(bucketName, safeFileName, file.getInputStream(), metadata)
-                    .withCannedAcl(CannedAccessControlList.PublicRead));
+            file.transferTo(destination);
         } catch (IOException e) {
             throw new RuntimeException("파일 저장에 실패했습니다.", e);
         }
-
-        // S3 URL 획득 및 반환
-        String s3Url = amazonS3.getUrl(bucketName, safeFileName).toString();
-        System.out.println("Saving file to: " + s3Url);
-        return s3Url;
+        System.out.println("Saving file to: " + destination.getAbsolutePath());
+        // DB에는 웹 접근 가능한 경로(/upload/파일명) 저장
+        return "/upload/" + safeFileName;
     }
-
 
 
     /**
