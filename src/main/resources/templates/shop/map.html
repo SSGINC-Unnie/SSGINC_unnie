@@ -10,12 +10,13 @@
     <!-- 외부 CSS 파일 -->
     <link rel="stylesheet" href="/css/shop/map.css">
 
-    <!-- 네이버 지도 API (submodules=geocoder 포함) -->
-    <script type="text/javascript"
-            src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=mt2l2d8ewa&submodules=geocoder">
-    </script>
+    <!-- 네이버 지도 API (submodule s=geocoder 포함) -->
+    <script type="text/javascript" th:src="@{'https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=' + ${clientId} + '&submodules=geocoder'}"></script>
+
+
+
     <!-- Daum 우편번호 서비스 (API키 없이 사용 가능) -->
-    <script src="http://dmaps.daum.net/map_js_init/postcode.v2.js"></script>
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 </head>
 <body>
 <div class="container" layout:fragment="content">

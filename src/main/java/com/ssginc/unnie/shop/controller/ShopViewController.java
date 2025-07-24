@@ -1,5 +1,6 @@
 package com.ssginc.unnie.shop.controller;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,9 +11,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/map")
 public class ShopViewController {
 
+    @Value("${naver.geocoding.clientId}")
+    private String clientId;
+
     @GetMapping("/map")
     public String getShopMapPage(Model model) {
         model.addAttribute("activePage", "map");
+        model.addAttribute("clientId", clientId);
         return "shop/map";
     }
 
