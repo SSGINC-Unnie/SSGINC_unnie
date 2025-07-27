@@ -25,6 +25,7 @@ public interface ShopMapper {
 
 
 
+
 //    int insertBookmark(ShopBookmarkRequest request);
 //
 //    int deleteBookmark(int shopId);
