@@ -10,7 +10,6 @@
     position: relative;
     width: 100%;
     overflow: hidden;
-    margin-bottom: 32px;
 }
 .main-banner img {
     width: 592px;
@@ -23,7 +22,7 @@
    메인 아이콘 메뉴
 ---------------------------------- */
 .icon-menu {
-    margin: 20px 0 32px 0;
+    margin: 20px 0;
     text-align: center;
 }
 .icon-menu ul {
@@ -38,6 +37,7 @@
     align-items: center;
     font-size: 0.9rem;
     cursor: pointer;
+
 }
 .icon-menu li img {
     width: 50px;
@@ -48,143 +48,69 @@
 }
 
 /* ----------------------------------
-   섹션 공통 스타일(여백 등)
+   주변 핫한 뷰티샵, 잇템 섹션, 꿀팁 등
 ---------------------------------- */
-.hot-beauty,
-.tips-section,
-.hot-items {
-    padding: 0 20px 0 20px;
+.hot-beauty, .hot-items, .tips-section {
+    padding: 20px;
 }
-.hot-beauty {
-    margin-bottom: 32px;
-}
-
-/* 섹션 제목 하단 여백 통일 */
-.hot-beauty h2,
-.hot-items h2,
-.tips-section h2 {
+.hot-beauty h2, .hot-items h2, .tips-section h2 {
     font-size: 1.2rem;
-    margin-bottom: 24px;
+    margin-bottom: 15px;
 }
 
-/* ----------------------------------
-   주변 핫한 뷰티샵 카드 레이아웃
----------------------------------- */
-.hot-beauty > div,
-.hot-items > div {
+/* 이미지 배치 */
+.hot-beauty div,
+.hot-items div {
     display: flex;
-    gap: 16px;
+    gap: 10px;
 }
-
-#shop-wrapper {
-    display: flex;
-    gap: 16px;
-    margin-top: 0;
-    width: 640px;               /* 고정 가로길이 */
-    max-width: 640px;
-    overflow-x: auto;           /* 가로 스크롤 */
-    overflow-y: hidden;
-    padding-bottom: 12px;
-    -webkit-overflow-scrolling: touch;
-    scroll-behavior: smooth;
-}
-
-.shop-card {
-    flex: 0 0 auto;
-    width: 440px;               /* 카드 한 장의 가로길이 */
-    border-radius: 18px;
-    background: #fff;
-    box-shadow: none;
-    border: none;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-}
-
-/* 이미지+아래 구분선 */
-.shop-image {
-    width: 100%;
-    position: relative;
-}
-.shop-image img {
-    width: 440px;
-    height: 240px;
+.hot-beauty div img,
+.hot-items div img {
+    width: 200%;
+    height: 100%;
     object-fit: cover;
-    display: block;
-    border-radius: 18px 18px 18px 18px;
-}
-.shop-image::after {
-    content: "";
-    display: block;
-    width: 100%;
-    height: 1px;
-    background: #eee;
-    position: absolute;
-    left: 0;
-    bottom: 0;
+    border-radius: 6px;
+    justify-content: space-between;
 }
 
-/* 카드 내부 정보(텍스트) */
-.shop-info {
-    width: 100%;
-    padding: 8px 16px 10px 0;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-}
-
-.shop-name {
-    font-size: 19px;
-    font-weight: 700;
-    color: #222;
-    margin-bottom: 2px;
-}
-
-.shop-address {
-    color: #888;
-    font-size: 15px;
-    margin-bottom: 2px;
-}
-
-.shop-meta {
-    color: #888;
-    font-size: 15px;
-    margin-bottom: 0;
-}
-
-#shop-wrapper::-webkit-scrollbar {
-    height: 7px;
-}
-#shop-wrapper::-webkit-scrollbar-thumb {
-    background: #eee;
-    border-radius: 4px;
-}
-#shop-wrapper::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-/* ----------------------------------
-   꿀팁(유튜브 영상) 그리드 스타일
----------------------------------- */
+/* 꿀팁(글+이미지) */
 .tips-wrapper {
     display: grid;
-    grid-template-columns: repeat(2, 320px);
-    gap: 16px;
-    justify-content: center;
-    margin-bottom: 20px;
-    width: 660px;
+    grid-template-columns: repeat(2, 1fr); /* 항상 2열로 배치 */
+    gap: 10px;
 }
-.video-container {
-    text-align: center;
-    width: 320px;
-    border-radius: 12px;
-    overflow: hidden;
-    background: #fff;
+.tips-wrapper article {
+    border-radius: 6px;
+    text-align: left; /* 왼쪽 정렬 */
 }
-.video-container iframe {
+.tips-wrapper article img {
     width: 100%;
-    height: 180px;
-    border-radius: 12px;
+    height: auto;
+    margin-bottom: 8px;
+    border-radius: 4px;
+}
+
+/* 글쓴이(아이디) */
+.tips-wrapper article .username {
+    color: #B3B3B3;    /* 글자색 */
+    font-size: 0.85rem;
+    margin-bottom: 4px; /* 아래 여백 */
+}
+
+/* 주변 핫한 뷰티샵 섹션: 그리드 레이아웃*/
+.hot-beauty {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* 2열 배치 */
+    gap: 10px; /* 여백 조정 */
+}
+
+/* 제목은 전체 가로를 차지하도록 설정 */
+.hot-beauty h2 {
+    grid-column: 1 / -1;
+    margin-bottom: 10px;
+}
+
+/* 이미지 스타일: 고정 크기 */
+.hot-beauty img {
     display: block;
 }

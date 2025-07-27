@@ -100,24 +100,5 @@
         WHERE hotshop_date = #{date}
     </select>
 
-    <select id="selectAllShops" resultType="com.ssginc.unnie.shop.dto.ShopAllResponse">
-        SELECT
-        s.shop_name       AS shopName,
-        s.shop_latitude   AS shopLatitude,
-        s.shop_longitude  AS shopLongitude,
-        s.shop_category   AS shopCategory,
-        s.shop_id         AS shopId,
-        s.shop_location   AS shopLocation,   <!-- 추가/수정: 주소 컬럼 명시 -->
-        COUNT(re.review_id) AS reviewCount,
-        COALESCE(ROUND(AVG(re.review_rate), 2), 0) AS avgRate
-        FROM shop s
-        LEFT JOIN receipt r ON r.receipt_shop_id = s.shop_id
-        LEFT JOIN review re ON r.receipt_id = re.review_receipt_id
-        WHERE s.shop_status = 1
-        AND (re.review_status = 0 OR re.review_status IS NULL)
-        GROUP BY s.shop_id, s.shop_name, s.shop_latitude, s.shop_longitude, s.shop_category, s.shop_location
-    </select>
-
-
 
 </mapper>
