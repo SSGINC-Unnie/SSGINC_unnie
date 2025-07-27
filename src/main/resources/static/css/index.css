@@ -36,6 +36,8 @@
     flex-direction: column;
     align-items: center;
     font-size: 0.9rem;
+    cursor: pointer;
+
 }
 .icon-menu li img {
     width: 50px;

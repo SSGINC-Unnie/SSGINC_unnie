@@ -84,5 +84,21 @@
         WHERE shop_status = 1
     </select>
 
+    <delete id="deleteByHotshopDate">
+        DELETE FROM hotshop
+        WHERE hotshop_date = #{date}
+    </delete>
+
+    <insert id="insertHotshop" useGeneratedKeys="true" keyProperty="hotshopId">
+        INSERT INTO hotshop (hotshop_shop_id, hotshop_date)
+        VALUES (#{hotshopShopId}, #{hotshopDate})
+    </insert>
+
+    <select id="selectByHotshopDate">
+        SELECT hotshop_id, hotshop_shop_id, hotshop_date
+        FROM hotshop
+        WHERE hotshop_date = #{date}
+    </select>
+
 
 </mapper>

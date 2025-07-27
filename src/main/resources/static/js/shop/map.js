@@ -20,6 +20,7 @@ const MAX_HEIGHT_RATIO = 0.8; // 80%
 document.addEventListener('mouseup', () => {
     isDragging = false;
 });
+
 // 카테고리에 따른 마커 아이콘 반환 함수
 function getMarkerIcon(category) {
     const normalized = category.trim();
@@ -36,15 +37,18 @@ function getMarkerIcon(category) {
             return '/img/shop/map_barber.png';
         default:
             console.warn("지원하지 않는 카테고리:", category);
-            return '/img/map_default.png';
+            return '/img/download.png';
     }
 }
 
 // 지도 영역 내 상점만 필터링 (옵션)
 function filterShopsInView(shops) {
     const bounds = map.getBounds();
+    console.log("Map bounds:", bounds);
+
     return shops.filter(shop => {
         const shopLatLng = new naver.maps.LatLng(shop.shopLatitude, shop.shopLongitude);
+        console.log("Shop Coordinates:", shop.shopLatitude, shop.shopLongitude);
         return bounds.hasLatLng(shopLatLng);
     });
 }
@@ -59,7 +63,6 @@ function removeMarkers() {
 function updateMarkers(shops) {
     removeMarkers();
     const visibleShops = filterShopsInView(shops);
-    console.log("Visible shops for markers:", visibleShops); // 필터링된 업체 목록 로그
 
     visibleShops.forEach(shop => {
         console.log(`Creating marker for ${shop.shopName}: (${shop.shopLatitude}, ${shop.shopLongitude})`);
@@ -82,7 +85,6 @@ function updateMarkers(shops) {
         });
     });
 }
-
 
 // 지도 초기화 함수
 async function initMap(lat, lng, shops) {
@@ -108,60 +110,47 @@ async function getLocationAndInit() {
             async (position) => {
                 const lat = position.coords.latitude;
                 const lng = position.coords.longitude;
-                // Reverse Geocoding을 통해 내 위치 업데이트
-                await updateMyLocationText(lat, lng);
-                // 지도 초기화 및 상점 데이터 로드
-                try {
-                    const response = await fetch('/api/shop');
-                    const data = await response.json();
-                    currentShopList = data.data.shops;
-                    renderShopList(currentShopList);
-                    await initMap(lat, lng, currentShopList);
-                } catch (error) {
-                    console.error('상점 데이터를 가져오는 데 실패했습니다:', error);
-                }
+
+                // 지도 초기화
+                await initMap(lat, lng, currentShopList);
+
+                // Reverse Geocoding 호출
+                await updateMyLocationText(lat, lng);  // 이 부분을 지도 초기화 후 호출
             },
             error => {
                 console.error('위치 정보를 가져올 수 없습니다:', error.message);
-                // 위치 권한 거부 시 fallback: 주소 입력 폼 표시
                 document.getElementById('addressFallback').style.display = 'block';
             },
-            { enableHighAccuracy: true }
+            {enableHighAccuracy: true}
         );
     } else {
         console.error('브라우저가 위치 정보를 지원하지 않습니다.');
     }
-}
+} // 누락된 괄호 추가
 
 // Reverse Geocoding: 현재 위치 주소 업데이트 함수
 async function updateMyLocationText(lat, lng) {
     return new Promise((resolve, reject) => {
-        naver.maps.Service.reverseGeocode(
-            {
-                coords: new naver.maps.LatLng(lat, lng),
-                orders: [naver.maps.Service.OrderType.ADDR, naver.maps.Service.OrderType.ROAD_ADDR].join(',')
-            },
-            (status, response) => {
-                if (status === naver.maps.Service.Status.OK) {
-                    const result = response.v2.results[0];
-                    if (result) {
-                        const { region } = result;
-                        const area1 = region.area1.name || '';
-                        const area2 = region.area2.name || '';
-                        const shortAddress = `${area1} ${area2}`.trim();
-                        document.getElementById('myLocationText').textContent = shortAddress || '현재 위치';
-                        resolve();
-                    } else {
-                        document.getElementById('myLocationText').textContent = '주소 정보를 찾을 수 없습니다.';
-                        reject('주소를 찾을 수 없음');
-                    }
+        naver.maps.Service.reverseGeocode({
+            coords: new naver.maps.LatLng(lat, lng),
+            orders: [naver.maps.Service.OrderType.ADDR, naver.maps.Service.OrderType.ROAD_ADDR].join(',')
+        }, (status, response) => {
+            if (status === naver.maps.Service.Status.OK) {
+                const result = response.v2.results[0];
+                if (result) {
+                    const {region} = result;
+                    const area1 = region.area1.name || '';
+                    const area2 = region.area2.name || '';
+                    const shortAddress = `${area1} ${area2}`.trim();
+                    document.getElementById('myLocationText').textContent = shortAddress || '현재 위치';
                 } else {
-                    console.error('Reverse Geocoding 실패:', status);
-                    document.getElementById('myLocationText').textContent = '주소 정보를 불러오지 못했습니다.';
-                    reject('Geocoding 실패');
+                    document.getElementById('myLocationText').textContent = '주소 정보를 찾을 수 없습니다.';
                 }
+            } else {
+                console.error('Reverse Geocoding 실패:', status);
+                document.getElementById('myLocationText').textContent = '주소 정보를 불러오지 못했습니다.';
             }
-        );
+        });
     });
 }
 
@@ -176,10 +165,9 @@ document.getElementById('reSearchBtn').addEventListener('click', async () => {
         const data = await response.json();
         currentShopList = data.data.shops;
         renderShopList(currentShopList);
-        map.setCenter(new naver.maps.LatLng(lat, lng));
-        map.setZoom(currentZoom);
     } catch (error) {
         console.error('상점 데이터를 가져오는 데 실패했습니다:', error);
+        document.getElementById('shopList').innerHTML = '<div>상점 데이터를 불러오는 데 실패했습니다. 나중에 다시 시도해 주세요.</div>';
     }
 });
 
@@ -209,25 +197,19 @@ async function getMediaImagesHTML(shopId) {
         const res = await fetch(`/api/media/file?targetType=SHOP&targetId=${shopId}`);
         const data = await res.json();
 
-        // 여러 장(fileUrns) 또는 단일(fileUrn) 체크
         if (data.data) {
-            // 여러 장인 경우
             if (Array.isArray(data.data.fileUrns) && data.data.fileUrns.length > 0) {
                 return getCarouselHTML(shopId, data.data.fileUrns);
-            }
-            // 단일 파일인 경우
-            else if (data.data.fileUrn) {
+            } else if (data.data.fileUrn) {
                 return getCarouselHTML(shopId, [data.data.fileUrn]);
             }
         }
-        // 이미지 정보가 없으면 빈 문자열 반환
         return '';
     } catch (error) {
         console.error("미디어 이미지 가져오기 실패:", error);
         return '';
     }
 }
-
 
 async function renderShopList(shops) {
     console.log('[Debug] renderShopList shops:', shops); // 추가
@@ -239,7 +221,7 @@ async function renderShopList(shops) {
     if (!shops || shops.length === 0) {
         shopListEl.innerHTML = '<div>해당 카테고리 상점이 없습니다.</div>';
         return;
-}
+    }
 
 
     let sortedShops = shops.slice(); // 원본 배열 복사
@@ -286,11 +268,10 @@ async function renderShopList(shops) {
     }
 }
 
-
 // Daum 우편번호 서비스로 주소 검색 팝업 열기
 function openDaumPostcode() {
     new daum.Postcode({
-        oncomplete: function(data) {
+        oncomplete: function (data) {
             // 선택된 주소 (기본 주소)
             var fullAddr = data.address;
             searchAddressToCoordinate(fullAddr);
@@ -326,12 +307,12 @@ async function searchAddressToCoordinate(address) {
 }
 
 // 주소 입력 fallback의 "주소 검색" 버튼 클릭 이벤트
-document.getElementById('openPostcodeBtn').addEventListener('click', function(){
+document.getElementById('openPostcodeBtn').addEventListener('click', function () {
     openDaumPostcode();
 });
 
 // 드롭다운으로 정렬을 선택할 때마다 목록 재렌더링
-document.getElementById('sortSelect').addEventListener('change', function() {
+document.getElementById('sortSelect').addEventListener('change', function () {
     // 이미 currentShopList에 상점 목록이 저장되어 있으므로,
     // renderShopList(currentShopList)를 다시 호출하면 됩니다.
     renderShopList(currentShopList);
@@ -340,11 +321,11 @@ document.getElementById('sortSelect').addEventListener('change', function() {
 document.addEventListener('DOMContentLoaded', () => {
     getLocationAndInit();
 
-    // 바텀시트 열기/닫기 이벤트
     const listViewBtn = document.getElementById('listViewBtn');
     const bottomSheet = document.getElementById('bottomSheet');
     const closeBottomSheetBtn = document.getElementById('closeBottomSheetBtn');
 
+    // 기존 바텀시트 열기/닫기
     listViewBtn.addEventListener('click', () => {
         bottomSheet.classList.add('open');
     });
@@ -352,27 +333,37 @@ document.addEventListener('DOMContentLoaded', () => {
         bottomSheet.classList.remove('open');
     });
 
-    // 카테고리 탭 버튼 클릭 이벤트
+    // 카테고리 탭 클릭 이벤트 (기존 유지)
     const categoryBtns = document.querySelectorAll('.category-btn');
     categoryBtns.forEach(btn => {
         btn.addEventListener('click', () => {
-            // 1) 모든 버튼에서 active 제거
             categoryBtns.forEach(b => b.classList.remove('active'));
-
-            // 2) 현재 클릭한 버튼만 active 추가
             btn.classList.add('active');
-
-            // 3) 해당 카테고리 불러오기
             const selectedCategory = btn.getAttribute('data-category');
             loadShopsByCategory(selectedCategory);
         });
     });
 
-
-    // 기본 탭(네일샵) 데이터 로드
-    const defaultCategory = document.querySelector('.category-btn.active')?.getAttribute('data-category');
-    if (defaultCategory) {
-        loadShopsByCategory(defaultCategory);
+    const urlParams = new URLSearchParams(window.location.search);
+    const selectedCategory = urlParams.get('category');
+    if (selectedCategory) {
+        // 해당 카테고리 탭 활성화
+        categoryBtns.forEach(btn => {
+            if (btn.getAttribute('data-category') === selectedCategory) {
+                btn.classList.add('active');
+                loadShopsByCategory(selectedCategory);
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+        // 목록(바텀시트) 자동 open
+        bottomSheet.classList.add('open');
+    } else {
+        // 기존처럼 defaultCategory 사용
+        const defaultCategory = document.querySelector('.category-btn.active')?.getAttribute('data-category');
+        if (defaultCategory) {
+            loadShopsByCategory(defaultCategory);
+        }
     }
 });
 
@@ -477,4 +468,3 @@ document.addEventListener('mousemove', (e) => {
 
     bottomSheet.style.height = newHeight + 'px';
 });
-
