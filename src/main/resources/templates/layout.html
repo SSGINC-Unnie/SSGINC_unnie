@@ -17,7 +17,9 @@
             <!-- 상단 로고 & 프로필 -->
             <div class="header-top">
                 <div class="logo">
-                    <img src="/static/img/logo.png" alt="언니어때 로고">
+                    <a href="/">
+                        <img src="/static/img/logo.png" alt="언니어때 로고">
+                    </a>
                 </div>
                 <div class="profile" sec:authorize="isAuthenticated()">
                     <img th:src="@{${memberProfile}}">

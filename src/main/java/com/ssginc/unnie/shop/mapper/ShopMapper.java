@@ -21,6 +21,7 @@ public interface ShopMapper {
     List<ShopAllResponse> getAllActiveShops();
 
 
+
 //    int insertBookmark(ShopBookmarkRequest request);
 //
 //    int deleteBookmark(int shopId);
