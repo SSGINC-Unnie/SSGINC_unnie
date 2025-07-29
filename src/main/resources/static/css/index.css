@@ -114,3 +114,21 @@
 .hot-beauty img {
     display: block;
 }
+
+.tips-wrapper {
+    display: grid;
+    grid-template-columns: repeat(2, 320px);  /* 2개의 비디오가 한 줄에 나열되도록 */
+    gap: 10px;  /* 비디오 간 간격 */
+    justify-content: center;  /* 중앙 정렬 */
+    margin-bottom: 20px;  /* 하단 간격 */
+}
+
+.video-container {
+    text-align: center;
+}
+
+.video-container iframe {
+    width: 320px;  /* 각 비디오의 가로 크기 */
+    height: 180px;  /* 각 비디오의 세로 크기 */
+    border-radius: 6px;  /* 비디오 모서리 둥글게 처리 */
+}
