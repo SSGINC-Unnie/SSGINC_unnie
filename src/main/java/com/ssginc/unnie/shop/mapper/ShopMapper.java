@@ -20,6 +20,9 @@ public interface ShopMapper {
 
     List<ShopAllResponse> getAllActiveShops();
 
+    List<ShopAllResponse> selectAllShops();
+
+
 
 
 //    int insertBookmark(ShopBookmarkRequest request);

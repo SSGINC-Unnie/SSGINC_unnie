@@ -8,6 +8,11 @@ import java.util.List;
 public interface ShopService {
     List<ShopResponse> selectShopByCategory(String category);
 
+    List<ShopAllResponse> getNearbyShops(double userLat, double userLon);
+
+    // Haversine 공식
+    double calculateDistance(double lat1, double lon1, double lat2, double lon2);
+
     List<ShopAllResponse> getAllActiveShops();
 
     List<ShopDesignerResponse> getDesignersByShopId(int shopId);
