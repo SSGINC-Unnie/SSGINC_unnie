@@ -1,44 +1,83 @@
 window.onload = function() {
-    const apiUrl = "/fetchVideos?query=뷰티꿀팁";  // YouTube API 엔드포인트
+    const query = 'beauty';
+    const apiUrl = `/fetchVideos?query=${query}&relevanceLanguage=ko&regionCode=KR`;
 
     fetch(apiUrl)
         .then(response => response.json())
         .then(data => {
-            console.log('YouTube API 데이터:', data);  // 데이터를 콘솔에 출력하여 확인
-
-            // 문자열 형태로 반환된 youtubeResult를 파싱하여 객체로 변환
             let youtubeResult;
             try {
-                youtubeResult = JSON.parse(data.data.youtubeResult);  // JSON 문자열을 객체로 변환
+                youtubeResult = JSON.parse(data.data.youtubeResult);
             } catch (e) {
                 console.error("youtubeResult 파싱 실패:", e);
                 return;
             }
 
-            // 결과가 없는 경우 처리
             if (!youtubeResult || !youtubeResult.items || youtubeResult.items.length === 0) {
-                console.log('검색 결과가 없습니다.');
                 return;
             }
 
-            const tipsWrapper = document.getElementById('tips-wrapper');
-            tipsWrapper.innerHTML = '';  // 기존 콘텐츠 제거
+            const youtubeWrapper = document.getElementById('youtube-wrapper');
+            youtubeWrapper.innerHTML = '';
 
             youtubeResult.items.forEach(video => {
-                // 동적으로 iframe 요소 생성
                 const iframeContainer = document.createElement('div');
                 iframeContainer.classList.add('video-container');
-
-                // iframe으로 유튜브 영상을 삽입 (640x360 크기)
                 iframeContainer.innerHTML = `
-                    <iframe width="640" height="360" src="https://www.youtube.com/embed/${video.id.videoId}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <iframe width="320" height="180" src="https://www.youtube.com/embed/${video.id.videoId}" frameborder="0" allowfullscreen></iframe>
                 `;
-
-                // 생성된 iframe 요소를 tips-wrapper에 추가
-                tipsWrapper.appendChild(iframeContainer);
+                youtubeWrapper.appendChild(iframeContainer);
             });
-        })
-        .catch(error => {
-            console.error('YouTube 데이터를 가져오는 데 실패했습니다:', error);
         });
 };
+
+navigator.geolocation.getCurrentPosition(function(position) {
+    fetch('/api/shop/nearby', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude
+        })
+    })
+        .then(response => response.json())
+        .then(result => {
+            const shopList = result.data.shops;
+            renderShopCards(shopList);
+        });
+});
+
+function renderShopCards(shopList) {
+    const wrapper = document.getElementById('shop-wrapper');
+    wrapper.innerHTML = '';
+
+    shopList.forEach(shop => {
+        const imageUrl = shop.shopImageUrl || '/img/common/tip1.png';
+        const address = shop.shopAddress || ''; // 주소 필드
+
+        const card = document.createElement('div');
+        card.className = 'shop-card';
+        card.style.cursor = 'pointer'; // 마우스 오버 시 손가락
+
+        card.innerHTML = `
+            <div class="shop-image">
+                <img src="${imageUrl}" alt="${shop.shopName}">
+            </div>
+            <div class="shop-info">
+                <div class="shop-name">${shop.shopName}</div>
+                <div class="shop-address">${address}</div>
+                <div class="shop-meta">
+                    평점 ${shop.avgRate} &nbsp; 리뷰 ${shop.reviewCount}
+                </div>
+            </div>
+        `;
+
+        // 카드 클릭 시 상세페이지 이동
+        card.addEventListener('click', () => {
+            window.location.href = `http://localhost:8111/map/shopdetail?shopId=${shop.shopId}`;
+        });
+
+        wrapper.appendChild(card);
+    });
+}
+

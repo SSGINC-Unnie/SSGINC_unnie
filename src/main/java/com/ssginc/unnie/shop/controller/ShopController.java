@@ -1,6 +1,5 @@
 package com.ssginc.unnie.shop.controller;
 
-import com.ssginc.unnie.common.config.MemberPrincipal;
 import com.ssginc.unnie.common.util.ResponseDto;
 import com.ssginc.unnie.shop.dto.*;
 import com.ssginc.unnie.shop.service.ShopService;
@@ -8,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -45,6 +43,18 @@ public class ShopController {
             @PathVariable String category) {
         return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "업체 조회에 성공했습니다.", Map.of("shops", shopService.selectShopByCategory(category))));
     }
+
+    @PostMapping("/nearby")
+    public ResponseEntity<ResponseDto<Map<String, Object>>> getNearbyShops(@RequestBody ShopLocationRequest location) {
+        List<ShopAllResponse> shops = shopService.getNearbyShops(location.getLatitude(), location.getLongitude());
+        Map<String, Object> responseMap = new HashMap<>();
+        responseMap.put("shops", shops);
+
+        return ResponseEntity.ok(
+                new ResponseDto<>(HttpStatus.OK.value(), "주변 10km 이내 업체 조회에 성공했습니다.", responseMap)
+        );
+    }
+
 
     /**
      * 업체 상세 보기

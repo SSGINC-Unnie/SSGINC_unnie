@@ -20,4 +20,12 @@ public class ShopAllResponse {
 
     private int shopId;
 
+    private String shopLocation;
+
+    private int reviewCount;
+
+    private double avgRate;
+
+
+
 }

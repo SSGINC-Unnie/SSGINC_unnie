@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.web.util.UriUtils;
 
 @Service
 public class MainServiceImpl implements MainService {
@@ -23,14 +24,14 @@ public class MainServiceImpl implements MainService {
     // YouTube API를 호출하여 결과 가져오기
     public String getYouTubeVideos(String query) {
         // URL 인코딩을 고려한 URL 구성
+        String encodedQuery = UriUtils.encode(query, "UTF-8");  // URL 인코딩 처리
         String url = UriComponentsBuilder.fromHttpUrl(youtubeApiUrl)
                 .queryParam("part", "snippet")
-                .queryParam("q", query)
+                .queryParam("q", encodedQuery)
                 .queryParam("type", "video")
                 .queryParam("maxResults", "4")
                 .queryParam("key", apiKey)
                 .toUriString();
-
         // API 호출
         String response = restTemplate.getForObject(url, String.class);
         return response;
