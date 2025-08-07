@@ -2,7 +2,7 @@ let map;
 let markers = []; // 상점 마커 저장 배열
 let userMarker = null; // 사용자 위치 마커
 let currentShopList = []; // 현재 불러온 상점 데이터
-let currentSortOrder = 'asc'; // 'asc': 가나다순, 'desc': 역순
+let currentSortOrder = 'asc';
 let carouselPositions = {};
 let isDragging = false;
 let startY = 0;
@@ -71,7 +71,7 @@ function updateMarkers(shops) {
             map: map,
             title: `${shop.shopName} - ${shop.shopCategory}`,
             icon: {
-                url: getMarkerIcon(shop.shopCategory),
+                url: getMarkerIcon(shop.shopCategory),  // 아이콘 설정
                 size: new naver.maps.Size(40, 40),
                 anchor: new naver.maps.Point(20, 20)
             }
@@ -133,7 +133,7 @@ async function updateMyLocationText(lat, lng) {
     return new Promise((resolve, reject) => {
         naver.maps.Service.reverseGeocode({
             coords: new naver.maps.LatLng(lat, lng),
-            orders: [naver.maps.Service.OrderType.ADDR, naver.maps.Service.OrderType.ROAD_ADDR].join(',')
+            orders: [naver.maps.Service.OrderType.ADDR, naver.maps.Service.OrderType.ROAD_ADDR].join(',') // 주소 변환
         }, (status, response) => {
             if (status === naver.maps.Service.Status.OK) {
                 const result = response.v2.results[0];
@@ -164,6 +164,11 @@ document.getElementById('reSearchBtn').addEventListener('click', async () => {
         const response = await fetch('/api/shop');
         const data = await response.json();
         currentShopList = data.data.shops;
+
+        // 지도 마커 업데이트
+        updateMarkers(currentShopList);  // 마커를 다시 갱신
+
+        // 하단 리스트 렌더링
         renderShopList(currentShopList);
     } catch (error) {
         console.error('상점 데이터를 가져오는 데 실패했습니다:', error);
@@ -184,7 +189,10 @@ async function loadShopsByCategory(category) {
         currentShopList = response.data.shops;
         console.log('[Debug] currentShopList:', currentShopList);
 
-        // 실제 목록 렌더링
+        // 지도 마커 업데이트
+        updateMarkers(currentShopList);  // 마커를 다시 갱신
+
+        // 하단 리스트 렌더링
         renderShopList(currentShopList);
     } catch (err) {
         console.error('카테고리별 상점 조회 실패:', err);
@@ -240,7 +248,7 @@ async function renderShopList(shops) {
         let mediaHTML = await getMediaImagesHTML(shop.shopId);
         // 미디어 이미지가 없으면 기본 이미지 출력 (원하는 경우)
         if (!mediaHTML) {
-            mediaHTML = `
+            mediaHTML = ` 
                     <div class="media-image">
                         <img src="/img/shop/download.jpg" alt="기본 이미지">
                     </div>
@@ -313,8 +321,6 @@ document.getElementById('openPostcodeBtn').addEventListener('click', function ()
 
 // 드롭다운으로 정렬을 선택할 때마다 목록 재렌더링
 document.getElementById('sortSelect').addEventListener('change', function () {
-    // 이미 currentShopList에 상점 목록이 저장되어 있으므로,
-    // renderShopList(currentShopList)를 다시 호출하면 됩니다.
     renderShopList(currentShopList);
 });
 
@@ -396,75 +402,3 @@ function getCarouselHTML(shopId, fileUrns) {
         </div>
     `;
 }
-
-
-
-/**
- * shopId별로 캐러셀 슬라이드 위치를 업데이트
- */
-function updateSlidePosition(shopId) {
-    const wrapper = document.getElementById(`carouselWrapper-${shopId}`);
-    if (!wrapper) return;
-
-    // 한 화면(슬라이드)의 폭을 100%로 보고, currentIndex * 100%만큼 왼쪽으로 이동
-    const currentIndex = carouselPositions[shopId] || 0;
-    const shiftPercentage = 100 * currentIndex;
-    wrapper.style.transform = `translateX(-${shiftPercentage}%)`;
-}
-
-/**
- * 이전 슬라이드로 이동
- */
-function prevSlide(shopId) {
-    if (!carouselPositions[shopId] && carouselPositions[shopId] !== 0) return;
-
-    if (carouselPositions[shopId] > 0) {
-        carouselPositions[shopId]--;
-        updateSlidePosition(shopId);
-    }
-}
-
-/**
- * 다음 슬라이드로 이동
- */
-function nextSlide(shopId) {
-    const wrapper = document.getElementById(`carouselWrapper-${shopId}`);
-    if (!wrapper) return;
-
-    // 전체 이미지 개수
-    const totalItems = wrapper.querySelectorAll('.media-image').length;
-    // 한 화면(슬라이드)당 3개
-    const itemsPerSlide = 3;
-    // 전체 슬라이드 수
-    const totalSlides = Math.ceil(totalItems / itemsPerSlide);
-
-    if (carouselPositions[shopId] < totalSlides - 1) {
-        carouselPositions[shopId]++;
-        updateSlidePosition(shopId);
-    }
-}
-
-// 드래그 시작
-dragHandle.addEventListener('mousedown', (e) => {
-    isDragging = true;
-    startY = e.clientY;
-    startHeight = bottomSheet.offsetHeight;
-});
-
-// 드래그 중
-document.addEventListener('mousemove', (e) => {
-    if (!isDragging) return;
-    // 마우스가 위로 이동(dy>0)하면 바텀시트 높이 증가, 아래로 이동하면 감소
-    const dy = startY - e.clientY;
-    let newHeight = startHeight + dy;
-
-    // 화면 전체 높이 기준으로 30%~80% 사이만 허용
-    const windowHeight = window.innerHeight;
-    const minHeight = windowHeight * MIN_HEIGHT_RATIO;
-    const maxHeight = windowHeight * MAX_HEIGHT_RATIO;
-
-    if (newHeight < minHeight) newHeight = minHeight;
-    if (newHeight > maxHeight) newHeight = maxHeight;
-
-    bottomSheet.style.height = newHeight + 'px';
-});
