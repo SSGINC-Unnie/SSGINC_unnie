@@ -2,6 +2,7 @@ package com.ssginc.unnie.common.config;
 
 import com.ssginc.unnie.common.util.JwtFilter;
 import com.ssginc.unnie.member.service.serviceImpl.MemberDetailsServiceImpl;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -48,6 +49,29 @@ public class SecurityConfig {
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 // JwtFilter를 UsernamePasswordAuthenticationFilter 전에 추가
+
+                // ✨ 여기 추가
+                .exceptionHandling(ex -> ex
+                        // 미인증 접근(401)
+                        .authenticationEntryPoint((req, res, e) -> {
+                            if (req.getRequestURI().startsWith("/api/")) {
+                                res.sendError(HttpServletResponse.SC_UNAUTHORIZED); // API는 상태코드
+                            } else {
+                                res.sendError(HttpServletResponse.SC_UNAUTHORIZED); // 401 페이지 만들면 자동 렌더링됨
+                                // 또는 로그인으로 보낼 거면: res.sendRedirect("/login");
+                            }
+                        })
+                        // 권한 부족(403)
+                        .accessDeniedHandler((req, res, e) -> {
+                            if (req.getRequestURI().startsWith("/api/")) {
+                                res.sendError(HttpServletResponse.SC_FORBIDDEN); // API는 상태코드
+                            } else {
+                                res.sendError(HttpServletResponse.SC_FORBIDDEN); // templates/error/403.html 렌더
+                            }
+                        })
+                )
+
+
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

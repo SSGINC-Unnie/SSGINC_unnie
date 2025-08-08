@@ -241,3 +241,69 @@ body {
     flex-direction: column; /* 여러 줄 정렬을 위해 세로 배치 */
     align-items: flex-start; /* 왼쪽 정렬 */
 }
+
+/* ---------- Error pages ---------- */
+.error-page {
+    width: 640px;
+    min-height: 55vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 0;
+}
+
+.error-card {
+    width: 100%;
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 16px;
+    padding: 28px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,.05);
+}
+
+
+.error-code {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .18em;
+    color: #9aa0a6;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+}
+.error-title {
+    font-size: 24px;
+    font-weight: 800;
+    color: #111;
+    margin-bottom: 6px;
+}
+.error-desc {
+    color: #555;
+    line-height: 1.7;
+    margin-bottom: 10px;
+}
+.error-meta {
+    color: #888;
+    font-size: 12px;
+}
+.error-actions {
+    margin-top: 16px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+/* 버튼 톤 재사용 (+ 보조버튼) */
+.btn {
+    display: inline-block;
+    padding: 10px 14px;
+    border-radius: 12px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+}
+.btn-primary { background-color: #ff3479; color: #fff; }
+.btn-primary:hover { background-color: #e02f70; }
+.btn-ghost { background: #111; color: #fff; }
+.btn-ghost:hover { opacity: .9; }

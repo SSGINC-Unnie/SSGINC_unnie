@@ -141,21 +141,66 @@ async function loadShopDetails(shopId) {
         document.getElementById('reviewSummary').textContent = shop.reviewSummary || '리뷰 요약 없음';
         document.getElementById('latestMemberNickname').textContent = shop.latestMemberNickname || '닉네임 없음';
 
-        if (shop.latestReviewDate) {
-            const dateObj = new Date(shop.latestReviewDate);
-            const yyyy = dateObj.getFullYear();
-            const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
-            const dd = String(dateObj.getDate()).padStart(2, '0');
-            document.getElementById('latestReviewDate').textContent = `${yyyy}-${mm}-${dd}`;
-        } else {
-            document.getElementById('latestReviewDate').textContent = '리뷰 날짜 없음';
-        }
+        const hasReview =
+            (typeof shop.reviewCount === 'number' && shop.reviewCount > 0) &&
+            (shop.latestReviewDate || shop.latestReviewContent);
 
-        document.getElementById('latestReviewContent').textContent = shop.latestReviewContent || '리뷰 내용 없음';
+        if (!hasReview) {
+            // 상단 평균 평점도 ‘-’ 로 표시
+            document.getElementById('avgRate').textContent = '-';
+            renderEmptyReviewState();
+        } else {
+            if (shop.latestReviewDate) {
+                const dateObj = new Date(shop.latestReviewDate);
+                const yyyy = dateObj.getFullYear();
+                const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
+                const dd = String(dateObj.getDate()).padStart(2, '0');
+                document.getElementById('latestReviewDate').textContent = `${yyyy}-${mm}-${dd}`;
+            } else {
+                document.getElementById('latestReviewDate').textContent = '리뷰 날짜 없음';
+            }
+
+            document.getElementById('latestReviewContent').textContent = shop.latestReviewContent || '리뷰 내용 없음';
+        }
     } catch (err) {
         console.error("[홈 탭] 샵 상세 조회 실패:", err);
     }
 }
+
+function renderEmptyReviewState() {
+    const box = document.querySelector('.review-box');
+    if (!box) return;
+
+    box.innerHTML = `
+      <div class="empty-review">
+        <img src="/img/shop/empty-review.svg" class="empty-illust"
+             onerror="this.style.display='none'" alt="empty" />
+        <div class="empty-title">아직 리뷰가 없어요</div>
+        <div class="empty-desc">첫 리뷰어가 되어 다른 이용자에게 도움을 주세요.</div>
+        <div class="empty-actions">
+          <button class="btn btn-primary" onclick="goWriteReview()">첫 리뷰 쓰기</button>
+          <button class="btn" onclick="copyShareLink()">링크 공유</button>
+        </div>
+      </div>
+    `;
+
+    // “리뷰 더보기” 버튼 숨김
+    const more = document.querySelector('.review-more-container');
+    if (more) more.style.display = 'none';
+}
+function goWriteReview() {
+    const shopId = getShopIdFromURL();
+    if (shopId) window.location.href = `/review/ocr`;
+}
+function copyShareLink() {
+    const url = location.href;
+    if (navigator.clipboard?.writeText) {
+        navigator.clipboard.writeText(url).then(() => alert('링크를 복사했어요.'));
+    } else {
+        prompt('아래 주소를 복사하세요:', url);
+    }
+}
+
 
 // 2) 디자이너 탭 정보 로딩
 async function loadDesigners(shopId) {
