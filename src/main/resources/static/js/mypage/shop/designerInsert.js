@@ -150,10 +150,24 @@ async function registerDesigners(redirectUrl) {
     }
 }
 
-document.querySelector('.btn-prev').addEventListener('click', function(event) {
-    event.preventDefault();
-    window.location.href = '/mypage/procedure/${shopId}';
-});
+const prevBtn = document.querySelector('.btn-prev');
+if (prevBtn) {
+    prevBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        if (history.length > 1) {
+            history.back();
+            return;
+        }
+
+        if (document.referrer) {
+            location.href = document.referrer;
+            return;
+        }
+
+        location.href = '/';
+    });
+}
 
 document.querySelector('.btn-complete').addEventListener('click', function(event) {
     event.preventDefault();
@@ -163,7 +177,7 @@ document.querySelector('.btn-complete').addEventListener('click', function(event
 /** [2] .btn-next 클릭 시 → 메인 페이지(/)로 이동 (예시) */
 document.querySelector('.btn-next').addEventListener('click', function(event) {
     event.preventDefault();
-    registerDesigners('/');
+    registerDesigners(`/mypage/procedure/${shopId}`);
 });
 
 // 수정/삭제 이벤트 위임 (pendingDesigners 배열과 UI 동기화)

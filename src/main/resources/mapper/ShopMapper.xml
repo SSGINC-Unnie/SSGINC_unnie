@@ -48,20 +48,23 @@
             s.shop_business_time,
             s.shop_member_id,
             s.shop_tel,
-            COUNT(re.review_id) AS review_count,
-            ROUND(AVG(re.review_rate), 2) AS avg_rate,
+            COALESCE(COUNT(re.review_id), 0)                 AS review_count,
+            COALESCE(ROUND(AVG(re.review_rate), 2), 0)       AS avg_rate,
             s.shop_location,
-            COALESCE(re.review_date, '') AS latest_review_date,  -- TIMESTAMP 값을 그대로 가져오기
-            COALESCE(s.review_summary, '') AS review_summary,
+            MAX(re.review_date)                              AS latest_review_date,
+            COALESCE(s.review_summary, '')                   AS review_summary,
             COALESCE(SUBSTRING_INDEX(GROUP_CONCAT(re.review_content ORDER BY re.review_date DESC), ',', 1), '') AS latest_review_content,
             COALESCE(SUBSTRING_INDEX(GROUP_CONCAT(m.member_nickname ORDER BY re.review_date DESC), ',', 1), '') AS latest_member_nickname
         FROM shop s
                  LEFT JOIN receipt r ON r.receipt_shop_id = s.shop_id
-                 LEFT JOIN review re ON r.receipt_id = re.review_receipt_id
+                 LEFT JOIN review re
+                           ON r.receipt_id = re.review_receipt_id
+                               AND re.review_status = 0                 -- WHERE 말고 JOIN 조건으로 이동
                  LEFT JOIN member m ON re.review_member_id = m.member_id
-        WHERE s.shop_id = #{shopId} AND s.shop_status = 1
-          AND (re.review_status = 0 OR re.review_status IS NULL)
-        GROUP BY s.shop_id, s.shop_name, s.shop_business_time, s.shop_member_id, s.shop_location, s.review_summary;
+        WHERE s.shop_id = #{shopId}
+          AND s.shop_status = 1
+        GROUP BY s.shop_id, s.shop_name, s.shop_business_time, s.shop_member_id, s.shop_tel,
+                 s.shop_location, s.review_summary;
     </select>
 
 

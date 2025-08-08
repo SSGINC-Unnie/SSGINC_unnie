@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>401 · 로그인 필요</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <section class="error-page">
+        <div class="error-card">
+            <div class="error-code">401 Unauthorized</div>
+            <h1 class="error-title">로그인이 필요합니다</h1>
+            <p class="error-desc">요청하신 페이지는 로그인 후 이용하실 수 있어요.</p>
+            <div class="error-actions">
+                <a class="btn btn-primary" href="/member/login">로그인</a>
+                <a class="btn btn-ghost" href="/">메인으로</a>
+            </div>
+        </div>
+    </section>
+</div>
+</body>
+</html>

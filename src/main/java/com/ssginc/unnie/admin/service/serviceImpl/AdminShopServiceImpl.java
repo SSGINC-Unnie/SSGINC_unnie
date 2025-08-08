@@ -185,6 +185,11 @@ public class AdminShopServiceImpl implements AdminShopService {
     public GeocodingCoordinate getCoordinates(String address) {
         // 입력된 address 확인
         log.info("getCoordinates() called with address = {}", address);
+        log.info("[NAVER-GEOCODING] id={}, secretSet={}, url={}",
+                clientId == null ? "null" : clientId.substring(0,4) + "****",
+                (clientSecret != null && !clientSecret.isBlank()),
+                geocodingUrl);
+
 
         try {
             HttpHeaders headers = new HttpHeaders();
