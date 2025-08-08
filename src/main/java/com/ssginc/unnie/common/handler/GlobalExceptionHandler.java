@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.io.IOException;
@@ -18,7 +19,7 @@ import java.util.Map;
  * 어플리케이션 내에서 발생하는 모든 예외를 전역적으로 처리하는 핸들러
  */
 @Slf4j
-@RestControllerAdvice
+@RestControllerAdvice(annotations = RestController.class)
 public class GlobalExceptionHandler {
 
     /**

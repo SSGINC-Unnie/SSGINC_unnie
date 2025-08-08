@@ -239,3 +239,49 @@ body {
     background-color: #e02f70;
 
 }
+
+/* Empty review state */
+.empty-review {
+    padding: 24px 12px 28px;
+    text-align: center;
+    color: #333;
+    border: 1px dashed #e5e5e5;
+    border-radius: 12px;
+    background: #fafafa;
+}
+.empty-illust {
+    width: 88px;
+    height: 88px;
+    margin-bottom: 12px;
+    opacity: .85;
+}
+.empty-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+.empty-desc {
+    font-size: 13px;
+    color: #777;
+    margin-bottom: 14px;
+}
+.empty-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+.empty-actions .btn {
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    background: #fff;
+    cursor: pointer;
+    font-size: 14px;
+}
+.empty-actions .btn-primary {
+    border-color: #ff3479;
+    background: #ff3479;
+    color: #fff;
+}
+.empty-actions .btn:active { transform: translateY(1px); }
+
