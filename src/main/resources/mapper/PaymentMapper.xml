@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssginc.unnie.payment.mapper.PaymentMapper">
+
+    <select id="selectProcedurePrice" parameterType="long" resultType="int">
+        SELECT p.procedure_price
+        FROM reservation r
+                 JOIN `procedure` p ON p.procedure_id = r.procedure_id
+        WHERE r.reservation_id = #{reservationId}
+    </select>
+
+    <insert id="insertPaymentIntent">
+        INSERT INTO payment_intent
+        (reservation_id, member_id, shop_id, order_id, provider, amount, status, currency, created_at)
+        VALUES
+            (#{reservationId}, #{memberId}, #{shopId}, #{orderId}, #{provider}, #{amount}, 'PENDING', 'KRW', NOW())
+    </insert>
+
+    <select id="selectIntentIdByOrderId" parameterType="string" resultType="long">
+        SELECT intent_id FROM payment_intent WHERE order_id = #{orderId}
+    </select>
+
+    <insert id="insertReservationPayment">
+        INSERT IGNORE INTO reservation_payment(reservation_id,intent_id)
+    VALUES(#{reservationId},#{intentId})
+    </insert>
+
+    <!-- 승인용 쿼리 -->
+    <select id="selectReservationIdByOrderId" parameterType="string" resultType="long">
+        SELECT reservation_id FROM payment_intent WHERE order_id = #{orderId}
+    </select>
+
+    <update id="updateIntentAsPaid">
+        UPDATE payment_intent
+        SET status='PAID',
+            approved_at = IFNULL(approved_at, NOW()),
+            provider_tid = #{providerTid},
+            provider     = #{provider},
+            updated_at   = NOW()
+        WHERE order_id = #{orderId}
+    </update>
+
+    <insert id="insertPaymentEvent">
+        INSERT INTO payment_event (intent_id, event_type, payload)
+        VALUES (#{intentId}, #{eventType}, CAST(#{payload} AS JSON))
+    </insert>
+
+
+    <select id="selectOrderName" parameterType="long" resultType="string">
+        SELECT CONCAT(s.shop_name, ' ', p.procedure_name) AS order_name
+        FROM reservation r
+                 JOIN shop s       ON s.shop_id = r.shop_id
+                 JOIN `procedure` p ON p.procedure_id = r.procedure_id
+        WHERE r.reservation_id = #{reservationId}
+    </select>
+
+</mapper>

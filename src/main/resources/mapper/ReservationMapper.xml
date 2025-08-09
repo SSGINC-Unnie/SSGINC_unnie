@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssginc.unnie.reservation.mapper.ReservationMapper">
+
+    <!-- SP: create_reservation_hold(...) 호출 -->
+    <select id="createReservationHold"
+            statementType="CALLABLE"
+            resultType="com.ssginc.unnie.reservation.dto.ReservationIdRow">
+        { CALL create_reservation_hold(
+                #{memberId,    jdbcType=BIGINT},
+                #{shopId,      jdbcType=INTEGER},
+                #{designerId,  jdbcType=INTEGER},
+                #{procedureId, jdbcType=INTEGER},
+                #{startTime,   jdbcType=TIMESTAMP},
+                #{holdMinutes, jdbcType=INTEGER}
+               ) }
+    </select>
+
+    <update id="confirmReservationPaid" statementType="CALLABLE">
+        { CALL confirm_reservation_paid(
+                #{reservationId, jdbcType=BIGINT},
+                #{intentId,      jdbcType=BIGINT}
+               ) }
+    </update>
+
+    <update id="cancelReservationByUser" statementType="CALLABLE">
+        { CALL cancel_reservation_by_user(
+                #{reservationId, jdbcType=BIGINT},
+                #{reason,        jdbcType=VARCHAR}
+               ) }
+    </update>
+
+</mapper>
