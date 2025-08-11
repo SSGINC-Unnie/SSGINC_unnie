@@ -31,6 +31,7 @@ public class TossWidgetController {
         String orderId = req.getOrderId();
 
         PaymentIntentCreateResponse intent = paymentService.createIntent(req);
+
         return ResponseEntity.ok(
                 new ResponseDto<>(
                         200,

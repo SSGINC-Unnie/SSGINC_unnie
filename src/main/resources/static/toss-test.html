@@ -1,14 +1,22 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8"/>
-    <title>Toss Widget Test</title>
-    <script src="https://js.tosspayments.com/v1/payment-widget.js"></script>
+    <!-- 페이지 한정 CSP (테스트용). 운영에선 unsafe-eval 제거 권장 -->
+    <meta http-equiv="Content-Security-Policy"
+          content="default-src 'self';
+               script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.tosspayments.com;
+               connect-src 'self' https://api.tosspayments.com https://*.tosspayments.com;
+               frame-src https://*.tosspayments.com;
+               img-src 'self' data: https:">
+
+    <meta charset="utf-8" />
+    <title>Toss Widget Test (prod)</title>
+
+    <script src="https://js.tosspayments.com/v1/payment-widget"></script>
     <style>
         body { font-family: sans-serif; max-width: 640px; margin: 40px auto; }
         #agreement, #payment-method { margin: 16px 0; }
-        input { padding: 6px 8px; }
-        button { padding: 8px 12px; }
+        input { padding: 6px 8px; } button { padding: 8px 12px; }
     </style>
 </head>
 <body>
@@ -35,22 +43,16 @@
             const res = await fetch(sessionApi, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    reservationId: reservationId,
-                    memberId: 1,
-                    shopId: 1,
-                    orderId: order
-                })
+                body: JSON.stringify({ reservationId, memberId: 1, shopId: 1, orderId: order })
             });
 
             if (!res.ok) {
-                const err = await res.json().catch(()=>({message: res.statusText}));
+                const err = await res.json().catch(() => ({ message: res.statusText }));
                 alert("세션 생성 실패: " + (err.message || res.statusText));
                 return;
             }
 
             const { data } = await res.json();
-
             const clientKey = data.clientKey;
             orderId   = data.orderId;
             amount    = data.amount;
@@ -58,25 +60,23 @@
             successUrl = data.successUrl;
             failUrl    = data.failUrl;
 
+            console.log('widget session data:', data);
+            console.log('clientKey prefix/len:', data?.clientKey?.slice(0, 7), data?.clientKey?.length);
+
             if (!window.PaymentWidget) {
-                alert("토스 위젯 로드 실패(네트워크 또는 차단 확?).");
+                alert("토스 위젯 로드 실패(네트워크/차단 확인).");
                 return;
             }
 
             paymentWidget = PaymentWidget(clientKey, "customer-001");
             paymentWidget.renderPaymentMethods("#payment-method", { value: amount }, { variantKey: "DEFAULT" });
             paymentWidget.renderAgreement("#agreement", { variantKey: "AGREEMENT" });
-
             document.getElementById('pay').style.display = 'inline-block';
         }
 
         async function requestPay() {
             await paymentWidget.requestPayment({
-                orderId: orderId,
-                orderName: orderName,
-                successUrl: successUrl,
-                failUrl: failUrl,
-                customerName: "테스트사용자"
+                orderId, orderName, successUrl, failUrl, customerName: "테스트사용자"
             });
         }
 
