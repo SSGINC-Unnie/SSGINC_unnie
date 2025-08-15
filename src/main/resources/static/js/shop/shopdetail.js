@@ -333,6 +333,19 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+
+function goToReservation() {
+    const shopId = getShopIdFromURL(); // 기존에 있던 shopId 추출 함수 재사용
+    if (!shopId) {
+        console.error("예약할 업체의 shopId를 찾을 수 없습니다.");
+        alert("업체 정보가 올바르지 않아 예약을 진행할 수 없습니다.");
+        return;
+    }
+
+    // shopId를 쿼리 파라미터로 넘기면서 /reservation 페이지로 이동
+    window.location.href = `/reservation?shopId=${shopId}`;
+}
+
 // JS 부분 (showMoreReviews 함수 추가)
 function showMoreReviews() {
     const shopId = getShopIdFromURL();  // 이미 선언된 함수 활용

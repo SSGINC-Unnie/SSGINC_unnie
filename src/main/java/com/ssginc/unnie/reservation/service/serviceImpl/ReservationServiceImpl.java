@@ -1,4 +1,4 @@
-package com.ssginc.unnie.reservation.service.ServiceImpl;
+package com.ssginc.unnie.reservation.service.serviceImpl;
 
 import com.ssginc.unnie.reservation.dto.ReservationHoldRequest;
 import com.ssginc.unnie.reservation.dto.ReservationIdRow;
