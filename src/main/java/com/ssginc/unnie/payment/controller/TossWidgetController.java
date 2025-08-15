@@ -5,12 +5,14 @@ import com.ssginc.unnie.payment.dto.PaymentIntentCreateRequest;
 import com.ssginc.unnie.payment.dto.PaymentIntentCreateResponse;
 import com.ssginc.unnie.payment.service.PaymentService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/payments/toss")
 @RequiredArgsConstructor
@@ -28,23 +30,22 @@ public class TossWidgetController {
     @PostMapping("/widget-session")
     public ResponseEntity<ResponseDto<?>> createSession(@RequestBody PaymentIntentCreateRequest req) {
         req.setProvider("TOSS");
-        String orderId = req.getOrderId();
-
         PaymentIntentCreateResponse intent = paymentService.createIntent(req);
+        Map<String, Object> data =Map.of(
+                "clientKey",  tossClientKey,
+                "orderId",    req.getOrderId(),
+                "amount",     intent.getAmount(),
+                "orderName",  intent.getOrderName(),
+                "successUrl", successUrl,
+                "failUrl",    failUrl
+        );
+        log.info("프론트엔드로 전달하는 데이터: {}", data);
+
 
         return ResponseEntity.ok(
                 new ResponseDto<>(
                         200,
-                        "세션 생성 성공",
-                        Map.of(
-                                "clientKey",  tossClientKey,
-                                "orderId",    intent.getOrderId(),
-                                "amount",     intent.getAmount(),
-                                "orderName",  intent.getOrderName(),
-                                "successUrl", successUrl,
-                                "failUrl",    failUrl
-                        )
-                )
+                        "세션 생성 성공",data)
         );
     }
 }

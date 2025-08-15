@@ -5,8 +5,8 @@ import com.ssginc.unnie.payment.dto.PaymentApproveRequest;
 import com.ssginc.unnie.payment.pg.TossGateway;
 import com.ssginc.unnie.payment.service.PaymentService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,12 +16,11 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class TossCallbackController {
 
-    @Value("${pg.mode:prod}")
+    @Value("${pg.mode:local}")
     private String pgMode;
 
     private final TossGateway tossGateway;
     private final PaymentService paymentService;
-
 
     @GetMapping("/success")
     public ResponseEntity<ResponseDto<Void>> success(
@@ -30,21 +29,15 @@ public class TossCallbackController {
             @RequestParam Long amount
     ) {
         log.info("Toss success params: paymentKey={}, orderId={}, amount={}, mode={}", paymentKey, orderId, amount, pgMode);
+        // 현재 pgMode가 무엇인지 로그에 기록
+        log.info("현재 PG 모드: {}", pgMode); // 이 줄을 추가
+        tossGateway.confirm(paymentKey, orderId, amount);
 
-        boolean realKey = paymentKey != null && paymentKey.startsWith("pay_");
-        if ("prod".equalsIgnoreCase(pgMode) && realKey) {
-            // 실제 confirm
-            tossGateway.confirm(paymentKey, orderId, amount);
-        } else {
-            // 개발/스텁
-            log.info("[SKIP CONFIRM] mode={}, paymentKey={}", pgMode, paymentKey);
-        }
-
+        // 결제 승인 처리
         paymentService.approve(new PaymentApproveRequest("TOSS", orderId, paymentKey));
+
         return ResponseEntity.ok(new ResponseDto<>(200, "토스 결제 승인 및 예약 확정 완료", null));
     }
-
-
 
     @GetMapping("/fail")
     public ResponseEntity<ResponseDto<Void>> fail(
