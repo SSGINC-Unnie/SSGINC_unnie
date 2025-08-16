@@ -33,6 +33,8 @@ public class SecurityConfig {
                         .requestMatchers("/review/**").authenticated()
                         //마이페이지 관련 - 로그인한 사용자만 접근
                         .requestMatchers("/mypage/**").authenticated()
+                        // 예약 관련 - 로그인한 사용자만 접근
+                        .requestMatchers("/reservation/**", "/api/reservation/**").authenticated()
                         //관리자 페이지 - ADMIN 권한 필요
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         // 마이페이지 (업체 관리) - MANAGER 권한 필요

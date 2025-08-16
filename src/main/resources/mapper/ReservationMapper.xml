@@ -32,4 +32,17 @@
                ) }
     </update>
 
+    <select id="findBookedTimesByDesignerAndDate" resultType="java.time.LocalDateTime">
+        SELECT
+            start_time
+        FROM
+            reservation
+        WHERE
+            designer_id = #{designerId}
+          AND
+            DATE(start_time) = #{date}
+          AND
+            status IN ('CONFIRMED', 'HOLD', 'PENDING')
+    </select>
+
 </mapper>

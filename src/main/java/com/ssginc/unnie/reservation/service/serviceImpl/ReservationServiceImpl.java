@@ -10,6 +10,11 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -40,5 +45,14 @@ public class ReservationServiceImpl implements ReservationService {
             log.error("예약 홀드 생성 실패: {}", msg, e);
             throw new IllegalStateException("예약 생성 실패: " + msg);
         }
+    }
+
+    @Override
+    public List<String> getBookedTimes(int designerId, String date) {
+        List<LocalDateTime> bookedDateTimes = reservationMapper.findBookedTimesByDesignerAndDate(designerId, date);
+
+        return bookedDateTimes.stream()
+                .map(ldt -> ldt.format(DateTimeFormatter.ofPattern("HH:mm")))
+                .collect(Collectors.toList());
     }
 }
