@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Mapper
 public interface ReservationMapper {
@@ -23,4 +24,9 @@ public interface ReservationMapper {
 
     void cancelReservationByUser(@Param("reservationId") Long reservationId,
                                  @Param("reason") String reason);
+
+    List<LocalDateTime> findBookedTimesByDesignerAndDate(
+            @Param("designerId") int designerId,
+            @Param("date") String date
+    );
 }

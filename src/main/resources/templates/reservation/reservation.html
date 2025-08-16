@@ -4,81 +4,161 @@
       layout:decorate="~{layout}">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>예약</title>
+    <meta name="viewport" content="width=640, user-scalable=no">
+    <title>예약하기 - 언니어때</title>
     <link rel="stylesheet" href="/css/reservation/reservation.css">
 </head>
 <body>
-<div class="container" layout:fragment="content">
+<div class="wrapper" layout:fragment="content">
+
     <div class="reservation-container">
-        <div id="step-1" class="step-card active">
-            <div class="step-header">
-                <span class="step-number">1</span>
-                <h2 class="step-title">서비스 및 디자이너 선택</h2>
+        <input type="hidden" id="current-member-name" th:value="${memberName}">
+        <div class="step-progress">
+            <div class="step-indicator">
+                <div class="step active" id="step-indicator-1">
+                    <div class="step-number">1</div>
+                    <div class="step-title">서비스 선택</div>
+                </div>
+                <div class="step" id="step-indicator-2">
+                    <div class="step-number">2</div>
+                    <div class="step-title">날짜 선택</div>
+                </div>
+                <div class="step" id="step-indicator-3">
+                    <div class="step-number">3</div>
+                    <div class="step-title">예약 확인</div>
+                </div>
             </div>
-            <div class="step-content">
-                <h3 class="content-title">서비스</h3>
-                <div id="procedure-list" class="card-list">
-                    <div class="loader"></div>
-                </div>
-                <h3 class="content-title">디자이너</h3>
-                <div id="designer-list" class="card-list">
-                    <div class="loader"></div>
-                </div>
+            <div class="progress-line">
+                <div class="progress-fill" id="progress-fill"></div>
             </div>
         </div>
 
-        <div id="step-2" class="step-card">
-            <div class="step-header">
-                <span class="step-number">2</span>
-                <h2 class="step-title">날짜 및 시간 선택</h2>
-            </div>
-            <div class="step-content">
-                <div id="calendar-view">
-                    <div class="calendar-header">
-                        <button id="prev-month-btn">&lt;</button>
-                        <h3 id="current-month-year"></h3>
-                        <button id="next-month-btn">&gt;</button>
+        <div class="step-content">
+            <div id="step-1" class="step-panel active">
+                <div class="selection-container">
+                    <div class="selection-header">
+                        <h2>서비스 및 디자이너 선택</h2>
+                        <p>원하는 서비스와 디자이너를 선택해주세요</p>
                     </div>
-                    <div class="calendar-grid">
-                        <div class="day-name">일</div><div class="day-name">월</div><div class="day-name">화</div><div class="day-name">수</div><div class="day-name">목</div><div class="day-name">금</div><div class="day-name">토</div>
+
+                    <div class="selection-section">
+                        <h3 class="section-title">서비스</h3>
+                        <div class="card-grid" id="services-grid">
+                        </div>
                     </div>
-                    <div id="calendar-dates" class="calendar-grid"></div>
+
+                    <div class="selection-section">
+                        <h3 class="section-title">디자이너</h3>
+                        <div class="card-grid" id="designers-grid">
+                        </div>
+                    </div>
+
+                    <div class="button-container">
+                        <button id="step1-next-btn" class="btn btn-primary next-btn" disabled>
+                            다음
+                        </button>
+                    </div>
                 </div>
-                <div id="time-slots-container" style="display:none;">
-                    <h3 class="content-title" id="selected-date-title">시간 선택</h3>
-                    <div id="time-slot-list" class="time-slots"></div>
+            </div>
+
+            <div id="step-2" class="step-panel">
+                <div class="selection-container">
+                    <div class="selection-header">
+                        <h2>날짜 및 시간 선택</h2>
+                        <p>예약할 날짜와 시간을 선택해주세요</p>
+                    </div>
+
+                    <div class="calendar-container">
+                        <div class="calendar-header">
+                            <button class="calendar-nav-btn" id="prev-month-btn">‹</button>
+                            <h3 class="calendar-title" id="calendar-title">2025년 8월</h3>
+                            <button class="calendar-nav-btn" id="next-month-btn">›</button>
+                        </div>
+
+                        <div class="calendar-week-headers">
+                            <div class="week-header">일</div>
+                            <div class="week-header">월</div>
+                            <div class="week-header">화</div>
+                            <div class="week-header">수</div>
+                            <div class="week-header">목</div>
+                            <div class="week-header">금</div>
+                            <div class="week-header">토</div>
+                        </div>
+
+                        <div class="calendar-grid" id="calendar-dates">
+                        </div>
+                    </div>
+
+                    <div class="time-container" id="time-container" style="display: none;">
+                        <h3 class="section-title" id="time-section-title">시간 선택</h3>
+                        <div class="time-grid" id="time-slots">
+                        </div>
+                    </div>
+
+                    <div class="button-container">
+                        <button id="step2-prev-btn" class="btn btn-ghost prev-btn">이전</button>
+                        <button id="step2-next-btn" class="btn btn-primary next-btn" disabled>다음</button>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div id="step-3" class="step-card">
-            <div class="step-header">
-                <span class="step-number">3</span>
-                <h2 class="step-title">예약 정보 확인</h2>
+            <div id="step-3" class="step-panel">
+                <div class="selection-container">
+                    <div class="selection-header">
+                        <h2>예약 정보 확인</h2>
+                        <p>예약 내용을 확인하고 결제를 진행해주세요</p>
+                    </div>
+
+                    <div class="booking-summary">
+                        <div class="summary-section">
+                            <h3>예약 정보</h3>
+                            <div id="booking-summary-content">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="payment-info">
+                        <h3>결제 안내</h3>
+                        <ul>
+                            <li>예약 확정을 위해 결제가 필요합니다</li>
+                            <li>결제 후 예약 취소 시 수수료가 발생할 수 있습니다</li>
+                            <li>예약 변경은 24시간 전까지 가능합니다</li>
+                        </ul>
+                    </div>
+
+                    <div class="button-container">
+                        <button id="step3-prev-btn" class="btn btn-ghost prev-btn">이전</button>
+                        <button id="confirm-booking-btn" class="btn btn-primary confirm-btn">예약 신청하기</button>
+                    </div>
+                </div>
             </div>
-            <div class="step-content">
-                <div id="reservation-summary" class="summary-card"></div>
+
+            <div id="success-panel" class="step-panel">
+                <div class="confirmation-success">
+                    <div class="success-content">
+                        <div class="success-icon">🎉</div>
+                        <h2>예약이 완료되었습니다!</h2>
+                        <p>예약 확정을 위해 10분 내에 결제를 진행해주세요.</p>
+
+                        <div class="booking-summary">
+                            <div id="final-summary-content">
+                            </div>
+                        </div>
+
+                        <div class="button-container">
+                            <a href="/mypage/reservations" class="btn btn-primary">내 예약 확인하기</a>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-
-        <div class="footer-actions">
-            <button id="next-btn" disabled>다음</button>
-            <button id="submit-btn" style="display:none;">예약 신청하기</button>
-        </div>
-    </div>
-
-    <div id="success-modal" class="modal-overlay" style="display:none;">
-        <div class="modal-content">
-            <h2>🎉 예약이 완료되었습니다.</h2>
-            <p>예약 확정을 위해 10분 내에 결제를 진행해주세요.</p>
-            <a href="/mypage/reservations" class="modal-btn">내 예약 확인하기</a>
         </div>
     </div>
     <div layout:fragment="scripts">
-        <script th:src="@{/js/reservation/reservation.js}"></script>
+        <script src="/js/reservation/reservation.js"></script>
     </div>
 </div>
+
+
 
 </body>
 </html>
