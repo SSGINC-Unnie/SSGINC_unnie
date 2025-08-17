@@ -26,4 +26,7 @@ public interface MemberMapper {
     String selectMemberByNameAndPhone(@Param("memberName") String memberName, @Param("memberPhone") String memberPhone);
     // 이메일로 비밀번호 업데이트
     int updateMemberPassword(@Param("memberEmail") String memberEmail, @Param("memberPw") String memberPw);
+
+    String selectMemberNameByMemberId(@Param("memberId") Long memberId);
+
 }

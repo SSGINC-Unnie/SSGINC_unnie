@@ -271,17 +271,16 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>`;
     };
 
-    // --- 최종 제출 (수정됨) ---
     const confirmBooking = async () => {
-        confirmBookingBtn.textContent = '예약 신청 중...';
+        confirmBookingBtn.textContent = '결제 정보 생성 중...';
         confirmBookingBtn.disabled = true;
 
         try {
             const { service, designer, date, time } = state.bookingData;
             const startTime = `${date}T${time}:00`;
 
-            // [수정] API 경로를 '/api/reservation/hold'로 변경
-            const response = await fetch('/api/reservation/hold', {
+            // --- 1. 우리 서버에 'HOLD' 상태로 예약 생성 요청 ---
+            const holdResponse = await fetch('/api/reservation/hold', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -292,27 +291,49 @@ document.addEventListener('DOMContentLoaded', () => {
                 })
             });
 
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || '예약 생성에 실패했습니다.');
+            if (!holdResponse.ok) {
+                throw new Error('예약 생성에 실패했습니다. 잠시 후 다시 시도해주세요.');
             }
 
-            const resJson = await response.json();
-            if (resJson.data && resJson.data.reserverName) {
-                state.memberName = resJson.data.reserverName;
+            const holdData = await holdResponse.json();
+            const reservationId = holdData.data.reservationId;
+            const orderId = 'unnie-' + new Date().getTime(); // 고유한 주문 ID 생성
+
+            // --- 2. 토스 위젯 세션 생성 요청 ---
+            const sessionResponse = await fetch('/api/payments/toss/widget-session', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    reservationId: reservationId,
+                    shopId: state.shopId,
+                    orderId: orderId
+                })
+            });
+
+            if (!sessionResponse.ok) {
+                throw new Error('결제 정보를 만드는 데 실패했습니다.');
             }
 
-            renderBookingSummary(finalSummaryContent);
-            showStep(4);
+            const sessionData = (await sessionResponse.json()).data;
+
+            const tossPayments = TossPayments(sessionData.clientKey);
+            tossPayments.requestPayment('카드', {
+                amount: sessionData.amount,
+                orderId: sessionData.orderId,
+                orderName: sessionData.orderName,
+                customerName: state.memberName,
+                successUrl: sessionData.successUrl,
+                failUrl: sessionData.failUrl,
+            });
 
         } catch (error) {
             alert(error.message);
-            confirmBookingBtn.textContent = '예약 신청하기';
+        } finally {
+            confirmBookingBtn.textContent = '결제하기';
             confirmBookingBtn.disabled = false;
         }
     };
 
-    // --- 이벤트 리스너 (기존과 동일) ---
     step1NextBtn.addEventListener('click', () => { showStep(2); renderCalendar(); });
     step2PrevBtn.addEventListener('click', () => showStep(1));
     step2NextBtn.addEventListener('click', () => { showStep(3); renderBookingSummary(bookingSummaryContent); });

@@ -9,4 +9,7 @@ public interface ReservationService {
 
     List<String> getBookedTimes(int designerId, String date);
 
+    String getReserverNameByMemberId(Long memberId);
+
+
 }

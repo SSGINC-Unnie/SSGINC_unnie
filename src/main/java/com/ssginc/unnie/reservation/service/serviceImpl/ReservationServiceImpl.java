@@ -1,5 +1,6 @@
 package com.ssginc.unnie.reservation.service.serviceImpl;
 
+import com.ssginc.unnie.member.mapper.MemberMapper;
 import com.ssginc.unnie.reservation.dto.ReservationHoldRequest;
 import com.ssginc.unnie.reservation.dto.ReservationIdRow;
 import com.ssginc.unnie.reservation.mapper.ReservationMapper;
@@ -21,6 +22,8 @@ import java.util.stream.Collectors;
 public class ReservationServiceImpl implements ReservationService {
 
     private final ReservationMapper reservationMapper;
+    private final MemberMapper memberMapper;
+
 
     @Override
     @Transactional
@@ -54,5 +57,14 @@ public class ReservationServiceImpl implements ReservationService {
         return bookedDateTimes.stream()
                 .map(ldt -> ldt.format(DateTimeFormatter.ofPattern("HH:mm")))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public String getReserverNameByMemberId(Long memberId) {
+        if (memberId == null) {
+            return null;
+        }
+        // MemberMapper를 통해 이름을 조회하여 반환
+        return memberMapper.selectMemberNameByMemberId(memberId);
     }
 }

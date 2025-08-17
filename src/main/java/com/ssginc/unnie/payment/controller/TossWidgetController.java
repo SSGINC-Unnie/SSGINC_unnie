@@ -1,5 +1,6 @@
 package com.ssginc.unnie.payment.controller;
 
+import com.ssginc.unnie.common.config.MemberPrincipal;
 import com.ssginc.unnie.common.util.ResponseDto;
 import com.ssginc.unnie.payment.dto.PaymentIntentCreateRequest;
 import com.ssginc.unnie.payment.dto.PaymentIntentCreateResponse;
@@ -8,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -28,7 +30,10 @@ public class TossWidgetController {
     private String failUrl;
 
     @PostMapping("/widget-session")
-    public ResponseEntity<ResponseDto<?>> createSession(@RequestBody PaymentIntentCreateRequest req) {
+    public ResponseEntity<ResponseDto<?>> createSession(
+            @RequestBody PaymentIntentCreateRequest req,
+            @AuthenticationPrincipal MemberPrincipal principal) {
+        req.setMemberId(principal.getMemberId());
         req.setProvider("TOSS");
         PaymentIntentCreateResponse intent = paymentService.createIntent(req);
         Map<String, Object> data =Map.of(
