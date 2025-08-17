@@ -47,9 +47,6 @@ public class MemberPrincipal implements UserDetails {
         return member.getMemberNickname(); // Member 엔티티의 닉네임 반환
     }
 
-    public String getMemberName() {
-        return member.getMemberName();
-    }
 
     @Override
     public boolean isAccountNonExpired() {

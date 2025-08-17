@@ -52,4 +52,10 @@
             END
         WHERE member_email = #{memberEmail}
     </update>
+
+    <select id="selectMemberNameByMemberId" resultType="java.lang.String">
+        SELECT member_name
+        FROM member
+        WHERE member_id = #{memberId}
+    </select>
 </mapper>

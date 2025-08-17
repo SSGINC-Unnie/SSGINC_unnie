@@ -48,8 +48,25 @@ public class ReservationController {
 
 
     @GetMapping("/member-info")
-    public ResponseEntity<?> memberInfo(@AuthenticationPrincipal MemberPrincipal p) {
-        Map<String,Object> data = Map.of("memberName", p.getMemberName());
-        return ResponseEntity.ok(Map.of("data", data));
+    public ResponseEntity<ResponseDto<Map<String, String>>> getMemberInfo(
+            @AuthenticationPrincipal MemberPrincipal principal) {
+
+        String memberName = reservationService.getReserverNameByMemberId(principal.getMemberId());
+
+        log.info(memberName);
+        return ResponseEntity.ok(
+                new ResponseDto<>(HttpStatus.OK.value(), "Success", Map.of("memberName", memberName))
+        );
+    }
+
+    @GetMapping("/booked-times")
+    public ResponseEntity<ResponseDto<List<String>>> getBookedTimes(
+            @RequestParam("designerId") int designerId,
+            @RequestParam("date") String date
+    ) {
+        List<String> bookedTimes = reservationService.getBookedTimes(designerId, date);
+        return ResponseEntity.ok(
+                new ResponseDto<>(HttpStatus.OK.value(), "예약된 시간 조회 성공", bookedTimes)
+        );
     }
 }
