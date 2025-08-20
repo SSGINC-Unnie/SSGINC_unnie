@@ -183,6 +183,27 @@ public enum ErrorCode {
     FILE_INTERNAL_SERVER_ERROR(500, "IM006", "파일 정보를 가져오는 중 오류가 발생했습니다."),
     INVALID_FILE_TARGET_TYPE(400, "IM007", "파일 대상 타입이 올바르지 않습니다"),
 
+    // =================================== 결제 관련 에러 =====================================================
+    PAYMENT_INTENT_NOT_FOUND(404, "PM001", "해당 결제의도를 찾을 수 없습니다."),
+    PAYMENT_APPROVE_FAILED(500, "PM002", "승인 처리 중 오류가 발생했습니다."),
+    RESERVATION_NOT_FOUND(404, "PM003", "해당 예약을 찾을 수 없습니다."),
+    INVALID_PAYMENT_AMOUNT(400, "PM004", "결제 금액은 0보다 커야 합니다."),
+    PAYMENT_INFO_FETCH_FAILED(500, "PM005", "결제 정보를 가져오는 중 오류가 발생했습니다."),
+    PAYMENT_INTENT_CREATION_FAILED(500, "PM006", "결제 의도 생성 중 DB 오류가 발생했습니다."),
+    PAYMENT_ALREADY_PROCESSED(409, "PM007", "이미 처리된 결제입니다."),
+    PAYMENT_CONFIRMATION_FAILED(500, "PM008", "예약 확정 처리 중 오류가 발생했습니다."),
+    PAYMENT_DETAILS_NOT_FOUND(404, "PM009", "결제 상세 정보를 찾을 수 없습니다."),
+    PAYLOAD_SERIALIZE_FAILED(500, "PM010", "결제 정보 직렬화에 실패했습니다."),
+
+    // =================================== 예약 관련 에러 =====================================================
+    RESERVATION_ID_NOT_FOUND(404, "RE001", "예약 ID 반환이 없습니다."),
+    RESERVATION_CREATE_FAILED(500, "RE002", "예약 생성 실패"),
+    BOOKED_TIMES_FETCH_FAILED(500, "RE003", "예약된 시간 조회 실패"),
+    RESERVATION_HOLD_FAILED(500, "RS004", "예약 홀드 중 오류 발생"),
+    RESERVATION_SLOT_UNAVAILABLE(409, "RS005", "이미 예약되었거나 선택할 수 없는 시간입니다."),
+    MY_RESERVATIONS_FETCH_FAILED(500, "RS006", "내 예약 목록을 불러오는 중 오류가 발생했습니다."),
+
+
     // =================================== 공통 에러 =====================================================
     UNKNOWN_ERROR(500, "CM001", "알 수 없는 오류가 발생했습니다."),
     FORBIDDEN(403, "CM002", "권한이 없습니다."),

@@ -19,8 +19,8 @@ public interface ReservationMapper {
             @Param("holdMinutes") Integer holdMinutes
     );
 
-    void confirmReservationPaid(@Param("reservationId") Long reservationId,
-                                @Param("intentId") Long intentId);
+    int confirmReservationPaid(@Param("reservationId") Long reservationId,
+                               @Param("intentId") Long intentId);
 
     void cancelReservationByUser(@Param("reservationId") Long reservationId,
                                  @Param("reason") String reason);
