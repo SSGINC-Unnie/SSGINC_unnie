@@ -1,5 +1,6 @@
 package com.ssginc.unnie.payment.mapper;
 
+import com.ssginc.unnie.payment.dto.PaymentSuccess;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -30,5 +31,8 @@ public interface PaymentMapper {
                            @Param("payload") String payloadJson);
 
     String selectOrderName(@Param("reservationId") Long reservationId);
+
+    PaymentSuccess selectSuccessInfoByOrderId(@Param("orderId") String orderId);
+
 
 }

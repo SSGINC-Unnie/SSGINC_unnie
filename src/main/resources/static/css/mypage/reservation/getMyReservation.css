@@ -1,0 +1,57 @@
+.mypage-container {
+    width: 100%;
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 24px;
+}
+.mypage-container h1 {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 24px;
+}
+.reservation-card {
+    background: #fff;
+    border: 1px solid #eaeaea;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.reservation-info h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0 0 8px;
+}
+.reservation-info p {
+    font-size: 14px;
+    color: #666;
+    margin: 4px 0;
+}
+.reservation-details {
+    text-align: right;
+}
+.reservation-details .status {
+    font-size: 14px;
+    font-weight: 700;
+    padding: 4px 8px;
+    border-radius: 6px;
+    color: #fff;
+    margin-bottom: 8px;
+    display: inline-block;
+}
+.reservation-details .status.confirmed { background-color: #00C73C; }
+.reservation-details .status.cancelled { background-color: #F55; }
+.reservation-details .status.hold { background-color: #FFB800; }
+.reservation-details .price {
+    font-size: 18px;
+    font-weight: 700;
+}
+.empty-list {
+    text-align: center;
+    padding: 80px 0;
+    color: #888;
+}
+.loader {
+}

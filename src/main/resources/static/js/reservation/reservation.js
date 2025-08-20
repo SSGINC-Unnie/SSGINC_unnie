@@ -218,7 +218,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const isPast = isToday && hour <= currentHour;
             const isBooked = bookedTimes.includes(time); // [추가] 예약 마감 여부 확인
 
-            // [수정] 이미 지났거나, 예약이 마감된 시간이면 비활성화
             if (isPast || isBooked) {
                 timeSlot.classList.add('disabled');
                 timeSlot.disabled = true;
@@ -244,7 +243,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
 
-    // --- Step 3: 예약 확인 (수정됨) ---
     const renderBookingSummary = (targetElement) => {
         const { service, designer, date, time } = state.bookingData;
 
@@ -299,7 +297,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const reservationId = holdData.data.reservationId;
             const orderId = 'unnie-' + new Date().getTime(); // 고유한 주문 ID 생성
 
-            // --- 2. 토스 위젯 세션 생성 요청 ---
             const sessionResponse = await fetch('/api/payments/toss/widget-session', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },

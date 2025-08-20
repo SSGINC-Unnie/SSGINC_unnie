@@ -1,17 +1,18 @@
 package com.ssginc.unnie.payment.controller;
 
-import com.ssginc.unnie.common.util.ResponseDto;
 import com.ssginc.unnie.payment.dto.PaymentApproveRequest;
 import com.ssginc.unnie.payment.pg.TossGateway;
 import com.ssginc.unnie.payment.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Controller; // 1. @RestController -> @Controller로 변경
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Slf4j
-@RestController
+@Controller // API가 아닌 페이지 이동을 담당하므로 @Controller로 변경
 @RequestMapping("/api/payments/toss")
 @RequiredArgsConstructor
 public class TossCallbackController {
@@ -23,29 +24,30 @@ public class TossCallbackController {
     private final PaymentService paymentService;
 
     @GetMapping("/success")
-    public ResponseEntity<ResponseDto<Void>> success(
-            @RequestParam String paymentKey,
-            @RequestParam String orderId,
-            @RequestParam Long amount
+    public String success(
+                           @RequestParam String paymentKey,
+                           @RequestParam String orderId,
+                           @RequestParam Long amount
     ) {
-        log.info("Toss success params: paymentKey={}, orderId={}, amount={}, mode={}", paymentKey, orderId, amount, pgMode);
-        // 현재 pgMode가 무엇인지 로그에 기록
-        log.info("현재 PG 모드: {}", pgMode); // 이 줄을 추가
-        tossGateway.confirm(paymentKey, orderId, amount);
+        log.info("Toss success: paymentKey={}, orderId={}, amount={}, mode={}", paymentKey, orderId, amount, pgMode);
+        try {
+            tossGateway.confirm(paymentKey, orderId, amount);
+            paymentService.approve(new PaymentApproveRequest("TOSS", orderId, paymentKey));
 
-        // 결제 승인 처리
-        paymentService.approve(new PaymentApproveRequest("TOSS", orderId, paymentKey));
+            return "redirect:/reservation/complete?orderId=" + orderId;
 
-        return ResponseEntity.ok(new ResponseDto<>(200, "토스 결제 승인 및 예약 확정 완료", null));
+        } catch (Exception e) {
+            log.error("결제 승인 처리 중 오류 발생: {}", e.getMessage());
+            return "redirect:/reservation/fail?message=" + e.getMessage();
+        }
     }
 
     @GetMapping("/fail")
-    public ResponseEntity<ResponseDto<Void>> fail(
-            @RequestParam String code,
-            @RequestParam String message,
-            @RequestParam(required = false) String orderId
+    public String fail( // 반환 타입을 String으로 변경
+                        @RequestParam String code,
+                        @RequestParam String message,
+                        @RequestParam(required = false) String orderId
     ) {
-        log.warn("Toss fail: code={}, message={}, orderId={}", code, message, orderId);
-        return ResponseEntity.badRequest().body(new ResponseDto<>(400, "토스 결제 실패: " + code + " - " + message, null));
+        return "redirect:/reservation/fail?message=" + message;
     }
 }
