@@ -55,4 +55,24 @@
         WHERE r.reservation_id = #{reservationId}
     </select>
 
+    <select id="selectSuccessInfoByOrderId" resultType="com.ssginc.unnie.payment.dto.PaymentSuccess">
+        SELECT
+            pi.order_id          AS orderId,
+            m.member_name        AS memberName,
+            s.shop_name          AS shopName,
+            p.procedure_name     AS procedureName,
+            d.designer_name      AS designerName,
+            r.start_time         AS reservationTime,
+            pi.amount
+        FROM
+            payment_intent pi
+                JOIN reservation r ON pi.reservation_id = r.reservation_id
+                JOIN member m ON r.member_id = m.member_id
+                JOIN shop s ON r.shop_id = s.shop_id
+                JOIN `procedure` p ON r.procedure_id = p.procedure_id
+                JOIN designer d ON r.designer_id = d.designer_id
+        WHERE
+            pi.order_id = #{orderId}
+    </select>
+
 </mapper>

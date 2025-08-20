@@ -7,4 +7,7 @@ public interface PaymentService {
 
     void approve(PaymentApproveRequest req);
 
+    PaymentSuccess getPaymentSuccessDetails(String orderId);
+
+
 }

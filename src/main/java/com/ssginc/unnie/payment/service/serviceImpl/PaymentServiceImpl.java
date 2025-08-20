@@ -63,4 +63,9 @@ public class PaymentServiceImpl implements PaymentService {
             throw new IllegalStateException("승인 처리 실패: " + e.getMessage());
         }
     }
+
+    @Override
+    public PaymentSuccess getPaymentSuccessDetails(String orderId) {
+        return paymentMapper.selectSuccessInfoByOrderId(orderId);
+    }
 }

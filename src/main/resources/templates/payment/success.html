@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+  <title>예약 완료</title>
+  <link rel="stylesheet" href="/css/reservation/reservation.css"> <style>
+  .result-container { text-align: center; padding: 60px 24px; }
+  .result-icon { font-size: 60px; margin-bottom: 24px; }
+  .result-container h2 { font-size: 24px; font-weight: 700; margin-bottom: 16px; }
+  .result-container p { color: #666; margin-bottom: 32px; }
+  .success-summary {
+    background: #f8f9fa; border-radius: 12px; padding: 24px;
+    text-align: left; margin: 32px auto; max-width: 400px;
+  }
+  .success-summary p { display: flex; justify-content: space-between; margin-bottom: 16px; }
+  .success-summary p:last-child { margin-bottom: 0; }
+  .button-group { display: flex; justify-content: center; gap: 12px; margin-top: 32px; }
+</style>
+</head>
+<body>
+<div class="wrapper" layout:fragment="content">
+  <div class="reservation-container result-container">
+    <div class="result-icon">🎉</div>
+    <h2>예약이 확정되었습니다!</h2>
+    <p>예약해주셔서 감사합니다. 매장에서 즐거운 시간을 보내세요.</p>
+
+    <div class="success-summary" th:if="${details}">
+      <p><strong>예약자명</strong> <span th:text="${details.memberName}"></span></p>
+      <p><strong>매장</strong> <span th:text="${details.shopName}"></span></p>
+      <p><strong>서비스</strong> <span th:text="${details.procedureName}"></span></p>
+      <p><strong>예약일시</strong> <span th:text="${#temporals.format(details.reservationTime, 'yyyy. MM. dd. HH:mm')}"></span></p>
+      <p><strong>주문번호</strong> <span th:text="${details.orderId}"></span></p>
+    </div>
+
+    <div class="button-group">
+      <a href="/" class="btn btn-ghost">홈으로 돌아가기</a>
+      <a href="/mypage/reservations" class="btn btn-primary">내 예약 목록 보기</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>

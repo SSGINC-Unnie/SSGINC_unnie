@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>결제 실패</title>
+    <link rel="stylesheet" href="/css/reservation/reservation.css">
+    <style>
+        .result-container { text-align: center; padding: 60px 24px; }
+        .result-icon { font-size: 60px; margin-bottom: 24px; }
+        .result-container h2 { font-size: 24px; font-weight: 700; margin-bottom: 16px; }
+        .result-container p { color: #666; margin-bottom: 32px; }
+        .button-group { display: flex; justify-content: center; gap: 12px; margin-top: 32px; }
+    </style>
+</head>
+<body>
+<div class="wrapper" layout:fragment="content">
+    <div class="reservation-container result-container">
+        <div class="result-icon">😥</div>
+        <h2>결제에 실패했습니다.</h2>
+        <p th:text="${errorMessage}">오류가 발생했습니다. 다시 시도해주세요.</p>
+        <div class="button-group">
+            <a href="/reservation" class="btn btn-primary">다시 시도하기</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

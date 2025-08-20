@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssginc.unnie.mypage.mapper.MyPageReservationMapper">
+
+    <select id="findReservationsByMemberId" resultType="com.ssginc.unnie.mypage.dto.reservation.ReservationResponse">
+        SELECT
+            r.reservation_id    AS reservationId,
+            s.shop_name         AS shopName,
+            p.procedure_name    AS procedureName,
+            d.designer_name     AS designerName,
+            r.start_time        AS reservationTime,
+            r.status,
+            p.procedure_price   AS price
+        FROM
+            reservation r
+                JOIN shop s ON r.shop_id = s.shop_id
+                JOIN `procedure` p ON r.procedure_id = p.procedure_id
+                LEFT JOIN designer d ON r.designer_id = d.designer_id
+        WHERE
+            r.member_id = #{memberId}
+        ORDER BY
+            r.start_time DESC
+    </select>
+
+</mapper>
