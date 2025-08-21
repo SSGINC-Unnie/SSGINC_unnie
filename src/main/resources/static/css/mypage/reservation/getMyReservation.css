@@ -13,12 +13,17 @@
     background: #fff;
     border: 1px solid #eaeaea;
     border-radius: 12px;
-    padding: 20px;
     margin-bottom: 16px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 20px;
 }
+
+.reservation-info {
+    flex-grow: 1;
+}
+
 .reservation-info h3 {
     font-size: 18px;
     font-weight: 700;
@@ -32,15 +37,13 @@
 .reservation-details {
     text-align: right;
 }
-.reservation-details .status {
-    font-size: 14px;
-    font-weight: 700;
-    padding: 4px 8px;
-    border-radius: 6px;
-    color: #fff;
-    margin-bottom: 8px;
-    display: inline-block;
+.reservation-details {
+    text-align: right;
+    flex-shrink: 0;
+    margin-left: 16px;
 }
+
+
 .reservation-details .status.confirmed { background-color: #FF3479; }
 .reservation-details .status.cancelled { background-color: #888; }
 .reservation-details .status.hold { background-color: #FFB800; }
@@ -57,10 +60,12 @@
 }
 
 .card-footer {
-    padding: 16px 20px;
     display: flex;
-    justify-content: flex-end;
+    gap: 8px;
+    flex-shrink: 0;
+    margin-left: 16px;
 }
+
 .btn {
     padding: 8px 16px;
     border: none;
@@ -69,6 +74,7 @@
     font-weight: 700;
     cursor: pointer;
     transition: background-color 0.2s;
+    white-space: nowrap;
 }
 
 .btn-primary:hover { background-color: #e02f70; }

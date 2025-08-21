@@ -12,4 +12,11 @@ public class MyPageReservationViewController {
     public String myReservationsPage() {
         return "mypage/reservation/getMyReservation";
     }
+
+    @GetMapping("/reservations/manage")
+    public String managerDashboardPage() {
+
+        return "mypage/reservation/reservationManage";
+    }
+
 }

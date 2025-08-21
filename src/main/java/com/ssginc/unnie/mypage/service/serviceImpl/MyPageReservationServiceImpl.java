@@ -1,10 +1,16 @@
 package com.ssginc.unnie.mypage.service.serviceImpl;
 
+import com.ssginc.unnie.common.exception.UnnieException;
 import com.ssginc.unnie.common.exception.UnnieMemberException;
 import com.ssginc.unnie.common.exception.UnnieReservationException;
+import com.ssginc.unnie.common.exception.UnnieShopException;
 import com.ssginc.unnie.common.util.ErrorCode;
+import com.ssginc.unnie.mypage.dto.reservation.DesignerScheduleDto;
+import com.ssginc.unnie.mypage.dto.reservation.MyPageReservationManagedto;
 import com.ssginc.unnie.mypage.dto.reservation.ReservationResponse;
+import com.ssginc.unnie.mypage.dto.shop.MyDesignerDetailResponse;
 import com.ssginc.unnie.mypage.mapper.MyPageReservationMapper;
+import com.ssginc.unnie.mypage.mapper.MyPageShopMapper;
 import com.ssginc.unnie.mypage.service.MyPageReservationService;
 import com.ssginc.unnie.reservation.dto.ReservationUpdateRequest;
 import lombok.RequiredArgsConstructor;
@@ -13,8 +19,11 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -23,6 +32,8 @@ import java.util.List;
 public class MyPageReservationServiceImpl implements MyPageReservationService {
 
     private final MyPageReservationMapper myPageReservationMapper;
+    private final MyPageShopMapper myPageShopMapper;
+
 
     @Override
     public List<ReservationResponse> getMyReservations(Long memberId) {
@@ -77,4 +88,38 @@ public class MyPageReservationServiceImpl implements MyPageReservationService {
         }
         return reservationId;
     }
+
+    @Override
+    @Transactional
+
+    public List<DesignerScheduleDto> getDailySchedule(Long memberId, int shopId, LocalDate date) {
+        int ownerCount = myPageShopMapper.checkShopOwnership(shopId, memberId);
+        if (ownerCount == 0) {
+            // 본인 소유의 매장이 아니면 권한 없음 에러 발생
+            throw new UnnieShopException(ErrorCode.SHOP_OWNERSHIP_REQUIRED);
+        }
+
+        String dateString = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        List<MyPageReservationManagedto> allReservations = myPageReservationMapper.findReservationsForDashboard(shopId, dateString);
+        List<MyDesignerDetailResponse> allDesigners = myPageShopMapper.findDesignersByShopId(shopId);
+
+        return allDesigners.stream().map(designer -> {
+            DesignerScheduleDto schedule = new DesignerScheduleDto();
+            schedule.setDesignerId(designer.getDesignerId());
+            schedule.setDesignerName(designer.getDesignerName());
+
+            List<MyPageReservationManagedto> designerReservations = allReservations.stream()
+                    .filter(res -> designer.getDesignerId().equals(res.getDesignerId()))
+                    .peek(res -> {
+                        if (res.getStartTime() != null) {
+                            res.setEndTime(res.getStartTime().plusMinutes(60));
+                        }
+                    })
+                    .collect(Collectors.toList());
+            schedule.setReservations(designerReservations);
+            return schedule;
+        }).collect(Collectors.toList());
+    }
+
+
 }

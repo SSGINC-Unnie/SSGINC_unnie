@@ -42,5 +42,26 @@
               )}
     </update>
 
+    <select id="findReservationsForDashboard" resultType="com.ssginc.unnie.mypage.dto.reservation.MyPageReservationManagedto">
+        SELECT
+            r.reservation_id    AS reservationId,
+            r.designer_id       AS designerId,
+            m.member_name       AS memberName,
+            p.procedure_name    AS procedureName,
+            r.start_time        AS startTime,
+            r.status
+        FROM
+            reservation r
+                JOIN member m ON r.member_id = m.member_id
+                JOIN `procedure` p ON r.procedure_id = p.procedure_id
+        WHERE
+            r.shop_id = #{shopId}
+          AND DATE(r.start_time) = #{searchDate}
+          AND r.status = 'CONFIRMED' -- 확정된 예약만 조회
+        ORDER BY
+            r.designer_id, r.start_time
+    </select>
+
+
 
 </mapper>

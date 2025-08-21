@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>예약 관리 대시보드</title>
+    <link rel="stylesheet" href="/css/mypage/reservation/reservationManage.css">
+</head>
+<body>
+<div class="wrapper" layout:fragment="content">
+    <div class="dashboard-container">
+        <header class="dashboard-header">
+            <h1>📅 예약 현황 대시보드</h1>
+            <div class="controls">
+                <select id="shop-selector" class="shop-selector">
+                    <option>매장 로딩 중...</option>
+                </select>
+                <input type="date" id="date-picker" class="date-picker">
+            </div>
+        </header>
+
+        <main id="timeline-wrapper" class="timeline-wrapper">
+            <div class="timeline-header"></div>
+            <div id="timeline-body" class="timeline-body">
+                <div class="loader"></div>
+            </div>
+        </main>
+    </div>
+
+    <div id="reservation-modal" class="modal-overlay" style="display:none;">
+        <div class="modal-content">
+            <h2>예약 상세 정보</h2>
+            <hr>
+            <div id="modal-details-content"></div>
+            <div class="modal-actions">
+                <button id="modal-close-btn" class="btn btn-ghost">닫기</button>
+            </div>
+        </div>
+    </div>
+    <div layout:fragment="scripts">
+        <script src="/js/mypage/reservation/reservationManage.js"></script>
+    </div>
+</div>
+
+
+</body>
+</html>

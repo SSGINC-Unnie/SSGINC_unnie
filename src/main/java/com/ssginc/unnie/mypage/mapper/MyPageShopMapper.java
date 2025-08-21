@@ -1,9 +1,11 @@
 package com.ssginc.unnie.mypage.mapper;
 
+import com.ssginc.unnie.mypage.dto.reservation.DesignerScheduleDto;
 import com.ssginc.unnie.mypage.dto.shop.*;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Mapper
@@ -79,6 +81,7 @@ public interface MyPageShopMapper {
 
     List<String> getShopImages(int shopId);
 
+    List<ShopResponse> findAllShopsByMemberId(@Param("memberId") Long memberId);
 
 
 

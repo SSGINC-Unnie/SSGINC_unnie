@@ -1,9 +1,6 @@
 package com.ssginc.unnie.mypage.service.serviceImpl;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.PageInfo;
 import com.ssginc.unnie.common.exception.UnnieShopException;
@@ -525,6 +522,11 @@ public class MyPageShopServiceImpl implements MyPageShopService {
         shopDetail.setShopImages(images);
         return shopDetail;
 
+    }
+
+    @Override
+    public List<ShopResponse> findAllShopsByMemberId(Long memberId) {
+        return myPageShopMapper.findAllShopsByMemberId(memberId);
     }
 
 

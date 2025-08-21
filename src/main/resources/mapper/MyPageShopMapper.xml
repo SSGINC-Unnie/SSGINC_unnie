@@ -248,4 +248,16 @@
         WHERE media_target_id = #{shopId}
           AND media_target_type = 'SHOP'
     </select>
+
+    <select id="findAllShopsByMemberId" parameterType="long" resultType="com.ssginc.unnie.mypage.dto.shop.ShopResponse">
+        SELECT
+            shop_id,
+            shop_name
+        FROM
+            shop
+        WHERE
+            shop_member_id = #{memberId} AND shop_status = 1
+        ORDER BY
+            shop_name ASC
+    </select>
 </mapper>

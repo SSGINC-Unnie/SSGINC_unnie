@@ -34,6 +34,9 @@ public interface MyPageShopService {
     Integer deleteShop(int shopId, long currentMemberId);
     Integer deleteDesigner(int designerId, long currentMemberId);
     Integer deleteProcedure(int procedureId, long currentMemberId);
+
+    List<ShopResponse> findAllShopsByMemberId(Long memberId);
+
     boolean isValidBusinessLicense(BusinessVerificationRequest request) throws URISyntaxException;
     BusinessVerificationRequest convertFromShopRequest(String shopRepresentationName,
                                                        String shopBusinessNumber,
