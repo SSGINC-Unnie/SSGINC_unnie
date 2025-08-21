@@ -69,7 +69,6 @@ public class PaymentServiceImpl implements PaymentService {
     @Transactional
     public void approve(PaymentApproveRequest req) {
 
-        // 1. 결제 의도를 'PAID' 상태로 업데이트
         int upd = paymentMapper.updateIntentAsPaid(req.getOrderId(), req.getProviderTid(), req.getProvider());
         if (upd == 0) {
             throw new UnniePaymentException(ErrorCode.PAYMENT_INTENT_NOT_FOUND);
@@ -86,17 +85,12 @@ public class PaymentServiceImpl implements PaymentService {
             paymentMapper.insertPaymentEvent(intentId, "APPROVE", payload);
         } catch (JsonProcessingException e) {
             log.error("Failed to serialize payload for orderId: {}", req.getOrderId(), e);
-            // Checked Exception을 우리가 만든 Unchecked Exception으로 변환하여 던짐
             throw new UnniePaymentException(ErrorCode.PAYLOAD_SERIALIZE_FAILED, e);
         }
 
-        // 3. 예약 상태를 'CONFIRMED'로 최종 확정
         Long reservationId = paymentMapper.selectReservationIdByOrderId(req.getOrderId());
-        int confirmResult = reservationMapper.confirmReservationPaid(reservationId, intentId);
+        reservationMapper.confirmReservationPaid(reservationId, intentId);
 
-        if (confirmResult == 0) {
-            throw new UnniePaymentException(ErrorCode.PAYMENT_CONFIRMATION_FAILED);
-        }
     }
 
     @Override

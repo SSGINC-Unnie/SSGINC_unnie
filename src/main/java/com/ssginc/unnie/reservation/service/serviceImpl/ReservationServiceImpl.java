@@ -6,6 +6,7 @@ import com.ssginc.unnie.common.util.ErrorCode;
 import com.ssginc.unnie.member.mapper.MemberMapper;
 import com.ssginc.unnie.reservation.dto.ReservationHoldRequest;
 import com.ssginc.unnie.reservation.dto.ReservationIdRow;
+import com.ssginc.unnie.reservation.dto.ReservationUpdateRequest;
 import com.ssginc.unnie.reservation.mapper.ReservationMapper;
 import com.ssginc.unnie.reservation.service.ReservationService;
 import lombok.RequiredArgsConstructor;
@@ -77,5 +78,31 @@ public class ReservationServiceImpl implements ReservationService {
         }
 
         return memberName;
+    }
+
+
+    @Override
+    @Transactional
+    public Long updateReservationDateTime(Long reservationId, Long memberId, ReservationUpdateRequest request) {
+        try {
+            reservationMapper.updateReservationDateTime(
+                    reservationId,
+                    memberId,
+                    request.getNewStartTime()
+            );
+        } catch (DataAccessException e) {
+            String msg = e.getMostSpecificCause() != null ? e.getMostSpecificCause().getMessage() : e.getMessage();
+            log.error("예약 변경 실패. reservationId={}, memberId={}, msg={}", reservationId, memberId, msg, e);
+
+            if (msg != null) {
+                if (msg.contains("Slot not available")) {
+                    throw new UnnieReservationException(ErrorCode.RESERVATION_SLOT_UNAVAILABLE);
+                }
+                if (msg.contains("Reservation not modifiable")) {
+                    throw new UnnieReservationException(ErrorCode.RESERVATION_NOT_MODIFIABLE);
+                }
+            }
+        }
+        return reservationId;
     }
 }

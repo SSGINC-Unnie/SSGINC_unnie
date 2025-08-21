@@ -12,6 +12,7 @@
             d.designer_name     AS designerName,
             r.start_time        AS reservationTime,
             r.status,
+            d.designer_id AS designerId,
             p.procedure_price   AS price
         FROM
             reservation r

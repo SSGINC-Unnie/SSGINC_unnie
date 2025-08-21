@@ -13,7 +13,8 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.List;
 
-@Slf4j // [추가] 로그 사용을 위해 추가
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MyPageReservationServiceImpl implements MyPageReservationService {
@@ -22,9 +23,7 @@ public class MyPageReservationServiceImpl implements MyPageReservationService {
 
     @Override
     public List<ReservationResponse> getMyReservations(Long memberId) {
-
         if (memberId == null || memberId <= 0) {
-            log.warn("유효하지 않은 memberId로 예약 조회 시도: {}", memberId);
             throw new UnnieMemberException(ErrorCode.MEMBER_NOT_FOUND);
         }
         try {

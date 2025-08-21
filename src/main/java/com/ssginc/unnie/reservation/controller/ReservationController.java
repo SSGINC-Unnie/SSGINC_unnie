@@ -2,10 +2,10 @@ package com.ssginc.unnie.reservation.controller;
 
 import com.ssginc.unnie.common.config.MemberPrincipal;
 import com.ssginc.unnie.common.util.ResponseDto;
-import com.ssginc.unnie.member.mapper.MemberMapper; // MemberMapper import
-import com.ssginc.unnie.member.vo.Member; // Member VO import
 import com.ssginc.unnie.reservation.dto.ReservationHoldRequest;
+import com.ssginc.unnie.reservation.dto.ReservationUpdateRequest;
 import com.ssginc.unnie.reservation.service.ReservationService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -68,5 +68,18 @@ public class ReservationController {
         return ResponseEntity.ok(
                 new ResponseDto<>(HttpStatus.OK.value(), "예약된 시간 조회 성공", bookedTimes)
         );
+    }
+
+    @PatchMapping("/{reservationId}")
+    public ResponseEntity<Void> updateReservationDateTime(
+            @PathVariable Long reservationId,
+            @AuthenticationPrincipal MemberPrincipal p,
+            @Valid @RequestBody ReservationUpdateRequest request) {
+
+        Long memberId = p.getMember().getMemberId();
+
+        reservationService.updateReservationDateTime(reservationId, memberId, request);
+
+        return ResponseEntity.ok().build();
     }
 }
