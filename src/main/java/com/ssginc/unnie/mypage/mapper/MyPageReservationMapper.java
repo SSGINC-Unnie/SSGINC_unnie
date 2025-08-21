@@ -1,5 +1,6 @@
 package com.ssginc.unnie.mypage.mapper;
 
+import com.ssginc.unnie.mypage.dto.reservation.MyPageReservationManagedto;
 import com.ssginc.unnie.mypage.dto.reservation.ReservationResponse;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -22,4 +23,7 @@ public interface MyPageReservationMapper {
                 @Param("memberId") Long memberId,
                 @Param("newStartTime") LocalDateTime newStartTime
         );
+
+        List<MyPageReservationManagedto> findReservationsForDashboard(@Param("shopId") int shopId, @Param("searchDate") String searchDate);
+
 }

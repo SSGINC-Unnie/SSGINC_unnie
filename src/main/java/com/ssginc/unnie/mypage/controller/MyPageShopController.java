@@ -230,6 +230,17 @@ public class MyPageShopController {
         );
     }
 
+    @GetMapping("/shops/manager")
+    public ResponseEntity<ResponseDto<List<ShopResponse>>> getManagerShops(
+            @AuthenticationPrincipal MemberPrincipal principal) {
+
+        List<ShopResponse> shops = myPageShopService.findAllShopsByMemberId(principal.getMemberId());
+
+        return ResponseEntity.ok(
+                new ResponseDto<>(HttpStatus.OK.value(), "관리자 매장 목록 조회 성공", shops)
+        );
+    }
+
 
 
 

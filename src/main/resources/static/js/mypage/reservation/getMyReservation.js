@@ -15,10 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const fetchMyReservations = async () => {
         try {
             const response = await fetch('/api/mypage/reservations');
-            if (!response.ok) {
-                if(response.status === 401) { window.location.href = '/login'; return; }
-                throw new Error('예약 목록을 불러오는데 실패했습니다.');
-            }
             const result = await response.json();
             renderReservations(result.data);
         } catch (error) {
@@ -60,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }[res.status] || res.status;
 
             const isChangeable = res.status === 'CONFIRMED' && (startTime.getTime() - new Date().getTime()) > 24 * 60 * 60 * 1000;
-            const isCancellable = isChangeable; // 취소 조건도 변경 조건과 동일
+            const isCancellable = isChangeable;
 
             card.innerHTML = `
             <div class="reservation-info">
@@ -72,16 +68,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="status ${statusClass}">${statusText}</div>
                 <div class="price">${res.price.toLocaleString()}원</div>
             </div>
-            <div class="card-footer">
-                ${isChangeable ? `<button class="btn btn-primary change-reservation-btn"
-                    data-reservation-id="${res.reservationId}"
-                    data-designer-id="${res.designerId}"
-                    data-start-time="${res.reservationTime}">
-                    예약 변경
-                </button>` : ''}
-
-                ${isCancellable ? `<button class="btn btn-ghost cancel-reservation-btn" data-reservation-id="${res.reservationId}">예약 취소</button>` : ''}
-            </div>
+            
+            ${isChangeable || isCancellable ? `
+                <div class="card-footer">
+                    ${isChangeable ? `<button class="btn btn-primary change-reservation-btn"
+                        data-reservation-id="${res.reservationId}"
+                        data-designer-id="${res.designerId}"
+                        data-start-time="${res.reservationTime}">
+                        예약 변경
+                    </button>` : ''}
+                    ${isCancellable ? `<button class="btn btn-ghost cancel-reservation-btn" data-reservation-id="${res.reservationId}">예약 취소</button>` : ''}
+                </div>
+            ` : ''}
         `;
             reservationListContainer.appendChild(card);
         });

@@ -84,6 +84,7 @@ public enum ErrorCode {
     BOOKMARK_INSERT_FAILED(500,"SH037","찜 등록에 실패했습니다."),
     SHOP_REFUSE_FAILED(500,"SH038","승인 거절에 실패했습니다."),
     MEMBER_ROLE_UPDATE_FAILED(500,"SH039","회원 등급 변경에 실패했습니다"),
+    SHOP_OWNERSHIP_REQUIRED(403, "SH040", "본인 소유의 업체만 접근 가능합니다."),
 
 
     // 관리자(업체)

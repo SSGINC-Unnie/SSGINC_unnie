@@ -65,6 +65,14 @@
                         <span class="arrow">&gt;</span>
                     </a>
                 </li>
+                <li class="menu-item" sec:authorize="hasRole('MANAGER')">
+                    <a href="/mypage/reservations/manage">
+                        <span class="menu-text">내 업체 관리</span>
+                        <span class="arrow">&gt;</span>
+                    </a>
+                    <ul class="submenu" id="shop-submenu" style="display: none;">
+                    </ul>
+                </li>
             </ul>
         </div>
     </div>

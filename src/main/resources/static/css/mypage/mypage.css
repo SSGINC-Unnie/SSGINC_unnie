@@ -143,3 +143,41 @@
     color: #555;
     font-size: 18px;
 }
+
+/* 드롭다운 메뉴 스타일 */
+.menu-item.has-dropdown > a {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.menu-item .arrow {
+    transition: transform 0.3s ease;
+}
+
+/* 드롭다운이 열렸을 때 화살표 아이콘 회전 */
+.menu-item.open .arrow {
+    transform: rotate(90deg);
+}
+
+.submenu {
+    list-style: none;
+    padding-left: 20px; /* 들여쓰기 */
+    margin-top: 10px;
+    border-left: 2px solid #f0f0f0;
+}
+
+.submenu li {
+    padding: 8px 0;
+}
+
+.submenu a {
+    text-decoration: none;
+    color: #555; /* 서브메뉴 폰트 색상 */
+    font-size: 15px;
+    transition: color 0.2s;
+}
+
+.submenu a:hover {
+    color: #ff3479; /* 호버 시 시그니처 색상 */
+}

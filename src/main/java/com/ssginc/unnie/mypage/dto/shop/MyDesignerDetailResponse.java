@@ -6,7 +6,7 @@ import java.util.List;
 
 @Data
 public class MyDesignerDetailResponse {
-    private int designerId;
+    private Long designerId;
     private String designerName;
     private String designerIntroduction;
     private String designerThumbnail;
