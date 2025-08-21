@@ -12,7 +12,5 @@ public interface ReservationService {
 
     String getReserverNameByMemberId(Long memberId);
 
-    Long updateReservationDateTime(Long reservationId, Long memberId, ReservationUpdateRequest request);
-
 
 }

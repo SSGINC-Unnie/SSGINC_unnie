@@ -45,12 +45,5 @@
             status IN ('CONFIRMED', 'HOLD', 'PENDING')
     </select>
 
-    <update id="updateReservationDateTime" statementType="CALLABLE">
-        {CALL update_reservation_datetime(
-                #{reservationId, mode=IN, jdbcType=BIGINT},
-                #{memberId, mode=IN, jdbcType=BIGINT},
-                #{newStartTime, mode=IN, jdbcType=TIMESTAMP}
-              )}
-    </update>
 
 </mapper>

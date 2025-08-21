@@ -203,6 +203,7 @@ public enum ErrorCode {
     RESERVATION_SLOT_UNAVAILABLE(409, "RS005", "이미 예약되었거나 선택할 수 없는 시간입니다."),
     MY_RESERVATIONS_FETCH_FAILED(500, "RS006", "내 예약 목록을 불러오는 중 오류가 발생했습니다."),
     RESERVATION_NOT_MODIFIABLE(403, "RS007", "변경할 수 없는 예약입니다 (24시간 이내 또는 이미 처리된 예약)."),
+    RESERVATION_CANCEL_FAILED(500, "RS008", "예약 취소 중 오류가 발생했습니다."),
 
 
     // =================================== 공통 에러 =====================================================

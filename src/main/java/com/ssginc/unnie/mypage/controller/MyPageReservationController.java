@@ -22,7 +22,6 @@ import java.util.Map;
 public class MyPageReservationController {
 
     private final MyPageReservationService myPageReservationService;
-    private final ReservationService reservationService;
 
     @GetMapping
     public ResponseEntity<ResponseDto<List<ReservationResponse>>> getMyReservations(
@@ -39,12 +38,29 @@ public class MyPageReservationController {
             @AuthenticationPrincipal MemberPrincipal principal,
             @Valid @RequestBody ReservationUpdateRequest request) {
         Long memberId = principal.getMemberId();
-        Long updatedReservationId = reservationService.updateReservationDateTime(reservationId, memberId, request);
+        Long updatedReservationId = myPageReservationService.updateReservationDateTime(reservationId, memberId, request);
         return ResponseEntity.ok(
                 new ResponseDto<>(
                         HttpStatus.OK.value(),
                         "예약이 성공적으로 변경되었습니다.",
                         Map.of("reservationId", updatedReservationId)
+                )
+        );
+    }
+
+    @DeleteMapping("/{reservationId}")
+    public ResponseEntity<ResponseDto<Object>> cancelReservation(
+            @PathVariable Long reservationId,
+            @AuthenticationPrincipal MemberPrincipal userDetails) {
+
+        Long memberId = userDetails.getMemberId();
+        Long deletedReservationId = myPageReservationService.cancelReservation(reservationId, memberId);
+
+        return ResponseEntity.ok(
+                new ResponseDto<>(
+                        HttpStatus.OK.value(),
+                        "예약이 성공적으로 변경되었습니다.",
+                        Map.of("reservationId", deletedReservationId)
                 )
         );
     }

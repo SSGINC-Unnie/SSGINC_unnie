@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
             card.className = 'reservation-card';
             card.dataset.reservationId = res.reservationId;
 
-            const startTime = new Date(res.reservationTime); // [수정] 필드명 reservationTime 사용
+            const startTime = new Date(res.reservationTime);
             const formattedTime = startTime.toLocaleString('ko-KR', {
                 year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
             });
@@ -60,26 +60,29 @@ document.addEventListener('DOMContentLoaded', () => {
             }[res.status] || res.status;
 
             const isChangeable = res.status === 'CONFIRMED' && (startTime.getTime() - new Date().getTime()) > 24 * 60 * 60 * 1000;
+            const isCancellable = isChangeable; // 취소 조건도 변경 조건과 동일
 
             card.innerHTML = `
-                <div class="reservation-info">
-                    <h3>${res.shopName}</h3>
-                    <p>${res.procedureName} / ${res.designerName}</p>
-                    <p class="reservation-time-display">${formattedTime}</p>
-                </div>
-                <div class="reservation-details">
-                    <div class="status ${statusClass}">${statusText}</div>
-                    <div class="price">${res.price.toLocaleString()}원</div>
-                </div>
-                <div class="card-footer">
-                    ${isChangeable ? `<button class="btn btn-primary change-reservation-btn"
-                        data-reservation-id="${res.reservationId}"
-                        data-designer-id="${res.designerId}"
-                        data-start-time="${res.reservationTime}">
-                        예약 변경
-                    </button>` : ''}
-                </div>
-            `;
+            <div class="reservation-info">
+                <h3>${res.shopName}</h3>
+                <p>${res.procedureName} / ${res.designerName}</p>
+                <p class="reservation-time-display">${formattedTime}</p>
+            </div>
+            <div class="reservation-details">
+                <div class="status ${statusClass}">${statusText}</div>
+                <div class="price">${res.price.toLocaleString()}원</div>
+            </div>
+            <div class="card-footer">
+                ${isChangeable ? `<button class="btn btn-primary change-reservation-btn"
+                    data-reservation-id="${res.reservationId}"
+                    data-designer-id="${res.designerId}"
+                    data-start-time="${res.reservationTime}">
+                    예약 변경
+                </button>` : ''}
+
+                ${isCancellable ? `<button class="btn btn-ghost cancel-reservation-btn" data-reservation-id="${res.reservationId}">예약 취소</button>` : ''}
+            </div>
+        `;
             reservationListContainer.appendChild(card);
         });
     };
@@ -96,13 +99,41 @@ document.addEventListener('DOMContentLoaded', () => {
     const nextMonthBtn = document.getElementById('modal-next-month-btn');
 
     // '예약 변경' 버튼 클릭 시 모달 열기 (이벤트 위임)
-    reservationListContainer.addEventListener('click', (e) => {
+    reservationListContainer.addEventListener('click', async(e) => {
         if (e.target.classList.contains('change-reservation-btn')) {
             const button = e.target;
             modalState.reservationId = button.dataset.reservationId;
             modalState.designerId = button.dataset.designerId;
             modalCurrentTime.textContent = new Date(button.dataset.startTime).toLocaleString('ko-KR');
             openModal();
+        }
+        if (e.target.classList.contains('cancel-reservation-btn')) {
+            const button = e.target;
+            const reservationId = button.dataset.reservationId;
+
+            if (confirm('정말로 예약을 취소하시겠습니까?')) {
+                try {
+                    const response = await fetch(`/api/mypage/reservations/${reservationId}`, {
+                        method: 'DELETE'
+                    });
+
+                    if (response.ok) {
+                        alert('예약이 취소되었습니다.');
+                        const card = button.closest('.reservation-card');
+                        if (card) {
+                            card.querySelector('.status').textContent = '예약취소';
+                            card.querySelector('.status').className = 'status cancelled';
+                            card.querySelector('.card-footer').innerHTML = '';
+                        }
+                    } else {
+                        const errorData = await response.json();
+                        alert(`취소 실패: ${errorData.message}`);
+                    }
+                } catch (error) {
+                    console.error('Reservation cancellation error:', error);
+                    alert('예약 취소 중 오류가 발생했습니다.');
+                }
+            }
         }
     });
 

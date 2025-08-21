@@ -26,7 +26,6 @@
             </div>
         </div>
 
-        <!-- 관리 메뉴 -->
         <div class="management-nav">
             <ul class="dropdown-menu">
                 <li class="menu-item">
@@ -35,10 +34,17 @@
                         <span class="arrow">&gt;</span>
                     </a>
                 </li>
+
+                <li class="menu-item">
+                    <a href="/mypage/reservations">
+                        <span class="menu-text">내 예약 관리</span>
+                        <span class="arrow">&gt;</span>
+                    </a>
+                </li>
                 <li class="menu-item">
                     <a href="/mypage/community/posts">
-                         <span class="menu-text">나의 게시글</span>
-                         <span class="arrow">&gt;</span>
+                        <span class="menu-text">나의 게시글</span>
+                        <span class="arrow">&gt;</span>
                     </a>
                 </li>
                 <li class="menu-item">
@@ -53,14 +59,13 @@
                         <span class="arrow">&gt;</span>
                     </a>
                 </li>
-                <!--  MANAGER 권한이 있는 경우만 표시 -->
                 <li class="menu-item" sec:authorize="hasRole('MANAGER')">
                     <a href="/mypage/myshop">
                         <span class="menu-text">내 업체 조회 • 수정</span>
                         <span class="arrow">&gt;</span>
                     </a>
                 </li>
-             </ul>
+            </ul>
         </div>
     </div>
 </div>
