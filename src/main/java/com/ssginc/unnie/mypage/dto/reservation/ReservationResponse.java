@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 @Data
 public class ReservationResponse {
     private Long reservationId;
+    private Long designerId;
     private String shopName;
     private String procedureName;
     private String designerName;

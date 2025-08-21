@@ -3,8 +3,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const state = {
         currentStep: 1,
         shopId: null,
-        // memberId는 이제 백엔드에서 처리하므로 삭제합니다.
-        // memberName은 API로 받아오므로 초기값만 설정합니다.
         memberName: '',
         bookingData: {
             service: null,

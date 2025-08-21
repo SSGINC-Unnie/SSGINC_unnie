@@ -29,4 +29,11 @@ public interface ReservationMapper {
             @Param("designerId") int designerId,
             @Param("date") String date
     );
+
+    void updateReservationDateTime(
+            @Param("reservationId") Long reservationId,
+            @Param("memberId") Long memberId,
+            @Param("newStartTime") LocalDateTime newStartTime
+    );
+
 }

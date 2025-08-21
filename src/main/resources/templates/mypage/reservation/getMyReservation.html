@@ -13,13 +13,43 @@
     <div id="reservation-list-container">
       <div class="loader"></div>
     </div>
-  </div>
 
+    <div id="change-modal" class="modal-overlay" style="display:none;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>🗓️ 예약 변경</h2>
+          <p><strong>현재 예약:</strong> <span id="modal-current-time"></span></p>
+          <hr>
+        </div>
+        <div class="modal-body">
+          <div class="calendar-container">
+            <div class="calendar-header">
+              <button id="modal-prev-month-btn" class="calendar-nav-btn">‹</button>
+              <h3 id="modal-current-month-year" class="calendar-title"></h3>
+              <button id="modal-next-month-btn" class="calendar-nav-btn">›</button>
+            </div>
+            <div class="calendar-week-headers">
+              <div class="week-header">일</div><div class="week-header">월</div><div class="week-header">화</div>
+              <div class="week-header">수</div><div class="week-header">목</div><div class="week-header">금</div>
+              <div class="week-header">토</div>
+            </div>
+            <div id="modal-calendar-dates" class="calendar-grid"></div>
+          </div>
+          <div id="modal-time-slots-container" class="time-container" style="display:none;">
+            <h3 id="modal-selected-date-title" class="section-title">시간 선택</h3>
+            <div id="modal-time-slot-list" class="time-grid"></div>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button id="modal-cancel-btn" class="btn btn-ghost">취소</button>
+          <button id="modal-confirm-btn" class="btn btn-primary" disabled>변경 완료</button>
+        </div>
+      </div>
+    </div>
+  </div>
   <div layout:fragment="scripts">
-    <script src="/js/mypage/reservation/getMyReservation.js"></script>
-  </div>
+  <script src="/js/mypage/reservation/getMyReservation.js"></script>
 </div>
-
-
+</div>
 </body>
 </html>
