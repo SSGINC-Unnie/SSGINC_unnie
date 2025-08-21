@@ -34,13 +34,21 @@
     color: #666;
     margin: 4px 0;
 }
-.reservation-details {
-    text-align: right;
-}
+
 .reservation-details {
     text-align: right;
     flex-shrink: 0;
     margin-left: 16px;
+}
+
+.reservation-details .status {
+    display: inline-block;
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 700;
+    color: white;
+    border-radius: 12px;
+    margin-bottom: 8px;
 }
 
 
