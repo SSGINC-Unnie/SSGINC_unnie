@@ -25,4 +25,22 @@
             r.start_time DESC
     </select>
 
+    <update id="updateReservationDateTime" statementType="CALLABLE">
+        {CALL update_reservation_datetime(
+                #{reservationId, mode=IN, jdbcType=BIGINT},
+                #{memberId, mode=IN, jdbcType=BIGINT},
+                #{newStartTime, mode=IN, jdbcType=TIMESTAMP}
+              )}
+    </update>
+
+
+
+    <update id="cancelReservationByUser" statementType="CALLABLE">
+        {CALL cancel_reservation_by_user(
+                #{reservationId, mode=IN, jdbcType=BIGINT},
+                #{memberId, mode=IN, jdbcType=BIGINT}
+              )}
+    </update>
+
+
 </mapper>

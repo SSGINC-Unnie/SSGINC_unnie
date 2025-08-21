@@ -2,6 +2,7 @@ package com.ssginc.unnie.reservation.controller;
 
 import com.ssginc.unnie.common.config.MemberPrincipal;
 import com.ssginc.unnie.common.util.ResponseDto;
+import com.ssginc.unnie.mypage.service.MyPageReservationService;
 import com.ssginc.unnie.reservation.dto.ReservationHoldRequest;
 import com.ssginc.unnie.reservation.dto.ReservationUpdateRequest;
 import com.ssginc.unnie.reservation.service.ReservationService;
@@ -24,6 +25,7 @@ import java.util.Map;
 public class ReservationController {
 
     private final ReservationService reservationService;
+    private final MyPageReservationService myPageReservationService;
 
     /**
      * 예약 홀드(결제 대기) 생성
@@ -78,7 +80,7 @@ public class ReservationController {
 
         Long memberId = p.getMember().getMemberId();
 
-        reservationService.updateReservationDateTime(reservationId, memberId, request);
+        myPageReservationService.updateReservationDateTime(reservationId, memberId, request);
 
         return ResponseEntity.ok().build();
     }
