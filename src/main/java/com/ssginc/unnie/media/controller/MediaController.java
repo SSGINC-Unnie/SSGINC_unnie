@@ -32,11 +32,15 @@ public class MediaController {
      * @return http 응답 객체
      */
     @PostMapping("upload")
-    public ResponseEntity<ResponseDto<Map<String, String>>> uploadFile (@RequestParam("file") MultipartFile file,
-                                                                        @RequestParam("targetType") String targetType,
-                                                                        @RequestParam("targetId") String targetId) {
+    public ResponseEntity<ResponseDto<Map<String, String>>> uploadFile(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam(value = "targetType", required = false) String targetType,
+            @RequestParam(value = "targetId", required = false) Long targetId) {
+
         log.info("파일 업로드 컨트롤러 실행");
-        String urn = mediaService.uploadFile(file, targetType, Long.parseLong(targetId));
+
+        String urn = mediaService.uploadFile(file, targetType, targetId);
+
         return ResponseEntity.ok(
                 new ResponseDto<>(HttpStatus.CREATED.value(), "파일 업로드에 성공했습니다.", Map.of("fileUrn", urn))
         );

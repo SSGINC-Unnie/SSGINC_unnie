@@ -3,6 +3,7 @@ package com.ssginc.unnie.community.mapper;
 import com.ssginc.unnie.community.dto.board.*;
 import com.ssginc.unnie.mypage.dto.community.MyPageBoardsResponse;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -11,7 +12,7 @@ import java.util.Map;
 public interface BoardMapper {
     int insertBoard(BoardCreateRequest boardRequest);
 
-    BoardDetailGetResponse selectBoard(String boardId);
+    BoardDetailGetResponse selectBoard(@Param("boardId") String boardId, @Param("memberId") Long memberId);
 
     int updateBoard(BoardUpdateRequest boardUpdateRequest);
 

@@ -7,7 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 public interface MediaService {
-    String uploadFile(MultipartFile file, String targetType, long targetId);
+    String uploadFile(MultipartFile file, String targetType, Long targetId);
 
     @Transactional(rollbackFor = Exception.class)
     void deleteFile(String fileUrn);

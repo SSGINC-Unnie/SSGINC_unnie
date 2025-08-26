@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Slf4j
@@ -32,6 +33,26 @@ public class BoardViewController {
         model.addAttribute("searchType", SearchType.values());
 
         return "community/boardList";
+    }
+
+    // 새 글 작성 페이지
+    @GetMapping("/write")
+    public String getBoardWriteView() {
+        return "community/boardWrite";
+    }
+
+    // 게시글 상세 조회 페이지
+    @GetMapping("/{boardId}")
+    public String getBoardDetailView(@PathVariable String boardId, Model model) {
+        model.addAttribute("boardId", boardId);
+        return "community/boardDetail";
+    }
+
+    // 게시글 수정 페이지
+    @GetMapping("/{boardId}/edit")
+    public String getBoardEditView(@PathVariable String boardId, Model model) {
+        model.addAttribute("boardId", boardId);
+        return "community/boardEdit";
     }
 
 }

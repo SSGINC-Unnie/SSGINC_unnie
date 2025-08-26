@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<head>
+  <meta charset="UTF-8">
+  <title>새 글 작성</title>
+  <link rel="stylesheet" th:href="@{/css/board/boardForm.css}">
+</head>
+<body>
+<div layout:fragment="content" id="main">
+  <form id="board-form">
+    <h2>게시글 수정</h2>
+    <div class="form-group">
+      <label for="category">카테고리</label>
+      <select id="category" name="boardCategory" required>
+        <option value="공지 있어!">공지</option>
+        <option value="여기 할인어때?">할인</option>
+        <option value="나 뭐가 어울려?">스타일</option>
+        <option value="이 꿀팁 들어봤어?">꿀팁</option>
+        <option value="이템 어때?">아이템</option>
+        <option value="자유게시판">자유</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="title">제목</label>
+      <input type="text" id="title" name="boardTitle" required>
+    </div>
+    <div class="form-group">
+      <label for="content">내용</label>
+      <textarea id="content" name="boardContents" rows="15" required></textarea>
+    </div>
+    <div class="form-actions">
+      <button type="button" id="cancel-button">취소</button>
+      <button type="submit">작성 완료</button>
+    </div>
+  </form>
+</div>
+
+<div layout:fragment="scripts">
+  <script th:src="@{/js/board/boardWrite.js}"></script>
+</div>
+</body>
+</html>

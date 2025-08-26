@@ -33,51 +33,49 @@ public class MediaServiceImpl implements MediaService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public String uploadFile(MultipartFile file, String targetType, long targetId) {
-        // 1) Enum 검증
-        MediaTargetType type;
-        try {
-            type = MediaTargetType.valueOf(targetType.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new UnnieMediaException(ErrorCode.INVALID_FILE_TARGET_TYPE);
-        }
+    public String uploadFile(MultipartFile file, String targetType, Long targetId) {
 
-        // 2) 파일 유효성 검증
+        // --- 1. 파일 저장 로직 (항상 실행) ---
         fileValidator.validate(file);
 
-        // 3) 파일명 생성
         String fileOriginalName = file.getOriginalFilename();
         String newFileName = fileNameGenerator.generateFileName(fileOriginalName);
 
-        // 4) 실제 물리 경로 (uploadPath + 새 파일명)
         String physicalPath = uploadPath + newFileName;
 
-        // 5) 파일 저장
         File destination = new File(physicalPath);
         log.info("fileName = {}, newFileName = {}, destination = {}",
                 fileOriginalName, newFileName, destination.getAbsolutePath());
 
         try {
-            if (!destination.exists()) {
-                destination.mkdirs(); // 상위 디렉토리가 없으면 생성
+            File parentDir = destination.getParentFile();
+            if (parentDir != null && !parentDir.exists()) {
+                parentDir.mkdirs();
             }
             file.transferTo(destination);
-
         } catch (IOException e) {
             throw new UnnieMediaException(ErrorCode.FILE_INTERNAL_SERVER_ERROR, e);
         }
 
         String fileUrn = "/upload/" + newFileName;
 
-        // 6) DB insert (로컬 경로 저장)
-        MediaRequest mediaRequest = MediaRequest.builder()
-                .targetType(targetType)
-                .targetId(targetId)
-                .fileUrn(fileUrn)
-                .fileOriginalName(fileOriginalName)
-                .newFileName(newFileName)
-                .build();
-        mediaMapper.insert(mediaRequest);
+
+        if (targetId != null && targetType != null) {
+            try {
+                MediaTargetType.valueOf(targetType.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                throw new UnnieMediaException(ErrorCode.INVALID_FILE_TARGET_TYPE);
+            }
+
+            MediaRequest mediaRequest = MediaRequest.builder()
+                    .targetType(targetType)
+                    .targetId(targetId)
+                    .fileUrn(fileUrn)
+                    .fileOriginalName(fileOriginalName)
+                    .newFileName(newFileName)
+                    .build();
+            mediaMapper.insert(mediaRequest);
+        }
 
         return fileUrn;
     }

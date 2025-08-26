@@ -1,0 +1,95 @@
+#main {
+    display: flex;
+    justify-content: center;
+    padding: 20px 0;
+    background-color: #f5f7f8;
+}
+
+.form-container {
+    max-width: 800px;
+    width: 100%;
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.form-container h2 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 30px;
+}
+
+.btn-ghost {
+    background-color: #eee;
+    color: #333;
+}
+
+#attachment-preview-area {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+#attachment-preview-area h5 {
+    font-weight: bold;
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+#attachment-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.attachment-item {
+    display: flex;
+    align-items: center;
+    background-color: #f7f7f7;
+    border: 1px solid #eee;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+.attachment-thumbnail {
+    width: 30px;
+    height: 30px;
+    object-fit: cover;
+    margin-right: 8px;
+    border-radius: 3px;
+}
+
+.attachment-delete-btn {
+    background: none;
+    border: none;
+    color: #999;
+    font-size: 16px;
+    margin-left: 8px;
+    cursor: pointer;
+}
+
+.attachment-delete-btn:hover {
+    color: #333;
+}

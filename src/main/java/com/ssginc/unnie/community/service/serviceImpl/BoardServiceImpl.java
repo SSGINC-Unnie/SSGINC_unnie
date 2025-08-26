@@ -65,13 +65,13 @@ public class BoardServiceImpl implements BoardService {
      */
     @Override
     @Transactional(readOnly = true)
-    public BoardDetailGetResponse getBoard(String boardId) {
+    public BoardDetailGetResponse getBoard(String boardId,Long memberId) {
 
         if (boardId == null){
             throw new UnnieBoardException(ErrorCode.BOARD_NOT_FOUND);
         }
 
-        BoardDetailGetResponse res = boardMapper.selectBoard(boardId);
+        BoardDetailGetResponse res = boardMapper.selectBoard(boardId, memberId);
 
         if (res == null){
             throw new UnnieBoardException(ErrorCode.BOARD_NOT_FOUND);

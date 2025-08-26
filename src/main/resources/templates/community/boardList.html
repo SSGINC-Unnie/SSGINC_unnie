@@ -4,172 +4,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unnie</title>
-
+    <title>언니어때 - 커뮤니티</title>
     <link rel="stylesheet" th:href="@{/css/board/boardList.css}">
-
 </head>
 
 <body>
-    <div layout:fragment="content" id="main" class="flex-col">
-        <div id="store">
-            <div id="title">
-                <span>카테고리</span>
-                <div id="tab-sort">
-                    <span>추천순</span>
-                    <div id="sort-bullet">
-                        <svg width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path fill-rule="evenodd" clip-rule="evenodd" d="M10.2759 0.711143L10.8506 0.154619L12 1.26767L11.4253 1.82419L7.23008 5.88671L6.65538 6.44323L6.08068 6.99976L5.50598 6.44323L4.93128 5.88671L0.73606 1.82419L0.161359 1.26767L1.31076 0.154622L1.88546 0.711145L6.08068 4.77366L10.2759 0.711143Z" fill="#787878"/>
-                        </svg>                            
-                    </div>
-                </div>
+<div layout:fragment="content" id="main" class="flex-col">
+    <div id="store">
+        <div id="title">
+            <div id="category-tabs">
+                <button class="category-tab active" data-category="공지 있어!">공지</button>
+                <button class="category-tab" data-category="여기 할인어때?">할인</button>
+                <button class="category-tab" data-category="나 뭐가 어울려?">스타일</button>
+                <button class="category-tab" data-category="이 꿀팁 들어봤어?">꿀팁</button>
+                <button class="category-tab" data-category="이템 어때?">아이템</button>
+                <button class="category-tab" data-category="자유게시판">자유</button>
             </div>
-            
-            <!-- 게시글 목록 -->
-            <div id="contents" class="grid-layout">
-                <div class="post" data-id="1">
-                    <div class="address">
-                        <div class="post-author">
-                            <img th:src="@{/img/karina.png}" alt="">
-                            <span>Osol_home</span>
-                        </div>
-                        <span class="post-title">따뜻한 집 속, 정돈된 살림</span>
-                    </div>
-                    <div class="img-wrapper">
-                        <img th:src="@{/img/logo.png}" alt="post image" class="post-image">
-                    </div>
-                    <div class="boards-info flex-row">
-                        <div class="boards-like">
-                            <svg width="14" height="12" viewBox="0 0 14 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12.6109 3.97494C12.8109 6.44494 11.1509 8.82994 7.1509 10.8999C7.11829 10.9162 7.08235 10.9247 7.0459 10.9247C7.00945 10.9247 6.97351 10.9162 6.9409 10.8999C2.9409 8.82994 1.2809 6.44994 1.4809 3.96494C1.7709 1.23994 5.1409 0.149939 7.0509 2.34994C8.9509 0.149939 12.3259 1.23994 12.6159 3.97494H12.6109Z" stroke="#808080"/>
-                            </svg>
-                            <span class="like-count">10</span>
-                        </div>
-                        <div class="boards-comment">
-                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <mask id="path-1-inside-1_356_3278" fill="white">
-                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M7.52195 9.1572C10.0986 8.66318 12 6.94442 12 4.9C12 2.46995 9.31371 0.5 6 0.5C2.68629 0.5 0 2.46995 0 4.9C0 7.1094 2.22061 8.93847 5.11441 9.25241L6.29321 11.5L7.52195 9.1572Z"/>
-                                </mask>
-                                <path d="M7.52195 9.1572L7.33366 8.17509L6.86025 8.26586L6.63636 8.69273L7.52195 9.1572ZM5.11441 9.25241L6 8.78794L5.75234 8.31575L5.22226 8.25824L5.11441 9.25241ZM6.29321 11.5L5.40763 11.9645L6.29321 13.653L7.1788 11.9645L6.29321 11.5ZM11 4.9C11 6.26199 9.67167 7.72683 7.33366 8.17509L7.71025 10.1393C10.5256 9.59953 13 7.62685 13 4.9H11ZM6 1.5C7.46658 1.5 8.75425 1.93731 9.65128 2.59514C10.5489 3.25339 11 4.08008 11 4.9H13C13 3.28987 12.108 1.91656 10.834 0.982325C9.55946 0.0476608 7.84713 -0.5 6 -0.5V1.5ZM1 4.9C1 4.08008 1.4511 3.25339 2.34872 2.59514C3.24575 1.93731 4.53342 1.5 6 1.5V-0.5C4.15287 -0.5 2.44054 0.0476608 1.166 0.982325C-0.107954 1.91656 -1 3.28987 -1 4.9H1ZM5.22226 8.25824C2.56977 7.97048 1 6.36965 1 4.9H-1C-1 7.84916 1.87145 9.90645 5.00655 10.2466L5.22226 8.25824ZM4.22882 9.71688L5.40763 11.9645L7.1788 11.0355L6 8.78794L4.22882 9.71688ZM7.1788 11.9645L8.40754 9.62167L6.63636 8.69273L5.40763 11.0355L7.1788 11.9645Z" fill="#808080" mask="url(#path-1-inside-1_356_3278)"/>
-                            </svg>
-                            <span class="comment-count">10</span>
-                        </div>
-                    </div>
-                    <p class="post-description">세탁기장 하나로 이렇게 좋은 수거? 셀프 세탁실 꾸미기 1탄 👕</p>
-                </div>
-                <div class="post" data-id="1">
-                    <div class="address">
-                        <div class="post-author">
-                            <img th:src="@{/img/karina.png}" alt="">
-                            <span>Osol_home</span>
-                        </div>
-                        <span class="post-title">따뜻한 집 속, 정돈된 살림</span>
-                    </div>
-                    <div class="img-wrapper">
-                        <img th:src="@{/img/logo.png}" alt="post image" class="post-image">
-                    </div>
-                    <p class="post-description">세탁기장 하나로 이렇게 좋은 수거? 셀프 세탁실 꾸미기 1탄 👕</p>
-                </div>
-                <div class="post" data-id="1">
-                    <div class="address">
-                        <div class="post-author">
-                            <img th:src="@{/img/karina.png}" alt="">
-                            <span>Osol_home</span>
-                        </div>
-                        <span class="post-title">따뜻한 집 속, 정돈된 살림</span>
-                    </div>
-                    <div class="img-wrapper">
-                        <img th:src="@{/img/logo.png}" alt="post image" class="post-image">
-                    </div>
-                    <p class="post-description">세탁기장 하나로 이렇게 좋은 수거? 셀프 세탁실 꾸미기 1탄 👕</p>
-                </div>
-                <div class="post" data-id="1">
-                    <div class="address">
-                        <div class="post-author">
-                            <img th:src="@{/img/karina.png}" alt="">
-                            <span>Osol_home</span>
-                        </div>
-                        <span class="post-title">따뜻한 집 속, 정돈된 살림</span>
-                    </div>
-                    <div class="img-wrapper">
-                        <img th:src="@{/img/logo.png}" alt="post image" class="post-image">
-                    </div>
-                    <p class="post-description">세탁기장 하나로 이렇게 좋은 수거? 셀프 세탁실 꾸미기 1탄 👕</p>
-                </div>
-                <div class="post" data-id="1">
-                    <div class="address">
-                        <div class="post-author">
-                            <img th:src="@{/img/karina.png}" alt="">
-                            <span>Osol_home</span>
-                        </div>
-                        <span class="post-title">따뜻한 집 속, 정돈된 살림</span>
-                    </div>
-                    <div class="img-wrapper">
-                        <img th:src="@{/img/logo.png}" alt="post image" class="post-image">
-                    </div>
-                    <p class="post-description">세탁기장 하나로 이렇게 좋은 수거? 셀프 세탁실 꾸미기 1탄 👕</p>
-                </div>
-                <div class="post" data-id="1">
-                    <div class="address">
-                        <div class="post-author">
-                            <img th:src="@{/img/karina.png}" alt="">
-                            <span>Osol_home</span>
-                        </div>
-                        <span class="post-title">따뜻한 집 속, 정돈된 살림</span>
-                    </div>
-                    <div class="img-wrapper">
-                        <img th:src="@{/img/logo.png}" alt="post image" class="post-image">
-                    </div>
-                    <p class="post-description">세탁기장 하나로 이렇게 좋은 수거? 셀프 세탁실 꾸미기 1탄 👕</p>
-                </div>
-                <div class="post" data-id="1">
-                    <div class="address">
-                        <div class="post-author">
-                            <img th:src="@{/img/karina.png}" alt="">
-                            <span>Osol_home</span>
-                        </div>
-                        <span class="post-title">따뜻한 집 속, 정돈된 살림</span>
-                    </div>
-                    <div class="img-wrapper">
-                        <img th:src="@{/img/logo.png}" alt="post image" class="post-image">
-                    </div>
-                    <p class="post-description">세탁기장 하나로 이렇게 좋은 수거? 셀프 세탁실 꾸미기 1탄 👕</p>
-                </div>
-                <div class="post" data-id="1">
-                    <div class="address">
-                        <div class="post-author">
-                            <img th:src="@{/img/karina.png}" alt="">
-                            <span>Osol_home</span>
-                        </div>
-                        <span class="post-title">따뜻한 집 속, 정돈된 살림</span>
-                    </div>
-                    <div class="img-wrapper">
-                        <img th:src="@{/img/logo.png}" alt="post image" class="post-image">
-                    </div>
-                    <p class="post-description">세탁기장 하나로 이렇게 좋은 수거? 셀프 세탁실 꾸미기 1탄 👕</p>
-                </div>
-                <div class="post" data-id="1">
-                    <div class="address">
-                        <div class="post-author">
-                            <img th:src="@{/img/karina.png}" alt="">
-                            <span>Osol_home</span>
-                        </div>
-                        <span class="post-title">따뜻한 집 속, 정돈된 살림</span>
-                    </div>
-                    <div class="img-wrapper">
-                        <img th:src="@{/img/logo.png}" alt="post image" class="post-image">
-                    </div>
-                    <p class="post-description">세탁기장 하나로 이렇게 좋은 수거? 셀프 세탁실 꾸미기 1탄 👕</p>
-                </div>
+            <div id="tab-sort">
+                <select id="sort-dropdown" class="filter-control">
+                    <option value="LATEST">최신순</option>
+                    <option value="POPULAR">인기순</option>
+                </select>
             </div>
         </div>
-        <!-- 페이지 네비게이션 -->
+
+        <div id="search-bar">
+            <select id="search-type-dropdown" class="filter-control">
+                <option value="TITLE">제목</option>
+                <option value="CONTENT">내용</option>
+            </select>
+            <input type="text" id="search-input" placeholder="검색어를 입력하세요">
+            <button id="search-button">검색</button>
+        </div>
+
+        <div id="contents" class="grid-layout">
+            <div class="loader"></div>
+        </div>
+
         <div id="pagination">
-            <button class="page-btn">1</button>
-            <button class="page-btn">2</button>
-            <button class="page-btn">3</button>
         </div>
+
     </div>
+</div>
+
+<div layout:fragment="scripts">
+    <script th:src="@{/js/board/boardList.js}"></script>
+</div>
 </body>
 
 </html>
