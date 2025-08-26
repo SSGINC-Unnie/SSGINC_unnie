@@ -44,11 +44,18 @@ public class BoardController {
      * 게시글 상세 조회 메서드
      */
     @GetMapping("/{boardId}")
-    public ResponseEntity<ResponseDto<Map<String, Object>>> getBoard(@PathVariable String boardId) {
+    public ResponseEntity<ResponseDto<Map<String, Object>>> getBoard(
+            @PathVariable String boardId,
+            @AuthenticationPrincipal MemberPrincipal memberPrincipal) { // ✅ Principal 객체 받기
+
+        // ✅ 로그인 상태에 따라 memberId 분기 처리 (비로그인 시 null 전달)
+        Long memberId = (memberPrincipal != null) ? memberPrincipal.getMemberId() : null;
+
         return ResponseEntity.ok(
-                new ResponseDto<>(HttpStatus.OK.value(), "게시글 조회 성공", Map.of("board", boardService.getBoard(boardId)))
+                new ResponseDto<>(HttpStatus.OK.value(), "게시글 조회 성공", Map.of("board", boardService.getBoard(boardId, memberId))) // ✅ memberId 전달
         );
     }
+
 
     /**
      * 게시글 수정 메서드
@@ -75,25 +82,7 @@ public class BoardController {
     }
 
     /**
-     * 비회원 게시글 목록 조회
-     */
-    @GetMapping("/guest")
-    public ResponseEntity<ResponseDto<Map<String, Object>>> getBoardsGuest(
-            @RequestParam(defaultValue = "공지 있어!") BoardCategory category,
-            @RequestParam(defaultValue = "LATEST") String sort,
-            @RequestParam(defaultValue = "TITLE") String searchType,
-            @RequestParam(required = false) String search,
-            @RequestParam(defaultValue = "1") int page) {
-
-        PageInfo<BoardsGuestGetResponse> boards = boardService.getBoardsGuest(category, sort, searchType, search, page);
-
-        return ResponseEntity.ok(
-                new ResponseDto<>(HttpStatus.OK.value(), "게시글 목록 조회 성공", Map.of("boards", boards))
-        );
-    }
-
-    /**
-     * 로그인 시 게시글 목록 조회
+     * 로그인/비로그인 시 게시글 목록 조회
      * @param category 게시글 카테고리
      * @param sort 게시글 정렬 방식(최신순/인기순)
      * @param searchType 게시글 검색 방식(제목/내용)
@@ -108,15 +97,20 @@ public class BoardController {
             @RequestParam(defaultValue = "TITLE") String searchType,
             @RequestParam(required = false) String search,
             @RequestParam(defaultValue = "1") int page,
-            @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
+            @AuthenticationPrincipal MemberPrincipal memberPrincipal) { // Required = false 효과
 
-        long memberId = memberPrincipal.getMemberId();
-
-        PageInfo<BoardsGetResponse> boards = boardService.getBoards(category, sort, searchType, search, page, memberId);
-
-        return ResponseEntity.ok(
-                new ResponseDto<>(HttpStatus.OK.value(), "게시글 목록 조회 성공", Map.of("boards", boards))
-        );
+        if (memberPrincipal == null) {
+            PageInfo<BoardsGuestGetResponse> boards = boardService.getBoardsGuest(category, sort, searchType, search, page);
+            return ResponseEntity.ok(
+                    new ResponseDto<>(HttpStatus.OK.value(), "게시글 목록 조회 성공", Map.of("boards", boards))
+            );
+        } else {
+            long memberId = memberPrincipal.getMemberId();
+            PageInfo<BoardsGetResponse> boards = boardService.getBoards(category, sort, searchType, search, page, memberId);
+            return ResponseEntity.ok(
+                    new ResponseDto<>(HttpStatus.OK.value(), "게시글 목록 조회 성공 (로그인)", Map.of("boards", boards))
+            );
+        }
     }
 
 }

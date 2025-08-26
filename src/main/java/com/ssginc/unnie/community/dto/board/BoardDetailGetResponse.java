@@ -21,4 +21,7 @@ public class BoardDetailGetResponse {
     private String boardCreatedAt; // 작성일
     private long boardViews; // 조회 수
     private int likeCount; // 좋아요 수
+    private boolean isOwner; // 작성자 확인
+    private String authorNickname;
+    private String authorProfile;
 }

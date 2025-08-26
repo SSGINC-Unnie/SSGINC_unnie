@@ -9,7 +9,7 @@ import com.ssginc.unnie.community.dto.board.*;
 public interface BoardService {
     String createBoard(BoardCreateRequest boardRequest);
 
-    BoardDetailGetResponse getBoard(String boardId);
+    BoardDetailGetResponse getBoard(String boardId, Long memberId);
 
     long updateBoard(BoardUpdateRequest boardUpdateRequest, long memberId);
 

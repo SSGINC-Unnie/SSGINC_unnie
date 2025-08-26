@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>게시글 상세</title>
+    <link rel="stylesheet" th:href="@{/css/board/boardDetail.css}">
+</head>
+<body>
+<div layout:fragment="content" id="main">
+    <div id="post-container">
+        <div id="post-header">
+            <h1 id="post-title"></h1>
+            <div id="post-meta">
+                <div class="author-info">
+                    <img id="author-profile" src="" alt="프로필">
+                    <span id="author-nickname"></span>
+                </div>
+                <span id="post-created-at"></span>
+            </div>
+            <div id="author-actions" style="display: none;">
+                <button id="edit-button">수정</button>
+                <button id="delete-button">삭제</button>
+            </div>
+        </div>
+
+        <div id="post-content">
+        </div>
+
+    </div>
+</div>
+
+<div layout:fragment="scripts">
+    <script th:src="@{/js/board/boardDetail.js}"></script>
+</div>
+</body>
+</html>

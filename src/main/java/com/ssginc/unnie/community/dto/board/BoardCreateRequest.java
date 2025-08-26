@@ -9,7 +9,8 @@ import lombok.*;
 @Setter
 public class BoardCreateRequest extends BoardRequestBase {
     @Builder
-    public BoardCreateRequest(long boardId, String boardTitle, String boardContents, BoardCategory boardCategory, String boardThumbnail, long boardAuthor) {
-        super(boardId, boardCategory, boardTitle, boardContents, boardThumbnail, boardAuthor);
+    public BoardCreateRequest(String boardTitle, String boardContents, BoardCategory boardCategory, String boardThumbnail, Long boardAuthor) {
+        super(null, boardCategory, boardTitle, boardContents, boardThumbnail, boardAuthor);
     }
+
 }
