@@ -4,18 +4,18 @@ document.addEventListener('DOMContentLoaded', () => {
     // 필요한 DOM 요소들을 미리 가져오기
     const contentsDiv = document.getElementById('contents');
     const paginationDiv = document.getElementById('pagination');
-    const categoryTabs = document.querySelectorAll('.category-tab');
     const sortDropdown = document.getElementById('sort-dropdown');
-    const searchTypeDropdown = document.getElementById('search-type-dropdown');
-    const searchInput = document.getElementById('search-input');
-    const searchButton = document.getElementById('search-button');
+    const categoryWrapper = document.getElementById('category-dropdown-wrapper');
+    const currentCategoryName = document.getElementById('current-category-name');
+    const categoryDropdownList = document.getElementById('category-dropdown-list')
 
     // 현재 페이지 및 검색 조건을 관리하는 상태 객체
     const state = {
         page: 1,
         category: '공지 있어!', // 기본값
         sort: 'LATEST',     // 기본값
-        searchType: 'TITLE',  // 기본값
+        searchType: 'TITLE', // 기본값
+
         search: ''
     };
 
@@ -60,23 +60,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
         boards.forEach(board => {
             const postHTML = `
-            <div class="post" data-id="${board.boardId}" onclick="location.href='/community/board/${board.boardId}'">
-                <div class="img-wrapper">
-                    <img src="${board.boardThumbnail}" alt="게시글 썸네일" class="post-image">
-                </div>
-                <div class="post-info-area">
+            <div class="post" data-id="${board.id}" onclick="location.href='/community/board/${board.id}'">
+                
+                <div class="post-header">
                     <div class="post-author">
                         <img src="${board.memberProfile}" alt="작성자 프로필">
                         <span>${board.memberNickname}</span>
                     </div>
-                    <p class="post-title">${board.boardTitle}</p>
+                    <p class="post-description">${board.boardTitle}</p>
+                </div>
+
+                <div class="img-wrapper">
+                    <img src="${board.boardThumbnail}" alt="게시글 썸네일" class="post-image">
+                </div>
+
+                <div class="post-footer">
                     <div class="boards-info">
                         <div class="boards-like">
-                            <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path></svg>
                             <span>${board.likeCount}</span>
                         </div>
                         <div class="boards-comment">
-                            <svg viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18z"></path></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"></path></svg>
                             <span>${board.commentCount}</span>
                         </div>
                     </div>
@@ -86,6 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
             contentsDiv.insertAdjacentHTML('beforeend', postHTML);
         });
     };
+
 
     const renderPagination = (pageInfo) => {
         console.log("페이지네이션 데이터:", pageInfo);
@@ -114,47 +120,46 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
 
-    // 카테고리 탭 클릭 이벤트
-    categoryTabs.forEach(tab => {
-        tab.addEventListener('click', (e) => {
-            // 모든 탭에서 'active' 클래스 제거
-            categoryTabs.forEach(t => t.classList.remove('active'));
-            // 클릭된 탭에 'active' 클래스 추가
-            e.currentTarget.classList.add('active');
-
-            state.category = e.currentTarget.dataset.category;
-            state.page = 1;
-            fetchBoards();
-        });
+    // 1. 카테고리 표시 영역을 클릭하면 드롭다운 목록을 열고 닫음
+    categoryWrapper.addEventListener('click', (e) => {
+        e.stopPropagation(); // 이벤트가 부모로 전파되는 것을 막음
+        categoryDropdownList.classList.toggle('hidden');
     });
 
-    // 정렬, 검색 유형 드롭다운 변경 이벤트
-    [sortDropdown, searchTypeDropdown].forEach(dropdown => {
-        dropdown.addEventListener('change', (e) => {
-            if (e.currentTarget.id === 'sort-dropdown') {
-                state.sort = e.currentTarget.value;
-            } else {
-                state.searchType = e.currentTarget.value;
-            }
+    // 2. 드롭다운 목록에서 특정 카테고리를 클릭했을 때의 동작
+    categoryDropdownList.addEventListener('click', (e) => {
+        if (e.target.classList.contains('category-item')) {
+            const selectedCategory = e.target.dataset.category;
+
+            state.category = selectedCategory;
             state.page = 1;
-            fetchBoards();
-        });
+
+            currentCategoryName.textContent = selectedCategory; // 화면 표시 업데이트
+            fetchBoards(); // 새 카테고리로 게시글 다시 불러오기
+        }
     });
 
-    // 검색 버튼 클릭 이벤트
-    searchButton.addEventListener('click', () => {
-        state.search = searchInput.value;
+    // 3. 페이지의 다른 곳을 클릭하면 드롭다운 목록을 닫음
+    window.addEventListener('click', () => {
+        if (!categoryDropdownList.classList.contains('hidden')) {
+            categoryDropdownList.classList.add('hidden');
+        }
+    });
+
+    // --- 다른 이벤트 리스너 ---
+
+    // 정렬 드롭다운 변경 시
+    sortDropdown.addEventListener('change', (e) => {
+        state.sort = e.target.value;
         state.page = 1;
         fetchBoards();
     });
 
-    // 검색창에서 Enter 키 입력 이벤트
-    searchInput.addEventListener('keyup', (e) => {
-        if (e.key === 'Enter') {
-            searchButton.click();
-        }
-    });
+    // --- 페이지 초기화 ---
+    const init = () => {
+        currentCategoryName.textContent = state.category; // 초기 카테고리 이름 설정
+        fetchBoards();
+    };
 
-    // 페이지 최초 진입 시, 기본값으로 게시글 목록을 불러옵니다.
-    fetchBoards();
+    init();
 });

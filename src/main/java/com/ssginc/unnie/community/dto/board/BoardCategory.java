@@ -18,5 +18,19 @@ public enum BoardCategory implements EnumDescription {
         this.description = description;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    // ✅ 이 메소드를 추가합니다.
+    public static BoardCategory fromDescription(String description) {
+        for (BoardCategory category : BoardCategory.values()) {
+            if (category.getDescription().equals(description)) {
+                return category;
+            }
+        }
+        // 일치하는 카테고리가 없을 경우 예외를 던지거나 기본값을 반환
+        throw new IllegalArgumentException("Invalid category description: " + description);
+    }
 }
 

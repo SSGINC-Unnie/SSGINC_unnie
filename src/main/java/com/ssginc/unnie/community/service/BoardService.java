@@ -15,9 +15,9 @@ public interface BoardService {
 
     int softDeleteBoard(String boardId, long memberId);
 
-    PageInfo<BoardsGuestGetResponse> getBoardsGuest(BoardCategory category, String sort, String searchType, String search, int page);
+    PageInfo<BoardsGuestGetResponse> getBoardsGuest(String category, String sort, String searchType, String search, int page);
 
-    PageInfo<BoardsGetResponse> getBoards(BoardCategory category, String sort, String searchType, String search, int page, long memberId);
+    PageInfo<BoardsGetResponse> getBoards(String category, String sort, String searchType, String search, int page, long memberId);
 
     void linkImagesToPost(String contents, long boardId);
 }
