@@ -26,29 +26,29 @@ public class PaymentServiceImpl implements PaymentService {
     @Transactional
     public PaymentIntentCreateResponse createIntent(PaymentIntentCreateRequest req) {
 
-        // 1. 예약 정보 및 결제 금액 조회
+        // 예약 정보 및 결제 금액 조회
         Integer amount = paymentMapper.selectProcedurePrice(req.getReservationId());
         if (amount == null) {
             throw new UnniePaymentException(ErrorCode.RESERVATION_NOT_FOUND);
         }
 
-        // 2. 결제 금액 유효성 검사
+        // 결제 금액 유효성 검사
         if (amount <= 0) {
             throw new UnniePaymentException(ErrorCode.INVALID_PAYMENT_AMOUNT);
         }
 
-        // 3. 주문명 생성
+        // 주문명 생성
         String orderName = paymentMapper.selectOrderName(req.getReservationId());
         if (orderName == null || orderName.isBlank()) {
             orderName = "예약-" + req.getReservationId();
         }
 
-        // 4. 결제 제공자(PG사) 설정
+        // 결제 제공자(PG사) 설정
         if (req.getProvider() == null || req.getProvider().isBlank()) {
             req.setProvider("TOSS");
         }
 
-        // 5. 결제 의도(Intent) 생성 및 DB 저장
+        // 결제 의도 생성 및 DB 저장
         paymentMapper.insertPaymentIntent(
                 req.getReservationId(), req.getMemberId(), req.getShopId(),
                 req.getOrderId(), req.getProvider(), amount
@@ -59,7 +59,7 @@ public class PaymentServiceImpl implements PaymentService {
         }
         paymentMapper.insertReservationPayment(req.getReservationId(), intentId);
 
-        // 6. 리다이렉트 URL 생성 및 반환
+        // 리다이렉트 URL 생성 및 반환
         String redirectUrl = "/pay/" + req.getProvider().toLowerCase() + "?orderId=" + req.getOrderId();
         return new PaymentIntentCreateResponse(intentId, req.getOrderId(), redirectUrl, amount, orderName);
     }
@@ -79,7 +79,7 @@ public class PaymentServiceImpl implements PaymentService {
             throw new UnniePaymentException(ErrorCode.PAYMENT_INTENT_NOT_FOUND);
         }
 
-        // 2. 결제 이벤트 로그 저장
+        // 결제 이벤트 로그 저장
         try {
             String payload = objectMapper.writeValueAsString(req);
             paymentMapper.insertPaymentEvent(intentId, "APPROVE", payload);

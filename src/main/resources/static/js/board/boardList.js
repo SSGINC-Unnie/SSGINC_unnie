@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             const result = await response.json();
 
-            if (result.code === 200) {
+            if (result.status === 200) {
                 renderBoards(result.data.boards.list);
                 renderPagination(result.data.boards);
             } else {
@@ -51,9 +51,8 @@ document.addEventListener('DOMContentLoaded', () => {
             contentsDiv.innerHTML = '<p>게시글을 불러오는 데 실패했습니다.</p>';
         }
     };
-
     const renderBoards = (boards) => {
-        contentsDiv.innerHTML = ''; // 기존 내용을 비웁니다.
+        contentsDiv.innerHTML = '';
         if (!boards || boards.length === 0) {
             contentsDiv.innerHTML = '<p>게시글이 없습니다.</p>';
             return;
@@ -61,48 +60,56 @@ document.addEventListener('DOMContentLoaded', () => {
 
         boards.forEach(board => {
             const postHTML = `
-                <div class="post" data-id="${board.boardId}" onclick="location.href='/community/board/${board.boardId}'">
-                    <div class="address">
-                        <div class="post-author">
-                            <img src="/img/${board.memberProfile}" alt="프로필 이미지">
-                            <span>${board.memberNickname}</span>
-                        </div>
-                        <span class="post-title">${board.boardTitle}</span>
+            <div class="post" data-id="${board.boardId}" onclick="location.href='/community/board/${board.boardId}'">
+                <div class="img-wrapper">
+                    <img src="${board.boardThumbnail}" alt="게시글 썸네일" class="post-image">
+                </div>
+                <div class="post-info-area">
+                    <div class="post-author">
+                        <img src="${board.memberProfile}" alt="작성자 프로필">
+                        <span>${board.memberNickname}</span>
                     </div>
-                    <div class="img-wrapper">
-                        <img src="/img/${board.boardThumbnail}" alt="post image" class="post-image">
-                    </div>
-                    <div class="boards-info flex-row">
+                    <p class="post-title">${board.boardTitle}</p>
+                    <div class="boards-info">
                         <div class="boards-like">
-                            <svg width="14" height="12" viewBox="0 0 14 12"><path d="M12.6109 3.97494C12.8109 6.44494 11.1509 8.82994 7.1509 10.8999C7.11829 10.9162 7.08235 10.9247 7.0459 10.9247C7.00945 10.9247 6.97351 10.9162 6.9409 10.8999C2.9409 8.82994 1.2809 6.44994 1.4809 3.96494C1.7709 1.23994 5.1409 0.149939 7.0509 2.34994C8.9509 0.149939 12.3259 1.23994 12.6159 3.97494H12.6109Z" stroke="#808080"/></svg>
-                            <span class="like-count">${board.likeCount}</span>
+                            <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path></svg>
+                            <span>${board.likeCount}</span>
                         </div>
                         <div class="boards-comment">
-                           <svg width="12" height="12" viewBox="0 0 12 12"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.52195 9.1572C10.0986 8.66318 12 6.94442 12 4.9C12 2.46995 9.31371 0.5 6 0.5C2.68629 0.5 0 2.46995 0 4.9C0 7.1094 2.22061 8.93847 5.11441 9.25241L6.29321 11.5L7.52195 9.1572Z" fill="#808080"/></svg>
-                            <span class="comment-count">${board.commentCount}</span>
+                            <svg viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18z"></path></svg>
+                            <span>${board.commentCount}</span>
                         </div>
                     </div>
-                    <p class="post-description">${board.boardTitle}</p>
                 </div>
-            `;
+            </div>
+        `;
             contentsDiv.insertAdjacentHTML('beforeend', postHTML);
         });
     };
 
     const renderPagination = (pageInfo) => {
+        console.log("페이지네이션 데이터:", pageInfo);
+
         paginationDiv.innerHTML = '';
-        for (let i = pageInfo.startPage; i <= pageInfo.endPage; i++) {
-            const pageBtn = document.createElement('button');
-            pageBtn.className = 'page-btn';
-            pageBtn.textContent = i;
-            if (i === pageInfo.pageNum) {
-                pageBtn.disabled = true;
-            }
-            pageBtn.addEventListener('click', () => {
-                state.page = i;
-                fetchBoards();
+
+        if (pageInfo && pageInfo.navigatepageNums) {
+
+            pageInfo.navigatepageNums.forEach(pageNum => {
+                const pageBtn = document.createElement('button');
+                pageBtn.className = 'page-btn';
+                pageBtn.textContent = pageNum;
+
+                if (pageNum === pageInfo.pageNum) {
+                    pageBtn.disabled = true;
+                }
+
+                pageBtn.addEventListener('click', () => {
+                    state.page = pageNum;
+                    fetchBoards();
+                });
+
+                paginationDiv.appendChild(pageBtn);
             });
-            paginationDiv.appendChild(pageBtn);
         }
     };
 

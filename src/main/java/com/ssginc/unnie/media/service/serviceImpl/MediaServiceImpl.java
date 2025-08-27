@@ -17,6 +17,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 @Slf4j
@@ -34,32 +38,38 @@ public class MediaServiceImpl implements MediaService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public String uploadFile(MultipartFile file, String targetType, Long targetId) {
-
-        // --- 1. 파일 저장 로직 (항상 실행) ---
+        // 1. 파일 유효성 검증
         fileValidator.validate(file);
 
+        // 2. 고유한 파일명 생성
         String fileOriginalName = file.getOriginalFilename();
         String newFileName = fileNameGenerator.generateFileName(fileOriginalName);
 
-        String physicalPath = uploadPath + newFileName;
-
-        File destination = new File(physicalPath);
-        log.info("fileName = {}, newFileName = {}, destination = {}",
-                fileOriginalName, newFileName, destination.getAbsolutePath());
+        // 3. 파일을 저장할 절대 경로 생성 (Path 객체 사용)
+        Path destinationFile = Paths.get(uploadPath, newFileName).toAbsolutePath();
+        log.info("파일 저장 경로: {}", destinationFile);
 
         try {
-            File parentDir = destination.getParentFile();
-            if (parentDir != null && !parentDir.exists()) {
-                parentDir.mkdirs();
+            // 4. 파일이 저장될 부모 디렉토리를 가져옴
+            Path parentDir = destinationFile.getParent();
+
+            // 5. 부모 디렉토리가 존재하지 않으면 생성 (핵심 수정 사항!)
+            if (parentDir != null && !Files.exists(parentDir)) {
+                Files.createDirectories(parentDir);
             }
-            file.transferTo(destination);
+
+            // 6. 파일 저장
+            Files.copy(file.getInputStream(), destinationFile, StandardCopyOption.REPLACE_EXISTING);
+
         } catch (IOException e) {
+            log.error("파일 저장 중 심각한 오류 발생", e);
             throw new UnnieMediaException(ErrorCode.FILE_INTERNAL_SERVER_ERROR, e);
         }
 
+        // 7. 웹 접근 경로(URN) 생성
         String fileUrn = "/upload/" + newFileName;
 
-
+        // 8. targetId가 있을 경우에만 DB에 미디어 정보 저장
         if (targetId != null && targetType != null) {
             try {
                 MediaTargetType.valueOf(targetType.toUpperCase());
@@ -77,6 +87,7 @@ public class MediaServiceImpl implements MediaService {
             mediaMapper.insert(mediaRequest);
         }
 
+        // 9. 웹 접근 경로 반환
         return fileUrn;
     }
 

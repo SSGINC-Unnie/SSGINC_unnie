@@ -48,10 +48,11 @@ $(document).ready(function() {
             contentType: false,
             processData: false,
             success: function(response) {
-                // ✅ 서버 응답 코드가 201(Created)이 아닌 200(OK)일 수 있으므로 함께 확인
-                if (response.code === 201 || response.code === 200) {
+                if (response.status === 201 || response.status === 200) {
                     const fileUrn = response.data.fileUrn;
+
                     $(editor).summernote('insertImage', fileUrn);
+
                     addAttachmentPreview(file.name, fileUrn);
                 } else {
                     alert(response.message || '이미지 업로드 중 오류가 발생했습니다.');
@@ -82,27 +83,24 @@ $(document).ready(function() {
      */
     attachmentList.on('click', '.attachment-delete-btn', function() {
         const item = $(this).closest('.attachment-item');
-        const fileUrnToDelete = item.data('urn');
+        // const fileUrnToDelete = item.data('urn');
 
-        if (confirm("이 첨부파일을 삭제하시겠습니까? 에디터 본문에서도 이미지가 삭제됩니다.")) {
-            const currentContent = $('#summernote-content').summernote('code');
-            const imgTagRegex = new RegExp(`<img[^>]+src\\s*=\\s*['"]${fileUrnToDelete}['\"][^>]*>`, 'g');
-            const updatedContent = currentContent.replace(imgTagRegex, '');
-            $('#summernote-content').summernote('code', updatedContent);
+        if (confirm("이 첨부파일을 삭제하시겠습니까? ")) {
+            // const currentContent = $('#summernote-content').summernote('code');
+            // const imgTagRegex = new RegExp(`<img[^>]+src\\s*=\\s*['"]${fileUrnToDelete}['\"][^>]*>`, 'g');
+            // const updatedContent = currentContent.replace(imgTagRegex, '');
+            // $('#summernote-content').summernote('code', updatedContent);
             item.remove();
         }
     });
 
-    /**
-     * 폼 제출 이벤트 핸들러 (기존의 간단한 방식으로 수정)
-     */
+
     $('#board-form').on('submit', async function (e) {
         e.preventDefault();
 
         const formData = new FormData(this);
         const content = $('#summernote-content').summernote('code');
 
-        // 본문에 이미지가 있는지 간단히 프론트에서 확인 (선택 사항)
         if (!content.includes('<img')) {
             alert('최소 1장의 이미지를 첨부해야 합니다.');
             return;
@@ -117,10 +115,9 @@ $(document).ready(function() {
             });
             const result = await response.json();
 
-            if (response.ok && (result.code === 201 || result.code === 200)) {
+            if (response.ok && (result.status === 201 || result.status === 200)) {
                 alert('게시글이 성공적으로 작성되었습니다.');
-                const newBoardId = result.data.boardId;
-                window.location.href = `/community/board/${newBoardId}`;
+                window.history.back();
             } else {
                 alert(result.message || '게시글 작성에 실패했습니다.');
             }

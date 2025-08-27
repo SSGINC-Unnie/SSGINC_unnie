@@ -9,6 +9,9 @@ import com.ssginc.unnie.common.exception.UnnieBoardException;
 import com.ssginc.unnie.common.util.ErrorCode;
 import com.ssginc.unnie.common.util.parser.BoardParser;
 import com.ssginc.unnie.common.util.validation.Validator;
+import com.ssginc.unnie.media.dto.MediaRequest;
+import com.ssginc.unnie.media.mapper.MediaMapper;
+import com.ssginc.unnie.media.vo.MediaTargetType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,6 +31,7 @@ public class BoardServiceImpl implements BoardService {
     private final Validator<BoardRequestBase> boardValidator; // 유효성 검증 인터페이스
 
     private final BoardMapper boardMapper;
+    private final MediaMapper mediaMapper;
 
     /**
      * 게시글 작성 메서드
@@ -35,29 +39,28 @@ public class BoardServiceImpl implements BoardService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public String createBoard(BoardCreateRequest boardRequest) {
-
-        // BoardParser 사용하여 HTML 파싱 후 검증
         BoardParser parser = new BoardParser(boardRequest.getBoardContents());
-        
         String thumbnail = parser.extractFirstImage();
 
-        boardRequest = BoardCreateRequest.builder()
-                                            .boardTitle(boardRequest.getBoardTitle())    // 기존 제목 유지
-                                            .boardCategory(boardRequest.getBoardCategory()) // 기존 카테고리 유지
-                                            .boardContents(boardRequest.getBoardContents()) // 기존 본문 유지 (HTML 그대로 저장)
-                                            .boardAuthor(boardRequest.getBoardAuthor())  // 기존 작성자 유지
-                                            .boardThumbnail(thumbnail) // 새로 추출한 썸네일 저장
-                                        .build();
+        // 2. 전달받은 boardRequest 객체에 썸네일을 직접 설정 (객체 재생성 X)
+        boardRequest.setBoardThumbnail(thumbnail);
 
+        // 3. 유효성 검증 (작성자, 썸네일이 모두 포함된 상태로 검증)
         boardValidator.validate(boardRequest);
 
+        // 4. board 테이블에 게시글 정보 저장
         int res = boardMapper.insertBoard(boardRequest);
-
-        if (res == 0){
+        if (res == 0) {
             throw new UnnieBoardException(ErrorCode.BOARD_CREATE_FAILED);
         }
 
-        return String.valueOf(boardRequest.getBoardId());
+        // 5. 새로 생성된 boardId를 가져옴
+        Long newBoardId = boardRequest.getBoardId();
+
+        // 6. 게시글 본문에 포함된 이미지들을 media 테이블과 연결
+        linkImagesToPost(boardRequest.getBoardContents(), newBoardId);
+
+        return String.valueOf(newBoardId);
     }
 
     /**
@@ -169,7 +172,7 @@ public class BoardServiceImpl implements BoardService {
      * 요청 정보 유효성 검증
      */
     private BoardsGetRequestBase buildRequest(BoardCategory category, String sort, String searchType, String search, int page, long memberId){
-        int pageSize = 10;
+        int pageSize = 9;
 
         if (page < 1){
             throw new UnnieBoardException(ErrorCode.PAGE_OUT_OF_RANGE);
@@ -214,6 +217,37 @@ public class BoardServiceImpl implements BoardService {
         PageHelper.startPage(page, pageSize);
 
         return request;
+    }
+
+
+    /**
+     * 게시글 본문(HTML)을 파싱하여 img 태그들을 찾고,
+     * media 테이블에 현재 게시글 ID와 이미지 정보를 연결(insert)하는 메소드 (신규 구현)
+     * @param contents 게시글 본문 HTML
+     * @param boardId 새로 생성된 게시글의 ID
+     */
+
+    @Override
+    public void linkImagesToPost(String contents, long boardId) {
+        BoardParser parser = new BoardParser(contents);
+        List<String> images = parser.extractAllImages();
+
+        for (String imageUrn : images) {
+            if (imageUrn != null && imageUrn.startsWith("/upload/")) {
+                String newFileName = imageUrn.substring("/upload/".length());
+
+                MediaRequest mediaRequest = MediaRequest.builder()
+                        .targetType(MediaTargetType.BOARD.name()) // "BOARD"
+                        .targetId(boardId)
+                        .fileUrn(imageUrn)
+                        .newFileName(newFileName)
+                        .fileOriginalName(newFileName)
+                        .build();
+
+                // DB의 media 테이블에 정보 저장
+                mediaMapper.insert(mediaRequest);
+            }
+        }
     }
 
 
