@@ -98,12 +98,12 @@ public class BoardController {
      */
     @GetMapping("")
     public ResponseEntity<ResponseDto<Map<String, Object>>> getBoards(
-            @RequestParam(defaultValue = "공지 있어!") BoardCategory category,
+            @RequestParam(defaultValue = "나 뭐가 어울려?") String category, // String으로 받음
             @RequestParam(defaultValue = "LATEST") String sort,
             @RequestParam(defaultValue = "TITLE") String searchType,
             @RequestParam(required = false) String search,
             @RequestParam(defaultValue = "1") int page,
-            @AuthenticationPrincipal MemberPrincipal memberPrincipal) { // Required = false 효과
+            @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
 
         if (memberPrincipal == null) {
             PageInfo<BoardsGuestGetResponse> boards = boardService.getBoardsGuest(category, sort, searchType, search, page);

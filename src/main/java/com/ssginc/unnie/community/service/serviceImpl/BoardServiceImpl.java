@@ -156,15 +156,17 @@ public class BoardServiceImpl implements BoardService {
      */
     @Override
     @Transactional(readOnly = true)
-    public PageInfo<BoardsGuestGetResponse> getBoardsGuest(BoardCategory category, String sort, String searchType, String search, int page) {
-        List<BoardsGuestGetResponse> boards = boardMapper.getGuestBoards((BoardsGuestGetRequest) this.buildRequest(category, sort, searchType, search, page, 0));
+    public PageInfo<BoardsGuestGetResponse> getBoardsGuest(String category, String sort, String searchType, String search, int page) {
+        BoardCategory boardCategory = BoardCategory.fromDescription(category);
+        List<BoardsGuestGetResponse> boards = boardMapper.getGuestBoards((BoardsGuestGetRequest) this.buildRequest(boardCategory, sort, searchType, search, page, 0));
         return new PageInfo<>(boards);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public PageInfo<BoardsGetResponse> getBoards(BoardCategory category, String sort, String searchType, String search, int page, long memberId) {
-        List<BoardsGetResponse> boards = boardMapper.getBoards((BoardsGetRequest) this.buildRequest(category, sort, searchType, search, page, memberId));
+    public PageInfo<BoardsGetResponse> getBoards(String category, String sort, String searchType, String search, int page, long memberId) {
+        BoardCategory boardCategory = BoardCategory.fromDescription(category);
+        List<BoardsGetResponse> boards = boardMapper.getBoards((BoardsGetRequest) this.buildRequest(boardCategory, sort, searchType, search, page, memberId));
         return new PageInfo<>(boards);
     }
 

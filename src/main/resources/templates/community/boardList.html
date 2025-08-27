@@ -12,14 +12,19 @@
 <div layout:fragment="content" id="main" class="flex-col">
     <div id="store">
         <div id="title">
-            <div id="category-tabs">
-                <button class="category-tab active" data-category="공지 있어!">공지</button>
-                <button class="category-tab" data-category="여기 할인어때?">할인</button>
-                <button class="category-tab" data-category="나 뭐가 어울려?">스타일</button>
-                <button class="category-tab" data-category="이 꿀팁 들어봤어?">꿀팁</button>
-                <button class="category-tab" data-category="이템 어때?">아이템</button>
-                <button class="category-tab" data-category="자유게시판">자유</button>
+            <div id="category-dropdown-wrapper">
+                <div id="current-category" class="category-display">
+                    <span id="current-category-name"></span>
+                </div>
+                <div id="category-dropdown-list" class="dropdown-list hidden">
+                    <div th:each="cat : ${boardCategory}"
+                         class="category-item"
+                         th:attr="data-category=${cat.description}"
+                         th:text="${cat.description}">
+                    </div>
+                </div>
             </div>
+
             <div id="tab-sort">
                 <select id="sort-dropdown" class="filter-control">
                     <option value="LATEST">최신순</option>
@@ -28,23 +33,19 @@
             </div>
         </div>
 
-        <div id="search-bar">
-            <select id="search-type-dropdown" class="filter-control">
-                <option value="TITLE">제목</option>
-                <option value="CONTENT">내용</option>
-            </select>
-            <input type="text" id="search-input" placeholder="검색어를 입력하세요">
-            <button id="search-button">검색</button>
-        </div>
-
         <div id="contents" class="grid-layout">
             <div class="loader"></div>
         </div>
 
         <div id="pagination">
         </div>
-
     </div>
+    <a href="/community/board/write" class="write-post-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+        </svg>
+        <span>글쓰기</span>
+    </a>
 
     <div layout:fragment="scripts">
         <script th:src="@{/js/board/boardList.js}"></script>
@@ -52,5 +53,4 @@
 </div>
 
 </body>
-
 </html>

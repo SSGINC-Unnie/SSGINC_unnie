@@ -24,7 +24,9 @@ public class BoardViewController {
 
     @GetMapping
     public String getBoardListView(Model model) {
+        model.addAttribute("boardCategory", BoardCategory.values());
         model.addAttribute("activePage", "community");
+
         return "community/boardList";
     }
 
