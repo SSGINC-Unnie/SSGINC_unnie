@@ -6,7 +6,6 @@ import com.ssginc.unnie.community.dto.board.BoardsGuestGetResponse;
 import com.ssginc.unnie.community.dto.board.SearchType;
 import com.ssginc.unnie.community.dto.board.SortType;
 import com.ssginc.unnie.community.service.BoardService;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -23,21 +22,17 @@ public class BoardViewController {
 
     private final BoardService boardService;
 
-    @GetMapping("/guest")
-    public String getGuestBoardListView(HttpSession session, Model model) {
-        PageInfo<BoardsGuestGetResponse> boards = boardService.getBoardsGuest(BoardCategory.NOTICE, "LATEST", "TITLE", "", 1);
-
-        model.addAttribute("boards", boards);
-        model.addAttribute("boardCategory", BoardCategory.values());
-        model.addAttribute("sortType", SortType.values());
-        model.addAttribute("searchType", SearchType.values());
-
+    @GetMapping
+    public String getBoardListView(Model model) {
+        model.addAttribute("activePage", "community");
         return "community/boardList";
     }
 
     // 새 글 작성 페이지
     @GetMapping("/write")
-    public String getBoardWriteView() {
+    public String getBoardWriteView(Model model) {
+        model.addAttribute("activePage", "community");
+
         return "community/boardWrite";
     }
 
@@ -45,6 +40,8 @@ public class BoardViewController {
     @GetMapping("/{boardId}")
     public String getBoardDetailView(@PathVariable String boardId, Model model) {
         model.addAttribute("boardId", boardId);
+        model.addAttribute("activePage", "community");
+
         return "community/boardDetail";
     }
 
@@ -52,6 +49,8 @@ public class BoardViewController {
     @GetMapping("/{boardId}/edit")
     public String getBoardEditView(@PathVariable String boardId, Model model) {
         model.addAttribute("boardId", boardId);
+        model.addAttribute("activePage", "community");
+
         return "community/boardEdit";
     }
 

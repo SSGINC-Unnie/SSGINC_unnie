@@ -18,4 +18,6 @@ public interface BoardService {
     PageInfo<BoardsGuestGetResponse> getBoardsGuest(BoardCategory category, String sort, String searchType, String search, int page);
 
     PageInfo<BoardsGetResponse> getBoards(BoardCategory category, String sort, String searchType, String search, int page, long memberId);
+
+    void linkImagesToPost(String contents, long boardId);
 }

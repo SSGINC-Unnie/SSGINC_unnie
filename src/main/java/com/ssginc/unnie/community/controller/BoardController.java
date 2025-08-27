@@ -34,9 +34,15 @@ public class BoardController {
      * @return insert 한 데이터의 id
      */
     @PostMapping("")
-    public ResponseEntity<ResponseDto<Map<String, String>>> createBoard(BoardCreateRequest boardRequest) {
-        return ResponseEntity.ok(
-                new ResponseDto<>(HttpStatus.CREATED.value(), "게시글 작성에 성공했습니다.", Map.of("boardId", boardService.createBoard(boardRequest)))
+    public ResponseEntity<ResponseDto<Map<String, String>>> createBoard(
+            BoardCreateRequest boardRequest,
+            @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
+
+        boardRequest.setBoardAuthor(memberPrincipal.getMemberId());
+        String newBoardId = boardService.createBoard(boardRequest);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                new ResponseDto<>(HttpStatus.CREATED.value(), "게시글 작성에 성공했습니다.", Map.of("boardId", newBoardId))
         );
     }
 

@@ -1,26 +1,23 @@
-#main {
-    display: flex;
-    justify-content: center;
-    padding: 20px 0;
-    background-color: #f5f7f8;
-}
-
+/* 폼 전체를 감싸는 흰색 박스 */
 .form-container {
-    max-width: 800px;
     width: 100%;
     background-color: #fff;
     padding: 30px;
     border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    border: 1px solid #e0e0e0;
+    box-sizing: border-box;
 }
 
+/* 폼 제목 */
 .form-container h2 {
-    font-size: 24px;
+    font-size: 22px;
     font-weight: bold;
-    margin-bottom: 20px;
+    margin-top: 0;
+    margin-bottom: 24px;
     text-align: center;
 }
 
+/* 폼 그룹 (라벨 + 입력창) */
 .form-group {
     margin-bottom: 20px;
 }
@@ -29,8 +26,46 @@
     display: block;
     margin-bottom: 8px;
     font-weight: 500;
+    font-size: 14px; /* 라벨 폰트 크기 조정 */
 }
 
+/*  카테고리, 제목 등 폼 컨트롤 공통 스타일 */
+.form-control {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    -webkit-appearance: none; /* iOS 기본 스타일 제거 */
+    -moz-appearance: none;    /* Firefox 기본 스타일 제거 */
+    appearance: none;         /* 표준 기본 스타일 제거 */
+}
+
+/*  select 태그에 화살표 추가 */
+select.form-control {
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 10px;
+}
+
+/*  입력창 포커스 시 테두리 스타일 */
+.form-control:focus {
+    border-color: #ff3479; /* 메인 색상 */
+    box-shadow: 0 0 0 2px rgba(255, 52, 121, 0.2);
+    outline: none;
+}
+
+/* Summernote 에디터 */
+.note-editor.note-frame {
+    border-color: #ccc;
+}
+.note-editor .note-editable img {
+    display: none !important;
+}
+
+/* 하단 버튼 영역 */
 .form-actions {
     display: flex;
     justify-content: flex-end;
@@ -38,11 +73,38 @@
     margin-top: 30px;
 }
 
-.btn-ghost {
-    background-color: #eee;
-    color: #333;
+/*  버튼 공통 스타일 */
+.btn {
+    padding: 10px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 5px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
 
+/*  '작성 완료' 버튼 스타일 */
+.btn-primary {
+    background-color: #ff3479;
+    color: white;
+}
+.btn-primary:hover {
+    background-color: #e02f70;
+}
+
+/*  '취소' 버튼 스타일 */
+.btn-ghost {
+    background-color: #f1f3f5;
+    border-color: #dee2e6;
+    color: #495057;
+}
+.btn-ghost:hover {
+    background-color: #e9ecef;
+}
+
+
+/* --- 이하 첨부 파일 관련 스타일은 그대로 유지 --- */
 #attachment-preview-area {
     margin-top: 20px;
     padding: 15px;

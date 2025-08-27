@@ -40,6 +40,8 @@ public class SecurityConfig {
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         // 마이페이지 (업체 관리) - MANAGER 권한 필요
                         .requestMatchers("/mypage/myshop/**").hasAnyRole("MANAGER") //mypage 업체관리 페이지는 업체담당자(MANAGER)만 접근 가능
+                        // 커뮤니티 - 글 작성
+                        .requestMatchers("/community/board/write").authenticated()
                         // 그 외 모든 요청은 기본적으로 허용
                         .anyRequest().permitAll()
                 )
@@ -53,7 +55,7 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 // JwtFilter를 UsernamePasswordAuthenticationFilter 전에 추가
 
-                // ✨ 여기 추가
+                // 여기 추가
                 .exceptionHandling(ex -> ex
                         // 미인증 접근(401)
                         .authenticationEntryPoint((req, res, e) -> {
