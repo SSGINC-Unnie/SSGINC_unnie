@@ -29,23 +29,35 @@
             b.board_id,
             b.board_category,
             b.board_author,
-            m.member_nickname AS "authorNickname",  m.member_profile AS "authorProfile",    b.board_title,
+            m.member_nickname AS "authorNickname",
+            m.member_profile AS "authorProfile",
+            b.board_title,
             b.board_contents,
             b.board_created_at,
             b.board_views,
-            coalesce(COUNT(l.like_id), 0) AS "likeCount",
+
+            (SELECT COUNT(l.like_id) FROM `like` l WHERE l.like_target_type = 'BOARD' AND l.like_target_id = b.board_id) AS "likeCount",
+
+            EXISTS(
+                SELECT 1 FROM `like` l
+                WHERE l.like_target_type = 'BOARD'
+                  AND l.like_target_id = b.board_id
+                  AND l.like_member_id = #{memberId}
+            ) AS "liked",
+
+            COALESCE((SELECT l.like_id FROM `like` l
+                      WHERE l.like_target_type = 'BOARD'
+                        AND l.like_target_id = b.board_id
+                        AND l.like_member_id = #{memberId}), 0) AS "likeId",
+
             CASE
-                WHEN b.board_author = #{memberId} THEN TRUE
+                WHEN #{memberId} IS NOT NULL AND b.board_author = #{memberId} THEN TRUE
                 ELSE FALSE
                 END AS "isOwner"
         FROM board b
                  JOIN member m ON b.board_author = m.member_id
-                 LEFT JOIN `like` l
-                           ON l.like_target_type = "BOARD"
-                               AND l.like_target_id = b.board_id
         WHERE b.board_id = #{boardId}
           AND b.board_isactive = 1
-        GROUP BY b.board_id, m.member_nickname, m.member_profile
     </select>
 
     <!--  게시글 수정  -->

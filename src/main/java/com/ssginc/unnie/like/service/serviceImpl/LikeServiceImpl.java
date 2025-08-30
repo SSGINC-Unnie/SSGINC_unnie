@@ -59,18 +59,16 @@ public class LikeServiceImpl implements LikeService {
 
         NotificationResponse notificationRes = getLikeTargetMemberInfoByTargetInfo(like);
 
-        LikeCreatedEvent event;
-
-        event = LikeCreatedEvent.builder()
+        LikeCreatedEvent event = LikeCreatedEvent.builder()
                 .receiverId(notificationRes.getReceiverId())
-                .memberNickname(notificationRes.getReceiverNickname())
+                .memberNickname(loginUser.getMemberNickname()) // ✅ loginUser의 닉네임 사용
                 .targetId(like.getLikeTargetId())
                 .targetTitle(notificationRes.getTargetTitle())
                 .type(like.getLikeTargetType())
                 .build();
 
-        if (like.getLikeTargetType().equals("COMMENT")) {
-            event.setTargetId(getBoardIdByCommentTargetId(like.getLikeTargetId()));
+        if ("COMMENT".equals(like.getLikeTargetType())) {
+            event.setTargetId(getBoardIdByCommentTargetId(like.getLikeId())); // ✅ likeId 사용
         }
 
         publisher.publishEvent(event);

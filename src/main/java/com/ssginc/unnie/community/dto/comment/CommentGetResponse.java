@@ -17,6 +17,7 @@ public class CommentGetResponse {
     private String commentCreatedAt; // 댓글 작성일
     private String commentUpdatedAt; // 댓글 수정일
     private String commentContents; // 댓글 내용
-    private String likeCount; // 좋아요 수
+    private int likeCount; // 좋아요 수
     private boolean liked; // 좋아요 여부
+    private long likeId;
 }

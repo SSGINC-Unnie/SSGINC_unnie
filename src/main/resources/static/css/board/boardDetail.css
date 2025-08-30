@@ -1,0 +1,234 @@
+#post-container {
+    background-color: #fff;
+    padding: 20px;
+}
+
+/* 헤더: 작성자 정보, 수정/삭제 버튼 */
+#post-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+.author-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+#author-profile {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+#author-nickname {
+    font-weight: 600;
+}
+#author-actions button {
+    margin-left: 10px;
+    background: none;
+    border: none;
+    color: #888;
+    cursor: pointer;
+}
+
+/* 메타 정보 (제목, 생성일) */
+#post-meta {
+    padding: 20px 0;
+}
+#post-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+#post-created-at {
+    font-size: 13px;
+    color: #999;
+}
+
+/* 게시글 이미지 컨테이너 및 이미지 스타일 */
+#post-image-container {
+    width: 100%;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #f0f0f0;
+}
+#post-thumbnail {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* 게시글 본문 */
+#post-body {
+    line-height: 1.7;
+    font-size: 16px;
+    padding-bottom: 20px;
+}
+#post-body img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+}
+
+/* 좋아요 버튼 */
+#like-section {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+#like-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+}
+#like-icon {
+    width: 24px;
+    height: 24px;
+    stroke: #aaa;
+    stroke-width: 2;
+    fill: none;
+    transition: all 0.2s ease;
+}
+#like-button.liked #like-icon {
+    stroke: #ff3479;
+    fill: #ff3479;
+}
+#like-count {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+/* --- Comment Section Styles --- */
+#comment-section {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+.comment-count-header {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+/* 댓글/대댓글 작성 폼 공통 */
+.comment-form-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 8px;
+}
+.comment-form-wrapper textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    resize: vertical;
+    font-size: 15px;
+}
+.comment-form-wrapper .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+.comment-form-wrapper .form-actions button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+/* 메인 댓글창 등록 버튼 */
+.comment-form-wrapper.main .form-actions button {
+    background-color: #333;
+    color: white;
+}
+
+/* 대댓글 폼 */
+.reply-form-wrapper {
+    margin-left: 50px;
+    margin-top: 15px;
+}
+/* 대댓글 '취소' 버튼 */
+.reply-form-wrapper .cancel-reply-btn {
+    background-color: #868e96;
+    color: white;
+}
+/* 대댓글 '등록' 버튼 (시그니처 색상) */
+.reply-form-wrapper .submit-reply-btn {
+    background-color: #ff3479;
+    color: white;
+}
+
+
+/* 댓글 목록 */
+#comment-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.comment-wrapper {
+    display: flex;
+    flex-direction: column;
+}
+.replies-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.comment-item {
+    display: flex;
+    gap: 12px;
+}
+.comment-item.reply {
+    margin-left: 50px;
+}
+.comment-author-profile {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+.comment-body {
+    flex-grow: 1;
+}
+.comment-author-name {
+    font-weight: 600;
+    font-size: 14px;
+}
+.comment-content {
+    font-size: 15px;
+    margin: 4px 0;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+.comment-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    color: #888;
+}
+.comment-meta button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #888;
+    padding: 0;
+    font-size: 12px;
+}
+.comment-meta .like-btn.liked {
+    color: #ff3479;
+    font-weight: bold;
+}

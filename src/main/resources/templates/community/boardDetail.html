@@ -1,21 +1,17 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<html lang="ko" xmlns:layout="http://www.thymeleaf.org" layout:decorate="~{layout}">
 <head>
     <meta charset="UTF-8">
     <title>게시글 상세</title>
     <link rel="stylesheet" th:href="@{/css/board/boardDetail.css}">
 </head>
 <body>
-<div layout:fragment="content" id="main">
+<div class="container" layout:fragment="content">
     <div id="post-container">
         <div id="post-header">
-            <h1 id="post-title"></h1>
-            <div id="post-meta">
-                <div class="author-info">
-                    <img id="author-profile" src="" alt="프로필">
-                    <span id="author-nickname"></span>
-                </div>
-                <span id="post-created-at"></span>
+            <div class="author-info">
+                <img id="author-profile" src="" alt="프로필">
+                <span id="author-nickname"></span>
             </div>
             <div id="author-actions" style="display: none;">
                 <button id="edit-button">수정</button>
@@ -23,15 +19,42 @@
             </div>
         </div>
 
-        <div id="post-content">
+        <div id="post-meta">
+            <h1 id="post-title"></h1>
+            <p id="post-created-at"></p>
         </div>
 
+        <div id="post-image-container">
+            <img id="post-thumbnail" src="" alt="게시글 대표 이미지" style="display: none;">
+        </div>
+
+        <div id="post-body"></div>
+
+        <div id="like-section">
+            <button id="like-button">
+                <svg id="like-icon" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path></svg>
+            </button>
+            <span id="like-count">0</span>
+        </div>
+
+        <div id="comment-section">
+            <div class="comment-count-header">
+                <span>댓글</span>
+                <span id="comment-count">0</span>
+            </div>
+            <div class="comment-form-wrapper main">
+                <textarea id="comment-input" placeholder="댓글을 남겨보세요"></textarea>
+                <div class="form-actions">
+                    <button id="comment-submit-btn">등록</button>
+                </div>
+            </div>
+            <div id="comment-list"></div>
+        </div>
     </div>
     <div layout:fragment="scripts">
         <script th:src="@{/js/board/boardDetail.js}"></script>
     </div>
 </div>
-
 
 </body>
 </html>

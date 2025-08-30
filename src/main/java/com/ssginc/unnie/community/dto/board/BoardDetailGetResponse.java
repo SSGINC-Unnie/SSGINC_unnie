@@ -24,4 +24,6 @@ public class BoardDetailGetResponse {
     private boolean isOwner; // 작성자 확인
     private String authorNickname;
     private String authorProfile;
+    private boolean liked;
+    private long likeId;
 }

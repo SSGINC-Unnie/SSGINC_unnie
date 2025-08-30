@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         boards.forEach(board => {
             const postHTML = `
-            <div class="post" data-id="${board.id}" onclick="location.href='/community/board/${board.id}'">
+            <div class="post" data-id="${board.boardId}" onclick="location.href='/community/board/${board.boardId}'">
                 
                 <div class="post-header">
                     <div class="post-author">
@@ -91,7 +91,6 @@ document.addEventListener('DOMContentLoaded', () => {
             contentsDiv.insertAdjacentHTML('beforeend', postHTML);
         });
     };
-
 
     const renderPagination = (pageInfo) => {
         console.log("페이지네이션 데이터:", pageInfo);

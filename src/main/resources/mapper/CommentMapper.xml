@@ -97,7 +97,9 @@
                 WHERE l.like_target_type = "COMMENT"
                   AND l.like_target_id = c.comment_id
                   AND l.like_member_id = #{memberId}
-            ) AS liked
+            ) AS liked,
+            -- ✅ 현재 유저가 누른 좋아요 ID를 가져오는 로직 추가
+            COALESCE((SELECT l.like_id FROM `like` l WHERE l.like_target_type = 'COMMENT' AND l.like_target_id = c.comment_id AND l.like_member_id = #{memberId}), 0) AS "likeId"
         FROM
             comment c
                 JOIN member m ON c.comment_member_id = m.member_id
