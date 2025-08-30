@@ -52,13 +52,16 @@ public class BoardController {
     @GetMapping("/{boardId}")
     public ResponseEntity<ResponseDto<Map<String, Object>>> getBoard(
             @PathVariable String boardId,
-            @AuthenticationPrincipal MemberPrincipal memberPrincipal) { // ✅ Principal 객체 받기
+            @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
 
-        // ✅ 로그인 상태에 따라 memberId 분기 처리 (비로그인 시 null 전달)
-        Long memberId = (memberPrincipal != null) ? memberPrincipal.getMemberId() : null;
+        boolean isLoggedIn = (memberPrincipal != null);
+        Long memberId = isLoggedIn ? memberPrincipal.getMemberId() : null;
+
+        BoardDetailGetResponse board = boardService.getBoard(boardId, memberId);
 
         return ResponseEntity.ok(
-                new ResponseDto<>(HttpStatus.OK.value(), "게시글 조회 성공", Map.of("board", boardService.getBoard(boardId, memberId))) // ✅ memberId 전달
+                new ResponseDto<>(HttpStatus.OK.value(), "게시글 조회 성공",
+                        Map.of("board", board, "isLoggedIn", isLoggedIn))
         );
     }
 
@@ -98,7 +101,7 @@ public class BoardController {
      */
     @GetMapping("")
     public ResponseEntity<ResponseDto<Map<String, Object>>> getBoards(
-            @RequestParam(defaultValue = "나 뭐가 어울려?") String category, // String으로 받음
+            @RequestParam(defaultValue = "나 뭐가 어울려?") String category,
             @RequestParam(defaultValue = "LATEST") String sort,
             @RequestParam(defaultValue = "TITLE") String searchType,
             @RequestParam(required = false) String search,

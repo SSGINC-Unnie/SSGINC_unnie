@@ -80,6 +80,13 @@ public class BoardServiceImpl implements BoardService {
             throw new UnnieBoardException(ErrorCode.BOARD_NOT_FOUND);
         }
 
+        log.info("---[게시글 소유권 확인]---");
+        log.info("게시글 ID: {}", boardId);
+        log.info("게시글 작성자 ID (DB): {}", res.getBoardAuthor());
+        log.info("현재 로그인 사용자 ID (JWT): {}", memberId);
+        log.info("isOwner 계산 결과 (SQL): {}", res.isOwner());
+        log.info("-------------------------");
+
         return res;
     }
 
