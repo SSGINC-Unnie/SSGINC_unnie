@@ -20,4 +20,6 @@ public interface BoardService {
     PageInfo<BoardsGetResponse> getBoards(String category, String sort, String searchType, String search, int page, long memberId);
 
     void linkImagesToPost(String contents, long boardId);
+
+
 }

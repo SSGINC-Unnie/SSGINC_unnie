@@ -113,12 +113,17 @@
         DATE_FORMAT(b.board_created_at, '%Y-%m-%d %H:%i:%s') AS boardCreatedAt,
         b.board_views AS boardViews,
         (SELECT COUNT(like_id) FROM `like` l WHERE l.like_target_type = "BOARD" AND l.like_target_id = b.board_id) AS likeCount,
-        (SELECT COUNT(comment_id) FROM `comment` c WHERE c.comment_board_id = b.board_id) AS commentCount
+        (SELECT COUNT(comment_id) FROM `comment` c
+        WHERE c.comment_board_id = b.board_id
+        AND c.comment_isactive = 1
+        AND c.comment_parent_id = 0) AS commentCount
         FROM board b
         JOIN member m ON b.board_author = m.member_id
         <where>
             b.board_isactive = 1
-            AND b.board_category = #{category}
+            <if test="category != null and category.name() != 'ALL'">
+                AND b.board_category = #{category}
+            </if>
             <if test="search != null and search != ''">
                 <choose>
                     <when test="searchType == 'TITLE'">
@@ -155,7 +160,10 @@
             -- 좋아요 개수
             (SELECT COUNT(like_id) FROM `like` l WHERE l.like_target_type = "BOARD" AND l.like_target_id = b.board_id) AS likeCount,
             -- 댓글 개수
-            (SELECT COUNT(comment_id) FROM `comment` c WHERE c.comment_board_id = b.board_id) AS commentCount,
+            (SELECT COUNT(comment_id) FROM `comment` c
+             WHERE c.comment_board_id = b.board_id
+               AND c.comment_isactive = 1
+               AND c.comment_parent_id = 0) AS commentCount,
             EXISTS(
                 SELECT 1
                 FROM `like` l
@@ -165,11 +173,22 @@
             ) AS liked
         FROM board b
                  JOIN member m ON b.board_author = m.member_id
-        WHERE
-            (b.board_category = #{category})
-                AND (#{searchType} = 'TITLE' AND b.board_title LIKE CONCAT('%', #{search}, '%')) OR
-            (#{searchType} = 'CONTENT' AND b.board_contents LIKE CONCAT('%', #{search}, '%'))
-            AND b.board_isactive = 1
+        <where>
+            b.board_isactive = 1
+            <if test="category != null and category.name() != 'ALL'">
+                AND b.board_category = #{category}
+            </if>
+            <if test="search != null and search != ''">
+                <choose>
+                    <when test="searchType == 'TITLE'">
+                        AND b.board_title LIKE CONCAT('%', #{search}, '%')
+                    </when>
+                    <when test="searchType == 'CONTENT'">
+                        AND b.board_contents LIKE CONCAT('%', #{search}, '%')
+                    </when>
+                </choose>
+            </if>
+        </where>
         ORDER BY
             CASE WHEN #{sort} = 'LATEST' THEN b.board_created_at END DESC,
             CASE WHEN #{sort} = 'POPULAR' THEN b.board_views END DESC

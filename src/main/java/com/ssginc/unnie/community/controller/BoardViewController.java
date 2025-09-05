@@ -1,18 +1,21 @@
 package com.ssginc.unnie.community.controller;
 
 import com.github.pagehelper.PageInfo;
-import com.ssginc.unnie.community.dto.board.BoardCategory;
-import com.ssginc.unnie.community.dto.board.BoardsGuestGetResponse;
-import com.ssginc.unnie.community.dto.board.SearchType;
-import com.ssginc.unnie.community.dto.board.SortType;
+import com.ssginc.unnie.common.config.MemberPrincipal;
+import com.ssginc.unnie.common.exception.UnnieBoardException;
+import com.ssginc.unnie.common.util.ErrorCode;
+import com.ssginc.unnie.community.dto.board.*;
 import com.ssginc.unnie.community.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.nio.file.AccessDeniedException;
 
 @Slf4j
 @Controller
@@ -49,11 +52,21 @@ public class BoardViewController {
 
     // 게시글 수정 페이지
     @GetMapping("/{boardId}/edit")
-    public String getBoardEditView(@PathVariable String boardId, Model model) {
+    public String getBoardEditView(@PathVariable String boardId, Model model,
+                                   @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
+
+        Long memberId = memberPrincipal.getMemberId();
+
+        BoardDetailGetResponse board = boardService.getBoard(boardId, memberId);
+        if (!board.isOwner()) {
+            throw new UnnieBoardException(ErrorCode.FORBIDDEN);
+        }
+
         model.addAttribute("boardId", boardId);
         model.addAttribute("activePage", "community");
-
         return "community/boardEdit";
     }
+
+
 
 }

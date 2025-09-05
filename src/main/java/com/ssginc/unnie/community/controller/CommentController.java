@@ -1,6 +1,9 @@
 package com.ssginc.unnie.community.controller;
 
+import com.github.pagehelper.PageInfo;
 import com.ssginc.unnie.common.config.MemberPrincipal;
+import com.ssginc.unnie.community.dto.comment.CommentGetResponse;
+import com.ssginc.unnie.community.dto.comment.CommentGuestGetResponse;
 import com.ssginc.unnie.community.dto.comment.CommentRequest;
 import com.ssginc.unnie.community.dto.member.CommunityMemberDto;
 import com.ssginc.unnie.community.service.CommentService;
@@ -73,8 +76,12 @@ public class CommentController {
     @GetMapping("/guest")
     public ResponseEntity<ResponseDto<Map<String, Object>>> getAllCommentsGuest(@RequestParam long boardId,
                                                                                 @RequestParam int page) {
+
+        PageInfo<CommentGuestGetResponse> pageInfo = commentService.getAllCommentsGuest(boardId, page);
+        int rootCommentCount = commentService.countRootComments(boardId);
         return ResponseEntity.ok(
-                new ResponseDto<>(HttpStatus.OK.value(), "비로그인 댓글 조회 성공", Map.of("comment", commentService.getAllCommentsGuest(boardId, page)))
+                new ResponseDto<>(HttpStatus.OK.value(), "비로그인 댓글 조회 성공",
+                        Map.of("pageInfo", pageInfo, "rootCommentCount", rootCommentCount))
         );
     }
 
@@ -86,9 +93,12 @@ public class CommentController {
                                                                            @RequestParam int page,
                                                                            @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
         long memberId = memberPrincipal.getMemberId();
+        PageInfo<CommentGetResponse> pageInfo = commentService.getAllComments(memberId, boardId, page);
+        int rootCommentCount = commentService.countRootComments(boardId);
 
         return ResponseEntity.ok(
-                new ResponseDto<>(HttpStatus.OK.value(), "비로그인 댓글 조회 성공", Map.of("comment", commentService.getAllComments(memberId, boardId, page)))
+                new ResponseDto<>(HttpStatus.OK.value(), "로그인 댓글 조회 성공",
+                        Map.of("pageInfo", pageInfo, "rootCommentCount", rootCommentCount))
         );
     }
 

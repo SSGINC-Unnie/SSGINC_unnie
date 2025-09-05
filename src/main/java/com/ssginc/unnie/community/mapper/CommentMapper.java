@@ -27,7 +27,7 @@ public interface CommentMapper {
 
     int updateComment(CommentRequest comment);
 
-    int checkCommentAndAuthor(Map<String, Object> commentId);
+    Integer checkCommentAndAuthor(Map<String, Object> commentId);
 
     int deleteComment(Map<String, Object> comment);
 
@@ -38,4 +38,7 @@ public interface CommentMapper {
     BoardResponseForEvent getBoardTitleAndBoardAuthorIdByBoardId(long commentBoardId);
 
     int getMemberIdByCommentId(long commentParentId);
+
+    int countRootCommentsByBoardId(long boardId);
+
 }

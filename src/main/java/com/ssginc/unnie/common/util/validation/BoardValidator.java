@@ -1,5 +1,6 @@
 package com.ssginc.unnie.common.util.validation;
 
+import com.ssginc.unnie.community.dto.board.BoardCreateRequest;
 import com.ssginc.unnie.community.dto.board.BoardRequestBase;
 import com.ssginc.unnie.community.dto.board.BoardUpdateRequest;
 import com.ssginc.unnie.community.dto.board.BoardCategory;
@@ -31,9 +32,10 @@ public class BoardValidator implements Validator<BoardRequestBase> {
         validateTitle(board.getBoardTitle());
         validateCategory(board.getBoardCategory());
         validateContent(board.getBoardContents());
-        validateThumbnail(board.getBoardThumbnail());
 
-        if (board instanceof BoardUpdateRequest){
+        if (board instanceof BoardCreateRequest) {
+            validateThumbnail(board.getBoardThumbnail());
+        } else if (board instanceof BoardUpdateRequest){
             validateBoardId(((BoardUpdateRequest) board).getBoardId());
         }
 

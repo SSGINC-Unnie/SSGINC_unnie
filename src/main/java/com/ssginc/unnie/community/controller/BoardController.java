@@ -73,6 +73,7 @@ public class BoardController {
     public ResponseEntity<ResponseDto<Map<String, Object>>> updateBoard(BoardUpdateRequest boardUpdateRequest,
                                                                         @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
         long memberId = memberPrincipal.getMemberId();
+        boardUpdateRequest.setBoardAuthor(memberId);
         return ResponseEntity.ok(
                 new ResponseDto<>(HttpStatus.OK.value(), "게시글 수정 성공", Map.of("boardId", boardService.updateBoard(boardUpdateRequest, memberId)))
         );

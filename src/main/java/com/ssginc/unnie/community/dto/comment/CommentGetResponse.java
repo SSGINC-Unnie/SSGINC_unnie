@@ -20,4 +20,6 @@ public class CommentGetResponse {
     private int likeCount; // 좋아요 수
     private boolean liked; // 좋아요 여부
     private long likeId;
+    private boolean isOwner;
+
 }

@@ -16,4 +16,7 @@ public interface MediaMapper {
 
     List<String> selectFileUrnByTarget(@Param("targetType") String targetType,
                                        @Param("targetId") long targetId);
+
+    int deleteMediaByTarget(@Param("targetType") String targetType, @Param("targetId") long targetId);
+
 }

@@ -228,9 +228,9 @@ public class CommentServiceImpl implements CommentService {
      * 댓글 식별 번호 존재 여부, 게시글 작성자 번호와 로그인 유저 번호 일치 여부 확인하는 메서드
      */
     private void validateCommentOwnership(long commentId, long memberId) {
-        int checkResult = commentMapper.checkCommentAndAuthor(Map.of("commentId", commentId, "memberId", memberId));
+        Integer checkResult = commentMapper.checkCommentAndAuthor(Map.of("commentId", commentId, "memberId", memberId));
 
-        if (checkResult == -1) {
+        if (checkResult == null || checkResult == -1) {
             throw new UnnieCommentException(ErrorCode.COMMENT_NOT_FOUND);
         }
 
@@ -262,4 +262,11 @@ public class CommentServiceImpl implements CommentService {
     public NotificationResponse getBoardAuthorIdByCommentId(long commentBoardId) {
         return commentMapper.getBoardAuthorIdByCommentId(commentBoardId);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public int countRootComments(long boardId) {
+        return commentMapper.countRootCommentsByBoardId(boardId);
+    }
+
 }
