@@ -232,3 +232,58 @@
     color: #ff3479;
     font-weight: bold;
 }
+
+/* 수정/삭제 버튼이 들어갈 컨테이너 */
+.comment-actions {
+    margin-left: auto; /* meta 정보의 오른쪽 끝으로 버튼들을 보냄 */
+}
+
+/* 수정/삭제 버튼 스타일 */
+.comment-actions button {
+    background: none;
+    border: none;
+    color: #888;
+    cursor: pointer;
+    font-size: 12px;
+    margin-left: 8px;
+}
+.comment-actions button:hover {
+    text-decoration: underline;
+}
+
+/* 댓글 수정 폼 */
+.comment-edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 8px;
+}
+.comment-edit-form textarea {
+    width: 100%;
+    min-height: 60px;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    resize: vertical;
+    font-size: 14px;
+}
+.comment-edit-form .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+.comment-edit-form .form-actions button {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+}
+.comment-edit-form .cancel-edit-btn {
+    background-color: #868e96;
+    color: white;
+}
+.comment-edit-form .submit-edit-btn {
+    background-color: #333;
+    color: white;
+}

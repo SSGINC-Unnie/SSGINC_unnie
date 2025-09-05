@@ -31,5 +31,11 @@
           AND media_target_id = #{targetId}
     </select>
 
+    <delete id="deleteMediaByTarget">
+        DELETE FROM media
+        WHERE media_target_type = #{targetType}
+          AND media_target_id = #{targetId}
+    </delete>
+
 </mapper>
 

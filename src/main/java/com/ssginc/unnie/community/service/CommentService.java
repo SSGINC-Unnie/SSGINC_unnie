@@ -24,4 +24,7 @@ public interface CommentService {
     long deleteComment(long commentId, long memberId);
 
     NotificationResponse getBoardAuthorIdByCommentId(long commentBoardId);
+
+    int countRootComments(long boardId);
+
 }

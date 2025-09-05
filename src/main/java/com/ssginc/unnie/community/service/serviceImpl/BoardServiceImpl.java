@@ -112,11 +112,15 @@ public class BoardServiceImpl implements BoardService {
      */
     @Transactional(rollbackFor = Exception.class)
     public long executeUpdateTransaction(BoardUpdateRequest boardUpdateRequest) {
-        int res = boardMapper.updateBoard(boardUpdateRequest);
 
+        mediaMapper.deleteMediaByTarget("BOARD", boardUpdateRequest.getBoardId());
+
+        int res = boardMapper.updateBoard(boardUpdateRequest);
         if (res == 0){
             throw new UnnieBoardException(ErrorCode.BOARD_UPDATE_FAILED);
         }
+
+        linkImagesToPost(boardUpdateRequest.getBoardContents(), boardUpdateRequest.getBoardId());
 
         return boardUpdateRequest.getBoardId();
     }

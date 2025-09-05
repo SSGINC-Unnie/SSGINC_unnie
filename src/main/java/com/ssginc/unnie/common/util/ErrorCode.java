@@ -148,6 +148,8 @@ public enum ErrorCode {
     COMMENT_INVALID_WORD(400, "CO008", "금칙어가 포함되어 있습니다."),
     COMMENT_PARENT_NOT_FOUND(404, "CO009", "원댓글을 찾을 수 없습니다."),
     COMMENT_BOARD_NOT_FOUND(404, "CO010", "댓글 게시글을 찾을 수 없습니다."),
+    COMMENT_FORBIDDEN(403, "CO008", "요청에 대한 권한이 없습니다."),
+
 
     // =================================== 좋아요 관련 에러 =====================================================
     LIKE_CREATE_FAILED(500, "LI001", "좋아요 중 오류가 발생했습니다"),
