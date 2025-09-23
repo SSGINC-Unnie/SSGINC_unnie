@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>나의 댓글</title>
+    <link rel="stylesheet" href="/css/mypage/community/getMycomments.css">
+</head>
+<body>
+<div class="container" layout:fragment="content">
+    <div class="page-header">
+        <h1>나의 댓글</h1>
+    </div>
+    <div class="content-area">
+        <ul class="list-container" id="comment-list">
+        </ul>
+        <div class="pagination" id="comment-pagination">
+        </div>
+    </div>
+
+    <script src="/js/mypage/community/getMycomments.js"></script>
+</div>
+</body>
+</html>
