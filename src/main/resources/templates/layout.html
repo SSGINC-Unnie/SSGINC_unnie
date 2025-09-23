@@ -8,7 +8,7 @@
     <title>언니어때</title>
     <link rel="stylesheet" href="/static/css/styles.css">
 </head>
-<body>
+<body th:data-member-id="${#authentication.principal != 'anonymousUser' ? #authentication.principal.memberId : 0}">
 <!-- 전체 페이지 래퍼 -->
 <div class="wrapper">
     <!-- Header -->
@@ -22,6 +22,13 @@
                     </a>
                 </div>
                 <div class="profile" sec:authorize="isAuthenticated()">
+                    <a href="/notifications" class="notification-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                        <span class="notification-badge hidden"></span>
+                    </a>
                     <img th:src="@{${memberProfile}}">
                     <form th:action="@{/member/logout}" method="post">
                         <button type="submit" class="auth-btn logout-btn">로그아웃</button>
@@ -65,7 +72,18 @@
             </nav>
         </div>
     </header>
-    <!-- Main -->
+
+    <div id="notification-popup" class="notification-popup hidden">
+        <div class="notification-header">
+            <h3>알림</h3>
+        </div>
+        <ul id="notification-list" class="notification-list">
+            <li class="notification-empty">새로운 알림이 없습니다.</li>
+        </ul>
+        <div class="notification-footer">
+            <a href="/notifications">모든 알림 보기</a>
+        </div>
+    </div>
     <div class="container" layout:fragment="content">
         <!-- 각 페이지별 콘텐츠가 들어갑니다 -->
     </div>
@@ -137,6 +155,10 @@
             <button id="modal-close-btn" class="btn-ghost">돌아가기</button>
             <a href="/member/login" id="modal-login-btn" class="btn-primary">로그인</a>
         </div>
+    </div>
+
+    <div layout:fragment="scripts">
+        <script src="/js/layout.js"></script>
     </div>
 </div>
 </body>

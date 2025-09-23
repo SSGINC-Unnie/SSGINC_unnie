@@ -54,9 +54,10 @@ public class CommentServiceImpl implements CommentService {
                         .builder()
                         .commentBoardId(request.getCommentBoardId())
                         .boardAuthorId(board.getBoardAuthor())
+                        .commentMemberId(member.getMemberId())
                         .commentMemberNickname(member.getMemberNickname())
                         .boardTitle(board.getBoardTitle())
-                .build());
+                        .build());
 
         return request.getCommentId();
     }
@@ -88,9 +89,10 @@ public class CommentServiceImpl implements CommentService {
         eventPublisher.publishEvent(
                 ReplyCreatedEvent.builder()
                         .receiverId(parentCommentAuthorId)
+                        .commentMemberId(member.getMemberId())
                         .commentMemberNickname(member.getMemberNickname())
                         .commentBoardId(request.getCommentBoardId())
-                        .commentContent(request.getCommentContents())
+                        .parentCommentId(request.getCommentParentId())
                         .build()
         );
 

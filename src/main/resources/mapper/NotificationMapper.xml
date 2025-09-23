@@ -34,5 +34,23 @@
             notification_isread = 0
         ORDER BY
             notification_created_at DESC
+            LIMIT 5
+    </select>
+
+    <select id="getAllMyNotificationsByMemberId"
+            resultType="com.ssginc.unnie.notification.vo.Notification">
+        SELECT
+            notification_id,
+            notification_type,
+            notification_contents,
+            notification_created_at,
+            notification_urn,
+            notification_isread
+        FROM
+            `notification`
+        WHERE
+            notification_member_id = #{memberId}
+        ORDER BY
+            notification_created_at DESC
     </select>
 </mapper>

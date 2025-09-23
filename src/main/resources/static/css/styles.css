@@ -38,6 +38,8 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 12px 20px;
+    position: relative;
+
 }
 
 .logo img {
@@ -359,4 +361,158 @@ body {
     border-radius: 5px;
     cursor: pointer;
     text-decoration: none;
+}
+
+/* --- 알림 아이콘 스타일 (수정) --- */
+.notification-icon {
+    position: relative; /* 뱃지의 위치 기준점 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #EAB308; /* 아이콘 색상을 노란색 계열로 변경 */
+    margin-right: 8px;
+}
+
+.notification-icon svg {
+    width: 26px;
+    height: 26px;
+    transition: transform 0.2s;
+}
+
+.notification-icon:hover svg {
+    transform: rotate(15deg); /* 마우스 올렸을 때 살짝 기울어지는 효과 */
+}
+
+/* 새 알림 숫자 뱃지 스타일 (수정) */
+.notification-badge {
+    position: absolute;
+    top: -5px;  /* 위치 조정 */
+    right: -7px; /* 위치 조정 */
+
+    /* 크기 및 모양 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px; /* 최소 너비 */
+    height: 20px;
+    padding: 0 6px; /* 숫자 양 옆 여백 */
+
+    /* 색상 및 폰트 */
+    background-color: #ff3479; /* 빨간색 배경 */
+    color: white;              /* 흰색 숫자 */
+    font-size: 12px;
+    font-weight: 600;
+
+    /* 기타 */
+    border-radius: 10px; /* 타원형 모양 */
+    border: 2px solid white;
+}
+
+/* 뱃지를 숨기기 위한 .hidden 클래스 (기존과 동일) */
+.notification-badge.hidden {
+    display: none;
+}
+
+/* --- 알림 팝업 스타일 (추가) --- */
+.notification-popup {
+    position: absolute;
+    top: 75px; /* 헤더 높이에 맞춰 조정 */
+    right: 10px; /* 위치 조정 */
+    width: 360px;
+    max-height: 480px;
+    background-color: white;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    z-index: 1500; /* 다른 요소들 위에 보이도록 */
+    display: flex;
+    flex-direction: column;
+    transition: opacity 0.2s, transform 0.2s;
+}
+
+.notification-popup.hidden {
+    display: none;
+    opacity: 0;
+    transform: translateY(-10px);
+}
+
+.notification-header {
+    padding: 16px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.notification-header h3 {
+    margin: 0;
+    font-size: 16px;
+}
+
+.notification-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    overflow-y: auto; /* 알림이 많아지면 스크롤 */
+    flex-grow: 1;
+}
+
+.notification-item {
+    display: flex;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid #f0f0f0;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.notification-item:last-child {
+    border-bottom: none;
+}
+.notification-item:hover {
+    background-color: #f8f9fa;
+}
+
+/* 읽지 않은 알림 표시 (왼쪽 파란 점) */
+.notification-item.unread::before {
+    content: '';
+    display: block;
+    width: 8px;
+    height: 8px;
+    background-color: #ff3479; /* 포인트 컬러 */
+    border-radius: 50%;
+    margin-top: 5px;
+    flex-shrink: 0;
+}
+
+.notification-content p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #333;
+}
+
+.notification-content .timestamp {
+    font-size: 12px;
+    color: #888;
+    margin-top: 4px;
+}
+
+.notification-empty {
+    padding: 60px 20px;
+    text-align: center;
+    color: #999;
+}
+
+.notification-footer {
+    padding: 12px;
+    text-align: center;
+    border-top: 1px solid #f0f0f0;
+}
+
+.notification-footer a {
+    text-decoration: none;
+    color: #555;
+    font-size: 14px;
+    font-weight: 500;
+}
+.notification-footer a:hover {
+    text-decoration: underline;
 }
