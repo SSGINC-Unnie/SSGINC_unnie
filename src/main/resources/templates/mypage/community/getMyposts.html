@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>나의 게시글</title>
+    <link rel="stylesheet" href="/css/mypage/community/getMyposts.css">
+</head>
+<body>
+<div class="container" layout:fragment="content">
+    <div class="page-header">
+        <h1>나의 게시글</h1>
+    </div>
+
+    <div class="content-area">
+        <div id="contents" class="grid-layout">
+            <div class="loader"></div> </div>
+
+        <div id="pagination">
+        </div>
+    </div>
+    <script src="/js/mypage/community/getMyposts.js"></script>
+</div>
+</body>
+</html>

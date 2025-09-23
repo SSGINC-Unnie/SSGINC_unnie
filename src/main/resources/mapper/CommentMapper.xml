@@ -4,19 +4,21 @@
 <mapper namespace="com.ssginc.unnie.community.mapper.CommentMapper">
 
     <!-- 댓글 작성 -->
-    <insert id="createComment" useGeneratedKeys="true" keyProperty="commentId"  keyColumn="comment_id">
+    <insert id="createComment" useGeneratedKeys="true" keyProperty="commentId" keyColumn="comment_id">
         INSERT INTO comment
         (
-         comment_contents,
-         comment_board_id,
-         comment_member_id
+            comment_contents,
+            comment_board_id,
+            comment_member_id,
+            comment_parent_id
         )
         VALUES
-        (
-         #{commentContents},
-         #{commentBoardId},
-         #{commentMemberId}
-        )
+            (
+                #{commentContents},
+                #{commentBoardId},
+                #{commentMemberId},
+                0
+            )
     </insert>
 
     <!-- 대댓글 작성 -->
@@ -138,14 +140,22 @@
     <!-- 내가 쓴 댓글 목록 조회   -->
     <select id="getMyComments" resultType="com.ssginc.unnie.mypage.dto.community.MyPageCommentsResponse">
         SELECT
-            c.comment_id,
-            c.comment_created_at,
-            c.comment_contents,
-            (SELECT COUNT(like_id) FROM `like` l WHERE l.like_target_type = "COMMENT" AND l.like_target_id = c.comment_id) AS likeCount
+            c.comment_id AS commentId,
+            c.comment_created_at AS commentCreatedAt,
+            c.comment_contents AS commentContents,
+            (SELECT COUNT(like_id) FROM `like` l WHERE l.like_target_type = "COMMENT" AND l.like_target_id = c.comment_id) AS likeCount,
+            b.board_id AS boardId,
+            b.board_title AS boardTitle,
+            b.board_thumbnail AS boardThumbnail,
+            (SELECT COUNT(comment_id) FROM comment com WHERE com.comment_board_id = b.board_id AND com.comment_isactive = 1) AS boardCommentCount
         FROM
             comment c
+                JOIN
+            board b ON c.comment_board_id = b.board_id
         WHERE
             c.comment_member_id = #{memberId}
+          AND c.comment_isactive = 1
+          AND b.board_isactive = 1
         ORDER BY
             c.comment_created_at DESC
     </select>
