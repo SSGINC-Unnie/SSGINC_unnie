@@ -1,5 +1,7 @@
 package com.ssginc.unnie.notification.service.serviceImpl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.ssginc.unnie.common.exception.UnnieNotificationException;
 import com.ssginc.unnie.common.util.ErrorCode;
 import com.ssginc.unnie.notification.dto.NotificationMessage;
@@ -7,6 +9,7 @@ import com.ssginc.unnie.notification.dto.NotificationResponse;
 import com.ssginc.unnie.notification.mapper.NotificationMapper;
 import com.ssginc.unnie.notification.repository.EmitterRepository;
 import com.ssginc.unnie.notification.service.NotificationService;
+import com.ssginc.unnie.notification.vo.Notification;
 import com.ssginc.unnie.notification.vo.NotificationType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -150,6 +153,13 @@ public class NotificationServiceImpl implements NotificationService {
         }
 
         return res;
+    }
+
+    @Override
+    public PageInfo<Notification> getAllMyNotificationsByMemberId(long memberId, int page) {
+        PageHelper.startPage(page, 10); // 한 페이지에 10개씩 표시
+        List<Notification> notifications = notificationMapper.getAllMyNotificationsByMemberId(memberId);
+        return new PageInfo<>(notifications);
     }
 
 

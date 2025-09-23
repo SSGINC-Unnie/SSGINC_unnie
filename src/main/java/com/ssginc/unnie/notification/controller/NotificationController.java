@@ -1,8 +1,10 @@
 package com.ssginc.unnie.notification.controller;
 
+import com.github.pagehelper.PageInfo;
 import com.ssginc.unnie.common.config.MemberPrincipal;
 import com.ssginc.unnie.common.util.ResponseDto;
 import com.ssginc.unnie.notification.service.NotificationService;
+import com.ssginc.unnie.notification.vo.Notification;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -44,6 +46,21 @@ public class NotificationController {
 
         return ResponseEntity.ok(
                 new ResponseDto<>(HttpStatus.OK.value(), "알림 조회 성공", Map.of("notifications", notificationService.getMyNotificationsByMemberId(memberId)))
+        );
+    }
+
+    // '모든 알림 보기' 페이지를 위한 API
+    @GetMapping("/all")
+    public ResponseEntity<ResponseDto<Map<String, Object>>> getAllMyNotifications(
+            @RequestParam(defaultValue = "1") int page,
+            @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
+
+        long memberId = memberPrincipal.getMemberId();
+
+        PageInfo<Notification> notificationPage = notificationService.getAllMyNotificationsByMemberId(memberId, page);
+
+        return ResponseEntity.ok(
+                new ResponseDto<>(HttpStatus.OK.value(), "전체 알림 조회 성공", Map.of("notifications", notificationPage))
         );
     }
 

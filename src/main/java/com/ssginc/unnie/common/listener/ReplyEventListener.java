@@ -18,15 +18,16 @@ public class ReplyEventListener {
 
     private final NotificationService notificationService;
 
-    // 트랜잭션 커밋 후 이벤트 발행 실행되도록 보장
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handleReplyCreated(ReplyCreatedEvent event) {
-        
+
+        String content = String.format("%s님이 회원님의 댓글에 답글을 남겼습니다.", event.getCommentMemberNickname());
+
         NotificationMessage msg = NotificationMessage.builder()
                 .notificationMemberId(event.getReceiverId())
                 .notificationType(NotificationType.REPLY)
-                .notificationContents(String.format("[%s]님이 [%s]글에 댓글을 남겼어요", event.getCommentMemberNickname(), event.getCommentContent()))
-                .notificationUrn(String.format("/community/board/%d", event.getCommentBoardId()))
+                .notificationContents(content) // 수정된 내용 적용
+                .notificationUrn(String.format("/community/board/%d#comment-%d", event.getCommentBoardId(), event.getParentCommentId())) // 원본 댓글로 바로 이동하도록 URL 수정
                 .build();
 
         notificationService.send(msg);
