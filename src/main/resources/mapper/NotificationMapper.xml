@@ -24,13 +24,15 @@
     <select id="getMyNotificationsByMemberId"
             resultType="com.ssginc.unnie.notification.dto.NotificationMessage">
         SELECT
+            notification_id,
+            notification_isread,
             notification_contents,
             notification_urn
         FROM
             `notification`
         WHERE
             notification_member_id = #{memberId}
-         AND
+          AND
             notification_isread = 0
         ORDER BY
             notification_created_at DESC
@@ -52,5 +54,25 @@
             notification_member_id = #{memberId}
         ORDER BY
             notification_created_at DESC
+    </select>
+
+    <update id="updateIsRead">
+        UPDATE notification
+        SET notification_isread = 1
+        WHERE notification_id = #{notificationId}
+    </update>
+
+    <update id="updateAllIsReadByMemberId">
+        UPDATE notification
+        SET notification_isread = 1
+        WHERE notification_member_id = #{memberId}
+          AND notification_isread = 0
+    </update>
+
+    <select id="countUnreadNotifications" resultType="int">
+        SELECT COUNT(*)
+        FROM notification
+        WHERE notification_member_id = #{memberId}
+          AND notification_isread = 0
     </select>
 </mapper>

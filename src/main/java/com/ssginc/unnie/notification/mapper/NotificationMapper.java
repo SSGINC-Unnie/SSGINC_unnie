@@ -14,6 +14,10 @@ public interface NotificationMapper {
 
     List<Notification> getAllMyNotificationsByMemberId(long memberId);
 
+    void updateIsRead(long notificationId);
 
+    void updateAllIsReadByMemberId(long memberId);
+
+    int countUnreadNotifications(long memberId);
 
 }

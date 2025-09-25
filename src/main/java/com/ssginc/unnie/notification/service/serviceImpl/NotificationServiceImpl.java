@@ -162,6 +162,21 @@ public class NotificationServiceImpl implements NotificationService {
         return new PageInfo<>(notifications);
     }
 
+    public void markAsRead(long notificationId) {
+        notificationMapper.updateIsRead(notificationId);
+    }
+
+    @Override
+    @Transactional
+    public void markAllAsRead(long memberId) {
+        notificationMapper.updateAllIsReadByMemberId(memberId);
+    }
+
+    @Override
+    public int countUnreadNotifications(long memberId) {
+        return notificationMapper.countUnreadNotifications(memberId);
+    }
+
 
     /**
      * Emitter 고유 아이디 생성

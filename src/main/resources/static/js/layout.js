@@ -6,20 +6,37 @@ document.addEventListener('DOMContentLoaded', function () {
     const notificationPopup = document.getElementById('notification-popup');
     const notificationList = document.getElementById('notification-list');
     const notificationBadge = document.querySelector('.notification-badge');
+    const clearAllBtn = document.getElementById('clear-all-notifications-btn');
+
+
+    const initializeNotificationCount = async () => {
+        if (!memberId || memberId === '0') return;
+        try {
+            const response = await fetch('/api/notification/count');
+            if (!response.ok) return;
+
+            const result = await response.json();
+            const count = result.data.count;
+
+            if (count > 0) {
+                notificationBadge.textContent = count;
+                notificationBadge.classList.remove('hidden');
+            } else {
+                notificationBadge.classList.add('hidden');
+            }
+        } catch (error) {
+            console.error("알림 수 초기화 실패:", error);
+        }
+    };
 
     // --- 알림 목록 불러오기 함수 ---
     const fetchNotifications = async () => {
         if (!memberId || memberId === '0') return;
-
         try {
             const response = await fetch('/api/notification');
             if (!response.ok) throw new Error('알림 목록을 불러오는데 실패했습니다.');
-
             const result = await response.json();
-            const notifications = result.data.notifications;
-
-            renderNotifications(notifications);
-
+            renderNotifications(result.data.notifications);
         } catch (error) {
             console.error(error);
             notificationList.innerHTML = '<li class="notification-empty">알림을 불러올 수 없습니다.</li>';
@@ -28,8 +45,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- 알림 목록을 화면에 그리는 함수 ---
     const renderNotifications = (notifications) => {
-        notificationList.innerHTML = ''; // 기존 목록 비우기
-
+        notificationList.innerHTML = '';
         if (!notifications || notifications.length === 0) {
             notificationList.innerHTML = '<li class="notification-empty">새로운 알림이 없습니다.</li>';
             return;
@@ -37,18 +53,35 @@ document.addEventListener('DOMContentLoaded', function () {
 
         notifications.forEach(noti => {
             const item = document.createElement('li');
-            item.className = 'notification-item unread'; // unread 클래스 추가
-            item.onclick = () => {
-                // TODO: 알림 읽음 처리 API 호출
-                location.href = noti.notificationUrn;
-            };
+            item.className = 'notification-item unread';
 
-            // 알림 타입에 따라 아이콘 등을 다르게 할 수 있음 (추후 확장)
+            item.onclick = async () => {
+                try {
+                    // 백엔드에 '읽음' 처리 요청
+                    const response = await fetch(`/api/notification/${noti.notificationId}/read`, {
+                        method: 'PATCH'
+                    });
+
+                    if (response.ok) {
+                        // 성공 시 화면에서 즉시 제거
+                        item.remove();
+                        // 만약 목록이 비게 되면 "없음" 메시지 표시
+                        if (notificationList.children.length === 0) {
+                            notificationList.innerHTML = '<li class="notification-empty">새로운 알림이 없습니다.</li>';
+                        }
+                    }
+                } catch (error) {
+                    console.error("알림 읽음 처리 실패:", error);
+                } finally {
+                    // 페이지 이동은 항상 마지막에 실행
+                    location.href = noti.notificationUrn;
+                }
+            };
 
             item.innerHTML = `
                 <div class="notification-content">
                     <p>${noti.notificationContents}</p>
-                    <div class="timestamp">${/* new Date(noti.notificationCreatedAt).toLocaleString() */'방금 전'}</div>
+                    <div class="timestamp">방금 전</div>
                 </div>
             `;
             notificationList.appendChild(item);
@@ -57,32 +90,43 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- 이벤트 리스너 설정 ---
 
-    // 알림 아이콘 클릭 시 팝업 토글 및 데이터 로드
+    // 알림 아이콘 클릭 시
     if (notificationIcon) {
         notificationIcon.addEventListener('click', (e) => {
-            e.preventDefault(); // a 태그의 기본 동작(페이지 이동) 막기
-            e.stopPropagation(); // 이벤트 버블링 방지
-
+            e.preventDefault();
+            e.stopPropagation();
             const isHidden = notificationPopup.classList.contains('hidden');
             if (isHidden) {
-                // 팝업 열기 & 알림 목록 새로고침
                 notificationPopup.classList.remove('hidden');
                 fetchNotifications();
-                // 뱃지 숨기기 (팝업을 열면 확인한 것으로 간주)
                 notificationBadge.classList.add('hidden');
                 notificationBadge.textContent = '0';
             } else {
-                // 팝업 닫기
                 notificationPopup.classList.add('hidden');
+            }
+        });
+    }
+
+    if (clearAllBtn) {
+        clearAllBtn.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            try {
+                const response = await fetch('/api/notification/read-all', {
+                    method: 'PATCH'
+                });
+                if (response.ok) {
+                    // 성공 시 화면의 목록을 비우고 "없음" 메시지 표시
+                    notificationList.innerHTML = '<li class="notification-empty">새로운 알림이 없습니다.</li>';
+                }
+            } catch (error) {
+                console.error("모든 알림 읽음 처리 실패:", error);
             }
         });
     }
 
     // 팝업 내부 클릭 시 닫히지 않도록
     if (notificationPopup) {
-        notificationPopup.addEventListener('click', (e) => {
-            e.stopPropagation();
-        });
+        notificationPopup.addEventListener('click', (e) => e.stopPropagation());
     }
 
     // 화면의 다른 곳을 클릭하면 팝업 닫기
@@ -92,25 +136,25 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // --- SSE 연결 로직 (기존 코드와 통합) ---
+    // --- SSE 연결 로직 ---
     if (memberId && memberId !== '0') {
-        const eventSource = new EventSource(`/api/notification/subscribe/${memberId}`);
 
+        initializeNotificationCount();
+
+        const eventSource = new EventSource(`/api/notification/subscribe/${memberId}`);
         eventSource.addEventListener('sse', function (event) {
             console.log("새로운 SSE 알림 수신:", event.data);
 
-            // 뱃지 숫자 업데이트
             let currentCount = parseInt(notificationBadge.textContent) || 0;
             const newCount = currentCount + 1;
             notificationBadge.textContent = newCount;
             notificationBadge.classList.remove('hidden');
 
-            // 팝업이 열려있다면, 목록 맨 위에 새 알림 추가
+
             if (!notificationPopup.classList.contains('hidden')) {
-                fetchNotifications(); // 간단하게 목록 전체를 새로고침
+                fetchNotifications();
             }
 
-            // 브라우저 팝업 알림 표시
             try {
                 const data = JSON.parse(event.data);
                 if (data.notificationContents) {
@@ -120,7 +164,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.error("알림 데이터 파싱 실패", e);
             }
         });
-
         eventSource.onerror = function(error) {
             console.error('EventSource 에러 발생:', error);
             eventSource.close();

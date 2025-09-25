@@ -516,3 +516,24 @@ body {
 .notification-footer a:hover {
     text-decoration: underline;
 }
+
+.notification-header {
+    display: flex; /* 가로 정렬을 위해 추가 */
+    justify-content: space-between; /* 양쪽 끝으로 정렬 */
+    align-items: center; /* 세로 중앙 정렬 */
+    padding: 16px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.clear-all-btn {
+    background: none;
+    border: none;
+    color: #888;
+    font-size: 13px;
+    cursor: pointer;
+    padding: 4px;
+}
+
+.clear-all-btn:hover {
+    text-decoration: underline;
+}

@@ -20,4 +20,11 @@ public interface NotificationService {
 
     PageInfo<Notification> getAllMyNotificationsByMemberId(long memberId, int page);
 
+    void markAsRead(long notificationId);
+
+    void markAllAsRead(long memberId);
+
+    int countUnreadNotifications(long memberId);
+
+
 }
