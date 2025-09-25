@@ -27,7 +27,11 @@ document.addEventListener('DOMContentLoaded', () => {
    * 알림 목록 데이터를 받아 HTML 요소를 생성합니다.
    * @param {Array} notifications - 알림 객체 배열
    */
+
+
   const renderNotifications = (notifications) => {
+    console.log("서버로부터 받은 알림 데이터:", notifications);
+
     notificationList.innerHTML = '';
     if (!notifications || notifications.length === 0) {
       notificationList.innerHTML = '<li class="notification-empty">표시할 알림이 없습니다.</li>';
@@ -37,20 +41,24 @@ document.addEventListener('DOMContentLoaded', () => {
     notifications.forEach(noti => {
       const item = document.createElement('li');
       item.className = 'notification-item';
-      // DTO의 'notificationIsRead' 필드명에 맞춰 수정 (Lombok getter는 isNotificationIsRead가 아닌 getNotificationIsRead로 생성될 수 있음)
+
       if (!noti.notificationIsRead) {
         item.classList.add('unread');
       }
+
       item.onclick = () => {
         // TODO: 알림 클릭 시 읽음 처리하는 API 호출 로직 추가
         location.href = noti.notificationUrn;
       };
+
+      const formattedTimestamp = noti.notificationCreatedAt ? noti.notificationCreatedAt.replace('T', ' ') : '시간 정보 없음';
+
       item.innerHTML = `
-                <div class="notification-content">
-                    <p>${noti.notificationContents}</p>
-                    <div class="timestamp">${new Date(noti.notificationCreatedAt).toLocaleString()}</div>
-                </div>
-            `;
+            <div class="notification-content">
+                <p>${noti.notificationContents}</p>
+                <div class="timestamp">${formattedTimestamp}</div>
+            </div>
+        `;
       notificationList.appendChild(item);
     });
   };

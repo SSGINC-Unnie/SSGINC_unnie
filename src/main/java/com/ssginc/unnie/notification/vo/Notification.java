@@ -19,6 +19,6 @@ public class Notification {
     String notificationContents; // 알림 내용
     LocalDateTime notificationCreatedAt; // 알림 발생일시
     String notificationUrn; // 알림 발생 장소
-    boolean NotificationIsRead; // 알림 확인 여부
+    boolean notificationIsRead; // 알림 확인 여부
     long notificationMemberId; // 수신자 식별 번호
 }

@@ -42,7 +42,7 @@ public class NotificationController {
     public ResponseEntity<ResponseDto<Map<String, Object>>> getMyNotifications(@AuthenticationPrincipal MemberPrincipal memberPrincipal){
 
 //        long memberId = memberPrincipal.getMemberId();
-        long memberId = 1;
+        long memberId = memberPrincipal.getMemberId();
 
         return ResponseEntity.ok(
                 new ResponseDto<>(HttpStatus.OK.value(), "알림 조회 성공", Map.of("notifications", notificationService.getMyNotificationsByMemberId(memberId)))
@@ -61,6 +61,32 @@ public class NotificationController {
 
         return ResponseEntity.ok(
                 new ResponseDto<>(HttpStatus.OK.value(), "전체 알림 조회 성공", Map.of("notifications", notificationPage))
+        );
+    }
+
+    @PatchMapping("/{notificationId}/read")
+    public ResponseEntity<ResponseDto<Void>> markAsRead(@PathVariable long notificationId) {
+        notificationService.markAsRead(notificationId);
+        return ResponseEntity.ok(
+                new ResponseDto<>(HttpStatus.OK.value(), "알림 읽음 처리 성공", null)
+        );
+    }
+
+    @PatchMapping("/read-all")
+    public ResponseEntity<ResponseDto<Void>> markAllAsRead(@AuthenticationPrincipal MemberPrincipal memberPrincipal) {
+        long memberId = memberPrincipal.getMemberId();
+        notificationService.markAllAsRead(memberId);
+        return ResponseEntity.ok(
+                new ResponseDto<>(HttpStatus.OK.value(), "모든 알림 읽음 처리 성공", null)
+        );
+    }
+
+    @GetMapping("/count")
+    public ResponseEntity<ResponseDto<Map<String, Object>>> countUnreadNotifications(@AuthenticationPrincipal MemberPrincipal memberPrincipal) {
+        long memberId = memberPrincipal.getMemberId();
+        int count = notificationService.countUnreadNotifications(memberId);
+        return ResponseEntity.ok(
+                new ResponseDto<>(HttpStatus.OK.value(), "안 읽은 알림 수 조회 성공", Map.of("count", count))
         );
     }
 
