@@ -20,4 +20,8 @@ public interface NotificationMapper {
 
     int countUnreadNotifications(long memberId);
 
+    void deleteNotifications(List<Long> ids);
+
+    void deleteAllNotificationsByMemberId(long memberId);
+
 }

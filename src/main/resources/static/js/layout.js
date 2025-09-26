@@ -3,8 +3,8 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- DOM 요소 가져오기 ---
     const memberId = document.body.dataset.memberId;
     const notificationIcon = document.querySelector('.notification-icon');
-    const notificationPopup = document.getElementById('notification-popup');
-    const notificationList = document.getElementById('notification-list');
+    const notificationPopup = document.getElementById('header-notification-popup');
+    const headerNotificationList = document.getElementById('header-notification-list');
     const notificationBadge = document.querySelector('.notification-badge');
     const clearAllBtn = document.getElementById('clear-all-notifications-btn');
 
@@ -36,18 +36,19 @@ document.addEventListener('DOMContentLoaded', function () {
             const response = await fetch('/api/notification');
             if (!response.ok) throw new Error('알림 목록을 불러오는데 실패했습니다.');
             const result = await response.json();
-            renderNotifications(result.data.notifications);
+            renderPopupNotifications(result.data.notifications);
         } catch (error) {
             console.error(error);
-            notificationList.innerHTML = '<li class="notification-empty">알림을 불러올 수 없습니다.</li>';
+            if(headerNotificationList) headerNotificationList.innerHTML = '<li class="notification-empty">알림을 불러올 수 없습니다.</li>';
         }
     };
 
     // --- 알림 목록을 화면에 그리는 함수 ---
-    const renderNotifications = (notifications) => {
-        notificationList.innerHTML = '';
+    const renderPopupNotifications = (notifications) => {
+        if (!headerNotificationList) return;
+        headerNotificationList.innerHTML = '';
         if (!notifications || notifications.length === 0) {
-            notificationList.innerHTML = '<li class="notification-empty">새로운 알림이 없습니다.</li>';
+            headerNotificationList.innerHTML = '<li class="notification-empty">새로운 알림이 없습니다.</li>';
             return;
         }
 
@@ -57,7 +58,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
             item.onclick = async () => {
                 try {
-                    // 백엔드에 '읽음' 처리 요청
                     const response = await fetch(`/api/notification/${noti.notificationId}/read`, {
                         method: 'PATCH'
                     });
@@ -66,8 +66,8 @@ document.addEventListener('DOMContentLoaded', function () {
                         // 성공 시 화면에서 즉시 제거
                         item.remove();
                         // 만약 목록이 비게 되면 "없음" 메시지 표시
-                        if (notificationList.children.length === 0) {
-                            notificationList.innerHTML = '<li class="notification-empty">새로운 알림이 없습니다.</li>';
+                        if (headerNotificationList.children.length === 0) {
+                            headerNotificationList.innerHTML = '<li class="notification-empty">새로운 알림이 없습니다.</li>';
                         }
                     }
                 } catch (error) {
@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     <div class="timestamp">방금 전</div>
                 </div>
             `;
-            notificationList.appendChild(item);
+            headerNotificationList.appendChild(item);
         });
     };
 
@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
                 if (response.ok) {
                     // 성공 시 화면의 목록을 비우고 "없음" 메시지 표시
-                    notificationList.innerHTML = '<li class="notification-empty">새로운 알림이 없습니다.</li>';
+                    if(headerNotificationList) headerNotificationList.innerHTML = '<li class="notification-empty">새로운 알림이 없습니다.</li>';
                 }
             } catch (error) {
                 console.error("모든 알림 읽음 처리 실패:", error);
@@ -124,7 +124,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // 팝업 내부 클릭 시 닫히지 않도록
     if (notificationPopup) {
         notificationPopup.addEventListener('click', (e) => e.stopPropagation());
     }
