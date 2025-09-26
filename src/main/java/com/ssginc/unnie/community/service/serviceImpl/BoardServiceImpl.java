@@ -14,11 +14,13 @@ import com.ssginc.unnie.media.mapper.MediaMapper;
 import com.ssginc.unnie.media.vo.MediaTargetType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 게시글 기능 관련 서비스 인터페이스 구현 클래스
@@ -32,6 +34,8 @@ public class BoardServiceImpl implements BoardService {
 
     private final BoardMapper boardMapper;
     private final MediaMapper mediaMapper;
+    private final RedisTemplate<String, String> redisTemplate;
+
 
     /**
      * 게시글 작성 메서드
@@ -41,23 +45,13 @@ public class BoardServiceImpl implements BoardService {
     public String createBoard(BoardCreateRequest boardRequest) {
         BoardParser parser = new BoardParser(boardRequest.getBoardContents());
         String thumbnail = parser.extractFirstImage();
-
-        // 2. 전달받은 boardRequest 객체에 썸네일을 직접 설정 (객체 재생성 X)
         boardRequest.setBoardThumbnail(thumbnail);
-
-        // 3. 유효성 검증 (작성자, 썸네일이 모두 포함된 상태로 검증)
         boardValidator.validate(boardRequest);
-
-        // 4. board 테이블에 게시글 정보 저장
         int res = boardMapper.insertBoard(boardRequest);
         if (res == 0) {
             throw new UnnieBoardException(ErrorCode.BOARD_CREATE_FAILED);
         }
-
-        // 5. 새로 생성된 boardId를 가져옴
         Long newBoardId = boardRequest.getBoardId();
-
-        // 6. 게시글 본문에 포함된 이미지들을 media 테이블과 연결
         linkImagesToPost(boardRequest.getBoardContents(), newBoardId);
 
         return String.valueOf(newBoardId);
@@ -67,25 +61,24 @@ public class BoardServiceImpl implements BoardService {
      * 게시글 상세 조회 메서드
      */
     @Override
-    @Transactional(readOnly = true)
-    public BoardDetailGetResponse getBoard(String boardId,Long memberId) {
+    @Transactional
+    public BoardDetailGetResponse getBoard(String boardIdStr, Long memberId) {
+        if (boardIdStr == null) {
+            throw new UnnieBoardException(ErrorCode.BOARD_NOT_FOUND);
+        }
+        long boardId = Long.parseLong(boardIdStr);
 
-        if (boardId == null){
+        String viewsKey = "board:views:" + boardId;
+        redisTemplate.opsForValue().increment(viewsKey);
+
+        BoardDetailGetResponse res = boardMapper.selectBoard(String.valueOf(boardId), memberId);
+        if (res == null) {
             throw new UnnieBoardException(ErrorCode.BOARD_NOT_FOUND);
         }
 
-        BoardDetailGetResponse res = boardMapper.selectBoard(boardId, memberId);
-
-        if (res == null){
-            throw new UnnieBoardException(ErrorCode.BOARD_NOT_FOUND);
-        }
-
-        log.info("---[게시글 소유권 확인]---");
-        log.info("게시글 ID: {}", boardId);
-        log.info("게시글 작성자 ID (DB): {}", res.getBoardAuthor());
-        log.info("현재 로그인 사용자 ID (JWT): {}", memberId);
-        log.info("isOwner 계산 결과 (SQL): {}", res.isOwner());
-        log.info("-------------------------");
+        String redisViewCountStr = redisTemplate.opsForValue().get(viewsKey);
+        long redisViews = Long.parseLong(redisViewCountStr != null ? redisViewCountStr : "0");
+        res.setBoardViews(res.getBoardViews() + redisViews);
 
         return res;
     }
@@ -170,6 +163,23 @@ public class BoardServiceImpl implements BoardService {
     public PageInfo<BoardsGuestGetResponse> getBoardsGuest(String category, String sort, String searchType, String search, int page) {
         BoardCategory boardCategory = BoardCategory.fromDescription(category);
         List<BoardsGuestGetResponse> boards = boardMapper.getGuestBoards((BoardsGuestGetRequest) this.buildRequest(boardCategory, sort, searchType, search, page, 0));
+
+        if (boards == null) {
+            boards = java.util.Collections.emptyList();
+        }
+
+        if (!boards.isEmpty()) {
+            List<String> keys = boards.stream().map(b -> "board:views:" + b.getBoardId()).collect(Collectors.toList());
+            List<String> viewCounts = redisTemplate.opsForValue().multiGet(keys);
+            for (int i = 0; i < boards.size(); i++) {
+                long redisViews = Long.parseLong(viewCounts.get(i) != null ? viewCounts.get(i) : "0");
+                BoardsGuestGetResponse board = boards.get(i);
+                board.setBoardViews(board.getBoardViews() + redisViews);
+            }
+        }
+
+
+
         return new PageInfo<>(boards);
     }
 
@@ -178,8 +188,23 @@ public class BoardServiceImpl implements BoardService {
     public PageInfo<BoardsGetResponse> getBoards(String category, String sort, String searchType, String search, int page, long memberId) {
         BoardCategory boardCategory = BoardCategory.fromDescription(category);
         List<BoardsGetResponse> boards = boardMapper.getBoards((BoardsGetRequest) this.buildRequest(boardCategory, sort, searchType, search, page, memberId));
+        if (boards == null) {
+            boards = java.util.Collections.emptyList();
+        }
+
+        if (!boards.isEmpty()) {
+            List<String> keys = boards.stream().map(b -> "board:views:" + b.getBoardId()).collect(Collectors.toList());
+            List<String> viewCounts = redisTemplate.opsForValue().multiGet(keys);
+            for (int i = 0; i < boards.size(); i++) {
+                long redisViews = Long.parseLong(viewCounts.get(i) != null ? viewCounts.get(i) : "0");
+                BoardsGetResponse board = boards.get(i);
+                board.setBoardViews(board.getBoardViews() + redisViews);
+            }
+        }
+
         return new PageInfo<>(boards);
     }
+
 
     /**
      * 요청 정보 유효성 검증

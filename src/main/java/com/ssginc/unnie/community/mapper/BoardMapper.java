@@ -29,4 +29,7 @@ public interface BoardMapper {
     int checkBoardAndAuthor(Map<String, Object> boardId);
 
     List<MyPageBoardsResponse> getMyBoards(long memberId);
+
+    void updateBoardViews(@Param("boardId") long boardId, @Param("count") long count);
+
 }
