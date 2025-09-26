@@ -212,4 +212,10 @@
         ORDER BY b.board_created_at desc
     </select>
 
+    <update id="updateBoardViews">
+        UPDATE board
+        SET board_views = board_views + #{count}
+        WHERE board_id = #{boardId}
+    </update>
+
 </mapper>
