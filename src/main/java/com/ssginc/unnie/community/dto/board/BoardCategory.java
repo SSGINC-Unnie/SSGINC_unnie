@@ -22,7 +22,6 @@ public enum BoardCategory implements EnumDescription {
         return description;
     }
 
-    // ✅ 이 메소드를 추가합니다.
     public static BoardCategory fromDescription(String description) {
         for (BoardCategory category : BoardCategory.values()) {
             if (category.getDescription().equals(description)) {

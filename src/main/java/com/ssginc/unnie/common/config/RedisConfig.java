@@ -12,10 +12,12 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Configuration
 public class RedisConfig {
 
+
+
     //LettuceConnectionFactory: redis 서버와 연결 관리
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
-        return new LettuceConnectionFactory("localhost", 6379); // Redis 호스트, 포트 설정
+        return new LettuceConnectionFactory("localhost", 6379);
     }
 
     //인증번호 저장용 RedisTemplate
@@ -23,6 +25,10 @@ public class RedisConfig {
     public RedisTemplate<String, String> redisTemplate(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, String> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
+
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setValueSerializer(new StringRedisSerializer());
+
         return template;
     }
 
