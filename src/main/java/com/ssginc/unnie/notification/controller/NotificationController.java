@@ -13,6 +13,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -88,6 +89,23 @@ public class NotificationController {
         return ResponseEntity.ok(
                 new ResponseDto<>(HttpStatus.OK.value(), "안 읽은 알림 수 조회 성공", Map.of("count", count))
         );
+    }
+
+    @DeleteMapping("")
+    public ResponseEntity<ResponseDto<Void>> deleteNotifications(
+            @RequestBody(required = false) Map<String, List<Long>> payload,
+            @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
+
+        if (payload != null && payload.containsKey("ids")) {
+            List<Long> ids = payload.get("ids");
+            notificationService.deleteNotifications(ids);
+            return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "선택 알림 삭제 성공", null));
+        } else {
+
+            long memberId = memberPrincipal.getMemberId();
+            notificationService.deleteAllNotifications(memberId);
+            return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "전체 알림 삭제 성공", null));
+        }
     }
 
 }

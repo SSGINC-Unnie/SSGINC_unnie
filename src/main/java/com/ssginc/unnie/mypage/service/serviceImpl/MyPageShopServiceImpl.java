@@ -12,6 +12,7 @@ import com.ssginc.unnie.mypage.service.MyPageShopService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,6 +41,7 @@ public class MyPageShopServiceImpl implements MyPageShopService {
     private String bucketName;
     private final AmazonS3 amazonS3;
 
+    private final ApplicationEventPublisher eventPublisher;
     private final MyPageShopMapper myPageShopMapper;
     private final ShopValidator shopValidator;
 
@@ -89,6 +91,14 @@ public class MyPageShopServiceImpl implements MyPageShopService {
         {
             throw new UnnieShopException(ErrorCode.SHOP_INSERT_FAILED);
         }
+
+        eventPublisher.publishEvent(
+                ShopRegistrationPendingEvent.builder()
+                        .shopId(request.getShopId())
+                        .shopName(request.getShopName())
+                        .build()
+        );
+
         return request.getShopId();
 
     }
@@ -578,6 +588,8 @@ public class MyPageShopServiceImpl implements MyPageShopService {
         // "02"이면 유효하지 않은 것으로 처리, 그 외에는 유효한 것으로 간주
         return !"02".equals(valid);
     }
+
+
 
 
 

@@ -177,6 +177,20 @@ public class NotificationServiceImpl implements NotificationService {
         return notificationMapper.countUnreadNotifications(memberId);
     }
 
+    @Override
+    @Transactional
+    public void deleteNotifications(List<Long> ids) {
+        if (ids != null && !ids.isEmpty()) {
+            notificationMapper.deleteNotifications(ids);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void deleteAllNotifications(long memberId) {
+        notificationMapper.deleteAllNotificationsByMemberId(memberId);
+    }
+
 
     /**
      * Emitter 고유 아이디 생성

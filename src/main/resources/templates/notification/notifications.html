@@ -4,21 +4,31 @@
       layout:decorate="~{layout}">
 <head>
   <meta charset="UTF-8">
-  <title>전체 알림</title>
+  <title>모든 알림</title>
   <link rel="stylesheet" href="/css/notification/notifications.css">
 </head>
 <body>
 <div class="container" layout:fragment="content">
-  <div class="page-header">
-    <h1>전체 알림</h1>
-  </div>
-  <div class="content-area">
-    <ul id="notification-list" class="notification-list">
-    </ul>
-    <div id="pagination">
+  <div class="notification-page-wrapper">
+    <div class="page-header">
+      <h1>전체 알림</h1>
+      <div class="notification-actions">
+        <label><input type="checkbox" id="select-all-checkbox"> 전체 선택</label>
+        <button id="delete-selected-btn" class="action-btn">선택 삭제</button>
+        <button id="delete-all-btn" class="action-btn delete-all">전체 삭제</button>
+      </div>
+    </div>
+    <div class="content-area">
+      <ul id="notification-list" class="notification-list">
+      </ul>
+      <div id="pagination">
+      </div>
     </div>
   </div>
-  <script src="/js/notification/notifications.js"></script>
+
+  <div layout:fragment="scripts">
+    <script src="/js/notification/notifications.js"></script>
+  </div>
 </div>
 </body>
 </html>

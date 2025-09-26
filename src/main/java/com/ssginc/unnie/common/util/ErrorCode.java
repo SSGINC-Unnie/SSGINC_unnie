@@ -176,6 +176,10 @@ public enum ErrorCode {
     INVALID_NOTIFICATION_REQUEST(400, "NT001", "잘못된 알림 요청입니다."),
     NOTIFICATION_NOT_FOUND(404, "NT002", "해당 알림을 찾을 수 없습니다."),
     NOTIFICATION_SERVICE_ERROR(500, "NT003", "알림 서비스 내부 오류가 발생했습니다."),
+    NOTIFICATION_SAVE_FAILED(500, "NT004", "알림 저장 중 오류가 발생했습니다."),
+    NOTIFICATION_FETCH_FAILED(500, "NT005", "알림 목록을 불러오는 중 오류가 발생했습니다."),
+    NOTIFICATION_UPDATE_FAILED(500, "NT006", "알림 상태 변경 중 오류가 발생했습니다."),
+    NOTIFICATION_DELETE_FAILED(500, "NT007", "알림 삭제 중 오류가 발생했습니다."),
 
     // =================================== 파일 관련 에러 =====================================================
     INVALID_FILE_TYPE(400, "IM001", "지원하지 않는 파일 형식입니다."),

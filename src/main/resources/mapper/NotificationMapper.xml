@@ -75,4 +75,17 @@
         WHERE notification_member_id = #{memberId}
           AND notification_isread = 0
     </select>
+
+    <delete id="deleteNotifications">
+        DELETE FROM notification
+        WHERE notification_id IN
+        <foreach item="id" collection="list" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteAllNotificationsByMemberId">
+        DELETE FROM notification
+        WHERE notification_member_id = #{memberId}
+    </delete>
 </mapper>

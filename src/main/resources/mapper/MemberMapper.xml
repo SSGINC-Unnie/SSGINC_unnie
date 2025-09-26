@@ -58,4 +58,10 @@
         FROM member
         WHERE member_id = #{memberId}
     </select>
+
+    <select id="findAllAdminMemberIds" resultType="long">
+        SELECT member_id
+        FROM member
+        WHERE member_role = 'ROLE_ADMIN'
+    </select>
 </mapper>

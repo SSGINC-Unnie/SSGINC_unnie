@@ -5,6 +5,8 @@ import com.ssginc.unnie.member.vo.Member;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * 회원가입을 위한 Mapper 인터페이스
  */
@@ -28,5 +30,8 @@ public interface MemberMapper {
     int updateMemberPassword(@Param("memberEmail") String memberEmail, @Param("memberPw") String memberPw);
 
     String selectMemberNameByMemberId(@Param("memberId") Long memberId);
+
+    List<Long> findAllAdminMemberIds();
+
 
 }

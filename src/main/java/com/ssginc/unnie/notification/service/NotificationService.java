@@ -26,5 +26,9 @@ public interface NotificationService {
 
     int countUnreadNotifications(long memberId);
 
+    void deleteNotifications(List<Long> ids);
+
+    void deleteAllNotifications(long memberId);
+
 
 }

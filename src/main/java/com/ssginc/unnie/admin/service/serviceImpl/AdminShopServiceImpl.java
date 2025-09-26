@@ -2,10 +2,7 @@ package com.ssginc.unnie.admin.service.serviceImpl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.ssginc.unnie.admin.dto.shop.AdminShopResponse;
-import com.ssginc.unnie.admin.dto.shop.AdminShopUpdateRequest;
-import com.ssginc.unnie.admin.dto.shop.GeocodingCoordinate;
-import com.ssginc.unnie.admin.dto.shop.GeocodingResponse;
+import com.ssginc.unnie.admin.dto.shop.*;
 import com.ssginc.unnie.admin.mapper.AdminShopMapper;
 import com.ssginc.unnie.admin.service.AdminShopService;
 import com.ssginc.unnie.common.exception.UnnieShopException;
@@ -18,6 +15,7 @@ import com.ssginc.unnie.mypage.mapper.MyPageShopMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -37,6 +35,8 @@ public class AdminShopServiceImpl implements AdminShopService {
     private final AdminShopMapper adminShopMapper;
     private final RestTemplate restTemplate;
     private final MyPageShopMapper myPageShopMapper;
+    private final ApplicationEventPublisher eventPublisher;
+
 
     @Value("${naver.geocoding.clientId}")
     private String clientId;
@@ -116,6 +116,14 @@ public class AdminShopServiceImpl implements AdminShopService {
             throw new UnnieShopException(ErrorCode.SHOP_NOT_FOUND);
         }
 
+        String shopName = myPageShopMapper.findShopNameById(request.getShopId()).getShopName(); // 업체 이름 조회
+        eventPublisher.publishEvent(
+                ShopApprovedEvent.builder()
+                        .receiverId(shopMemberId)
+                        .shopId(request.getShopId())
+                        .shopName(shopName)
+                        .build()
+        );
 
         return request.getShopId();
     }
