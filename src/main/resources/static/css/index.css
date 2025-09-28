@@ -188,3 +188,58 @@
     border-radius: 12px;
     display: block;
 }
+
+
+.popular-posts {
+    padding: 0 20px 32px 20px; /* 하단 여백 추가 */
+}
+
+.popular-posts h2 {
+    font-size: 1.2rem;
+    margin-bottom: 24px;
+}
+
+#popular-posts-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.popular-post-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+}
+
+.popular-post-item:hover {
+    background-color: #f8f9fa;
+}
+
+.popular-post-item img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 6px;
+    flex-shrink: 0;
+}
+
+.popular-post-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.popular-post-info .title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+}
+
+.popular-post-info .meta {
+    font-size: 13px;
+    color: #888;
+}

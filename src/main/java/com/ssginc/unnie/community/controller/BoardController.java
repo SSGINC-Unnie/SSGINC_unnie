@@ -14,6 +14,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -121,6 +122,14 @@ public class BoardController {
                     new ResponseDto<>(HttpStatus.OK.value(), "게시글 목록 조회 성공 (로그인)", Map.of("boards", boards))
             );
         }
+    }
+
+    @GetMapping("/popular")
+    public ResponseEntity<ResponseDto<List<BoardsGetResponse>>> getPopularBoards() {
+        List<BoardsGetResponse> popularBoards = boardService.getPopularBoards();
+        return ResponseEntity.ok(
+                new ResponseDto<>(HttpStatus.OK.value(), "인기 게시글 조회 성공", popularBoards)
+        );
     }
 
 }

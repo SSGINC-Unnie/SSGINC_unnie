@@ -258,3 +258,18 @@ p {
 .write-post-btn svg {
     stroke: white; /* 아이콘 선 색상 */
 }
+
+
+.boards-views {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.boards-info svg {
+    width: 16px;
+    height: 16px;
+    fill: #888;
+    stroke: #888; /* 눈 모양 아이콘은 stroke 기반이라 추가 */
+    stroke-width: 1;
+}

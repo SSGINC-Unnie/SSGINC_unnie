@@ -3,6 +3,8 @@ package com.ssginc.unnie.community.service;
 import com.github.pagehelper.PageInfo;
 import com.ssginc.unnie.community.dto.board.*;
 
+import java.util.List;
+
 /**
  * 게시글 기능 인터페이스
  */
@@ -21,5 +23,6 @@ public interface BoardService {
 
     void linkImagesToPost(String contents, long boardId);
 
+    List<BoardsGetResponse> getPopularBoards();
 
 }
