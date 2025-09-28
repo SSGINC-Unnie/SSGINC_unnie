@@ -32,4 +32,6 @@ public interface BoardMapper {
 
     void updateBoardViews(@Param("boardId") long boardId, @Param("count") long count);
 
+    List<BoardsGetResponse> findPopularBoards();
+
 }

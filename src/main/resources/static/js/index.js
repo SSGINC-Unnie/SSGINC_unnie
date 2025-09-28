@@ -1,19 +1,30 @@
 window.onload = function() {
-    const query = 'beauty';
+    fetchPopularPosts();
+
+    const query = '메이크업';
     const apiUrl = `/fetchVideos?query=${query}&relevanceLanguage=ko&regionCode=KR`;
 
     fetch(apiUrl)
         .then(response => response.json())
         .then(data => {
+            console.log("백엔드로부터 받은 전체 응답:", data);
+
             let youtubeResult;
             try {
-                youtubeResult = JSON.parse(data.data.youtubeResult);
+                // data.data가 null이 아닌지 먼저 확인
+                if (data && data.data && data.data.youtubeResult) {
+                    youtubeResult = JSON.parse(data.data.youtubeResult);
+                } else {
+                    console.error("youtubeResult 필드가 응답에 없습니다.");
+                    return;
+                }
             } catch (e) {
                 console.error("youtubeResult 파싱 실패:", e);
                 return;
             }
 
             if (!youtubeResult || !youtubeResult.items || youtubeResult.items.length === 0) {
+                console.log("YouTube API 검색 결과가 없습니다.");
                 return;
             }
 
@@ -47,17 +58,55 @@ navigator.geolocation.getCurrentPosition(function(position) {
         });
 });
 
+const fetchPopularPosts = () => {
+    fetch('/api/community/board/popular')
+        .then(response => response.json())
+        .then(result => {
+            if (result.status === 200) {
+                renderPopularPosts(result.data);
+            }
+        })
+        .catch(error => console.error("인기 게시글 로딩 실패:", error));
+};
+
+const renderPopularPosts = (postList) => {
+    const wrapper = document.getElementById('popular-posts-wrapper');
+    wrapper.innerHTML = '';
+
+    if (!postList || postList.length === 0) {
+        wrapper.innerHTML = '<p>인기 게시글이 없습니다.</p>';
+        return;
+    }
+
+    postList.forEach(post => {
+        const item = document.createElement('div');
+        item.className = 'popular-post-item';
+        item.onclick = () => { location.href = `/community/board/${post.boardId}`; };
+
+        item.innerHTML = `
+            <img src="${post.boardThumbnail || '/img/common/tip1.png'}" alt="${post.boardTitle}">
+            <div class="popular-post-info">
+                <span class="title">${post.boardTitle}</span>
+                <span class="meta">
+                    좋아요 ${post.likeCount} · 댓글 ${post.commentCount} · 조회 ${post.boardViews}
+                </span>
+            </div>
+        `;
+        wrapper.appendChild(item);
+    });
+};
+
 function renderShopCards(shopList) {
     const wrapper = document.getElementById('shop-wrapper');
     wrapper.innerHTML = '';
 
     shopList.forEach(shop => {
         const imageUrl = shop.shopImageUrl || '/img/common/tip1.png';
-        const address = shop.shopAddress || ''; // 주소 필드
+        const address = shop.shopAddress || '';
 
         const card = document.createElement('div');
         card.className = 'shop-card';
-        card.style.cursor = 'pointer'; // 마우스 오버 시 손가락
+        card.style.cursor = 'pointer';
 
         card.innerHTML = `
             <div class="shop-image">
@@ -72,7 +121,6 @@ function renderShopCards(shopList) {
             </div>
         `;
 
-        // 카드 클릭 시 상세페이지 이동
         card.addEventListener('click', () => {
             window.location.href = `http://localhost:8111/map/shopdetail?shopId=${shop.shopId}`;
         });
@@ -80,4 +128,3 @@ function renderShopCards(shopList) {
         wrapper.appendChild(card);
     });
 }
-
