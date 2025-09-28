@@ -287,3 +287,27 @@
     background-color: #333;
     color: white;
 }
+
+.meta-line {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* 요소들 사이의 간격 */
+    font-size: 13px;
+    color: #999;
+}
+
+.meta-separator {
+    font-weight: bold;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.meta-item svg {
+    width: 16px;
+    height: 16px;
+    stroke: #999;
+}

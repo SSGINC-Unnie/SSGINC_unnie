@@ -288,5 +288,11 @@ public class BoardServiceImpl implements BoardService {
         }
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<BoardsGetResponse> getPopularBoards() {
+        return boardMapper.findPopularBoards();
+    }
+
 
 }

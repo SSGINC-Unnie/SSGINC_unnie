@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const authorActions = document.getElementById('author-actions');
     const postTitle = document.getElementById('post-title');
     const postCreatedAt = document.getElementById('post-created-at');
+    const postViews = document.getElementById('post-views');
     const postThumbnail = document.getElementById('post-thumbnail');
     const postBody = document.getElementById('post-body');
     const likeButton = document.getElementById('like-button');
@@ -50,6 +51,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 postCreatedAt.textContent = new Date(board.boardCreatedAt).toLocaleString();
                 likeCount.textContent = board.likeCount;
                 currentLikeId = board.likeId;
+                postViews.textContent = board.boardViews;
+
 
                 const tempDiv = document.createElement('div');
                 tempDiv.innerHTML = board.boardContents;

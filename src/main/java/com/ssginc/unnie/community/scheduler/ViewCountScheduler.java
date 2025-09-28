@@ -20,7 +20,7 @@ public class ViewCountScheduler {
     private final RedisTemplate<String, String> redisTemplate;
     private final BoardMapper boardMapper;
 
-    @Scheduled(cron = "*/20 * * * * *")
+    @Scheduled(cron = "0 */10 * * * *")
     @Transactional
     public void syncViewCountsToDB() {
         log.info("조회수 DB 동기화 스케줄러 시작");
