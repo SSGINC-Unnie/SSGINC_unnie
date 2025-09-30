@@ -7,6 +7,8 @@
     <meta name="viewport" content="width=640, user-scalable=no">
     <title>언니어때</title>
     <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="icon" type="image/png" th:href="@{/img/common/favicon.png}">
+    <link rel="apple-touch-icon" th:href="@{/img/common/favicon.png}">
 </head>
 <body th:data-member-id="${#authentication.principal != 'anonymousUser' ? #authentication.principal.memberId : 0}">
 <!-- 전체 페이지 래퍼 -->
