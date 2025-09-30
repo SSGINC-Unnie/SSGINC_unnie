@@ -22,6 +22,9 @@ public interface ShopMapper {
 
     List<ShopAllResponse> selectAllShops();
 
+    ShopScheduleInfoDto findScheduleInfoByShopId(@Param("shopId") Long shopId);
+
+
 
 
 

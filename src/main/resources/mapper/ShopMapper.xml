@@ -122,6 +122,16 @@
         GROUP BY s.shop_id, s.shop_name, s.shop_latitude, s.shop_longitude, s.shop_category, s.shop_location
     </select>
 
+    <select id="findScheduleInfoByShopId" parameterType="long" resultType="com.ssginc.unnie.shop.dto.ShopScheduleInfoDto">
+        SELECT
+            shop_business_time AS businessHours,
+            shop_closed_day AS closedDays
+        FROM
+            shop
+        WHERE
+            shop_id = #{shopId}
+    </select>
+
 
 
 </mapper>

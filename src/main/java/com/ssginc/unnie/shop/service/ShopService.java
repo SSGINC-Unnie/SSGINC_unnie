@@ -23,6 +23,8 @@ public interface ShopService {
 
     ShopDetailsResponse getShopDetailsByShopId(int shopId);
 
+    ShopScheduleInfoDto findScheduleInfoByShopId(Long shopId);
+
 
 //    Integer createBookmark(ShopBookmarkRequest request);
 //

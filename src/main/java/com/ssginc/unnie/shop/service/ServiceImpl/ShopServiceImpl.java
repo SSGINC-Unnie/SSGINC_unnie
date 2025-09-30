@@ -113,6 +113,11 @@ public class ShopServiceImpl implements ShopService {
         return res;
     }
 
+    @Override
+    public ShopScheduleInfoDto findScheduleInfoByShopId(Long shopId) {
+        return shopMapper.findScheduleInfoByShopId(shopId);
+    }
+
 //    /**
 //     * 찜 등록
 //     */

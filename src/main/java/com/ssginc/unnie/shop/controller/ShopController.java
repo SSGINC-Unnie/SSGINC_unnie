@@ -92,6 +92,14 @@ public class ShopController {
                 Map.of("shopDetails", shopService.getShopDetailsByShopId(shopId))));
     }
 
+    @GetMapping("/{shopId}/schedule-info")
+    public ResponseEntity<ResponseDto<ShopScheduleInfoDto>> getShopScheduleInfo(@PathVariable Long shopId) {
+        ShopScheduleInfoDto scheduleInfo = shopService.findScheduleInfoByShopId(shopId);
+        return ResponseEntity.ok(
+                new ResponseDto<>(HttpStatus.OK.value(), "매장 운영 정보 조회 성공", scheduleInfo)
+        );
+    }
+
     // 찜 등록
 //    @PostMapping("/shopdetails/bookmark/{shopId}")
 //    public ResponseEntity<ResponseDto<Map<String, Integer>>> createBookmark(
