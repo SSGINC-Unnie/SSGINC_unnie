@@ -121,7 +121,6 @@ public class MainServiceImpl implements MainService {
                     .queryParam("key", apiKey)
                     .queryParam("relevanceLanguage", "ko")
                     .queryParam("regionCode", "KR")
-                    .queryParam("videoDuration", "medium")
                     .buildAndExpand(query).toUri();
 
             return restTemplate.getForObject(uri, String.class);
