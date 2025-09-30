@@ -1,5 +1,10 @@
 package com.ssginc.unnie.main.service;
 
 public interface MainService {
-    String getYouTubeVideos(String query);
+
+    String getYouTubeVideos();
+
+    void refreshYoutubeCache();
+
+    String callYoutubeApi(String query);
 }
