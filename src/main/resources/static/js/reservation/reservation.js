@@ -10,7 +10,11 @@ document.addEventListener('DOMContentLoaded', () => {
             date: null,
             time: null
         },
-        calendarDate: new Date() // 오늘 날짜 기준으로 달력 생성
+        calendarDate: new Date(),
+        scheduleInfo: {
+            businessHours: null,
+            closedDays: null
+        }
     };
 
     // --- DOM 요소 (기존과 동일) ---
@@ -154,6 +158,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const firstDayOfMonth = new Date(year, month, 1).getDay();
         const daysInMonth = new Date(year, month + 1, 0).getDate();
         const today = new Date(); today.setHours(0, 0, 0, 0);
+        const daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
+
         calendarDates.innerHTML = '';
 
         for (let i = 0; i < firstDayOfMonth; i++) {
@@ -165,8 +171,12 @@ document.addEventListener('DOMContentLoaded', () => {
             dateCell.className = 'date-cell';
             dateCell.textContent = day;
             const currentDate = new Date(year, month, day);
+            const currentDayName = daysOfWeek[currentDate.getDay()];
+            const isClosedDay = state.scheduleInfo.closedDays?.includes(currentDayName);
 
-            if (currentDate < today) {
+
+
+            if (currentDate < today || isClosedDay) {
                 dateCell.classList.add('disabled');
             } else {
                 if (currentDate.getTime() === today.getTime()) dateCell.classList.add('today');
@@ -194,40 +204,49 @@ document.addEventListener('DOMContentLoaded', () => {
         const date = state.bookingData.date;
         const bookedTimes = await fetchData(`/api/reservation/booked-times?designerId=${designerId}&date=${date}`);
 
-        renderTimeSlots(dateObj, bookedTimes || []); // 조회된 목록을 renderTimeSlots에 전달
-
+        renderTimeSlots(dateObj, bookedTimes || []);
         timeContainer.style.display = 'block';
         timeSectionTitle.textContent = `${dateObj.toLocaleDateString('ko-KR')} 시간 선택`;
         updateStep2NextButton();
     };
 
-    const renderTimeSlots = (selectedDate, bookedTimes) => { // bookedTimes 파라미터 추가
+    const renderTimeSlots = (selectedDate, bookedTimes) => {
         timeSlots.innerHTML = '';
         const isToday = selectedDate.toDateString() === new Date().toDateString();
         const currentHour = new Date().getHours();
-        const availableTimeSlots = ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00'];
 
-        availableTimeSlots.forEach(time => {
+        const hours = state.scheduleInfo.businessHours || '09:00-18:00';
+        const [start, end] = hours.split('-');
+        const startHour = parseInt(start.split(':')[0]);
+        const endHour = parseInt(end.split(':')[0]);
+
+        for (let hour = startHour; hour < endHour; hour++) {
+            const time = `${String(hour).padStart(2, '0')}:00`;
             const timeSlot = document.createElement('button');
             timeSlot.className = 'time-slot';
             timeSlot.textContent = time;
 
-            const hour = parseInt(time.split(':')[0]);
             const isPast = isToday && hour <= currentHour;
-            const isBooked = bookedTimes.includes(time); // [추가] 예약 마감 여부 확인
+            const isBooked = bookedTimes.includes(time);
 
             if (isPast || isBooked) {
                 timeSlot.classList.add('disabled');
                 timeSlot.disabled = true;
-                if(isBooked) {
-                    timeSlot.textContent = "예약마감"; // 마감된 슬롯에 텍스트 표시
+                if (isBooked) {
+                    timeSlot.textContent = "예약마감";
                 }
             } else {
                 timeSlot.addEventListener('click', () => selectTime(time, timeSlot));
             }
+
+            if (state.bookingData.time === time) {
+                timeSlot.classList.add('selected');
+            }
+
             timeSlots.appendChild(timeSlot);
-        });
+        }
     };
+
 
     const selectTime = (time, slotElement) => {
         state.bookingData.time = time;
@@ -343,6 +362,17 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!state.shopId) {
             document.body.innerHTML = '<h1>잘못된 접근입니다.</h1>';
             return;
+        }
+
+        try {
+            const scheduleData = await fetchData(`/api/shop/${state.shopId}/schedule-info`);
+            if (scheduleData) {
+                state.scheduleInfo = scheduleData;
+            }
+        } catch (e) {
+            console.error("매장 운영 정보 로딩 실패", e);
+            // 운영 정보 로딩 실패 시 기본값 설정 또는 에러 처리
+            state.scheduleInfo.businessHours = '09:00-18:00';
         }
 
         try {
