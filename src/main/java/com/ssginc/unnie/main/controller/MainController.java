@@ -22,11 +22,10 @@ public class MainController {
     }
 
     @GetMapping("/fetchVideos")
-    public ResponseEntity<ResponseDto<Map<String, Object>>> fetchYouTubeVideos(@RequestParam String query) {
-        String youtubeResult = mainService.getYouTubeVideos(query);
+    public ResponseEntity<ResponseDto<Map<String, Object>>> fetchYouTubeVideos() {
 
+        String youtubeResult = mainService.getYouTubeVideos();
         Map<String, Object> responseData = Map.of("youtubeResult", youtubeResult);
-
         return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "파일 조회에 성공했습니다.", responseData));
     }
 }
