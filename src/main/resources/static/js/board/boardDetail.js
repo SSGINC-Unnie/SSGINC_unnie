@@ -18,6 +18,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeModalBtn = document.getElementById('modal-close-btn');
     const deleteButton = document.getElementById('delete-button');
     const editButton = document.getElementById('edit-button');
+    const reportPostBtn = document.getElementById('report-post-btn');
+    const reportModal = document.getElementById('report-modal');
+    const reportForm = document.getElementById('report-form');
+    const cancelReportBtn = document.getElementById('cancel-report-btn');
 
 
     // --- 상태 변수 ---
@@ -186,6 +190,64 @@ document.addEventListener('DOMContentLoaded', () => {
 
     editButton.addEventListener('click', () => {
         window.location.href = `/community/board/${boardId}/edit`;
+    });
+
+    reportPostBtn.addEventListener('click', () => {
+        if (!isLoggedIn) {
+            loginModal.classList.remove('hidden');
+            return;
+        }
+        reportModal.classList.remove('hidden');
+    });
+
+    cancelReportBtn.addEventListener('click', () => {
+        reportModal.classList.add('hidden');
+        reportForm.reset();
+    });
+
+    reportModal.addEventListener('click', (e) => {
+        if (e.target === reportModal) {
+            reportModal.classList.add('hidden');
+            reportForm.reset();
+        }
+    });
+
+    reportForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const selectedReason = reportForm.querySelector('input[name="reason"]:checked');
+        if (!selectedReason) {
+            alert('신고 사유를 선택해주세요.');
+            return;
+        }
+
+        const reportData = {
+            targetType: 1, // 1: 게시글
+            targetId: boardId,
+            reason: selectedReason.value,
+            reasonDetailed: document.getElementById('report-reason-detailed').value
+        };
+
+        try {
+            const response = await fetch('/api/report', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(reportData)
+            });
+
+            if (response.ok) {
+                alert('신고가 정상적으로 접수되었습니다.');
+            } else {
+                const result = await response.json();
+                alert(result.message || '신고 접수에 실패했습니다.');
+            }
+        } catch (error) {
+            console.error('Error submitting report:', error);
+            alert('오류가 발생하여 신고에 실패했습니다.');
+        } finally {
+            reportModal.classList.add('hidden');
+            reportForm.reset();
+        }
     });
 
     //게시글 삭제

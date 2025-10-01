@@ -37,6 +37,8 @@ public class ReportServiceImpl implements ReportService {
             throw new UnnieReportException(ErrorCode.REPORT_NOT_FOUND);
         }
 
+
+
         // 본인 컨텐츠 여부 검증
         if (reportMapper.isOwnContent(report.getReportTargetType(), report.getReportTargetId(), report.getReportMemberId())) {
             log.error("본인 콘텐츠 신고 시도: reporterId={}, targetId={}", report.getReportMemberId(), report.getReportTargetId());

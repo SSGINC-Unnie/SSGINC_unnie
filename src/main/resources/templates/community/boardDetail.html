@@ -18,6 +18,28 @@
                 <button id="delete-button">삭제</button>
             </div>
         </div>
+
+        <div id="report-modal" class="modal-overlay hidden">
+            <div class="modal-content">
+                <h3 class="modal-title">게시글 신고하기</h3>
+                <form id="report-form">
+                    <div class="report-reasons">
+                        <label><input type="radio" name="reason" value="INAPPROPRIATE_CONTENT"> 부적절한 컨텐츠</label>
+                        <label><input type="radio" name="reason" value="ADVERTISEMENT"> 광고 및 홍보</label>
+                        <label><input type="radio" name="reason" value="PERSONAL_INFORMATION"> 개인정보 유출</label>
+                        <label><input type="radio" name="reason" value="COPYRIGHT_VIOLATION"> 저작권 침해</label>
+                        <label><input type="radio" name="reason" value="COMMUNITY_RULE_VIOLATION"> 커뮤니티 규칙 위반</label>
+                        <label><input type="radio" name="reason" value="ETC"> 기타</label>
+                    </div>
+                    <textarea id="report-reason-detailed" placeholder="상세한 신고 사유를 입력해주세요. (선택)"></textarea>
+                    <div class="modal-actions">
+                        <button type="button" id="cancel-report-btn">취소</button>
+                        <button type="submit" id="submit-report-btn">신고 접수</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         <div id="post-meta">
             <h1 id="post-title"></h1>
             <div class="meta-line">
