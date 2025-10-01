@@ -1,6 +1,8 @@
 $(document).ready(function() {
 
     const attachmentList = $('#attachment-list');
+    const MAX_IMAGE_WIDTH = 1280; // 이미지 리사이징 최대 너비 설정 (px)
+    const IMAGE_COMPRESSION_QUALITY = 0.85; // 이미지 압축 품질 (0.0 ~ 1.0)
 
     // 1. Summernote 에디터 초기화
     $('#summernote-content').summernote({
@@ -26,13 +28,56 @@ $(document).ready(function() {
         fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New','맑은 고딕','궁서','굴림체','돋움체','바탕체'],
         fontSizes: ['8','9','10','11','12','14','16','18','20','22','24','28','30','36','50','72'],
         callbacks: {
+
             onImageUpload: function(files) {
                 for (let i = 0; i < files.length; i++) {
-                    sendFile(files[i], this);
+                    resizeImage(files[i], this);
                 }
             }
         }
     });
+
+    /**
+     * 이미지를 리사이징하는 함수
+     * @param {File} file - 원본 이미지 파일
+     * @param {object} editor - Summernote 에디터 인스턴스
+     */
+    function resizeImage(file, editor) {
+        const reader = new FileReader();
+
+        reader.onload = function(event) {
+            const img = new Image();
+            img.src = event.target.result;
+
+            img.onload = function() {
+                // 1. 이미지의 너비가 최대 너비보다 클 경우에만 리사이징 실행
+                if (img.width > MAX_IMAGE_WIDTH) {
+                    const canvas = document.createElement('canvas');
+                    const ratio = MAX_IMAGE_WIDTH / img.width;
+                    canvas.width = MAX_IMAGE_WIDTH;
+                    canvas.height = img.height * ratio;
+
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                    // 2. Canvas를 Blob으로 변환
+                    canvas.toBlob(function(blob) {
+                        // 3. Blob을 File 객체로 다시 만들어 원본 파일명과 타입을 유지
+                        const resizedFile = new File([blob], file.name, { type: file.type });
+                        // 4. 리사이징된 파일을 서버로 전송
+                        sendFile(resizedFile, editor);
+                    }, file.type, IMAGE_COMPRESSION_QUALITY);
+
+                } else {
+                    // 5. 이미지 너비가 최대 너비보다 작으면 원본을 그대로 전송
+                    sendFile(file, editor);
+                }
+            };
+        };
+
+        reader.readAsDataURL(file);
+    }
+
 
     /**
      * 이미지를 서버로 전송하고, 반환된 경로를 에디터와 첨부 파일 목록에 추가하는 함수

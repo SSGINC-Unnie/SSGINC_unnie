@@ -9,6 +9,9 @@ $(document).ready(function() {
     // --- 상태 변수 ---
     const boardId = window.location.pathname.split('/')[3];
 
+    const MAX_IMAGE_WIDTH = 1280; // 이미지 리사이징 최대 너비 설정 (px)
+    const IMAGE_COMPRESSION_QUALITY = 0.85; // 이미지 압축 품질 (0.0 ~ 1.0)
+
     // Summernote 초기화
     summernoteContent.summernote({
         height: 300,
@@ -16,9 +19,10 @@ $(document).ready(function() {
         placeholder: '내용을 입력해주세요',
         dialogsInBody: true,
         callbacks: {
+
             onImageUpload: function(files) {
                 for (let i = 0; i < files.length; i++) {
-                    sendFile(files[i], this);
+                    resizeImage(files[i], this); // 수정된 코드
                 }
             }
         },
@@ -66,6 +70,36 @@ $(document).ready(function() {
         } catch (error) { console.error('Error fetching data:', error); }
     };
 
+    /**
+     * 이미지를 리사이징하는 함수
+     */
+    function resizeImage(file, editor) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const img = new Image();
+            img.src = event.target.result;
+            img.onload = function() {
+                if (img.width > MAX_IMAGE_WIDTH) {
+                    const canvas = document.createElement('canvas');
+                    const ratio = MAX_IMAGE_WIDTH / img.width;
+                    canvas.width = MAX_IMAGE_WIDTH;
+                    canvas.height = img.height * ratio;
+
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                    canvas.toBlob(function(blob) {
+                        const resizedFile = new File([blob], file.name, { type: file.type });
+                        sendFile(resizedFile, editor);
+                    }, file.type, IMAGE_COMPRESSION_QUALITY);
+                } else {
+                    sendFile(file, editor);
+                }
+            };
+        };
+        reader.readAsDataURL(file);
+    }
+
     // 2. Summernote에 이미지 업로드
     function sendFile(file, editor) {
         const formData = new FormData();
@@ -90,6 +124,7 @@ $(document).ready(function() {
             }
         });
     }
+
 
     // 3. 첨부 파일 미리보기 추가
     function addAttachmentPreview(fileName, fileUrn) {
