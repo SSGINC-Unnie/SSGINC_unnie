@@ -173,9 +173,6 @@ public class CommentServiceImpl implements CommentService {
 
         List<CommentGuestGetResponse> comments = commentMapper.getAllCommentsGuest(boardId);
 
-        if (comments == null || comments.isEmpty()){
-            throw new UnnieCommentException(ErrorCode.COMMENT_SELECT_FAILED);
-        }
 
         return new PageInfo<>(comments);
     }
@@ -191,9 +188,6 @@ public class CommentServiceImpl implements CommentService {
 
         List<CommentGetResponse> comments = commentMapper.getAllComments(Map.of("memberId", memberId, "boardId", boardId));
 
-        if (comments == null || comments.isEmpty()){
-            throw new UnnieCommentException(ErrorCode.COMMENT_SELECT_FAILED);
-        }
 
         return new PageInfo<>(comments);
     }
