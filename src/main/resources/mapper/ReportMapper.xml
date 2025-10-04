@@ -6,7 +6,7 @@
     <!--  신고 INSERT  -->
     <insert id="insertReport" useGeneratedKeys="true" keyProperty="reportId" keyColumn="report_id">
         INSERT INTO
-        report
+            report
         (
             report_target_type,
             report_target_id,
@@ -15,13 +15,13 @@
             report_reason_detailed
         )
         VALUES
-        (
-            #{reportTargetType},
-            #{reportTargetId},
-            #{reportMemberId},
-            #{reportReason},
-            #{reportReasonDetailed}
-        )
+            (
+                #{reportTargetType},
+                #{reportTargetId},
+                #{reportMemberId},
+                #{reportReason},
+                #{reportReasonDetailed}
+            )
     </insert>
 
     <!--  신고 무시 처리  -->
@@ -73,6 +73,9 @@
                 WHERE review_id = #{reportTargetId}
                 AND review_member_id = #{reportMemberId}
             </when>
+            <otherwise>
+                SELECT 1 WHERE 1 = 0
+            </otherwise>
         </choose>
         )
     </select>
@@ -93,6 +96,9 @@
                 SELECT 1 FROM review
                 WHERE review_id = #{reportTargetId}
             </when>
+            <otherwise>
+                SELECT 1 WHERE 1 = 0
+            </otherwise>
         </choose>
         )
     </select>
@@ -102,10 +108,10 @@
         SELECT EXISTS (
             SELECT 1
             FROM `report`
-            WHERE report_target_type= #{reportTargetType}
-              AND report_target_id= #{reportTargetId}
-              AND report_member_id = #{reportMemberId}
-          ) AS "isDuplicate";
+            WHERE report_target_type = #{reportTargetType}
+              AND report_target_id   = #{reportTargetId}
+              AND report_member_id   = #{reportMemberId}
+        )
     </select>
 
     <!-- 신고 목록 조회  -->
@@ -164,9 +170,7 @@
             SELECT 1
             FROM report
             WHERE report_id = #{reportId}
-        ) AS "check"
+        )
     </select>
-
-
 
 </mapper>
