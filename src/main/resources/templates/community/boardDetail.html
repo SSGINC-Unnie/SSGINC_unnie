@@ -13,9 +13,12 @@
                 <img id="author-profile" src="" alt="프로필">
                 <span id="author-nickname"></span>
             </div>
-            <div id="author-actions" style="display: none;">
-                <button id="edit-button">수정</button>
-                <button id="delete-button">삭제</button>
+            <div class="post-actions">
+                <button id="report-post-btn" class="report-btn">신고</button>
+                <div id="author-actions" style="display: none;">
+                    <button id="edit-button">수정</button>
+                    <button id="delete-button">삭제</button>
+                </div>
             </div>
         </div>
 
@@ -46,12 +49,9 @@
                 <span id="post-created-at"></span>
                 <span class="meta-separator">·</span>
                 <span id="post-views-container" class="meta-item">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"></path>
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-            </svg>
-            <span id="post-views">0</span>
-        </span>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    <span id="post-views">0</span>
+                </span>
             </div>
         </div>
         <div id="post-image-container">
@@ -78,10 +78,21 @@
             <div id="comment-list"></div>
         </div>
     </div>
+
+    <div id="login-required-modal" class="modal-overlay hidden">
+        <div class="modal-content" style="max-width: 360px; text-align: center;">
+            <h3 class="modal-title">로그인 필요</h3>
+            <p style="margin: 0 0 20px;">로그인이 필요한 기능입니다.<br>로그인 페이지로 이동하시겠습니까?</p>
+            <div class="modal-actions">
+                <button type="button" id="modal-close-btn" class="btn-ghost">취소</button>
+                <a href="/login" class="btn-primary" style="text-decoration: none; padding: 8px 16px;">로그인</a>
+            </div>
+        </div>
+    </div>
+
     <div layout:fragment="scripts">
         <script th:src="@{/js/board/boardDetail.js}"></script>
     </div>
 </div>
-
 </body>
 </html>

@@ -31,12 +31,6 @@ public class ReportServiceImpl implements ReportService {
         // 입력 내용 유효성 검증
         reportValidator.validate(report);
 
-        // 신고 대상 존재 여부 확인
-        if (!reportMapper.isTargetExists(report.getReportTargetType(), report.getReportTargetId())) {
-            log.error("신고 대상이 존재하지 않음: targetType={}, targetId={}", report.getReportTargetType(), report.getReportTargetId());
-            throw new UnnieReportException(ErrorCode.REPORT_NOT_FOUND);
-        }
-
 
 
         // 본인 컨텐츠 여부 검증

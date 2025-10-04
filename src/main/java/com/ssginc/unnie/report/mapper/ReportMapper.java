@@ -15,12 +15,13 @@ import java.util.List;
 @Mapper
 public interface ReportMapper {
 
-    boolean isOwnContent(int reportTargetType,
-                         long reportTargetId,
-                         long reportMemberId);
+    Boolean isOwnContent(@Param("reportTargetType") int reportTargetType,
+                         @Param("reportTargetId") long reportTargetId,
+                         @Param("reportMemberId") long reportMemberId);
 
-    boolean isTargetExists(int reportTargetType,
-                           long reportTargetId);
+
+    Boolean isTargetExists(@Param("reportTargetType") int reportTargetType, @Param("reportTargetId") long reportTargetId);
+
 
     boolean isDuplicateReport(int reportTargetType,
                               long reportTargetId,
