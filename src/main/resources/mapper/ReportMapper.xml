@@ -126,7 +126,7 @@
             r.report_target_id AS reportTargetId,
             r.report_member_id AS reportMemberId,
             r.report_reason AS reportReason,
-            r.report_created_at,
+            r.report_created_at AS reportCreatedAt,
             r.report_resolved_at,
             CASE
                 WHEN r.report_status = 0 THEN '미처리'
@@ -152,7 +152,7 @@
             r.report_target_id AS reportTargetId,
             r.report_member_id AS reportMemberId,
             r.report_reason AS reportReason,
-            r.report_created_at,
+            r.report_created_at AS reportCreatedAt,
             r.report_resolved_at,
             CASE
                 WHEN r.report_status = 0 THEN '미처리'

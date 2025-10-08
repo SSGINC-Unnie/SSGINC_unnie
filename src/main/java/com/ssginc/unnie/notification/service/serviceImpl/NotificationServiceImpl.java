@@ -5,7 +5,6 @@ import com.github.pagehelper.PageInfo;
 import com.ssginc.unnie.common.exception.UnnieNotificationException;
 import com.ssginc.unnie.common.util.ErrorCode;
 import com.ssginc.unnie.notification.dto.NotificationMessage;
-import com.ssginc.unnie.notification.dto.NotificationResponse;
 import com.ssginc.unnie.notification.mapper.NotificationMapper;
 import com.ssginc.unnie.notification.repository.EmitterRepository;
 import com.ssginc.unnie.notification.service.NotificationService;
@@ -14,7 +13,6 @@ import com.ssginc.unnie.notification.vo.NotificationType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
-import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -195,7 +193,8 @@ public class NotificationServiceImpl implements NotificationService {
     /**
      * Emitter 고유 아이디 생성
      */
-    private String makeTimeIncludeId(long memberId) {
+    @Override
+    public String makeTimeIncludeId(long memberId) {
         return memberId + "_" + System.currentTimeMillis();
     }
 }

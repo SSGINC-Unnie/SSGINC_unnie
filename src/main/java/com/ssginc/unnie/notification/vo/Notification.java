@@ -10,9 +10,9 @@ import java.time.LocalDateTime;
 /**
  * 알림 VO 클래스
  */
-@Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 public class Notification {
     long notificationId; // 알림번호
     NotificationType notificationType; // 알림타입

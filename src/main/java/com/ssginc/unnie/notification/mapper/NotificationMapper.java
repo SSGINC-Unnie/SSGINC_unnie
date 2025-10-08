@@ -3,6 +3,7 @@ package com.ssginc.unnie.notification.mapper;
 import com.ssginc.unnie.notification.dto.NotificationMessage;
 import com.ssginc.unnie.notification.vo.Notification;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -23,5 +24,7 @@ public interface NotificationMapper {
     void deleteNotifications(List<Long> ids);
 
     void deleteAllNotificationsByMemberId(long memberId);
+
+    List<Notification> findAllByMemberId(@Param("memberId") long memberId);
 
 }

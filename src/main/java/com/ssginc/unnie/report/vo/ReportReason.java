@@ -21,6 +21,9 @@ public enum ReportReason {
     private final String description;
 
     public static String getDescriptionFromName(String name) {
+        if (name == null) {
+            return "알 수 없음";
+        }
         for (ReportReason reason : ReportReason.values()) {
             if (reason.name().equalsIgnoreCase(name)) {
                 return reason.getDescription();

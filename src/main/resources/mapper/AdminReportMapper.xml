@@ -146,16 +146,16 @@
             r.report_target_id AS reportTargetId,
             r.report_member_id AS reportMemberId,
             r.report_reason AS reportReason,
-            r.report_created_at,
-            r.report_resolved_at,
+            r.report_reason_detailed AS reportReasonDetailed,
+            r.report_created_at AS reportCreatedAt,
+            r.report_resolved_at AS reportResolvedAt,
             CASE
                 WHEN r.report_status = 0 THEN '미처리'
                 WHEN r.report_status = 1 THEN '처리 완료'
                 WHEN r.report_status = 2 THEN '무시'
                 END AS reportStatus
         FROM report r
-        WHERE
-            r.report_id = #{reportId}
+        WHERE r.report_id = #{reportId}
     </select>
 
     <!-- 신고 존재 여부  -->
@@ -199,5 +199,17 @@
 
     </select>
 
+    <select id="getBoardContentById" resultType="String">
+        SELECT board_contents
+        FROM board
+        WHERE board_id = #{targetId}
+    </select>
+
+    <update id="updateReportStatus">
+        UPDATE report
+        SET report_status = #{status},
+            report_resolved_at = CURRENT_TIMESTAMP
+        WHERE report_id = #{reportId}
+    </update>
 
 </mapper>
