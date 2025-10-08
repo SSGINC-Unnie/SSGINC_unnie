@@ -22,4 +22,5 @@ public class AdminReportDetailResponse {
     private LocalDateTime reportResolvedAt; // 신고 처리 일시
     private String reportStatus; // 처리 상태(미처리 / 처리 / 무시)
     private long reportMemberId; // 신고자 식별 번호
+    private String reportedContent;
 }

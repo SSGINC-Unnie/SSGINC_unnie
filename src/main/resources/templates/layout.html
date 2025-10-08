@@ -55,6 +55,9 @@
                     <li th:classappend="${activePage == 'approve'} ? ' active' : ''">
                         <a href="/admin/approve">승인 요청 업체 조회</a>
                     </li>
+                    <li th:classappend="${activePage == 'report'} ? ' active' : ''">
+                        <a href="/admin/community/report">신고된 게시물 조회</a>
+                    </li>
                 </ul>
                 <!-- 일반 사용자용 메뉴: 관리자가 아닐 경우에만 보임 -->
                 <ul class="nav" sec:authorize="!hasRole('ADMIN')">

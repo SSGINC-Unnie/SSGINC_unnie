@@ -8,15 +8,13 @@ import com.ssginc.unnie.admin.service.AdminReportService;
 import com.ssginc.unnie.common.exception.UnnieReportException;
 import com.ssginc.unnie.common.util.ErrorCode;
 import com.ssginc.unnie.common.util.validation.Validator;
-import com.ssginc.unnie.notification.dto.NotificationMessage;
 import com.ssginc.unnie.notification.dto.NotificationResponse;
-import com.ssginc.unnie.notification.vo.NotificationType;
-import com.ssginc.unnie.report.mapper.ReportMapper;
+import com.ssginc.unnie.notification.mapper.NotificationMapper;
+import com.ssginc.unnie.notification.vo.Notification;
 import com.ssginc.unnie.report.vo.ReportReason;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,17 +29,16 @@ import java.util.List;
 public class AdminReportServiceImpl implements AdminReportService {
 
     private final AdminReportMapper reportMapper;
-
     private final Validator<AdminReportRequest> validator;
-
     private final ApplicationEventPublisher eventPublisher;
+    private final NotificationMapper notificationMapper;
 
     /**
      * 신고 목록 조회
      */
-    @Override
     @Transactional(readOnly = true)
-    public PageInfo<AdminReportsResponse> getAllReports(int targetType, String status, String startDate, String endDate, int page, String role) {
+    @Override
+    public PageInfo<AdminReportsResponse> getAllReports(Integer targetType, String status, String startDate, String endDate, int page, String role) {
 
         AdminReportRequest reportRequest = AdminReportRequest.builder()
                 .reportTargetType(targetType)
@@ -88,14 +85,23 @@ public class AdminReportServiceImpl implements AdminReportService {
         if (!reportMapper.checkReportId(reportId)){
             throw new UnnieReportException(ErrorCode.ADMIN_REPORT_NOT_FOUND);
         }
-
-        AdminReportDetailResponse res = reportMapper.getReportById(reportId);
-
-        if (res != null) {
-            res.setReportReason(ReportReason.getDescriptionFromName(res.getReportReason()));
+        AdminReportDetailResponse responseDto = reportMapper.getReportById(reportId);
+        if (responseDto == null) {
+            throw new UnnieReportException(ErrorCode.ADMIN_REPORT_NOT_FOUND);
         }
 
-        return res;
+        String reportedContent = null;
+        long targetId = responseDto.getReportTargetId();
+
+                reportedContent = reportMapper.getBoardContentById(targetId);
+
+        responseDto.setReportedContent(reportedContent);
+
+        if (responseDto.getReportReason() != null) {
+            responseDto.setReportReason(ReportReason.getDescriptionFromName(responseDto.getReportReason()));
+        }
+
+        return responseDto;
     }
 
     /**
@@ -146,6 +152,7 @@ public class AdminReportServiceImpl implements AdminReportService {
         }
 
         int res = reportMapper.softDeleteReportById(report);
+        reportMapper.updateReportStatus(report.getReportId(), 1);
 
         if (res == 0) {
             throw new UnnieReportException(ErrorCode.REPORTED_CONTENT_DELETE_FAILED);
@@ -171,28 +178,16 @@ public class AdminReportServiceImpl implements AdminReportService {
     }
 
 
-    /**
-     * 신고 타입에 따라 알림 메세지 생성
-     * @param report
-     * @param response
-     * @return
-     */
+
+
     @Override
-    public NotificationMessage createNotificationMsg(AdminReportDeleteRequest report, NotificationResponse response) {
+    @Transactional(readOnly = true)
+    public PageInfo<Notification> getAdminNotifications(long adminId, int page) {
+        PageHelper.startPage(page, 15);
 
-        NotificationMessage msg = NotificationMessage
-                .builder()
-                .notificationMemberId(response.getReceiverId())
-                .notificationType(NotificationType.LIKE)
-                .build();
+        List<Notification> notifications = notificationMapper.findAllByMemberId(adminId);
 
-
-        String content = String.format("\'[%s]\'글이 신고 접수 및 운영팀 검토 결과 삭제되었습니다. 올바른 이용을 부탁드립니다.", response.getTargetTitle());
-        String urn = "";
-
-        msg.setNotificationContents(content);
-        msg.setNotificationUrn(urn);
-        return msg;
+        return new PageInfo<>(notifications);
     }
 
 

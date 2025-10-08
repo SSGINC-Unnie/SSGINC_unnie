@@ -1,6 +1,7 @@
 package com.ssginc.unnie.notification.service;
 
 import com.github.pagehelper.PageInfo;
+import com.ssginc.unnie.admin.dto.report.AdminReportDeleteRequest;
 import com.ssginc.unnie.notification.dto.NotificationMessage;
 import com.ssginc.unnie.notification.dto.NotificationResponse;
 import com.ssginc.unnie.notification.vo.Notification;
@@ -30,5 +31,5 @@ public interface NotificationService {
 
     void deleteAllNotifications(long memberId);
 
-
+    String makeTimeIncludeId(long memberId);
 }

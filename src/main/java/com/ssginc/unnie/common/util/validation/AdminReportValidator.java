@@ -26,8 +26,11 @@ public class AdminReportValidator implements Validator<AdminReportRequest> {
             throw new UnnieReportException(ErrorCode.PAGE_OUT_OF_RANGE);
         }
 
-        if (report.getReportTargetType() < 0 || report.getReportTargetType() > 3) {
-            throw new UnnieReportException(ErrorCode.REPORT_TYPE_INVALID);
+        if (report.getReportTargetType() != null) {
+            int targetType = report.getReportTargetType();
+            if (targetType < 0 || targetType > 3) {
+                throw new UnnieReportException(ErrorCode.REPORT_INVALID_TARGET_TYPE);
+            }
         }
 
         if (report.getReportStatus() != null) {

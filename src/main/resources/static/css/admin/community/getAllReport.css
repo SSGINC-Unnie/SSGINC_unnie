@@ -1,0 +1,37 @@
+.report-container { padding: 20px; }
+.filter-container { display: flex; gap: 10px; margin-bottom: 20px; align-items: center; }
+.filter-container input, .filter-container select { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+#search-btn { padding: 8px 16px; border: none; background-color: #333; color: white; border-radius: 4px; cursor: pointer; }
+.report-table { width: 100%; border-collapse: collapse; text-align: center; }
+.report-table th, .report-table td { border-bottom: 1px solid #ddd; padding: 12px; }
+.report-table th { background-color: #f8f8f8; }
+.report-table tbody tr:hover { background-color: #f1f1f1; }
+.status-badge { padding: 4px 8px; border-radius: 12px; color: white; font-size: 12px; white-space: nowrap; }
+.status-pending { background-color: #f44336; }
+.status-processed { background-color: #4CAF50; }
+.status-ignored { background-color: #9E9E9E; }
+.details-button { background-color: #007bff; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; white-space: nowrap; }
+
+.dropdown-content {
+    display: block;
+    max-height: 0;
+    padding: 0 20px;
+    background-color: #fafafa;
+    overflow-y: auto;
+    transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out;
+    text-align: left;
+}
+.section-title { margin-top: 20px; margin-bottom: 10px; font-size: 16px; font-weight: bold; color: #333; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+.report-detail-info dl { margin: 0; }
+.report-detail-info div { display: flex; margin-bottom: 8px; }
+.report-detail-info dt { font-weight: 600; width: 120px; color: #555; }
+.markdown-body { line-height: 1.6; border: 1px dashed #ccc; padding: 15px; background-color: white; }
+.reported-content-body { border: 1px solid #e0e0e0; padding: 15px; background-color: #fff; border-radius: 4px; margin-top: 10px; }
+.admin-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+.admin-actions button { padding: 8px 16px; border: none; border-radius: 5px; cursor: pointer; }
+.btn-secondary { background-color: #6c757d; color: white; }
+.btn-danger { background-color: #dc3545; color: white; }
+
+#pagination-container { display: flex; justify-content: center; gap: 5px; margin-top: 20px; }
+#pagination-container button { padding: 5px 10px; border: 1px solid #ddd; background: #fff; cursor: pointer; }
+#pagination-container button.active { background-color: #333; color: white; border-color: #333; }

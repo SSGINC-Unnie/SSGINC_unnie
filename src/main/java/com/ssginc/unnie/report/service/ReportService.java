@@ -7,4 +7,8 @@ import com.ssginc.unnie.report.dto.ReportRequest;
  */
 public interface ReportService {
     long createReport(ReportRequest report);
+
+    long insertReport(ReportRequest report);
+
+    void sendNotificationToAdmins(long reportId, int targetType);
 }

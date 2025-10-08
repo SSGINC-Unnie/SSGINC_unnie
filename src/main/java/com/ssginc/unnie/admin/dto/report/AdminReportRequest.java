@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Builder
 public class AdminReportRequest {
     private int page; // 현재 페이지
-    private int reportTargetType; // 신고 컨텐츠 타입 (게시글/댓글/리뷰)
+    private Integer reportTargetType; // 신고 컨텐츠 타입 (게시글/댓글/리뷰)
     private String reportStatus; // 처리 상태(미처리 / 처리 / 무시)
     private String memberRole; // 유저 권한
     private String startDate; // yyyy-MM-dd

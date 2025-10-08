@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:layout="http://www.thymeleaf.org" layout:decorate="~{layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>신고 관리</title>
+    <link rel="stylesheet" th:href="@{/css/admin/community/getAllReport.css}">
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="report-container">
+        <h1>신고 관리</h1>
+
+        <div class="filter-container">
+            <input type="date" id="start-date">
+            <span>~</span>
+            <input type="date" id="end-date">
+            <select id="target-type">
+                <option value="">전체 대상</option>
+                <option value="1">게시글</option>
+                <option value="2">댓글</option>
+                <option value="3">리뷰</option>
+            </select>
+            <select id="report-status">
+                <option value="">전체 상태</option>
+                <option value="0">미처리</option>
+                <option value="1">처리 완료</option>
+                <option value="2">무시</option>
+            </select>
+            <button id="search-btn">조회</button>
+        </div>
+
+        <table class="report-table">
+            <thead>
+            <tr>
+                <th>신고 ID</th>
+                <th>대상 타입</th>
+                <th>대상 ID</th>
+                <th>신고 사유</th>
+                <th>신고일</th>
+                <th>상태</th>
+                <th>상세보기</th>
+            </tr>
+            </thead>
+            <tbody id="report-list-body">
+            </tbody>
+        </table>
+
+        <div id="pagination-container">
+        </div>
+    </div>
+
+    <div layout:fragment="scripts">
+        <script th:src="@{/js/vendor/markdown-it.min.js}"></script>
+        <script th:src="@{/js/admin/community/getAllReport.js}"></script>
+    </div>
+
+</div>
+</body>
+</html>
