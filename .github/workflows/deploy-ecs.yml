@@ -48,6 +48,12 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
+      - name: Build (bootJar)
+        run: |
+          ./gradlew bootJar --no-daemon
+          echo "== built files =="
+          ls -alh build/libs
+
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
         run: |
