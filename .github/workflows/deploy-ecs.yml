@@ -1,0 +1,62 @@
+name: Deploy to Amazon ECS
+
+on:
+  push:
+    branches:
+      - main # main 브랜치에 푸시될 때 실행
+
+# 환경 변수 (본인 AWS 환경에 맞게 이름 확인!)
+env:
+  AWS_REGION: ap-northeast-2
+  ECR_REPOSITORY: unnie-app-repo         # 2단계에서 만든 ECR 리포지토리 이름
+  ECS_CLUSTER: unnie-cluster            # 3-A 단계에서 만든 ECS 클러스터 이름
+  ECS_SERVICE: unnie-service            # 3-C 단계에서 만든 ECS 서비스 이름
+  ECS_TASK_DEFINITION: unnie-task-def   # 3-B 단계에서 만든 작업 정의 '패밀리' 이름
+  CONTAINER_NAME: unnie-container       # 3-B 단계의 컨테이너 설정에서 입력한 이름
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-image
+        # 1. Gradle 빌드를 실행하여 JAR 파일 생성
+        # 2. Docker 이미지를 빌드하고 ECR에 푸시
+        run: |
+          ./gradlew build -x test
+          docker build -t ${{ env.ECR_REPOSITORY }}:${{ github.sha }} .
+          docker tag ${{ env.ECR_REPOSITORY }}:${{ github.sha }} ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest
+          docker push ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest
+          echo "::set-output name=image::${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest"
+
+      - name: Render Amazon ECS task definition
+        id: render-task-definition
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ${{ env.ECS_TASK_DEFINITION }}
+          container-name: ${{ env.CONTAINER_NAME }}
+          image: ${{ steps.build-image.outputs.image }}
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.render-task-definition.outputs.task-definition }}
+          service: ${{ env.ECS_SERVICE }}
+          cluster: ${{ env.ECS_CLUSTER }}
+          wait-for-service-stability: true
