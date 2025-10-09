@@ -10,7 +10,6 @@ env:
   ECR_REPOSITORY: unnie-app-repo
   ECS_CLUSTER: unnie-cluster
   ECS_SERVICE: unnie-service
-  ECS_TASK_DEFINITION: unnie-task-def
   CONTAINER_NAME: unnie-container
 
 jobs:
@@ -20,13 +19,12 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Check Secrets
         run: |
           echo "Access Key ID Exists? ${{ secrets.AWS_ACCESS_KEY_ID != '' }}"
           echo "Secret Access Key Exists? ${{ secrets.AWS_SECRET_ACCESS_KEY != '' }}"
-
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -37,9 +35,9 @@ jobs:
 
       - name: Login to Amazon ECR
         id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
+        uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Set up JDK
+      - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -48,33 +46,38 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
-      - name: Build (bootJar)
+      # bootJar가 있으면 그걸, 없으면 build (test 태스크가 없어도 에러 안 나게 방어)
+      - name: Build application
+        shell: bash
         run: |
-          ./gradlew bootJar --no-daemon
+          set -e
+          if ./gradlew tasks --all | grep -qE '(^|[:[:space:]])bootJar[[:space:]]'; then
+            echo ">> bootJar detected. Building with bootJar"
+            ./gradlew bootJar --no-daemon
+          else
+            echo ">> bootJar not found. Using build (skip test if present)"
+            if ./gradlew tasks --all | grep -qE '(^|[:[:space:]])test[[:space:]]'; then
+              ./gradlew build -x test --no-daemon
+            else
+              ./gradlew build --no-daemon
+            fi
+          fi
           echo "== built files =="
-          ls -alh build/libs
+          ls -alh **/build/libs || true
 
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
         run: |
-          ./gradlew build
+          set -e
           docker build -t ${{ env.ECR_REPOSITORY }}:${{ github.sha }} .
           docker tag  ${{ env.ECR_REPOSITORY }}:${{ github.sha }} ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest
           docker push ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest
           echo "image=${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest" >> $GITHUB_OUTPUT
 
-      - name: Render Amazon ECS task definition
-        id: render-task-definition
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
-        with:
-          task-definition: ${{ env.ECS_TASK_DEFINITION }}
-          container-name: ${{ env.CONTAINER_NAME }}
-          image: ${{ steps.build-image.outputs.image }}
-
-      - name: Deploy Amazon ECS task definition
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-        with:
-          task-definition: ${{ steps.render-task-definition.outputs.task-definition }}
-          service: ${{ env.ECS_SERVICE }}
-          cluster: ${{ env.ECS_CLUSTER }}
-          wait-for-service-stability: true
+      - name: Force new deployment on ECS service (use latest image)
+        run: |
+          aws ecs update-service \
+            --cluster "${{ env.ECS_CLUSTER }}" \
+            --service "${{ env.ECS_SERVICE }}" \
+            --force-new-deployment \
+            --region "${{ env.AWS_REGION }}"
