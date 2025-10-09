@@ -2,7 +2,7 @@
 FROM gradle:8.7-jdk17-alpine AS builder
 WORKDIR /workspace
 COPY --chown=gradle:gradle . .
-# Spring Boot면 bootJar, 일반 Java면 jar 자동 선택
+RUN apk add --no-cache bash \
 RUN bash -lc 'if gradle tasks --all | grep -q bootJar; then gradle bootJar --no-daemon; else gradle jar --no-daemon; fi'
 
 # --- runtime ---
