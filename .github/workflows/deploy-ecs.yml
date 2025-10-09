@@ -39,10 +39,19 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
         run: |
-          ./gradlew build -x test
+          ./gradlew build
           docker build -t ${{ env.ECR_REPOSITORY }}:${{ github.sha }} .
           docker tag  ${{ env.ECR_REPOSITORY }}:${{ github.sha }} ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest
           docker push ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest
