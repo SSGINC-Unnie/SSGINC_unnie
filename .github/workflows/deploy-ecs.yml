@@ -17,48 +17,34 @@ jobs:
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Verify Secrets Content
-        id: check_secrets
-        shell: bash
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - name: Check Secrets
         run: |
-          if [ ${#AWS_ACCESS_KEY_ID} -eq 20 ]; then
-            echo "key_id_length_valid=true" >> $GITHUB_OUTPUT
-          else
-            echo "key_id_length_valid=false" >> $GITHUB_OUTPUT
-          fi
-          if [ ${#AWS_SECRET_ACCESS_KEY} -eq 40 ]; then
-            echo "secret_key_length_valid=true" >> $GITHUB_OUTPUT
-          else
-            echo "secret_key_length_valid=false" >> $GITHUB_OUTPUT
-          fi
+          echo "Access Key ID Exists? ${{ secrets.AWS_ACCESS_KEY_ID != '' }}"
+          echo "Secret Access Key Exists? ${{ secrets.AWS_SECRET_ACCESS_KEY != '' }}"
+
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Login to Amazon ECR
         id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
-
-      - name: Grant execute permission for gradlew
-        run: chmod +x ./gradlew
+        uses: aws-actions/amazon-ecr-login@v1
 
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
         run: |
           ./gradlew build -x test
           docker build -t ${{ env.ECR_REPOSITORY }}:${{ github.sha }} .
-          docker tag ${{ env.ECR_REPOSITORY }}:${{ github.sha }} ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest
+          docker tag  ${{ env.ECR_REPOSITORY }}:${{ github.sha }} ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest
           docker push ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest
           echo "image=${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest" >> $GITHUB_OUTPUT
 
