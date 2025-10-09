@@ -3,8 +3,7 @@ FROM gradle:8.7-jdk17-alpine AS builder
 WORKDIR /workspace
 COPY --chown=gradle:gradle . .
 
-RUN apk add --no-cache bash && \
-    bash -lc 'if gradle tasks --all | grep -q bootJar; then gradle bootJar --no-daemon; else gradle jar --no-daemon; fi'
+RUN /bin/sh -lc 'if gradle tasks --all | grep -q "[[:space:]]bootJar[[:space:]]"; then gradle bootJar --no-daemon; else gradle assemble --no-daemon; fi'
 
 FROM amazoncorretto:17-alpine-jdk
 WORKDIR /app
