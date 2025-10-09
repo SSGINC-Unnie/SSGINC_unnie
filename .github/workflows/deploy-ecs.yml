@@ -37,34 +37,6 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '17'
-
-      - name: Make gradlew executable
-        run: chmod +x ./gradlew
-
-      # bootJar가 있으면 그걸, 없으면 build (test 태스크가 없어도 에러 안 나게 방어)
-      - name: Build application
-        shell: bash
-        run: |
-          set -e
-          if ./gradlew tasks --all | grep -qE '(^|[:[:space:]])bootJar[[:space:]]'; then
-            echo ">> bootJar detected. Building with bootJar"
-            ./gradlew bootJar --no-daemon
-          else
-            echo ">> bootJar not found. Using build (skip test if present)"
-            if ./gradlew tasks --all | grep -qE '(^|[:[:space:]])test[[:space:]]'; then
-              ./gradlew build -x test --no-daemon
-            else
-              ./gradlew build --no-daemon
-            fi
-          fi
-          echo "== built files =="
-          ls -alh **/build/libs || true
-
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
         run: |

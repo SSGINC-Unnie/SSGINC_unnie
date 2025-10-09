@@ -1,17 +1,14 @@
-# 베이스 이미지 선택
+# --- builder ---
+FROM gradle:8.7-jdk17-alpine AS builder
+WORKDIR /workspace
+COPY --chown=gradle:gradle . .
+# Spring Boot면 bootJar, 일반 Java면 jar 자동 선택
+RUN bash -lc 'if gradle tasks --all | grep -q bootJar; then gradle bootJar --no-daemon; else gradle jar --no-daemon; fi'
+
+# --- runtime ---
 FROM amazoncorretto:17-alpine-jdk
-
-# 작업자 정보
-LABEL maintainer="tkdguq0654@naver.com"
-
-# JAR 파일 변수 선언
-ARG JAR_FILE=build/libs/*.jar
-
-# JAR 파일을 Docker 이미지 안으로 복사
-COPY ${JAR_FILE} app.jar
-
-# 애플리케이션 실행 포트 설정
+WORKDIR /app
+# 빌더에서 생성된 JAR을 복사 (하위모듈까지 포괄)
+COPY --from=builder /workspace/**/build/libs/*.jar app.jar
 EXPOSE 8080
-
-# Docker 컨테이너가 시작될 때 실행할 명령어
-ENTRYPOINT ["java","-jar","/app.jar"]
+ENTRYPOINT ["java","-jar","/app/app.jar"]
