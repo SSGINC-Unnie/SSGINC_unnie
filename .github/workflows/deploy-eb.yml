@@ -45,3 +45,5 @@ jobs:
           region: ${{ env.AWS_REGION }}
           version_label: ${{ github.sha }}
           deployment_package: build/libs/unnie-0.0.1-SNAPSHOT.war
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
