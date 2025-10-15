@@ -1,11 +1,11 @@
 spring:
   application:
     name: unnie
-    servlet:
-      multipart:
-        enabled: true
-        max-file-size: 10MB
-        max-request-size: 10MB
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
 
   web:
     encoding:
@@ -16,6 +16,7 @@ spring:
       cache:
         cachecontrol:
           no-store: true
+
 
   datasource:
     url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3306/unnie?serverTimezone=UTC&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true}
@@ -30,7 +31,7 @@ spring:
   data:
     redis:
       host: ${SPRING_DATA_REDIS_HOST:localhost}
-      port: 6379
+      port: ${SPRING_DATA_REDIS_PORT:6379}
       password: ${SPRING_DATA_REDIS_PASSWORD:}
 
   main:
@@ -39,8 +40,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: ${SPRING_MAIL_USERNAME}
-    password: ${SPRING_MAIL_PASSWORD}
+    username: ${SPRING_MAIL_USERNAME:}
+    password: ${SPRING_MAIL_PASSWORD:}
     properties:
       mail:
         smtp:
@@ -48,6 +49,7 @@ spring:
           starttls:
             enable: true
 
+# --- 애플리케이션 고유 설정 ---
 mybatis:
   config-location: classpath:mybatis-config.xml
   mapper-locations: classpath:mapper/*.xml
@@ -82,7 +84,44 @@ pagehelper:
   support-methods-arguments: true
 
 naver:
+  ocr:
+    url: ${NAVER_OCR_URL:}
+    secret: ${NAVER_OCR_SECRET:}
   geocoding:
     url: "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode"
-    clientId: "${NAVER_GEOCODING_CLIENT_ID:}"
-    clientSecret: "${NAVER_GEOCODING_CLIENT_SECRET:}"
+    clientId: ${NAVER_GEOCODING_CLIENT_ID:}
+    clientSecret: ${NAVER_GEOCODING_CLIENT_SECRET:}
+
+openai:
+  api:
+    key: ${OPENAI_API_KEY:}
+
+coolsms:
+  api:
+    key: ${COOLSMS_API_KEY:}
+    secret: ${COOLSMS_API_SECRET:}
+    number: ${COOLSMS_API_NUMBER:}
+
+public-api:
+  business:
+    base-url: "http://api.odcloud.kr/api/nts-businessman/v1/validate?serviceKey="
+    service-key: ${PUBLIC_API_SERVICE_KEY:}
+
+youtube:
+  api:
+    key: ${YOUTUBE_API_KEY:}
+
+toss:
+  secret-key: ${TOSS_SECRET_KEY:}
+  client-key: ${TOSS_CLIENT_KEY:}
+  success-url: ${TOSS_SUCCESS_URL:http://localhost:5000/api/payments/toss/success}
+  fail-url: ${TOSS_FAIL_URL:http://localhost:5000/api/payments/toss/fail}
+
+cloud:
+  aws:
+    credentials:
+      use-default-aws-credentials-chain: true # EB 환경에서는 이 설정으로 EC2 역할 기반 인증을 사용합니다.
+    stack:
+      auto: false
+    region:
+      static: ap-northeast-2
