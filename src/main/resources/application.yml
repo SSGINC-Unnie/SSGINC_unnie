@@ -19,9 +19,9 @@ spring:
 
 
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3306/unnie?serverTimezone=UTC&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true}
-    username: ${SPRING_DATASOURCE_USERNAME:root}
-    password: ${SPRING_DATASOURCE_PASSWORD:1234}
+    url: ${SPRING_DATASOURCE_URL:}
+    username: ${SPRING_DATASOURCE_USERNAME:}
+    password: ${SPRING_DATASOURCE_PASSWORD:}
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
       pool-name: WinnerHikariPool
@@ -120,7 +120,7 @@ toss:
 cloud:
   aws:
     credentials:
-      use-default-aws-credentials-chain: true # EB 환경에서는 이 설정으로 EC2 역할 기반 인증을 사용합니다.
+      use-default-aws-credentials-chain: true
     stack:
       auto: false
     region:
