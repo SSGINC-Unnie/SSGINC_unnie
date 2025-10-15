@@ -1,9 +1,6 @@
 package com.ssginc.unnie.mypage.service.serviceImpl;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
+
 import com.ssginc.unnie.common.exception.UnnieMediaException;
 import com.ssginc.unnie.common.exception.UnnieMemberException;
 import com.ssginc.unnie.common.util.ErrorCode;

@@ -1,6 +1,5 @@
 package com.ssginc.unnie.mypage.service.serviceImpl;
 
-import com.amazonaws.services.s3.AmazonS3;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.PageInfo;
 import com.ssginc.unnie.common.exception.UnnieShopException;
