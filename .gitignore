@@ -335,9 +335,5 @@ gradle-app.setting
 *.log.*
 /logs/*
 
-#build
-/build.gradle
 
-#yml
-src/main/resources/application.yml
 .github/ISSUE_TEMPLATE/새 텍스트 문서.txt
