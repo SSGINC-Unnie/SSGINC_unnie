@@ -81,3 +81,8 @@ pagehelper:
   reasonable: true
   support-methods-arguments: true
 
+naver:
+  geocoding:
+    url: "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode"
+    clientId: "${NAVER_GEOCODING_CLIENT_ID:}"
+    clientSecret: "${NAVER_GEOCODING_CLIENT_SECRET:}"
