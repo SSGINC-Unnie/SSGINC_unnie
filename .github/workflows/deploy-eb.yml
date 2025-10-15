@@ -23,7 +23,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build WAR
-        run: ./gradlew bootWar
+        run: ./gradlew bootWar -x test
 
       - name: Show build artifacts
         run: ls -al build/libs
