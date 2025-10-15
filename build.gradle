@@ -194,6 +194,10 @@ dependencies {
 
 }
 
+
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+
+build.dependsOn bootWar
