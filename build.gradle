@@ -181,9 +181,9 @@ dependencies {
     // lombok을 이용해 Junit 테스트를 진행하는 경우 추가
     testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
-
-    // AWS
-    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+//
+//    // AWS
+//    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
     // Minidev JSON (for JSONArray and JSONObject)
     implementation 'org.json:json:20210307'

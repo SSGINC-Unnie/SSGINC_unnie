@@ -43,9 +43,6 @@ public class MyPageMemberServiceImpl implements MyPageMemberService {
     @Value("${public-api.business.service-key}")
     private String serviceKey;
 
-    @Value("${cloud.aws.s3.bucket}")
-    private String bucketName;
-    private final AmazonS3 amazonS3;
 
     private final MyPageMemberMapper myPageMemberMapper;
     private final PasswordEncoder passwordEncoder;
