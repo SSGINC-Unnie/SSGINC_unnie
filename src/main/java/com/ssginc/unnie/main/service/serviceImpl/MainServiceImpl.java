@@ -8,6 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -36,10 +37,6 @@ public class MainServiceImpl implements MainService {
      */
 
 
-    @PostConstruct
-    public void initYoutubeCache() {
-        this.refreshYoutubeCache();
-    }
 
 
     @Override
@@ -59,7 +56,7 @@ public class MainServiceImpl implements MainService {
      * (스케줄러가 호출) 실제 YouTube API를 호출하여 결과를 Redis에 캐시합니다.
      */
 
-    @Override
+    @Scheduled(initialDelay = 60000, fixedRate = 21600000)
     public void refreshYoutubeCache() {
         log.info("YouTube API를 직접 호출하여 캐시를 갱신합니다.");
 
