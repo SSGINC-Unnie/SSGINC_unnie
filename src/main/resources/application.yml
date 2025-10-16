@@ -30,8 +30,9 @@ spring:
 
   data:
     redis:
-      host: ${SPRING_DATA_REDIS_HOST:localhost}
+      host: ${SPRING_DATA_REDIS_HOST:127.0.0.1}
       port: ${SPRING_DATA_REDIS_PORT:6379}
+      timeout: 2s
       password: ${SPRING_DATA_REDIS_PASSWORD:}
 
   main:
@@ -61,13 +62,22 @@ management:
   endpoint:
     health:
       show-details: always
+      probes:
+        enabled: ${MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED:true}
+  health:
+    redis:
+      enabled: ${MANAGEMENT_HEALTH_REDIS_ENABLED:true}
+
   endpoints:
     jmx:
       exposure:
         include: '*'
+    web:
+      exposure:
+        include: health,info
 
 server:
-  port: 5000
+  port: ${SERVER_PORT:5000}
   error:
     whitelabel:
       enabled: false
@@ -116,3 +126,5 @@ toss:
   client-key: ${TOSS_CLIENT_KEY:}
   success-url: ${TOSS_SUCCESS_URL:}
   fail-url: ${TOSS_FAIL_URL:}
+
+
