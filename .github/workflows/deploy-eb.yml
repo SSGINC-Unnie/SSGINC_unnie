@@ -45,9 +45,11 @@ jobs:
           rm -rf build/deployment eb-bundle.zip
           mkdir -p build/deployment
           cp "${{ steps.findwar.outputs.war }}" build/deployment/application.war
-          
-          # Create Procfile to specify the command for starting the app
-          cat > build/deployment/Procfile <<'EOF'
+          cp -r .platform build/deployment/.platform
+          chmod -R +x build/deployment/.platform/hooks || true
+          (cd build/deployment && zip -r ../../eb-bundle.zip .)
+          unzip -l eb-bundle.zip
+          ls -al eb-bundle.zip  # Add this line to check if the ZIP file exists
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
