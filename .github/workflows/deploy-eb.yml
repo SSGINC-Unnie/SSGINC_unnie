@@ -53,7 +53,8 @@ jobs:
           application_name: ${{ env.EB_APPLICATION_NAME }}
           environment_name: ${{ env.EB_ENVIRONMENT_NAME }}
           region: ${{ env.AWS_REGION }}
-          version_label: ${{ github.sha }}-${{ github.run_number }}
+          version_label: ${{ github.sha }}-${{ github.run_number }}-${{ github.run_attempt }}
+          use_existing_version_if_available: true
           deployment_package: eb-bundle.zip
           wait_for_deployment: false
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
