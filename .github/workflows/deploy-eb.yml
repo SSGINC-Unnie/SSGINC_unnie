@@ -27,37 +27,16 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build with Gradle
-        run: ./gradlew bootWar -x test --no-daemon
-
-      - name: Find WAR path
-        id: findwar
-        shell: bash
-        run: |
-          set -e
-          war=$(ls -1 build/libs/*.war 2>/dev/null | grep -v 'plain.war' | head -n1)
-          if [[ -z "$war" ]]; then
-            echo "No WAR found in build/libs"; exit 1
-          fi
-          echo "WAR file: $war"
-          echo "war=$war" >> "$GITHUB_OUTPUT"
+        run: ./gradlew bootWar -x test
 
       - name: Create ZIP bundle
-        shell: bash
         run: |
-          set -eux
-          rm -rf build/deployment eb-bundle.zip
           mkdir -p build/deployment
-          cp "${{ steps.findwar.outputs.war }}" build/deployment/application.war
-
+          cp build/libs/*.war build/deployment/application.war
           if [ -d ".platform" ]; then
             cp -r .platform build/deployment/.platform
-            chmod -R +x build/deployment/.platform/hooks || true
-          else
-            echo "::warning::.platform 폴더가 없습니다.
           fi
-
-          (cd build/deployment && zip -r ../../eb-bundle.zip .)
-          unzip -l eb-bundle.zip
+          cd build/deployment && zip -r ../../eb-bundle.zip .
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -72,5 +51,6 @@ jobs:
           application_name: ${{ env.EB_APPLICATION_NAME }}
           environment_name: ${{ env.EB_ENVIRONMENT_NAME }}
           region: ${{ env.AWS_REGION }}
-          version_label: ${{ github.sha }}-${{ github.run_number }}
+          version_label: ${{ github.sha }}
           deployment_package: eb-bundle.zip
+          wait_for_deployment: true
