@@ -114,14 +114,5 @@ youtube:
 toss:
   secret-key: ${TOSS_SECRET_KEY:}
   client-key: ${TOSS_CLIENT_KEY:}
-  success-url: ${TOSS_SUCCESS_URL:http://localhost:5000/api/payments/toss/success}
-  fail-url: ${TOSS_FAIL_URL:http://localhost:5000/api/payments/toss/fail}
-
-cloud:
-  aws:
-    credentials:
-      use-default-aws-credentials-chain: true
-    stack:
-      auto: false
-    region:
-      static: ap-northeast-2
+  success-url: ${TOSS_SUCCESS_URL:}
+  fail-url: ${TOSS_FAIL_URL:}
