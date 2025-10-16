@@ -38,6 +38,28 @@ jobs:
           fi
           echo "WAR file: $war"
           echo "war=$war" >> "$GITHUB_OUTPUT"
+          
+      - name: Prepare EB bundle (zip)
+        run: |
+          set -eux
+          rm -rf deploy bundle.zip
+          mkdir -p deploy
+          cp "${{ steps.findwar.outputs.war }}" deploy/application.war
+        
+          if [ -d ".ebextensions" ]; then
+            cp -r .ebextensions deploy/.ebextensions
+          else
+            echo "::warning::.ebextensions directory not found at repo root"
+          fi
+        
+          if [ -d ".platform" ]; then
+            cp -r .platform deploy/.platform
+          fi
+
+          (cd deploy && zip -r ../bundle.zip .)
+        
+          echo "Bundle content:"
+          unzip -l bundle.zip
 
       - name: Deploy to Elastic Beanstalk
         uses: einaregilsson/beanstalk-deploy@v22
@@ -46,6 +68,6 @@ jobs:
           environment_name: ${{ env.EB_ENVIRONMENT_NAME }}
           region: ${{ env.AWS_REGION }}
           version_label:     ${{ github.sha }}-${{ github.run_number }}
-          deployment_package: ${{ steps.findwar.outputs.war }}
+          deployment_package: bundle.zip
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
