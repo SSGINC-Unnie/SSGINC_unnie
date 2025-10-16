@@ -1,6 +1,7 @@
 package com.ssginc.unnie.common.config;
 
 import com.ssginc.unnie.common.redis.RedisToken;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -12,12 +13,15 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Configuration
 public class RedisConfig {
 
+    @Value("${spring.data.redis.host}")
+    private String host;
 
+    @Value("${spring.data.redis.port}")
+    private int port;
 
-    //LettuceConnectionFactory: redis 서버와 연결 관리
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
-        return new LettuceConnectionFactory("localhost", 6379);
+        return new LettuceConnectionFactory(host, port);
     }
 
     //인증번호 저장용 RedisTemplate
