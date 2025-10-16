@@ -32,7 +32,7 @@ spring:
     redis:
       host: ${SPRING_DATA_REDIS_HOST:127.0.0.1}
       port: ${SPRING_DATA_REDIS_PORT:6379}
-      timeout: 10000s
+      timeout: 10000
       password: ${SPRING_DATA_REDIS_PASSWORD:}
 
   main:
