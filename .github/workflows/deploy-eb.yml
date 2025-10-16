@@ -29,27 +29,11 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew bootWar -x test --no-daemon
 
-      - name: Find WAR path
-        id: findwar
-        shell: bash
-        run: |
-          set -e
-          war=$(ls -1 build/libs/*.war 2>/dev/null | grep -v 'plain.war' | head -n1)
-          [ -z "$war" ] && { echo "No WAR found"; exit 1; }
-          echo "war=$war" >> "$GITHUB_OUTPUT"
-
       - name: Create ZIP bundle
-        shell: bash
         run: |
-          set -eux
-          rm -rf build/deployment eb-bundle.zip
-          mkdir -p build/deployment
-          cp "${{ steps.findwar.outputs.war }}" build/deployment/application.war
-          cp -r .platform build/deployment/.platform
-          chmod -R +x build/deployment/.platform/hooks || true
-          (cd build/deployment && zip -r ../../eb-bundle.zip .)
-          unzip -l eb-bundle.zip
-          ls -al eb-bundle.zip  # Add this line to check if the ZIP file exists
+          mkdir build/deployment
+          cp build/libs/*.war build/deployment/application.war
+          cd build/deployment && zip -r ../../eb-bundle.zip .
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -67,6 +51,6 @@ jobs:
           version_label: ${{ github.sha }}-${{ github.run_number }}-${{ github.run_attempt }}
           use_existing_version_if_available: true
           deployment_package: eb-bundle.zip
-          wait_for_deployment: false
+          wait_for_deployment: true
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
