@@ -31,8 +31,12 @@ jobs:
 
       - name: Create ZIP bundle
         run: |
-          mkdir build/deployment
+          mkdir -p build/deployment
           cp build/libs/*.war build/deployment/application.war
+          cp Procfile build/deployment/Procfile
+          if [ -d ".platform" ]; then
+            cp -r .platform build/deployment/.platform
+          fi
           cd build/deployment && zip -r ../../eb-bundle.zip .
 
       - name: Configure AWS credentials
