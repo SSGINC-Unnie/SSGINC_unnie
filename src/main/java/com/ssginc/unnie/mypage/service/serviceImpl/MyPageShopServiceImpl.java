@@ -1,5 +1,6 @@
 package com.ssginc.unnie.mypage.service.serviceImpl;
 
+import com.amazonaws.services.s3.AmazonS3;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.PageInfo;
 import com.ssginc.unnie.common.exception.UnnieShopException;
@@ -36,6 +37,9 @@ public class MyPageShopServiceImpl implements MyPageShopService {
     @Value("${public-api.business.service-key}")
     private String serviceKey;
 
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucketName;
+    private final AmazonS3 amazonS3;
 
     private final ApplicationEventPublisher eventPublisher;
     private final MyPageShopMapper myPageShopMapper;

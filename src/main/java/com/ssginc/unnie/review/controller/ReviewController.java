@@ -30,10 +30,10 @@ public class ReviewController {
 
     private final ReviewService reviewService;
     // ✅ 업로드 디렉토리 (프로젝트 내 static 폴더)
-//    private static final String UPLOAD_DIR = "C:/workSpace/SSGINC_Unnie/src/main/resources/static/upload";
+    private static final String UPLOAD_DIR = "C:/workSpace/SSGINC_Unnie/src/main/resources/static/upload";
 
     // ✅ 업로드 디렉토리 (프로젝트 내 static 폴더)
-    private static final String UPLOAD_DIR = "/Users/wish/IdeaProjects/SSGINC_unnie/src/main/resources/static/upload";
+//    private static final String UPLOAD_DIR = "/Users/wish/IdeaProjects/SSGINC_unnie/src/main/resources/static/upload";
 
     /**
      * 리뷰 등록

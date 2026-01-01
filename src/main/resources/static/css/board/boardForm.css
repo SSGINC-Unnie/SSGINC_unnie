@@ -61,9 +61,9 @@ select.form-control {
 .note-editor.note-frame {
     border-color: #ccc;
 }
-.note-editor .note-editable img {
+/* .note-editor .note-editable img {
     display: none !important;
-}
+} */
 
 /* 하단 버튼 영역 */
 .form-actions {

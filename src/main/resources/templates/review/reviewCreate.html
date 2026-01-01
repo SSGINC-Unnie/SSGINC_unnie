@@ -19,8 +19,8 @@
         <div class="review-form-container" sec:authorize="isAuthenticated()">
             <h2 class="review-title">리뷰 작성</h2>
             <form id="reviewForm">
-                <!-- receiptId는 URL 쿼리에서 자동 설정되며, 화면에 표시하지 않음 -->
                 <input type="hidden" id="reviewReceiptId" name="reviewReceiptId">
+                <input type="hidden" id="reviewReservationId" name="reviewReservationId">
 
                 <!-- 파일 업로드 영역 -->
                 <div class="form-group">

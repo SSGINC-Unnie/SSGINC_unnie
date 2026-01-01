@@ -45,5 +45,25 @@
             status IN ('CONFIRMED', 'HOLD', 'PENDING')
     </select>
 
+    <select id="findReservationById" resultType="com.ssginc.unnie.reservation.dto.ReservationResponse">
+        SELECT
+            reservation_id AS reservationId,
+            member_id      AS memberId,
+            shop_id        AS shopId,
+            status         AS status,
+            start_time     AS startTime,
+            end_time       AS endTime
+        FROM reservation
+        WHERE reservation_id = #{reservationId}
+    </select>
+
+    <update id="updateExpiredReservationsToCompleted">
+        UPDATE reservation
+        SET status = 'COMPLETED',
+            updated_at = NOW()
+        WHERE status = 'CONFIRMED'
+          AND end_time &lt; NOW()
+          </update>
 
 </mapper>
+

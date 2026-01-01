@@ -26,6 +26,8 @@ public class ShopAllResponse {
 
     private double avgRate;
 
+    private String shopImageUrl;
+
 
 
 }

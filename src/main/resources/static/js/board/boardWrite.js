@@ -1,14 +1,17 @@
+// boardWrite.js (FULL — paste-safe, upload-safe)
+
 $(document).ready(function() {
 
     const attachmentList = $('#attachment-list');
-    const MAX_IMAGE_WIDTH = 1280; // 이미지 리사이징 최대 너비 설정 (px)
-    const IMAGE_COMPRESSION_QUALITY = 0.85; // 이미지 압축 품질 (0.0 ~ 1.0)
+    const MAX_IMAGE_WIDTH = 1280;
+    const IMAGE_COMPRESSION_QUALITY = 0.85;
 
-    // 1. Summernote 에디터 초기화
+    // 업로드 진행 상태
+    let uploading = 0;
+
+    // ===== Summernote 초기화 =====
     $('#summernote-content').summernote({
         height: 300,
-        minHeight: null,
-        maxHeight: null,
         focus: true,
         lang: "ko-KR",
         placeholder: '내용을 입력해주세요',
@@ -16,75 +19,94 @@ $(document).ready(function() {
         toolbar: [
             ['fontname', ['fontname']],
             ['fontsize', ['fontsize']],
-            ['style', ['bold', 'italic', 'underline','strikethrough', 'clear']],
+            ['style', ['bold','italic','underline','strikethrough','clear']],
             ['color', ['forecolor','color']],
             ['table', ['table']],
-            ['para', ['ul', 'ol', 'paragraph']],
+            ['para', ['ul','ol','paragraph']],
             ['height', ['height']],
             ['picture', ['picture']],
             ['insert',['link','video']],
-            ['view', ['fullscreen', 'help']]
+            ['view', ['fullscreen','help']]
         ],
-        fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New','맑은 고딕','궁서','굴림체','돋움체','바탕체'],
+        fontNames: ['Arial','Arial Black','Comic Sans MS','Courier New','맑은 고딕','궁서','굴림체','돋움체','바탕체'],
         fontSizes: ['8','9','10','11','12','14','16','18','20','22','24','28','30','36','50','72'],
         callbacks: {
-
+            // (1) 에디터에서 직접 이미지 선택 시: 리사이즈 + 업로드 경유
             onImageUpload: function(files) {
                 for (let i = 0; i < files.length; i++) {
                     resizeImage(files[i], this);
                 }
+            },
+            onPaste: function(e) {
+                const ev = e.originalEvent || e;
+                const cd = ev.clipboardData || window.clipboardData;
+                if (!cd) return;
+
+                const items = cd.items || [];
+                let hasImageItem = false;
+                for (let i = 0; i < items.length; i++) {
+                    if (items[i].kind === 'file' && items[i].type.startsWith('image/')) {
+                        hasImageItem = true;
+                    }
+                }
+                if (hasImageItem) {
+                    ev.preventDefault();
+                    for (let i = 0; i < items.length; i++) {
+                        if (items[i].kind === 'file' && items[i].type.startsWith('image/')) {
+                            const file = items[i].getAsFile();
+                            if (file) resizeImage(file, this);
+                        }
+                    }
+                    return;
+                }
+
+                const html = cd.getData('text/html');
+                if (html && html.length > 0) {
+                    ev.preventDefault();
+                    const sanitized = sanitizeHTML(html);
+                    $(this).summernote('pasteHTML', sanitized);
+
+                    setTimeout(() => replaceDataURIImagesWithUploads(this), 0);
+                    return;
+                }
+
             }
         }
     });
 
-    /**
-     * 이미지를 리사이징하는 함수
-     * @param {File} file - 원본 이미지 파일
-     * @param {object} editor - Summernote 에디터 인스턴스
-     */
+    // ===== 이미지 리사이즈 후 업로드 =====
     function resizeImage(file, editor) {
         const reader = new FileReader();
-
-        reader.onload = function(event) {
+        reader.onload = function(evt) {
             const img = new Image();
-            img.src = event.target.result;
-
+            img.src = evt.target.result;
             img.onload = function() {
-                // 1. 이미지의 너비가 최대 너비보다 클 경우에만 리사이징 실행
                 if (img.width > MAX_IMAGE_WIDTH) {
                     const canvas = document.createElement('canvas');
                     const ratio = MAX_IMAGE_WIDTH / img.width;
                     canvas.width = MAX_IMAGE_WIDTH;
                     canvas.height = img.height * ratio;
-
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-                    // 2. Canvas를 Blob으로 변환
                     canvas.toBlob(function(blob) {
-                        // 3. Blob을 File 객체로 다시 만들어 원본 파일명과 타입을 유지
                         const resizedFile = new File([blob], file.name, { type: file.type });
-                        // 4. 리사이징된 파일을 서버로 전송
                         sendFile(resizedFile, editor);
                     }, file.type, IMAGE_COMPRESSION_QUALITY);
-
                 } else {
-                    // 5. 이미지 너비가 최대 너비보다 작으면 원본을 그대로 전송
                     sendFile(file, editor);
                 }
             };
         };
-
         reader.readAsDataURL(file);
     }
 
-
-    /**
-     * 이미지를 서버로 전송하고, 반환된 경로를 에디터와 첨부 파일 목록에 추가하는 함수
-     */
+    // ===== 파일 업로드(에디터에 삽입 + 첨부목록 추가) =====
     function sendFile(file, editor) {
         const formData = new FormData();
         formData.append('file', file);
+
+        uploading++;
+        toggleSubmit(false);
 
         $.ajax({
             url: '/api/media/upload',
@@ -95,9 +117,7 @@ $(document).ready(function() {
             success: function(response) {
                 if (response.status === 201 || response.status === 200) {
                     const fileUrn = response.data.fileUrn;
-
                     $(editor).summernote('insertImage', fileUrn);
-
                     addAttachmentPreview(file.name, fileUrn);
                 } else {
                     alert(response.message || '이미지 업로드 중 오류가 발생했습니다.');
@@ -105,53 +125,129 @@ $(document).ready(function() {
             },
             error: function() {
                 alert('이미지 업로드에 실패했습니다.');
+            },
+            complete: function() {
+                uploading = Math.max(0, uploading - 1);
+                if (uploading === 0) toggleSubmit(true);
             }
         });
     }
 
-    /**
-     * 하단 첨부 파일 목록에 미리보기 아이템을 생성하고 추가하는 함수
-     */
-    function addAttachmentPreview(fileName, fileUrn) {
-        const attachmentItemHTML = `
-            <div class="attachment-item" data-urn="${fileUrn}">
-                <img src="${fileUrn}" alt="${fileName}" class="attachment-thumbnail">
-                <span class="attachment-name">${fileName}</span>
-                <button type="button" class="attachment-delete-btn" title="첨부 삭제">&times;</button>
-            </div>
-        `;
-        attachmentList.append(attachmentItemHTML);
+    // ===== data:image/* 를 서버 업로드로 치환 =====
+    function replaceDataURIImagesWithUploads(editor) {
+        const $editable = $(editor).parent().find('.note-editable');
+        $editable.find('img').each(function() {
+            const $img = $(this);
+            const src = $img.attr('src') || '';
+            if (src.startsWith('data:')) {
+                const blob = dataURLToBlob(src);
+                const filename = guessFilenameFromMime(blob.type);
+                // 업로드 카운트/버튼 제어
+                uploading++;
+                toggleSubmit(false);
+
+                const formData = new FormData();
+                formData.append('file', new File([blob], filename, { type: blob.type }));
+
+                $.ajax({
+                    url: '/api/media/upload',
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        if (response.status === 201 || response.status === 200) {
+                            const urn = response.data.fileUrn;
+                            $img.attr('src', urn);
+                            addAttachmentPreview(filename, urn);
+                        } else {
+                            // 실패 시 data URI 이미지는 제거(서버 정책에 맞게 조정 가능)
+                            $img.remove();
+                            alert(response.message || '붙여넣은 이미지 업로드에 실패했습니다.');
+                        }
+                    },
+                    error: function() {
+                        $img.remove();
+                        alert('붙여넣은 이미지 업로드에 실패했습니다.');
+                    },
+                    complete: function() {
+                        uploading = Math.max(0, uploading - 1);
+                        if (uploading === 0) toggleSubmit(true);
+                    }
+                });
+            }
+        });
     }
 
-    /**
-     * 첨부 파일 삭제 버튼 클릭 이벤트
-     */
+    function dataURLToBlob(dataurl) {
+        const arr = dataurl.split(',');
+        const mime = arr[0].match(/:(.*?);/)[1];
+        const bstr = atob(arr[1]);
+        let n = bstr.length;
+        const u8 = new Uint8Array(n);
+        while (n--) u8[n] = bstr.charCodeAt(n);
+        return new Blob([u8], { type: mime });
+    }
+
+    function guessFilenameFromMime(mime) {
+        const ext = mime.split('/')[1] || 'png';
+        return `pasted.${ext}`;
+    }
+
+    // ===== 첨부 미리보기 =====
+    function addAttachmentPreview(fileName, fileUrn) {
+        const html = `
+      <div class="attachment-item" data-urn="${fileUrn}">
+        <img src="${fileUrn}" alt="${fileName}" class="attachment-thumbnail">
+        <span class="attachment-name">${fileName}</span>
+        <button type="button" class="attachment-delete-btn" title="첨부 삭제">&times;</button>
+      </div>
+    `;
+        attachmentList.append(html);
+    }
+
     attachmentList.on('click', '.attachment-delete-btn', function() {
         const item = $(this).closest('.attachment-item');
-        // const fileUrnToDelete = item.data('urn');
-
-        if (confirm("이 첨부파일을 삭제하시겠습니까? ")) {
-            // const currentContent = $('#summernote-content').summernote('code');
-            // const imgTagRegex = new RegExp(`<img[^>]+src\\s*=\\s*['"]${fileUrnToDelete}['\"][^>]*>`, 'g');
-            // const updatedContent = currentContent.replace(imgTagRegex, '');
-            // $('#summernote-content').summernote('code', updatedContent);
-            item.remove();
-        }
+        item.remove();
     });
-
 
     $('#board-form').on('submit', async function (e) {
         e.preventDefault();
 
-        const formData = new FormData(this);
-        const content = $('#summernote-content').summernote('code');
-
-        if (!content.includes('<img')) {
-            alert('최소 1장의 이미지를 첨부해야 합니다.');
+        if (uploading > 0) {
+            alert('이미지 업로드가 끝날 때까지 잠시만 기다려주세요.');
             return;
         }
 
-        formData.set('boardContents', content);
+        // 본문 HTML
+        let html = $('#summernote-content').summernote('code');
+
+        const $root = $('<div>').html(html);
+        const $blocks = $root.children('p, div');
+        if ($blocks.length && isBlankOrImgOnly($($blocks[0]))) {
+            const $firstText = $blocks.filter(function() {
+                return $(this).text().trim().length > 0;
+            }).first();
+            if ($firstText.length) {
+                $($blocks[0]).before($firstText);
+                html = $root.html();
+                $('#summernote-content').summernote('code', html);
+            }
+        }
+
+        const plain = $root.text().replace(/\u00A0|\u200B/g,'').trim();
+
+        const hasImg = /<img\b/i.test(html);
+        if (plain.length === 0 && !hasImg) {
+            alert('텍스트나 이미지를 최소 1개 이상 입력해주세요.');
+            return;
+        }
+
+        $('#summernote-content').val(html);
+
+        const formData = new FormData(this);
+        formData.set('boardContents', html);
+        formData.set('boardContentsText', plain); // 서버에서 순수 텍스트 검증시 활용
 
         try {
             const response = await fetch('/api/community/board', {
@@ -166,18 +262,49 @@ $(document).ready(function() {
             } else {
                 alert(result.message || '게시글 작성에 실패했습니다.');
             }
-        } catch (error) {
-            console.error('Error creating board:', error);
+        } catch (err) {
+            console.error(err);
             alert('오류가 발생했습니다. 다시 시도해주세요.');
         }
     });
 
-    /**
-     * 취소 버튼 이벤트 핸들러
-     */
+    function isBlankOrImgOnly($el) {
+        const textTrim = $el.text().trim();
+        const htmlTrim = $el.html().replace(/<br\s*\/?>/gi,'').trim();
+        const hasImg = $el.find('img').length > 0;
+        return textTrim.length === 0 && (hasImg || htmlTrim === '');
+    }
+
+    function toggleSubmit(enable) {
+        const $submitBtn = $('#submit-button');
+        if ($submitBtn.length) $submitBtn.prop('disabled', !enable);
+    }
+
+    function sanitizeHTML(input) {
+        let html = input;
+
+        html = html.replace(/<!--[\s\S]*?-->/g, '');
+        html = html.replace(/<!\[if[\s\S]*?<!\[endif\]>/gi, '');
+
+        html = html.replace(/<\/?(script|style)[^>]*>/gi, '');
+
+        html = html.replace(/<\/?o:p[^>]*>/gi, '');
+
+        html = html.replace(/<\/?span[^>]*>/gi, '');
+        html = html.replace(/<\/?font[^>]*>/gi, '');
+
+        html = html.replace(/\s+(class|style|id|width|height|align)=(".*?"|'.*?'|[^\s>]+)/gi, '');
+
+        html = html.replace(/&nbsp;/gi, ' ');
+
+        return html;
+    }
+
+    // 취소 버튼
     $('#cancel-button').on('click', function() {
-        if(confirm('작성을 취소하시겠습니까? 변경사항이 저장되지 않습니다.')) {
+        if (confirm('작성을 취소하시겠습니까? 변경사항이 저장되지 않습니다.')) {
             window.history.back();
         }
     });
+
 });

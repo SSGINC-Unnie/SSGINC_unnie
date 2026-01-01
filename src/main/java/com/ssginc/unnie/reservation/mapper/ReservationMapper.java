@@ -1,6 +1,7 @@
 package com.ssginc.unnie.reservation.mapper;
 
 import com.ssginc.unnie.reservation.dto.ReservationIdRow;
+import com.ssginc.unnie.reservation.dto.ReservationResponse;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -29,5 +30,9 @@ public interface ReservationMapper {
             @Param("designerId") int designerId,
             @Param("date") String date
     );
+
+    ReservationResponse findReservationById(Long reservationId);
+
+    int updateExpiredReservationsToCompleted();
 
 }

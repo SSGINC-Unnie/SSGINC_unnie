@@ -192,4 +192,5 @@
 .time-slot.selected { background: #ff3479; color: white; border-color: #ff3479; }
 .time-slot.disabled { background: #f5f5f5; color: #999; cursor: not-allowed; }
 .section-title { font-size: 16px; font-weight: 700; margin-bottom: 12px; }
+.reservation-details .status.completed { background-color: #333; }
 

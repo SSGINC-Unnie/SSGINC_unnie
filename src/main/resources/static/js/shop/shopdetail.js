@@ -255,8 +255,7 @@ async function loadProcedures(shopId) {
         procedureListEl.innerHTML = '';
 
         procedures.forEach(procedure => {
-            const thumbnailSrc = '/img/shop/download.jpg'; // 시술은 기본 이미지 사용
-            const item = document.createElement('div');
+            const thumbnailSrc = procedure.procedureThumbnail ? procedure.procedureThumbnail : '/img/shop/download.jpg';            const item = document.createElement('div');
             item.classList.add('designer-item');
             item.innerHTML = `
                 <img src="${thumbnailSrc}" alt="시술 이미지" class="designer-thumbnail" />

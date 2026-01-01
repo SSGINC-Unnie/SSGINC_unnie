@@ -52,11 +52,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const statusText = {
                 'CONFIRMED': '예약확정',
                 'CANCELLED': '예약취소',
-                'HOLD': '결제대기'
+                'HOLD': '결제대기',
+                'COMPLETED': '이용완료'
             }[res.status] || res.status;
+
 
             const isChangeable = res.status === 'CONFIRMED' && (startTime.getTime() - new Date().getTime()) > 24 * 60 * 60 * 1000;
             const isCancellable = isChangeable;
+            const isReviewable = res.status === 'COMPLETED';
 
             card.innerHTML = `
             <div class="reservation-info">
@@ -69,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="price">${res.price.toLocaleString()}원</div>
             </div>
             
-            ${isChangeable || isCancellable ? `
+            ${isChangeable || isCancellable || isReviewable ? `
                 <div class="card-footer">
                     ${isChangeable ? `<button class="btn btn-primary change-reservation-btn"
                         data-reservation-id="${res.reservationId}"
@@ -77,7 +80,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         data-start-time="${res.reservationTime}">
                         예약 변경
                     </button>` : ''}
+                    
                     ${isCancellable ? `<button class="btn btn-ghost cancel-reservation-btn" data-reservation-id="${res.reservationId}">예약 취소</button>` : ''}
+                    
+                    ${isReviewable ? `<a href="/review/create?reservationId=${res.reservationId}" class="btn btn-primary">리뷰 쓰기</a>` : ''}
                 </div>
             ` : ''}
         `;

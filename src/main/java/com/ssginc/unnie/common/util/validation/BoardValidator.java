@@ -8,6 +8,7 @@ import com.ssginc.unnie.common.exception.UnnieBoardException;
 import com.ssginc.unnie.common.util.ErrorCode;
 import com.ssginc.unnie.common.util.parser.BoardParser;
 import lombok.extern.slf4j.Slf4j;
+import org.jsoup.Jsoup;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -71,24 +72,29 @@ public class BoardValidator implements Validator<BoardRequestBase> {
     /**
      * 게시글 본문 검증
      */
+
     private void validateContent(String content) {
         if (content == null || content.isEmpty()) {
             log.error("게시글 내용이 누락되었습니다.");
             throw new UnnieBoardException(ErrorCode.BOARD_CONTENT_REQUIRED);
         }
 
-        // BoardParser 사용하여 HTML 파싱 후 검증
-        BoardParser parser = new BoardParser(content);
+        String plain = Jsoup.parse(content).text()
+                .replace("\u00A0", " ")
+                .replace("\u200B", "")
+                .trim();
+        int textLength = plain.codePointCount(0, plain.length());
 
-        int textLength = parser.getContentTextLength();
+        boolean hasImage = content.matches("(?is).*<img\\b[^>]*src\\s*=\\s*['\"][^'\"\\s][^'\">]*['\"][^>]*>.*");
 
-        if (textLength == 0) {
-            log.error("<div id='content'> 태그 내부에 본문이 없습니다.");
+        if (textLength == 0 && !hasImage) {
+            log.error("본문(텍스트/이미지) 모두 없음");
             throw new UnnieBoardException(ErrorCode.BOARD_CONTENT_REQUIRED);
         }
 
-        if (textLength < 10 || textLength > 800) {
-            log.error("게시글 내용 길이 제한 위반: 현재 길이 = {}", textLength);
+        int MAX_TEXT_LEN = 4000;
+        if (textLength > MAX_TEXT_LEN) {
+            log.error("본문 텍스트 길이 초과: {}", textLength);
             throw new UnnieBoardException(ErrorCode.BOARD_CONTENT_LENGTH_INVALID);
         }
     }

@@ -50,27 +50,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 const board = result.data.board;
                 isLoggedIn = result.data.isLoggedIn;
 
-                if(authorProfile) authorProfile.src = board.authorProfile;
-                if(authorNickname) authorNickname.textContent = board.authorNickname;
-                if(postTitle) postTitle.textContent = board.boardTitle;
-                if(postCreatedAt) postCreatedAt.textContent = new Date(board.boardCreatedAt).toLocaleString();
-                if(likeCount) likeCount.textContent = board.likeCount;
+                if (authorProfile) authorProfile.src = board.authorProfile || '';
+                if (authorNickname) authorNickname.textContent = board.authorNickname || '';
+                if (postTitle) postTitle.textContent = board.boardTitle || '';
+                if (postCreatedAt) postCreatedAt.textContent = new Date(board.boardCreatedAt).toLocaleString();
+                if (likeCount) likeCount.textContent = board.likeCount;
                 currentLikeId = board.likeId;
-                if(postViews) postViews.textContent = board.boardViews;
+                if (postViews) postViews.textContent = board.boardViews;
 
-                const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = board.boardContents;
-                const firstImg = tempDiv.querySelector('img');
-                if (firstImg && postThumbnail) {
-                    postThumbnail.src = firstImg.src;
-                    postThumbnail.style.display = 'block';
-                } else {
-                    const postImageContainer = document.getElementById('post-image-container');
-                    if(postImageContainer) postImageContainer.style.display = 'none';
-                }
+                const postImageContainer = document.getElementById('post-image-container');
+                if (postImageContainer) postImageContainer.style.display = 'none';
+                if (postThumbnail) postThumbnail.style.display = 'none';
 
-                const contentWithoutImages = board.boardContents.replace(/<img[^>]*>/g, "");
-                if(postBody) postBody.innerHTML = contentWithoutImages;
+                if (postBody) postBody.innerHTML = board.boardContents || '';
 
                 if (board.owner && authorActions) {
                     authorActions.style.display = 'block';
@@ -79,7 +71,9 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 alert(result.message || '게시글을 불러올 수 없습니다.');
             }
-        } catch (error) { console.error('Error fetching board:', error); }
+        } catch (error) {
+            console.error('Error fetching board:', error);
+        }
     };
 
     // 2. 댓글 불러오기

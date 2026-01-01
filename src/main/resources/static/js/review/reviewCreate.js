@@ -2,8 +2,12 @@ document.addEventListener("DOMContentLoaded", function () {
     // URL 쿼리에서 receiptId 추출 후 hidden input에 설정
     const params = new URLSearchParams(window.location.search);
     const receiptId = params.get("receiptId");
+    const reservationId = params.get("reservationId");
     if (receiptId) {
         document.getElementById("reviewReceiptId").value = receiptId;
+    }
+    if (reservationId) {
+        document.getElementById("reviewReservationId").value = reservationId;
     }
 
     // 별점 클릭 기능 구현
@@ -24,6 +28,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const submitButton = document.getElementById("submitReview");
     submitButton.addEventListener("click", function () {
         const reviewReceiptId = document.getElementById("reviewReceiptId").value;
+        const reviewReservationId = document.getElementById("reviewReservationId").value;
         const file = document.getElementById("file").files[0];
         const reviewRate = reviewRateInput.value;
         const reviewContent = document.getElementById("reviewContent").value;
@@ -32,13 +37,14 @@ document.addEventListener("DOMContentLoaded", function () {
         const keywordCheckboxes = document.querySelectorAll('input[name="keyword"]:checked');
         const keywords = Array.from(keywordCheckboxes).map(cb => cb.value).join(",");
 
-        if (!reviewReceiptId || !reviewRate || !reviewContent || !keywords) {
-            alert("필수 입력 항목을 모두 채워주세요.");
+        if ((!reviewReceiptId && !reviewReservationId) || !reviewRate || !reviewContent || !keywords) {
+            alert("필수 입력 항목을 모두 채워주세요. (잘못된 접근일 수 있습니다)");
             return;
         }
 
         let formData = new FormData();
-        formData.append("reviewReceiptId", reviewReceiptId);
+        if(reviewReceiptId) formData.append("reviewReceiptId", reviewReceiptId);
+        if(reviewReservationId) formData.append("reviewReservationId", reviewReservationId);
         formData.append("reviewRate", reviewRate);
         formData.append("reviewContent", reviewContent);
         formData.append("keywordId", keywords);

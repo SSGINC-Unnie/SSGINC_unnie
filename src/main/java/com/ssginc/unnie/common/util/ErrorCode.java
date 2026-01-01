@@ -211,6 +211,7 @@ public enum ErrorCode {
     MY_RESERVATIONS_FETCH_FAILED(500, "RS006", "내 예약 목록을 불러오는 중 오류가 발생했습니다."),
     RESERVATION_NOT_MODIFIABLE(403, "RS007", "변경할 수 없는 예약입니다 (24시간 이내 또는 이미 처리된 예약)."),
     RESERVATION_CANCEL_FAILED(500, "RS008", "예약 취소 중 오류가 발생했습니다."),
+    REVIEW_TOO_EARLY(500, "RS008", "시술 시간이 지나지 않았습니다."),
 
 
     // =================================== 공통 에러 =====================================================
